@@ -3,6 +3,10 @@ import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 
+// Add support for optional data.json argument
+const dataPath = process.argv[2] || "data.json";
+console.log(`Using data file: ${dataPath}`);
+
 (async () => {
   const __dirname = fileURLToPath(new URL(".", import.meta.url));
 

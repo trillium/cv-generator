@@ -1,0 +1,38 @@
+header:
+  name: John Doe
+  resume: https://example.com/resume.pdf
+workExperience:
+  - position: Software Engineer
+    company: Example Corp
+    location: Remote
+    type: Full-time
+    years: 2020-2024
+    bubbles: ["React", "TypeScript"]
+    lines:
+      - text: Developed cool stuff
+        bulletPoint: true
+projects:
+  - name: Project X
+    duration: 2023
+    bubbles: ["Open Source"]
+    lines:
+      - text: Built something awesome
+        bulletPoint: true
+profile:
+  shouldDisplayProfileImage: true
+  lines: ["Enthusiastic developer"]
+  links:
+    - label: GitHub
+      url: https://github.com/johndoe
+technical:
+  - category: Languages
+    bubbles: ["JavaScript", "Python"]
+languages:
+  - name: English
+    abbreviation: EN
+    level: Native
+education:
+  - degree: BSc Computer Science
+    school: Example University
+    location: City
+    years: 2016-2020
