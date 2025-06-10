@@ -1,7 +1,16 @@
-import "./Title.css";
+import Separator from "../Separator/Separator";
 
 const Title = ({ text }: { text: string }) => {
-  return <span className="title">{text}</span>;
+  return (
+    <>
+      <div className="w-full">
+        <div className="text-primary-500 rounded text-base font-bold">
+          {text}
+        </div>
+        <Separator className="" />
+      </div>
+    </>
+  );
 };
 
 export default Title;

@@ -1,42 +1,52 @@
-import { FaGithub, FaHouseUser, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaSquareXTwitter, FaBluesky } from "react-icons/fa6";
-import "./ProfileLink.css";
+import { BsGlobe } from "react-icons/bs";
+import { clsx } from "clsx";
 
 export type ProfileLinkProps = {
   /** Only GitHub Twitter LinkedIn Website */
-  type: string;
+  icon: string;
   /** Please, use without https:// */
   link: string;
   /** Optional: custom display name for the link */
   name?: string;
+  className?: string;
 };
 
-const ProfileLink = ({ type, link, name }: ProfileLinkProps) => {
-  let icon;
+const ProfileLink = ({ icon, link, name, className }: ProfileLinkProps) => {
+  let Icon;
 
-  switch (type) {
+  switch (icon) {
     case "GitHub":
-      icon = <FaGithub />;
+      Icon = <FaGithub />;
       break;
     case "Twitter":
-      icon = <FaSquareXTwitter />;
+      Icon = <FaSquareXTwitter />;
       break;
     case "LinkedIn":
-      icon = <FaLinkedin />;
+      Icon = <FaLinkedin />;
       break;
     case "Website":
-      icon = <FaHouseUser />;
+      Icon = <BsGlobe />;
       break;
     case "Bluesky":
-      icon = <FaBluesky />;
+      Icon = <FaBluesky />;
+      break;
+    case "None":
+      Icon = <></>;
       break;
   }
 
   return (
-    <div className="profile__header__link">
-      <a href={`https://${link}`} target="_blank" rel="noopener noreferrer">
-        {icon}
-        <span>{name || type}</span>
+    <div className={clsx("text-inherit flex items-center gap-2", className)}>
+      <a
+        href={`https://${link}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-semibold text-inherit flex items-center gap-2"
+      >
+        {Icon}
+        <span className="text-sm">{name || icon}</span>
       </a>
     </div>
   );

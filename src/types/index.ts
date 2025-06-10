@@ -1,10 +1,10 @@
-export type Lines = { text: string; bulletPoint: boolean }[];
+export type Lines = { text: string; bulletPoint?: boolean }[];
 
 export type WorkExperience = {
   position: string;
   company: string;
   location: string;
-  type: string;
+  icon: string;
   years: string;
   bubbles: string[];
   lines: Lines;
@@ -12,9 +12,10 @@ export type WorkExperience = {
 
 export type Project = {
   name: string;
-  duration: string;
-  bubbles: string[];
-  lines: Lines;
+  duration?: string;
+  bubbles?: string[];
+  lines?: Lines;
+  links?: ProfileLinkProps;
 };
 
 export type TechnicalCategory = {
@@ -31,12 +32,10 @@ export type Education = {
 
 import type { ProfileLinkProps } from "../components/Profile/ProfileLink/ProfileLink";
 import type { Language } from "../components/Profile/ProfileLanguages/ProfileLanguages";
+import { HeaderProps } from "../components/Header/Header";
 
 export type CVData = {
-  header: {
-    name: string;
-    resume: string[];
-  };
+  header: HeaderProps;
   workExperience: WorkExperience[];
   projects?: Project[];
   profile: {
@@ -45,6 +44,6 @@ export type CVData = {
     links: ProfileLinkProps[];
   };
   technical: TechnicalCategory[];
-  languages: Language[];
-  education: Education[];
+  languages?: Language[];
+  education?: Education[];
 };

@@ -1,11 +1,11 @@
 import "./Profile.css";
 import Title from "../Title/Title";
-import Bubble from "../Bubble/Bubble";
 import ProfileImage from "./ProfileImage/ProfileImage";
 import ProfileLanguages, {
   type Language,
 } from "./ProfileLanguages/ProfileLanguages";
 import ProfileLink, { ProfileLinkProps } from "./ProfileLink/ProfileLink";
+import BubbleList from "../Bubble/BubbleList";
 
 type TechnicalCategory = {
   category: string;
@@ -26,8 +26,8 @@ type Data = {
     links: ProfileLinkProps[];
   };
   technical: TechnicalCategory[];
-  languages: Language[];
-  education: Education[];
+  languages?: Language[];
+  education?: Education[];
 };
 
 const ProfileHeader = ({
@@ -36,16 +36,19 @@ const ProfileHeader = ({
   shouldDisplayProfileImage,
 }: Data["profile"]) => {
   return (
-    <div className="profile__header">
+    <div className="flex flex-col items-startr ">
       {shouldDisplayProfileImage && (
         <ProfileImage circular={true} border={true} />
       )}
-      <div className="profile__header__lines">
+      <Title text="Contact" />
+      <div className="flex flex-col items-start">
         {lines.map((line, index) => (
-          <p key={index}>{line}</p>
+          <p key={index} className="text-base text-neutral-700 m-0">
+            {line}
+          </p>
         ))}
       </div>
-      <div className="profile__header__links">
+      <div className="flex flex-row flex-wrap gap-2 mt-2">
         {links.map((link, index) => {
           return <ProfileLink key={index} {...link} />;
         })}
@@ -56,17 +59,18 @@ const ProfileHeader = ({
 
 const ProfileSkills = ({ technical }: { technical: TechnicalCategory[] }) => {
   return (
-    <div className="profile__block-container">
+    <div className="flex flex-col gap-2 w-full">
       <Title text="Technical Skills" />
       {technical.map((tech, index) => {
         return (
-          <div className="profile__skills-category" key={index}>
-            <span className="profile__skills-span">{tech.category}</span>
-            <div className="profile__skills-bubbles">
-              {tech.bubbles.map((bubble, b_index) => (
-                <Bubble key={b_index} text={bubble} />
-              ))}
-            </div>
+          <div className="flex flex-col gap-1" key={index}>
+            <span className="font-semibold text-sm text-neutral-700 mb-1">
+              {tech.category}
+            </span>
+            <BubbleList
+              bubbles={tech.bubbles}
+              className="flex-wrap gap-0.5 gap-y-1"
+            />
           </div>
         );
       })}
@@ -74,20 +78,19 @@ const ProfileSkills = ({ technical }: { technical: TechnicalCategory[] }) => {
   );
 };
 
-const ProfileEducation = ({ education }: { education: Education[] }) => {
+const ProfileEducation = ({ education }: { education?: Education[] }) => {
+  if (!education || education.length === 0) return null;
   return (
-    <div className="profile__block-container">
+    <div className="flex flex-col gap-2 w-full">
       <Title text="Education" />
-      <div className="profile__education-container">
+      <div className="flex flex-col gap-2">
         {education.map((edu, index) => {
           return (
-            <div className="profile__education-element" key={index}>
-              <span className="profile__education-degree">{edu.degree}</span>
-              <span className="profile__education-school">{edu.school}</span>
-              <span className="profile__education-location">
-                {edu.location}
-              </span>
-              <span className="profile__education-years">{edu.years}</span>
+            <div className="flex flex-col gap-0.5" key={index}>
+              <span className="font-semibold text-sm">{edu.degree}</span>
+              <span className="text-base">{edu.school}</span>
+              <span className="text-xs text-neutral-500">{edu.location}</span>
+              <span className="text-xs text-neutral-500">{edu.years}</span>
             </div>
           );
         })}
@@ -97,12 +100,15 @@ const ProfileEducation = ({ education }: { education: Education[] }) => {
 };
 
 const Profile = ({ data }: { data: Data }) => {
+  // Use smart defaults for languages and education
+  const languages = data.languages ?? [];
+  const education = data.education ?? [];
   return (
-    <div className="profile__container">
+    <div className="flex flex-col gap-4 w-full">
       <ProfileHeader {...data.profile} />
       <ProfileSkills technical={data.technical} />
-      <ProfileLanguages languages={data.languages} showAbbreviation={false} />
-      <ProfileEducation education={data.education} />
+      <ProfileLanguages languages={languages} showAbbreviation={false} />
+      <ProfileEducation education={education} />
     </div>
   );
 };

@@ -1,14 +1,19 @@
 {
   "header": {
-    "name": "Trillium Smith",
-    "resume": ["Tagline and shit"]
+    "name": "Trillium Smith B",
+    "resume": [
+      "Full-stack developer with a focus on front-end experience, accessibility, and modern tooling. Builder of hands-free tools and responsive client sites, from early concept to production."
+    ],
+    "title": [
+      "Software Developer"
+    ]
   },
   "workExperience": [
     {
       "position": "Lead Software Engineer",
       "company": "HackForLA",
       "location": "Los Angeles, CA",
-      "type": "Remote",
+      "icon": "Remote",
       "years": "Oct 2022 - Present",
       "bubbles": [
         "React.js",
@@ -20,16 +25,13 @@
       ],
       "lines": [
         {
-          "text": "Modernized application codebase by transitioning from Create React App to Vite, resulting in a 20% increase in development efficiency.",
-          "bulletPoint": true
+          "text": "Led a front-end modernization effort by migrating apps from Create React App to Vite, reducing build times and improving developer experience."
         },
         {
-          "text": "Improved developer productivity by streamlining UI/UX consistency through the implementation of the Material UI CSS framework.",
-          "bulletPoint": true
+          "text": "Helped design and implement a shared UI component system using Material UI, improving accessibility and consistency across multiple projects."
         },
         {
-          "text": "Introduced code styling guidelines to raise code quality, which streamlined code reviews and strengthened team-wide collaboration.",
-          "bulletPoint": true
+          "text": "Contributed to team collaboration by introducing code quality tools (linting, reviews, shared configs) and supporting remote onboarding workflows."
         }
       ]
     },
@@ -37,73 +39,131 @@
       "position": "Software Engineer",
       "company": "TS Consulting",
       "location": "Los Angeles, CA",
-      "type": "Remote",
+      "icon": "Remote",
       "years": "Jul 2021 - Present",
       "bubbles": [
         "WordPress",
-        "PHP",
         "UI/UX",
         "JavaScript",
-        "Event Kiosk",
+        "Client-Facing",
         "Site Maintenance"
       ],
       "lines": [
         {
-          "text": "Developed and managed a comprehensive e-commerce platform using WordPress, ensured seamless functionality and ongoing site maintenance.",
-          "bulletPoint": true
+          "text": "Built and maintained WordPress sites with custom themes and integrated plugins to support e-commerce and client needs."
         },
         {
-          "text": "Resolved UI/UX challenges for clients PHP-based coaching and educational and education video platform.",
-          "bulletPoint": true
+          "text": "Addressed UX and layout issues for a legacy PHP coaching platform, improving site usability and content delivery for end users."
         },
         {
-          "text": "Designed and implemented a check-in kiosk system for an event-based service company, improving operational efficiency for in-person services.",
-          "bulletPoint": true
+          "text": "Built a check-in kiosk system for a live events company, streamlining attendee onboarding and reducing queue times."
         }
       ]
     }
   ],
   "projects": [
     {
+      "name": "Flossy",
+      "links": [
+        {
+          "name": "Live Site",
+          "icon": "None",
+          "link": "flossy.com"
+        }
+      ],
+      "bubbles": [
+        "React",
+        "Material UI"
+      ],
+      "lines": [
+        {
+          "text": [
+            "Translated client vision into a fully responsive, production-ready website"
+          ]
+        },
+        {
+          "text": [
+            "Collaborated closely with clients during revisions, translating feedback into precise UI changes without compromising UX or responsive behavior."
+          ]
+        }
+      ]
+    },
+    {
       "name": "Massage Therapy Booking Application",
-      "duration": "Ongoing",
+      "links": [
+        {
+          "name": "GitHub",
+          "link": "linkedin.com/in/trilliumsmith/",
+          "icon": "None"
+        },
+        {
+          "name": "Live Site",
+          "link": "github.com/trillium",
+          "icon": "None"
+        }
+      ],
       "bubbles": [
         "Next.js",
         "Tailwind CSS",
         "TypeScript",
         "Redux",
-        "Google Calendar API"
+        "Google Calendar API",
+        "Serverless"
       ],
       "lines": [
         {
-          "text": "Clients can see accurate availability and book appointments. Therapists can accept/deny appointment requests, manage general availability and create location-specific sub-events. Minimum booking time can be reduced based on distance between therapist and client booking location.",
-          "bulletPoint": true
-        }
-      ]
-    },
-    {
-      "name": "SEO Keyword Optimizer",
-      "duration": "Ongoing",
-      "bubbles": ["React", "Material UI"],
-      "lines": [
+          "text": "Built a full-stack serverless scheduling tool, with therapist-side availability controls, travel buffers, and calendar integration."
+        },
         {
-          "text": "Lightweight keyword tracking app that provides users with a real-time count of keywords in their articles. Designed to help writers stay on top of their keyword usage for better SEO and content optimization.",
-          "bulletPoint": true
+          "text": "Designed around real-world constraints for solo practitioners and flexible appointment management."
         }
       ]
     },
     {
       "name": "Spoken Form Test Case Visualizer",
-      "duration": "Ongoing",
-      "bubbles": ["HTML", "Shiki", "YAML", "VSCode Extension"],
-      "lines": [
+      "links": [
         {
-          "text": "Developed a Cursorless Test Case Visualizer that generates HTML output, using Shiki for syntax highlighting generated directly from existing test case .yaml files.",
-          "bulletPoint": true
+          "name": "GitHub",
+          "link": "linkedin.com/in/trilliumsmith/",
+          "icon": "None"
         },
         {
-          "text": "Enhanced developer experience with intuitive, visually-rich HTML outputs, speeding up the learning process for the visual programming Cursorless VSCode extension.",
-          "bulletPoint": true
+          "name": "Live Site",
+          "link": "github.com/trillium",
+          "icon": "None"
+        }
+      ],
+      "bubbles": [
+        "HTML",
+        "Shiki",
+        "YAML",
+        "VSCode Extension"
+      ],
+      "lines": [
+        {
+          "text": "Built a visualizer that converts YAML-based test cases into syntax-highlighted HTML for Cursorless, a voice-powered dev tool."
+        },
+        {
+          "text": "Improved contributor experience and test readability in an open source project focused on accessibility and developer ergonomics."
+        }
+      ]
+    },
+    {
+      "name": "Voice Accessibility Speaking",
+      "links": [
+        {
+          "name": "Video Link",
+          "link": "http://trillium.is/voice_tools_talk_2025_05",
+          "icon": "None"
+        }
+      ],
+      "bubbles": [
+        "Accessibility",
+        "Public Speaking"
+      ],
+      "lines": [
+        {
+          "text": "Presented a live demo of voice-driven development using Talon Voice and open-source tools like Cursorless. Focused on accessibility, developer ergonomics, and sustainable workflows."
         }
       ]
     }
@@ -117,63 +177,119 @@
     ],
     "links": [
       {
-        "type": "LinkedIn",
-        "link": "linkedin.com/in/trilliumsmith/",
-        "name": "linkedin.com/in/trilliumsmith/"
+        "name": "linkedin.com/in/trilliumsmith/",
+        "icon": "LinkedIn",
+        "link": "linkedin.com/in/trilliumsmith/"
       },
       {
-        "type": "GitHub",
-        "link": "github.com/trillium",
-        "name": "github.com/trillium"
+        "name": "github.com/trillium",
+        "icon": "GitHub",
+        "link": "github.com/trillium"
       },
       {
-        "type": "Website",
-        "link": "trilliumsmith.com",
-        "name": "trilliumsmith.com"
+        "name": "trilliumsmith.com",
+        "icon": "Website",
+        "link": "trilliumsmith.com"
       },
       {
-        "type": "Bluesky",
-        "link": "bsky.app/trillium.is",
-        "name": "bsky.app/trillium.is"
+        "name": "bsky.app/trillium.is",
+        "icon": "Bluesky",
+        "link": "bsky.app/trillium.is"
       }
     ]
   },
   "technical": [
     {
       "category": "Programming Languages",
-      "bubbles": ["JavaScript", "TypeScript", "Python"]
+      "bubbles": [
+        "JavaScript",
+        "TypeScript",
+        "Python"
+      ]
     },
     {
       "category": "Front-End Technologies",
-      "bubbles": ["React.js", "Next.js", "Vite", "Tailwind CSS", "Redux"]
+      "bubbles": [
+        "React.js",
+        "Next.js",
+        "Vite",
+        "Tailwind CSS",
+        "Redux",
+        "Material UI"
+      ]
     },
     {
       "category": "Back-End Technologies",
-      "bubbles": ["Node.js", "Express.js", "Flask"]
+      "bubbles": [
+        "Node.js",
+        "Express.js",
+        "Flask",
+        "Django"
+      ]
     },
     {
       "category": "Database Technologies",
-      "bubbles": ["MongoDB", "SQL", "PostgreSQL"]
+      "bubbles": [
+        "MongoDB",
+        "SQL",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "category": "APIs & Integration",
+      "bubbles": [
+        "RESTful APIs",
+        "Google Calendar API"
+      ]
+    },
+    {
+      "category": "CMS",
+      "bubbles": [
+        "WordPress",
+        "Custom WP Plugins"
+      ]
     },
     {
       "category": "Version Control",
-      "bubbles": ["Git"]
+      "bubbles": [
+        "Git"
+      ]
     },
     {
       "category": "Testing & QA",
-      "bubbles": ["Jest", "Selenium", "Pytest"]
+      "bubbles": [
+        "Jest",
+        "Selenium",
+        "Pytest"
+      ]
     },
     {
       "category": "Container Orchestration",
-      "bubbles": ["Docker", "Kubernetes"]
+      "bubbles": [
+        "Docker",
+        "Kubernetes"
+      ]
     },
     {
       "category": "Infrastructure & CI/CD",
-      "bubbles": ["Amazon Web Services (AWS)", "GitHub Actions"]
+      "bubbles": [
+        "Amazon Web Services (AWS)",
+        "GitHub Actions"
+      ]
+    },
+    {
+      "category": "AI & Automation Tools",
+      "bubbles": [
+        "GitHub Copilot"
+      ]
     }
   ],
-  "languages": [
-    { "language": "English", "abbreviation": "EN", "level": "Native" }
-  ],
-  "education": []
+  "education": [
+    {
+      "degree": "",
+      "school": "College of the Redwoods 2012",
+      "location": "",
+      "years": ""
+    }
+  ]
 }

@@ -1,15 +1,43 @@
 import puppeteer from "puppeteer";
-import { writeFileSync } from "node:fs";
+import { writeFileSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
+import path from "node:path";
+import yaml from "js-yaml";
 
-// Add support for optional data.json argument
-const dataPath = process.argv[2] || "data.json";
+// Fix: define __dirname at the top for use throughout the script
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Accept .json or .yml/.yaml file, convert to valid JSON, write to /src/script-data.json
+const dataPath = process.argv[2] || "./src/data.json";
 console.log(`Using data file: ${dataPath}`);
 
-(async () => {
-  const __dirname = fileURLToPath(new URL(".", import.meta.url));
+const ext = path.extname(dataPath).toLowerCase();
+let dataObj: any;
 
+try {
+  const fileContent = readFileSync(dataPath, "utf-8");
+  if (ext === ".yml" || ext === ".yaml") {
+    dataObj = yaml.load(fileContent);
+  } else if (ext === ".json") {
+    dataObj = JSON.parse(fileContent);
+  } else {
+    throw new Error(
+      "Unsupported file type. Please provide a .json or .yml/.yaml file.",
+    );
+  }
+  // Write to /src/script-data.json
+  writeFileSync(
+    path.join(__dirname, "src", "script-data.json"),
+    JSON.stringify(dataObj, null, 2),
+  );
+  console.log("✅ Data written to src/script-data.json");
+} catch (err) {
+  console.error("❌ Failed to process input file:", err);
+  process.exit(1);
+}
+
+(async () => {
   console.log("⏳ Starting Vite server");
   const server = await createServer({
     configFile: "vite.config.ts",
@@ -27,8 +55,8 @@ console.log(`Using data file: ${dataPath}`);
 
   console.log("🖨️  Generating PDF");
   const pdf = await page.pdf({
-    format: "A4",
-    margin: { top: 0, bottom: 0, left: 0, right: 0 },
+    format: "letter",
+    margin: { top: ".25in", bottom: ".25in", left: ".25in", right: ".25in" },
     printBackground: true,
     scale: 0.8,
   });
@@ -40,4 +68,7 @@ console.log(`Using data file: ${dataPath}`);
 
   await server.close();
   console.log("🏁 Done");
+
+  // Reset script-data.json to empty object
+  writeFileSync(path.join(__dirname, "src", "script-data.json"), "{}\n");
 })();

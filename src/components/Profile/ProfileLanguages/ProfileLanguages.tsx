@@ -8,12 +8,13 @@ export type Language = {
 };
 
 const ProfileLanguages = ({
-  languages,
+  languages = [],
   showAbbreviation,
 }: {
-  languages: Language[];
+  languages?: Language[];
   showAbbreviation: boolean;
 }) => {
+  if (!languages || languages.length === 0) return <></>;
   return (
     <div className="profile__block-container">
       <Title text="Languages" />

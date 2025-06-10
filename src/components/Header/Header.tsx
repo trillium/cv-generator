@@ -1,23 +1,33 @@
-import Separator from "../Separator/Separator";
-import "./Header.css";
-
-type HeaderProps = {
+export type HeaderProps = {
   name: string;
+  title: string[];
   resume: string[];
 };
 
-const Header = ({ name, resume }: HeaderProps) => {
+const Header = ({ name, title, resume }: HeaderProps) => {
+  const [first, last] = name.split(" ");
   return (
     <>
-      <div className="header__container">
-        <h1 className="header__name">{name}</h1>
-        <div className="header__lines">
+      <div className="flex flex-col gap-1">
+        <h1 className="font-sans font-bold leading-tight m-0 text-4xl">
+          <span className="text-primary-500">{first}</span>{" "}
+          <span className="font-normal">{last}</span>
+        </h1>
+        <div className="my-1">
+          {title.map((line, index) => (
+            <p key={index} className="m-0 text-xl leading-1.5">
+              {line}
+            </p>
+          ))}
+        </div>
+        <div className="mt-2">
           {resume.map((line, index) => (
-            <p key={index}>{line}</p>
+            <p key={index} className="m-0 text-md leading-[1.3]">
+              {line}
+            </p>
           ))}
         </div>
       </div>
-      <Separator marginBottom={10} marginTop={5} />
     </>
   );
 };

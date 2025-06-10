@@ -1,13 +1,7 @@
-import "./Separator.css";
+import { clsx } from "clsx";
 
-const Separator = ({
-  marginTop = 10,
-  marginBottom = 10,
-}: {
-  marginTop?: number;
-  marginBottom?: number;
-}) => {
-  return <div className="separator" style={{ marginBottom, marginTop }}></div>;
+const Separator = ({ className = "my-2.5" }: { className?: string }) => {
+  return <div className={clsx("h-px w-full bg-primary-500", className)}></div>;
 };
 
 export default Separator;

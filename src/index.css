@@ -1,14 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Sacramento&display=swap");
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  -print-color-adjust: exact;
-
-  --color-primary-500: rgb(20, 184, 166);
-  --color-neutral-100: rgb(255, 255, 255);
-  --color-neutral-200: rgb(94, 90, 94, 0.3);
-  --color-neutral-400: rgb(94, 90, 94);
-  --color-neutral-900: rgb(20, 20, 20);
-}
+@import "tailwindcss";
+@config "../tailwind.config.js";

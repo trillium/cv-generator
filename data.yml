@@ -1,0 +1,212 @@
+header:
+  name: Trillium Smith B
+  resume:
+    - Full-stack developer with a focus on front-end experience, accessibility, and modern tooling. Builder of hands-free tools and responsive client sites, from early concept to production.
+  title:
+    - Software Developer
+workExperience:
+  - position: Lead Software Engineer
+    company: HackForLA
+    location: Los Angeles, CA
+    icon: Remote
+    years: Oct 2022 - Present
+    bubbles:
+      - React.js
+      - Vite
+      - Material UI
+      - JavaScript
+      - TypeScript
+      - Redux
+    lines:
+      - text: >-
+          Led a front-end modernization effort by migrating apps from Create React App to Vite, reducing build times and improving developer experience.
+
+
+      - text: >-
+          Helped design and implement a shared UI component system using Material UI, improving accessibility and consistency across multiple projects.
+
+
+      - text: >-
+          Contributed to team collaboration by introducing code quality tools (linting, reviews, shared configs) and supporting remote onboarding workflows.
+
+
+  - position: Software Engineer
+    company: TS Consulting
+    location: Los Angeles, CA
+    icon: Remote
+    years: Jul 2021 - Present
+    bubbles:
+      - WordPress
+      - UI/UX
+      - JavaScript
+      - Client-Facing
+      - Site Maintenance
+    lines:
+      - text: >-
+          Built and maintained WordPress sites with custom themes and integrated plugins to support e-commerce and client needs.
+
+
+      - text: >-
+          Addressed UX and layout issues for a legacy PHP coaching platform, improving site usability and content delivery for end users.
+
+
+      - text: >-
+          Built a check-in kiosk system for a live events company, streamlining attendee onboarding and reducing queue times.
+
+
+projects:
+  - name: Flossy
+    links:
+      - name: Live Site
+        icon: None
+        link: flossy.com
+
+    bubbles:
+      - React
+      - Material UI
+    lines:
+      - text:
+          - Translated client vision into a fully responsive, production-ready website
+
+      - text:
+          - Collaborated closely with clients during revisions, translating feedback into precise UI changes without compromising UX or responsive behavior.
+
+  - name: Massage Therapy Booking Application
+    links:
+      - name: GitHub
+        link: linkedin.com/in/trilliumsmith/
+        icon: None
+      - name: Live Site
+        link: github.com/trillium
+        icon: None
+    bubbles:
+      - Next.js
+      - Tailwind CSS
+      - TypeScript
+      - Redux
+      - Google Calendar API
+      - Serverless
+    lines:
+      - text: >-
+          Built a full-stack serverless scheduling tool, with therapist-side availability controls, travel buffers, and calendar integration.
+
+
+      - text: >-
+          Designed around real-world constraints for solo practitioners and flexible appointment management.
+
+
+  - name: Spoken Form Test Case Visualizer
+    links:
+      - name: GitHub
+        link: linkedin.com/in/trilliumsmith/
+        icon: None
+      - name: Live Site
+        link: github.com/trillium
+        icon: None
+    bubbles:
+      - HTML
+      - Shiki
+      - YAML
+      - VSCode Extension
+    lines:
+      - text: >-
+          Built a visualizer that converts YAML-based test cases into syntax-highlighted HTML for Cursorless, a voice-powered dev tool.
+
+
+      - text: >-
+          Improved contributor experience and test readability in an open source project focused on accessibility and developer ergonomics.
+
+
+  - name: Voice Accessibility Speaking
+    links:
+      - name: Video Link
+        link: http://trillium.is/voice_tools_talk_2025_05
+        icon: None
+    bubbles:
+      - Accessibility
+      - Public Speaking
+    lines:
+      - text: Presented a live demo of voice-driven development using Talon Voice and open-source tools like Cursorless. Focused on accessibility, developer ergonomics, and sustainable workflows.
+
+profile:
+  shouldDisplayProfileImage: false
+  lines:
+    - Los Angeles, CA
+    - (818) 738 - 5344
+    - trillium@trilliumsmith.com
+  links:
+    - name: linkedin.com/in/trilliumsmith/
+      icon: LinkedIn
+      link: linkedin.com/in/trilliumsmith/
+    - name: github.com/trillium
+      icon: GitHub
+      link: github.com/trillium
+    - name: trilliumsmith.com
+      icon: Website
+      link: trilliumsmith.com
+    - name: bsky.app/trillium.is
+      icon: Bluesky
+      link: bsky.app/trillium.is
+
+technical:
+  - category: Programming Languages
+    bubbles:
+      - JavaScript
+      - TypeScript
+      - Python
+  - category: Front-End Technologies
+    bubbles:
+      - React.js
+      - Next.js
+      - Vite
+      - Tailwind CSS
+      - Redux
+      - Material UI
+  - category: Back-End Technologies
+    bubbles:
+      - Node.js
+      - Express.js
+      - Flask
+      - Django
+  - category: Database Technologies
+    bubbles:
+      - MongoDB
+      - SQL
+      - PostgreSQL
+  - category: APIs & Integration
+    bubbles:
+      - RESTful APIs
+      - Google Calendar API
+  - category: CMS
+    bubbles:
+      - WordPress
+      - Custom WP Plugins
+  - category: Version Control
+    bubbles:
+      - Git
+  - category: Testing & QA
+    bubbles:
+      - Jest
+      - Selenium
+      - Pytest
+  - category: Container Orchestration
+    bubbles:
+      - Docker
+      - Kubernetes
+  - category: Infrastructure & CI/CD
+    bubbles:
+      - Amazon Web Services (AWS)
+      - GitHub Actions
+  - category: AI & Automation Tools
+    bubbles:
+      - GitHub Copilot
+
+education: # #
+  [
+    {
+      "degree": "",
+      "school": "College of the Redwoods 2012",
+      "location": "",
+      "years": "",
+    },
+  ]

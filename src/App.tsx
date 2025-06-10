@@ -2,7 +2,8 @@ import scriptData from "./script-data.json";
 import fallbackData from "./data.json";
 import "./App.css";
 
-import Category from "./components/Category/Category";
+import Projects from "./components/Projects/Projects";
+import WorkExperience from "./components/WorkExperience/WorkExperience";
 import Header from "./components/Header/Header";
 import Profile from "./components/Profile/Profile";
 
@@ -21,27 +22,39 @@ function isValidData(data: any): data is CVData {
   );
 }
 
-const data: CVData = isValidData(scriptData) ? scriptData : fallbackData;
+function defualtObject(): CVData {
+  // Use scriptData if valid, otherwise fallbackData
+  const base = isValidData(scriptData) ? scriptData : fallbackData;
+  // Ensure all required fields exist, with sensible defaults if missing
+  return {
+    header: base.header || { name: "", resume: [], title: [] },
+    workExperience: base.workExperience || [],
+    projects: base.projects || [],
+    profile: base.profile || {
+      shouldDisplayProfileImage: false,
+      lines: [],
+      links: [],
+    },
+    technical: base.technical || [],
+    education: base.education || [],
+    languages: base.languages || [],
+  };
+}
+
+const data: CVData = defualtObject();
 
 function App() {
   return (
-    <div className="app__container">
-      <Header name={data.header.name} resume={data.header.resume} />
-      <div className="app__body">
-        <div
-          className="app__body-left"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}
-        >
-          <Category data={data.workExperience} />
+    <div className="min-h-screen w-full bg-white flex flex-col items-center justify-center ">
+      <div className="grid grid-cols-10 gap-10 w-full max-w-6xl mx-auto rounded-md bg-white">
+        <div className="col-span-7 flex flex-col gap-2">
+          <Header {...data.header} />
+          <WorkExperience data={data.workExperience} />
           {Array.isArray(data.projects) && data.projects.length > 0 && (
-            <Category data={data.projects} />
+            <Projects data={data.projects} />
           )}
         </div>
-        <div className="app__body-right">
+        <div className="col-span-3 flex flex-col border-primary-500 border-l px-4 bg-neutral-100 rounded-r-md max-w-xs w-full">
           <Profile data={data} />
         </div>
       </div>
