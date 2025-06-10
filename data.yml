@@ -13,17 +13,16 @@ workExperience:
     bubbles:
       - React.js
       - Vite
-      - Material UI
       - JavaScript
       - TypeScript
       - Redux
     lines:
       - text: >-
-          Led a front-end modernization effort by migrating apps from Create React App to Vite, reducing build times and improving developer experience.
+          Led front-end modernization by migrating from CRA to Vite, reducing build times by 20% and improving developer experience through faster local feedback and leaner builds.
 
 
       - text: >-
-          Helped design and implement a shared UI component system using Material UI, improving accessibility and consistency across multiple projects.
+          Co-designed and implemented a shared UI component library, standardizing accessibility and visual consistency across internal projects.
 
 
       - text: >-
@@ -43,7 +42,7 @@ workExperience:
       - Site Maintenance
     lines:
       - text: >-
-          Built and maintained WordPress sites with custom themes and integrated plugins to support e-commerce and client needs.
+          Diagnosed and resolved layout, CSS, and plugin issues in custom WordPress themes inherited from prior developers, restoring site functionality and improving visual consistency for small business clients.
 
 
       - text: >-
@@ -60,16 +59,16 @@ projects:
       - name: Live Site
         icon: None
         link: flossy.com
-
     bubbles:
       - React
       - Material UI
     lines:
       - text:
-          - Translated client vision into a fully responsive, production-ready website
-
+          - Translated client vision into a fully responsive, production-ready website.
       - text:
           - Collaborated closely with clients during revisions, translating feedback into precise UI changes without compromising UX or responsive behavior.
+      - text:
+          - Diagnosed and restored broken inbound marketing pipelines, recovering lead flow and enabling campaign tracking.
 
   - name: Massage Therapy Booking Application
     links:
@@ -161,7 +160,8 @@ technical:
       - Vite
       - Tailwind CSS
       - Redux
-      - Material UI
+      - Responsive Design
+      - Figma
   - category: Back-End Technologies
     bubbles:
       - Node.js
@@ -201,12 +201,4 @@ technical:
     bubbles:
       - GitHub Copilot
 
-education: # #
-  [
-    {
-      "degree": "",
-      "school": "College of the Redwoods 2012",
-      "location": "",
-      "years": "",
-    },
-  ]
+education: [{ "school": "College of the Redwoods 2012" }]

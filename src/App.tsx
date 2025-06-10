@@ -7,41 +7,11 @@ import WorkExperience from "./components/WorkExperience/WorkExperience";
 import Header from "./components/Header/Header";
 import Profile from "./components/Profile/Profile";
 
+import defualtObject from "./lib/defualtObject";
+
 import type { CVData } from "./types";
 
-function isValidData(data: any): data is CVData {
-  return !!(
-    data &&
-    typeof data === "object" &&
-    "header" in data &&
-    "workExperience" in data &&
-    "profile" in data &&
-    "technical" in data &&
-    "languages" in data &&
-    "education" in data
-  );
-}
-
-function defualtObject(): CVData {
-  // Use scriptData if valid, otherwise fallbackData
-  const base = isValidData(scriptData) ? scriptData : fallbackData;
-  // Ensure all required fields exist, with sensible defaults if missing
-  return {
-    header: base.header || { name: "", resume: [], title: [] },
-    workExperience: base.workExperience || [],
-    projects: base.projects || [],
-    profile: base.profile || {
-      shouldDisplayProfileImage: false,
-      lines: [],
-      links: [],
-    },
-    technical: base.technical || [],
-    education: base.education || [],
-    languages: base.languages || [],
-  };
-}
-
-const data: CVData = defualtObject();
+const data: CVData = defualtObject(scriptData, fallbackData);
 
 function App() {
   return (
