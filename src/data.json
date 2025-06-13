@@ -1,12 +1,10 @@
 {
   "header": {
-    "name": "Trillium Smith B",
+    "name": "Trillium Smith",
     "resume": [
       "Full-stack developer with a focus on front-end experience, accessibility, and modern tooling. Builder of hands-free tools and responsive client sites, from early concept to production."
     ],
-    "title": [
-      "Software Developer"
-    ]
+    "title": ["Software Developer"]
   },
   "workExperience": [
     {
@@ -15,13 +13,7 @@
       "location": "Los Angeles, CA",
       "icon": "Remote",
       "years": "Oct 2022 - Present",
-      "bubbles": [
-        "React.js",
-        "Vite",
-        "JavaScript",
-        "TypeScript",
-        "Redux"
-      ],
+      "bubbles": ["React.js", "Vite", "JavaScript", "TypeScript", "Redux"],
       "lines": [
         {
           "text": "Led front-end modernization by migrating from CRA to Vite, reducing build times by 20% and improving developer experience through faster local feedback and leaner builds."
@@ -70,10 +62,7 @@
           "link": "flossy.com"
         }
       ],
-      "bubbles": [
-        "React",
-        "Material UI"
-      ],
+      "bubbles": ["React", "Material UI"],
       "lines": [
         {
           "text": [
@@ -97,12 +86,12 @@
       "links": [
         {
           "name": "GitHub",
-          "link": "linkedin.com/in/trilliumsmith/",
+          "link": "https://github.com/trillium/www-massage",
           "icon": "None"
         },
         {
           "name": "Live Site",
-          "link": "github.com/trillium",
+          "link": "https://trilliummassage.la/",
           "icon": "None"
         }
       ],
@@ -128,12 +117,7 @@
       "links": [
         {
           "name": "GitHub",
-          "link": "linkedin.com/in/trilliumsmith/",
-          "icon": "None"
-        },
-        {
-          "name": "Live Site",
-          "link": "github.com/trillium",
+          "link": "https://github.com/cursorless-dev/cursorless/pull/2272",
           "icon": "None"
         }
       ],
@@ -141,7 +125,10 @@
         "HTML",
         "Shiki",
         "YAML",
-        "VSCode Extension"
+        "VSCode Extension",
+        "Node",
+        "TypeScript",
+        "Docusaurus"
       ],
       "lines": [
         {
@@ -161,10 +148,7 @@
           "icon": "None"
         }
       ],
-      "bubbles": [
-        "Accessibility",
-        "Public Speaking"
-      ],
+      "bubbles": ["Accessibility", "Public Speaking"],
       "lines": [
         {
           "text": "Presented a live demo of voice-driven development using Talon Voice and open-source tools like Cursorless. Focused on accessibility, developer ergonomics, and sustainable workflows."
@@ -205,11 +189,7 @@
   "technical": [
     {
       "category": "Programming Languages",
-      "bubbles": [
-        "JavaScript",
-        "TypeScript",
-        "Python"
-      ]
+      "bubbles": ["JavaScript", "TypeScript", "Python"]
     },
     {
       "category": "Front-End Technologies",
@@ -225,68 +205,39 @@
     },
     {
       "category": "Back-End Technologies",
-      "bubbles": [
-        "Node.js",
-        "Express.js",
-        "Flask",
-        "Django"
-      ]
+      "bubbles": ["Node.js", "Express.js", "Flask", "Django"]
     },
     {
       "category": "Database Technologies",
-      "bubbles": [
-        "MongoDB",
-        "SQL",
-        "PostgreSQL"
-      ]
+      "bubbles": ["MongoDB", "SQL", "PostgreSQL"]
     },
     {
       "category": "APIs & Integration",
-      "bubbles": [
-        "RESTful APIs",
-        "Google Calendar API"
-      ]
+      "bubbles": ["RESTful APIs", "Google Calendar API"]
     },
     {
       "category": "CMS",
-      "bubbles": [
-        "WordPress",
-        "Custom WP Plugins"
-      ]
+      "bubbles": ["WordPress", "Custom WP Plugins"]
     },
     {
       "category": "Version Control",
-      "bubbles": [
-        "Git"
-      ]
+      "bubbles": ["Git"]
     },
     {
       "category": "Testing & QA",
-      "bubbles": [
-        "Jest",
-        "Selenium",
-        "Pytest"
-      ]
+      "bubbles": ["Jest", "Selenium", "Pytest"]
     },
     {
       "category": "Container Orchestration",
-      "bubbles": [
-        "Docker",
-        "Kubernetes"
-      ]
+      "bubbles": ["Docker", "Kubernetes"]
     },
     {
       "category": "Infrastructure & CI/CD",
-      "bubbles": [
-        "Amazon Web Services (AWS)",
-        "GitHub Actions"
-      ]
+      "bubbles": ["Amazon Web Services (AWS)", "GitHub Actions"]
     },
     {
       "category": "AI & Automation Tools",
-      "bubbles": [
-        "GitHub Copilot"
-      ]
+      "bubbles": ["GitHub Copilot"]
     }
   ],
   "education": [

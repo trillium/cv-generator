@@ -11,6 +11,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "pdf": "tsx pdf.ts && open -a 'Google Chrome' output.pdf",
+    "pdf:anon": "tsx pdf.ts --anon && open -a 'Google Chrome' output.pdf",
     "typecheck": "tsc",
     "prepare": "husky",
     "watch:data": "nodemon --exec \"node watcher.cjs data.yml src/data.json\" --watch data.yml"

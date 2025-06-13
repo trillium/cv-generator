@@ -1,5 +1,5 @@
 header:
-  name: Trillium Smith B
+  name: Trillium Smith
   resume:
     - Full-stack developer with a focus on front-end experience, accessibility, and modern tooling. Builder of hands-free tools and responsive client sites, from early concept to production.
   title:
@@ -73,10 +73,10 @@ projects:
   - name: Massage Therapy Booking Application
     links:
       - name: GitHub
-        link: linkedin.com/in/trilliumsmith/
+        link: https://github.com/trillium/www-massage
         icon: None
       - name: Live Site
-        link: github.com/trillium
+        link: https://trilliummassage.la/
         icon: None
     bubbles:
       - Next.js
@@ -97,16 +97,16 @@ projects:
   - name: Spoken Form Test Case Visualizer
     links:
       - name: GitHub
-        link: linkedin.com/in/trilliumsmith/
-        icon: None
-      - name: Live Site
-        link: github.com/trillium
+        link: https://github.com/cursorless-dev/cursorless/pull/2272
         icon: None
     bubbles:
       - HTML
       - Shiki
       - YAML
       - VSCode Extension
+      - Node
+      - TypeScript
+      - Docusaurus
     lines:
       - text: >-
           Built a visualizer that converts YAML-based test cases into syntax-highlighted HTML for Cursorless, a voice-powered dev tool.

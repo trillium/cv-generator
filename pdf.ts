@@ -71,4 +71,5 @@ try {
 
   // Reset script-data.json to empty object
   writeFileSync(path.join(__dirname, "src", "script-data.json"), "{}\n");
+  console.log("🔄 src/script-data.json reset to empty object");
 })();
