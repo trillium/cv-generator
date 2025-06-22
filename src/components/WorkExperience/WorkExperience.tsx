@@ -40,7 +40,7 @@ function WorkExperienceItem({
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between">
-        <div className="font-bold text-lg">{item.position}</div>
+        <div className="font-bold ">{item.position}</div>
         <div className="text-base font-medium">{item.years}</div>
       </div>
       <div className="text-base font-medium">{item.company}</div>

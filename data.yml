@@ -95,10 +95,6 @@ projects:
 
 
   - name: Spoken Form Test Case Visualizer
-    links:
-      - name: GitHub
-        link: https://github.com/cursorless-dev/cursorless/pull/2272
-        icon: None
     bubbles:
       - HTML
       - Shiki
@@ -202,3 +198,15 @@ technical:
       - GitHub Copilot
 
 education: [{ "school": "College of the Redwoods 2012" }]
+coverLetter:
+  - Dear Hiring Manager,
+  -
+
+  - >-
+    I am excited to apply for the Software Developer position. With extensive experience in full-stack development, a strong focus on front-end technologies, and a passion for accessibility and modern tooling, I have successfully led projects from concept to production. My work at HackForLA and TS Consulting demonstrates my ability to modernize codebases, implement shared UI libraries, and improve developer workflows. I am adept at collaborating with cross-functional teams, introducing code quality tools, and supporting remote onboarding. My technical expertise spans React, Next.js, TypeScript, Node.js, AWS, and CI/CD pipelines, complemented by a commitment to building accessible and user-friendly applications. I am eager to bring my skills and enthusiasm to your team and contribute to impactful projects.
+
+
+  -
+
+  - Sincerely,
+  - Trillium Smith

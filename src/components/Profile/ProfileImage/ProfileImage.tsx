@@ -1,6 +1,5 @@
 import useProfilePicture from "../../../hooks/useProfilePicture";
 import clsx from "clsx";
-import "./ProfileImage.css";
 
 type ImageOptions = {
   circular?: boolean;
@@ -11,9 +10,9 @@ const ProfileImage = (options: ImageOptions = {}) => {
   const profilePicture = useProfilePicture();
 
   const profilePictureClasses = clsx(
-    "profile__header__image",
-    { profile__header__image__circular: options.circular },
-    { profile__header__image__border: options.border },
+    "flex items-center justify-center w-24 h-24 overflow-hidden bg-white shadow-sm",
+    { "rounded-full": options.circular },
+    { "ring-2 ring-gray-300": options.border },
   );
 
   return (

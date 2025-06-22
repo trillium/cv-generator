@@ -6,7 +6,7 @@ import type { Project } from "../../types";
 
 const Projects = ({ data }: { data: Project[] }) => {
   return (
-    <section className="flex flex-col items-start">
+    <section className="flex flex-col items-start gap-2">
       <Title text="Projects" />
       <div>
         {data.map((item) => {
@@ -22,7 +22,8 @@ function ProjectItem({ data }: { data: Project }) {
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between">
-        <div className="font-bold text-lg">{data.name}</div>
+        {/* <div className="font-bold text-lg">{data.name}</div> */}
+        <div className="font-bold">{data.name}</div>
         <ProjectLinks links={Array.isArray(links) ? links : []} />
       </div>
       <BubbleList bubbles={bubbles} />

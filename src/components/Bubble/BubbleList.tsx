@@ -2,7 +2,7 @@ import Bubble from "../Bubble/Bubble";
 import clsx from "clsx";
 
 function BubbleList({
-  bubbles,
+  bubbles = [],
   className = "gap-2",
 }: {
   bubbles: string[];

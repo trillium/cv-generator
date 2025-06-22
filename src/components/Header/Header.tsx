@@ -2,9 +2,17 @@ export type HeaderProps = {
   name: string;
   title: string[];
   resume: string[];
+  omitTitle?: boolean;
+  omitBlurb?: boolean;
 };
 
-const Header = ({ name, title, resume }: HeaderProps) => {
+const Header = ({
+  name,
+  title,
+  resume,
+  omitTitle = false,
+  omitBlurb = false,
+}: HeaderProps) => {
   const [first, last] = name.split(" ");
   return (
     <>
@@ -13,20 +21,24 @@ const Header = ({ name, title, resume }: HeaderProps) => {
           <span className="text-primary-500">{first}</span>{" "}
           <span className="font-normal">{last}</span>
         </h1>
-        <div className="my-1">
-          {title.map((line, index) => (
-            <p key={index} className="m-0 text-xl leading-1.5">
-              {line}
-            </p>
-          ))}
-        </div>
-        <div className="mt-2">
-          {resume.map((line, index) => (
-            <p key={index} className="m-0 text-md leading-[1.3]">
-              {line}
-            </p>
-          ))}
-        </div>
+        {!omitTitle && (
+          <div className="my-1">
+            {title.map((line, index) => (
+              <p key={index} className="m-0 text-xl leading-1.5">
+                {line}
+              </p>
+            ))}
+          </div>
+        )}
+        {!omitBlurb && (
+          <div className="mt-2">
+            {resume.map((line, index) => (
+              <p key={index} className="m-0 text-md leading-[1.3]">
+                {line}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

@@ -46,4 +46,5 @@ export type CVData = {
   technical: TechnicalCategory[];
   languages?: Language[];
   education?: Education[];
+  coverLetter?: string[];
 };

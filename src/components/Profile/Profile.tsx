@@ -1,4 +1,3 @@
-import "./Profile.css";
 import Title from "../Title/Title";
 import ProfileImage from "./ProfileImage/ProfileImage";
 import ProfileLanguages, {
@@ -30,7 +29,7 @@ type Data = {
   education?: Education[];
 };
 
-const ProfileHeader = ({
+export const ProfileHeader = ({
   lines,
   links,
   shouldDisplayProfileImage,

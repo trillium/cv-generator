@@ -1,0 +1,155 @@
+header:
+  name: Candidate Name
+  resume:
+    - Full-stack developer with a focus on front-end experience, accessibility, and modern tooling. Builder of hands-free tools and responsive client sites, from early concept to production.
+  title:
+    - Software Developer
+workExperience:
+  - position: Lead Software Engineer
+    company: Organization Ax
+    location: City, State
+    icon: Remote
+    years: Oct 2022 - Present
+
+  - position: Software Engineer
+    company: Organization B
+    location: City, State
+    icon: Remote
+    years: Jul 2021 - Present
+
+projects:
+  - name: Project Alpha
+    links:
+      - name: Live Site
+        icon: None
+        link: https://example.com
+    bubbles:
+      - React
+      - Material UI
+
+  - name: Project Beta
+    links:
+      - name: GitHub
+        link: https://github.com/example/project-beta
+        icon: None
+      - name: Live Site
+        link: https://example-beta.com/
+        icon: None
+    bubbles:
+      - Next.js
+      - Tailwind CSS
+      - TypeScript
+      - Redux
+      - Google Calendar API
+      - Serverless
+
+  - name: Project Gamma
+    links:
+      - name: GitHub
+        link: https://github.com/example/project-gamma
+        icon: None
+    bubbles:
+      - HTML
+      - Shiki
+      - YAML
+      - VSCode Extension
+      - Node
+      - TypeScript
+      - Docusaurus
+
+  - name: Project Delta
+    links:
+      - name: Video Link
+        link: https://example.com/video
+        icon: None
+    bubbles:
+      - Accessibility
+      - Public Speaking
+
+profile:
+  shouldDisplayProfileImage: false
+  lines:
+    - City, State
+    - (XXX) XXX - XXXX
+    - email@example.com
+  links:
+    - name: linkedin.com/in/username
+      icon: LinkedIn
+      link: linkedin.com/in/username
+    - name: github.com/username
+      icon: GitHub
+      link: github.com/username
+    - name: example.com
+      icon: Website
+      link: example.com
+    - name: bsky.app/username
+      icon: Bluesky
+      link: bsky.app/username
+
+technical:
+  - category: Programming Languages
+    bubbles:
+      - JavaScript
+      - TypeScript
+      - Python
+  - category: Front-End Technologies
+    bubbles:
+      - React.js
+      - Next.js
+      - Vite
+      - Tailwind CSS
+      - Redux
+      - Responsive Design
+      - Figma
+  - category: Back-End Technologies
+    bubbles:
+      - Node.js
+      - Express.js
+      - Flask
+      - Django
+  - category: Database Technologies
+    bubbles:
+      - MongoDB
+      - SQL
+      - PostgreSQL
+  - category: APIs & Integration
+    bubbles:
+      - RESTful APIs
+      - Google Calendar API
+  - category: CMS
+    bubbles:
+      - WordPress
+      - Custom WP Plugins
+  - category: Version Control
+    bubbles:
+      - Git
+  - category: Testing & QA
+    bubbles:
+      - Jest
+      - Selenium
+      - Pytest
+  - category: Container Orchestration
+    bubbles:
+      - Docker
+      - Kubernetes
+  - category: Infrastructure & CI/CD
+    bubbles:
+      - Amazon Web Services (AWS)
+      - GitHub Actions
+  - category: AI & Automation Tools
+    bubbles:
+      - GitHub Copilot
+
+education: [{ "school": "University Name Year" }]
+coverLetter:
+  - Dear Hiring Manager,
+  -
+
+  - >-
+    I am excited to apply for the Software Developer position. With extensive experience in full-stack development, a strong focus on front-end technologies, and a passion for accessibility and modern tooling, I have successfully led projects from concept to production. My work at Organization A and Organization B demonstrates my ability to modernize codebases, implement shared UI libraries, and improve developer workflows. I am adept at collaborating with cross-functional teams, introducing code quality tools, and supporting remote onboarding. My technical expertise spans React, Next.js, TypeScript, Node.js, AWS, and CI/CD pipelines, complemented by a commitment to building accessible and user-friendly applications. I am eager to bring my skills and enthusiasm to your team and contribute to impactful projects.
+
+
+  -
+
+  - Sincerely,
+  - Candidate Name
