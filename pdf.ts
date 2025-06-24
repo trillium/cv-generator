@@ -1,30 +1,15 @@
 import puppeteer, { Page, Browser } from "puppeteer";
-import { writeFileSync, readFileSync, mkdirSync, existsSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import path from "node:path";
-import yaml from "js-yaml";
 import { CVData } from "./src/types";
 import { anonymizeData } from "./lib/anonymous";
+import { parseAndWriteDataFile } from "./lib/parseAndWriteDataFile";
+import { allVariants } from "./src/lib/allVariants";
+import readline from "readline";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-function parseAndWriteDataFile(inputPath: string, outputPath: string): any {
-  const ext = path.extname(inputPath).toLowerCase();
-  let dataObj: any;
-  const fileContent = readFileSync(inputPath, "utf-8");
-  if (ext === ".yml" || ext === ".yaml") {
-    dataObj = yaml.load(fileContent);
-  } else if (ext === ".json") {
-    dataObj = JSON.parse(fileContent);
-  } else {
-    throw new Error(
-      "Unsupported file type. Please provide a .json or .yml/.yaml file.",
-    );
-  }
-  writeFileSync(outputPath, JSON.stringify(dataObj, null, 2));
-  return dataObj;
-}
 
 async function startViteServer(rootDir: string) {
   const server = await createServer({
@@ -107,32 +92,81 @@ const dataPath =
   userArgv.find((arg) => !arg.startsWith("-")) || "./src/data.json";
 const isAnon = userArgv.includes("--anon");
 const skipPdf = userArgv.includes("--no-pdf");
-console.log(
-  `Using data file: ${dataPath}${isAnon ? " (anonymized)" : ""}${skipPdf ? " (no PDF/server)" : ""}`,
-);
 
-let dataObj: CVData;
-try {
-  dataObj = parseAndWriteDataFile(
-    dataPath,
-    path.join(__dirname, "src", "script-data.json"),
-  );
-  if (isAnon) {
-    dataObj = anonymizeData(dataObj);
-    console.log("🔒 Data anonymized and written to src/script-data.json");
-  } else {
-    console.log("✅ Data written to src/script-data.json");
-  }
-  writeFileSync(
-    path.join(__dirname, "src", "script-data.json"),
-    JSON.stringify(dataObj, null, 2),
-  );
-} catch (err) {
-  console.error("❌ Failed to process input file:", err);
-  process.exit(1);
+// Parse resumeType from args, default to first in allVariants
+const resumeTypeArg = userArgv.find((arg) => arg.startsWith("--resumeType="));
+
+async function promptForResumeType(): Promise<string> {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+    console.log("Please select a resume type:");
+    allVariants.forEach((variant, idx) => {
+      console.log(`  [${idx + 1}] ${variant}`);
+    });
+    rl.question("Enter the number of your choice: ", (answer) => {
+      const idx = parseInt(answer, 10) - 1;
+      rl.close();
+      if (idx >= 0 && idx < allVariants.length) {
+        resolve(allVariants[idx]);
+      } else {
+        console.error("❌ Invalid selection.");
+        process.exit(1);
+      }
+    });
+  });
 }
 
-async function main(dataObj) {
+let resumeTypePromise: Promise<string>;
+if (resumeTypeArg) {
+  resumeTypePromise = Promise.resolve(resumeTypeArg.split("=")[1]);
+} else {
+  resumeTypePromise = promptForResumeType();
+}
+
+(async () => {
+  const resumeType = await resumeTypePromise;
+  if (!allVariants.includes(resumeType)) {
+    console.error(
+      `❌ Invalid resumeType: '${resumeType}'. Valid options: ${allVariants.join(", ")}`,
+    );
+    process.exit(1);
+  }
+  console.log(
+    `Using data file: ${dataPath}${isAnon ? " (anonymized)" : ""}${skipPdf ? " (no PDF/server)" : ""}\nResume type: ${resumeType}`,
+  );
+
+  let dataObj: CVData;
+  try {
+    dataObj = parseAndWriteDataFile(
+      dataPath,
+      path.join(__dirname, "src", "script-data.json"),
+    );
+    if (isAnon) {
+      dataObj = anonymizeData(dataObj);
+      console.log("🔒 Data anonymized and written to src/script-data.json");
+    } else {
+      console.log("✅ Data written to src/script-data.json");
+    }
+    writeFileSync(
+      path.join(__dirname, "src", "script-data.json"),
+      JSON.stringify(dataObj, null, 2),
+    );
+  } catch (err) {
+    console.error("❌ Failed to process input file:", err);
+    process.exit(1);
+  }
+
+  if (!skipPdf) {
+    await main(dataObj, resumeType);
+  } else {
+    console.log("⏩ Skipping server and PDF generation due to --no-pdf flag.");
+  }
+})();
+
+async function main(dataObj, resumeType) {
   console.log(dataObj.header.name);
 
   console.log("⏳ Starting Vite server");
@@ -140,11 +174,17 @@ async function main(dataObj) {
 
   console.log("🐾 Opening Puppeteer and generating PDF");
   const outDir = path.join(__dirname, "out");
-  const url = server.resolvedUrls?.local[0] as string;
+  const url = new URL(
+    `/${resumeType}/resume`,
+    server.resolvedUrls?.local[0] as string,
+  ).toString();
   const browser = await puppeteer.launch();
 
   await generateAndSavePdf({ url, dataObj, type: "Resume", outDir, browser });
-  const coverLetterUrl = new URL("/cover-letter", url).toString();
+  const coverLetterUrl = new URL(
+    `/${resumeType}/cover-letter`,
+    server.resolvedUrls?.local[0] as string,
+  ).toString();
   await generateAndSavePdf({
     url: coverLetterUrl,
     dataObj,
@@ -160,10 +200,4 @@ async function main(dataObj) {
 
   // resetScriptDataJson(path.join(__dirname, "src", "script-data.json"));
   console.log("🔄 src/script-data.json reset to empty object");
-}
-
-if (!skipPdf) {
-  main(dataObj);
-} else {
-  console.log("⏩ Skipping server and PDF generation due to --no-pdf flag.");
 }

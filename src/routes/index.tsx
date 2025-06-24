@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { resumeComponentMap } from "./$resumeType.resume";
 import { coverLetterComponentMap } from "./$resumeType.cover-letter";
+import { allVariants } from "../lib/allVariants";
 
 /**
  * For two or more objects, for their matching keys, put the values in an array.
@@ -41,13 +42,6 @@ export const Route = createFileRoute("/")({
 });
 
 // Build resumeTypes as a metadata object for rendering
-const allVariants = Array.from(
-  new Set([
-    ...Object.keys(resumeComponentMap),
-    ...Object.keys(coverLetterComponentMap),
-  ]),
-);
-
 const resumeTypes: Record<
   string,
   Record<string, { label: string; to: string; params: { resumeType: string } }>

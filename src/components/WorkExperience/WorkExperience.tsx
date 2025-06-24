@@ -14,7 +14,13 @@ type WorkExperiences = {
   lines: Lines;
 };
 
-const WorkExperience = ({ data }: { data: WorkExperiences[] }) => {
+const WorkExperience = ({
+  data,
+  showBubbles = true,
+}: {
+  data: WorkExperiences[];
+  showBubbles?: boolean;
+}) => {
   return (
     <section className="flex flex-col items-start gap-2">
       <Title text="Professional Experience" />
@@ -24,6 +30,7 @@ const WorkExperience = ({ data }: { data: WorkExperiences[] }) => {
             key={index}
             item={item}
             isLast={index !== data.length - 1}
+            showBubbles={showBubbles}
           />
         ))}
       </div>
@@ -33,9 +40,11 @@ const WorkExperience = ({ data }: { data: WorkExperiences[] }) => {
 
 function WorkExperienceItem({
   item,
+  showBubbles = true,
 }: {
   item: WorkExperiences;
   isLast: boolean;
+  showBubbles?: boolean;
 }) {
   return (
     <div className="flex flex-col">
@@ -44,7 +53,7 @@ function WorkExperienceItem({
         <div className="text-base font-medium">{item.years}</div>
       </div>
       <div className="text-base font-medium">{item.company}</div>
-      <BubbleList bubbles={item.bubbles} />
+      {showBubbles && <BubbleList bubbles={item.bubbles} />}
       <LineList lines={item.lines} />
     </div>
   );

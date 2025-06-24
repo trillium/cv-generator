@@ -1,3 +1,22 @@
+info:
+  firstName: Trillium
+  lastName: Smith
+  role: Software Developer
+  email: Trillium@trilliumsmith
+  phone: 818.738.5344
+  website: www.trilliumsmith.com
+  bluesky: bsky.app/profile/trillium.is
+  linkedIn: www.linkedin.com/in/trilliumsmith/
+  github: www.github.com/trillium/
+careerSummary:
+  - title: Experience
+    text: 5+ years as Software Developer with 3 small/medium companies in the Technology and Consulting industries
+  - title: Skill Highlight
+    text: 5+ years building accessible, modern web applications at 3 companies across technology, consulting, and nonprofit sectors
+  - title: Languages
+    text: JavaScript, TypeScript, Python, HTML, CSS
+  - title: Tools
+    text: React.js, Next.js, Vite, Tailwind CSS, Redux, Node.js, Express.js, Flask, Django, MongoDB, Git, GitHub, AWS, Docker, Figma, Postman, GitHub Copilot, Selenium, Jest, Pytest
 header:
   name: Trillium Smith
   resume:
@@ -18,7 +37,7 @@ workExperience:
       - Redux
     lines:
       - text: >-
-          Led front-end modernization by migrating from CRA to Vite, reducing build times by 20% and improving developer experience through faster local feedback and leaner builds.
+          Led front-end modernization by migrating from Create React App to Vite, reducing build times by 20% and improving developer experience through faster local feedback and leaner builds.
 
 
       - text: >-

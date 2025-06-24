@@ -35,6 +35,8 @@ import type { Language } from "../components/Profile/ProfileLanguages/ProfileLan
 import { HeaderProps } from "../components/Header/Header";
 
 export type CVData = {
+  info: InfoType;
+  careerSummary: CareerSummary;
   header: HeaderProps;
   workExperience: WorkExperience[];
   projects?: Project[];
@@ -48,3 +50,22 @@ export type CVData = {
   education?: Education[];
   coverLetter?: string[];
 };
+
+export type InfoType = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: string;
+  website?: string;
+  bluesky?: string;
+  github?: string;
+  linkedIn?: string;
+};
+
+export type CareerSummaryItem = {
+  title: string;
+  text: string;
+};
+
+export type CareerSummary = CareerSummaryItem[];

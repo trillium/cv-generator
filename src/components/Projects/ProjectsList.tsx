@@ -3,14 +3,10 @@ import type { Project } from "../../types";
 
 export default function ProjectsList({
   projects = [],
+  showBubbles = true,
 }: {
   projects?: Project[];
+  showBubbles?: boolean;
 }) {
-  return (
-    <>
-      {Array.isArray(projects) && projects.length > 0 && (
-        <Projects data={projects} />
-      )}
-    </>
-  );
+  return <Projects data={projects} showBubbles={showBubbles} />;
 }

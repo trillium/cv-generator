@@ -14,7 +14,8 @@
     "pdf:anon": "tsx pdf.ts --anon",
     "typecheck": "tsc",
     "prepare": "husky",
-    "watch:data": "nodemon --exec \"node watcher.cjs data.yml src/data.json\" --watch data.yml"
+    "watch:data": "nodemon --exec \"node watcher.cjs data.yml src/data.json\" --watch data.yml",
+    "yml-to-json": "nodemon --watch . --ext yml --exec 'tsx lib/ymlToJson.ts'"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.121.27",
@@ -24,7 +25,8 @@
     "js-yaml": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.4.1",

@@ -1,6 +1,7 @@
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { FaSquareXTwitter, FaBluesky } from "react-icons/fa6";
+import { FaSquareXTwitter, FaBluesky, FaPhone } from "react-icons/fa6";
 import { BsGlobe } from "react-icons/bs";
+import { MdEmail } from "react-icons/md";
 import { clsx } from "clsx";
 
 export type ProfileLinkProps = {
@@ -31,6 +32,12 @@ const ProfileLink = ({ icon, link, name, className }: ProfileLinkProps) => {
       break;
     case "Bluesky":
       Icon = <FaBluesky />;
+      break;
+    case "Email":
+      Icon = <MdEmail />;
+      break;
+    case "Phone":
+      Icon = <FaPhone />;
       break;
     case "None":
       Icon = <></>;

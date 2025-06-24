@@ -1,3 +1,4 @@
+import { CVData as CVDataSchema } from "../types/cvdata.zod";
 import type { CVData, Project } from "../types";
 
 /**
@@ -5,6 +6,16 @@ import type { CVData, Project } from "../types";
  * Used as a base to ensure all fields are present when merging data sources.
  */
 const defaultCVData: CVData = {
+  info: {
+    firstName: "",
+    lastName: "",
+    website: "",
+    phone: "",
+    email: "",
+    bluesky: "",
+    role: "",
+    github: "",
+  },
   header: {
     name: "",
     title: [],
@@ -53,21 +64,13 @@ function normalizeProjects(projects: any[] = []): Project[] {
 }
 
 /**
- * Checks if the provided data is a valid CVData object.
+ * Checks if the provided data is a valid CVData object using Zod validation.
  * @param data - The data to check.
  * @returns True if valid, false otherwise.
  */
 function isValidData(data: any): data is CVData {
-  return !!(
-    data &&
-    typeof data === "object" &&
-    "header" in data &&
-    "workExperience" in data &&
-    "profile" in data &&
-    "technical" in data &&
-    "languages" in data &&
-    "education" in data
-  );
+  const result = CVDataSchema.safeParse(data);
+  return result.success;
 }
 
 /**

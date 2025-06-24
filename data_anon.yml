@@ -1,3 +1,22 @@
+info:
+  firstName: FirstName
+  lastName: LastName
+  role: Software Developer
+  email: FirstName@example.com
+  phone: 555.444.3333
+  website: www.example.com
+  bluesky: bsky.app/profile/example.com
+  linkedIn: www.linkedin.com/in/example/
+  github: www.github.com/example/
+careerSummary:
+  - title: Experience
+    text: 5+ years as Software Developer with 3 small/medium companies in the Technology and Consulting industries
+  - title: Skill Highlight
+    text: 5+ years building accessible, modern web applications at 3 companies across technology, consulting, and nonprofit sectors
+  - title: Languages
+    text: JavaScript, TypeScript, Python, HTML, CSS
+  - title: Tools
+    text: React.js, Next.js, Vite, Tailwind CSS, Redux, Node.js, Express.js, Flask, Django, MongoDB, Git, GitHub, AWS, Docker, Figma, Postman, GitHub Copilot, Selenium, Jest, Pytest
 header:
   name: Candidate Name
   resume:

@@ -1,10 +1,23 @@
 {
+  "info": {
+    "firstName": "Trillium",
+    "lastName": "Smith",
+    "role": "Software Developer",
+    "email": "Trillium@trilliumsmith",
+    "phone": "818.738.5344",
+    "website": "www.trilliumsmith.com",
+    "bluesky": "bsky.app/profile/trillium.is",
+    "linkedIn": "www.linkedin.com/in/trilliumsmith/",
+    "github": "www.github.com/trillium/"
+  },
   "header": {
     "name": "Trillium Smith",
     "resume": [
       "Full-stack developer with a focus on front-end experience, accessibility, and modern tooling. Builder of hands-free tools and responsive client sites, from early concept to production."
     ],
-    "title": ["Software Developer"]
+    "title": [
+      "Software Developer"
+    ]
   },
   "workExperience": [
     {
@@ -13,10 +26,16 @@
       "location": "Los Angeles, CA",
       "icon": "Remote",
       "years": "Oct 2022 - Present",
-      "bubbles": ["React.js", "Vite", "JavaScript", "TypeScript", "Redux"],
+      "bubbles": [
+        "React.js",
+        "Vite",
+        "JavaScript",
+        "TypeScript",
+        "Redux"
+      ],
       "lines": [
         {
-          "text": "Led front-end modernization by migrating from CRA to Vite, reducing build times by 20% and improving developer experience through faster local feedback and leaner builds."
+          "text": "Led front-end modernization by migrating from Create React App to Vite, reducing build times by 20% and improving developer experience through faster local feedback and leaner builds."
         },
         {
           "text": "Co-designed and implemented a shared UI component library, standardizing accessibility and visual consistency across internal projects."
@@ -55,14 +74,10 @@
   "projects": [
     {
       "name": "Flossy",
-      "links": [
-        {
-          "name": "Live Site",
-          "icon": "None",
-          "link": "flossy.com"
-        }
+      "bubbles": [
+        "React",
+        "Material UI"
       ],
-      "bubbles": ["React", "Material UI"],
       "lines": [
         {
           "text": [
@@ -79,22 +94,17 @@
             "Diagnosed and restored broken inbound marketing pipelines, recovering lead flow and enabling campaign tracking."
           ]
         }
+      ],
+      "links": [
+        {
+          "name": "Live Site",
+          "icon": "None",
+          "link": "flossy.com"
+        }
       ]
     },
     {
       "name": "Massage Therapy Booking Application",
-      "links": [
-        {
-          "name": "GitHub",
-          "link": "https://github.com/trillium/www-massage",
-          "icon": "None"
-        },
-        {
-          "name": "Live Site",
-          "link": "https://trilliummassage.la/",
-          "icon": "None"
-        }
-      ],
       "bubbles": [
         "Next.js",
         "Tailwind CSS",
@@ -109,6 +119,18 @@
         },
         {
           "text": "Designed around real-world constraints for solo practitioners and flexible appointment management."
+        }
+      ],
+      "links": [
+        {
+          "name": "GitHub",
+          "icon": "None",
+          "link": "https://github.com/trillium/www-massage"
+        },
+        {
+          "name": "Live Site",
+          "icon": "None",
+          "link": "https://trilliummassage.la/"
         }
       ]
     },
@@ -134,17 +156,20 @@
     },
     {
       "name": "Voice Accessibility Speaking",
-      "links": [
-        {
-          "name": "Video Link",
-          "link": "http://trillium.is/voice_tools_talk_2025_05",
-          "icon": "None"
-        }
+      "bubbles": [
+        "Accessibility",
+        "Public Speaking"
       ],
-      "bubbles": ["Accessibility", "Public Speaking"],
       "lines": [
         {
           "text": "Presented a live demo of voice-driven development using Talon Voice and open-source tools like Cursorless. Focused on accessibility, developer ergonomics, and sustainable workflows."
+        }
+      ],
+      "links": [
+        {
+          "name": "Video Link",
+          "icon": "None",
+          "link": "http://trillium.is/voice_tools_talk_2025_05"
         }
       ]
     }
@@ -182,7 +207,11 @@
   "technical": [
     {
       "category": "Programming Languages",
-      "bubbles": ["JavaScript", "TypeScript", "Python"]
+      "bubbles": [
+        "JavaScript",
+        "TypeScript",
+        "Python"
+      ]
     },
     {
       "category": "Front-End Technologies",
@@ -198,39 +227,68 @@
     },
     {
       "category": "Back-End Technologies",
-      "bubbles": ["Node.js", "Express.js", "Flask", "Django"]
+      "bubbles": [
+        "Node.js",
+        "Express.js",
+        "Flask",
+        "Django"
+      ]
     },
     {
       "category": "Database Technologies",
-      "bubbles": ["MongoDB", "SQL", "PostgreSQL"]
+      "bubbles": [
+        "MongoDB",
+        "SQL",
+        "PostgreSQL"
+      ]
     },
     {
       "category": "APIs & Integration",
-      "bubbles": ["RESTful APIs", "Google Calendar API"]
+      "bubbles": [
+        "RESTful APIs",
+        "Google Calendar API"
+      ]
     },
     {
       "category": "CMS",
-      "bubbles": ["WordPress", "Custom WP Plugins"]
+      "bubbles": [
+        "WordPress",
+        "Custom WP Plugins"
+      ]
     },
     {
       "category": "Version Control",
-      "bubbles": ["Git"]
+      "bubbles": [
+        "Git"
+      ]
     },
     {
       "category": "Testing & QA",
-      "bubbles": ["Jest", "Selenium", "Pytest"]
+      "bubbles": [
+        "Jest",
+        "Selenium",
+        "Pytest"
+      ]
     },
     {
       "category": "Container Orchestration",
-      "bubbles": ["Docker", "Kubernetes"]
+      "bubbles": [
+        "Docker",
+        "Kubernetes"
+      ]
     },
     {
       "category": "Infrastructure & CI/CD",
-      "bubbles": ["Amazon Web Services (AWS)", "GitHub Actions"]
+      "bubbles": [
+        "Amazon Web Services (AWS)",
+        "GitHub Actions"
+      ]
     },
     {
       "category": "AI & Automation Tools",
-      "bubbles": ["GitHub Copilot"]
+      "bubbles": [
+        "GitHub Copilot"
+      ]
     }
   ],
   "education": [
@@ -245,5 +303,23 @@
     null,
     "Sincerely,",
     "Trillium Smith"
+  ],
+  "careerSummary": [
+    {
+      "title": "Experience",
+      "text": "5+ years as Software Developer with 3 small/medium companies in the Technology and Consulting industries"
+    },
+    {
+      "title": "Skill Highlight",
+      "text": "5+ years building accessible, modern web applications at 3 companies across technology, consulting, and nonprofit sectors"
+    },
+    {
+      "title": "Languages",
+      "text": "JavaScript, TypeScript, Python, HTML, CSS"
+    },
+    {
+      "title": "Tools",
+      "text": "React.js, Next.js, Vite, Tailwind CSS, Redux, Node.js, Express.js, Flask, Django, MongoDB, Git, GitHub, AWS, Docker, Figma, Postman, GitHub Copilot, Selenium, Jest, Pytest"
+    }
   ]
 }

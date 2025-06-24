@@ -3,7 +3,7 @@ import type { CVData } from "../types";
 import scriptData from "../script-data.json";
 import fallbackData from "../data.json";
 import TwoColumnResume from "../components/Resume/two-column/resume";
-import SingleColumnResume from "../components/Resume/two-column/resume";
+import SingleColumnResume from "../components/Resume/single-column/resume";
 
 export const Route = createFileRoute("/$resumeType/resume")({
   component: ResumeRoute,
