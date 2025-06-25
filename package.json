@@ -10,12 +10,13 @@
     "prelint": "prettier . --write",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "pdf": "tsx pdf.ts",
-    "pdf:anon": "tsx pdf.ts --anon",
+    "pdf": "tsx pdf.ts --resumeType=single-column",
+    "pdf:anon": "tsx pdf.ts --anon --resumeType=single-column",
     "typecheck": "tsc",
     "prepare": "husky",
     "watch:data": "nodemon --exec \"node watcher.cjs data.yml src/data.json\" --watch data.yml",
-    "yml-to-json": "nodemon --watch . --ext yml --exec 'tsx lib/ymlToJson.ts'"
+    "yml-to-json": "tsx lib/ymlToJson.ts",
+    "yml-to-json:watch": "nodemon --watch . --ext yml --exec 'tsx lib/ymlToJson.ts'"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.121.27",
@@ -23,6 +24,7 @@
     "clsx": "^2.1.0",
     "diff": "^8.0.2",
     "js-yaml": "^4.1.0",
+    "pdfjs-dist": "^5.3.31",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",

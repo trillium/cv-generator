@@ -19,10 +19,6 @@ careerSummary:
     text: React.js, Next.js, Vite, Tailwind CSS, Redux, Node.js, Express.js, Flask, Django, MongoDB, Git, GitHub, AWS, Docker, Figma, Postman, GitHub Copilot, Selenium, Jest, Pytest
 header:
   name: Candidate Name
-  resume:
-    - Full-stack developer with a focus on front-end experience, accessibility, and modern tooling. Builder of hands-free tools and responsive client sites, from early concept to production.
-  title:
-    - Software Developer
 workExperience:
   - position: Lead Software Engineer
     company: Organization Ax

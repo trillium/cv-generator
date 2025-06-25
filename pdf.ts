@@ -8,6 +8,7 @@ import { anonymizeData } from "./lib/anonymous";
 import { parseAndWriteDataFile } from "./lib/parseAndWriteDataFile";
 import { allVariants } from "./src/lib/allVariants";
 import readline from "readline";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -70,6 +71,11 @@ async function generateAndSavePdf({
     },
     page,
   );
+  // // Check number of pages in the PDF buffer
+  // const pdfDoc = await getDocument({ data: pdf }).promise;
+  // if (pdfDoc.numPages > 1) {
+  //   console.log(`⚠️  Warning: Generated PDF for ${type} is ${pdfDoc.numPages} pages.`);
+  // }
   ensureDirectoryExists(outDir);
   const outPath = path.join(outDir, getOutputFilename({ data: dataObj, type }));
   writeFileSync(outPath, pdf);
@@ -198,6 +204,6 @@ async function main(dataObj, resumeType) {
   await server.close();
   console.log("🏁 Done");
 
-  // resetScriptDataJson(path.join(__dirname, "src", "script-data.json"));
+  resetScriptDataJson(path.join(__dirname, "src", "script-data.json"));
   console.log("🔄 src/script-data.json reset to empty object");
 }

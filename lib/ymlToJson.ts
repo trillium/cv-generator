@@ -13,7 +13,11 @@ function main() {
     const data = yaml.load(ymlText);
     const parseResult = CVData.safeParse(data);
     if (!parseResult.success) {
-      console.error("Validation failed:", parseResult.error.format());
+      console.error(
+        "Validation failed (formatted):",
+        parseResult.error.format(),
+      );
+      console.error("Validation failed (raw):", parseResult.error);
     } else {
       fs.writeFileSync(outputPath, JSON.stringify(parseResult.data, null, 2));
       console.log(

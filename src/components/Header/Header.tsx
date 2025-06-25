@@ -17,7 +17,7 @@ const Header = ({
   return (
     <>
       <div className="flex flex-col gap-1">
-        <h1 className="font-sans font-bold leading-tight m-0 text-4xl">
+        <h1 className="font-sans font-bold leading-tight m-0 text-3xl">
           <span className="text-primary-500">{first}</span>{" "}
           <span className="font-normal">{last}</span>
         </h1>

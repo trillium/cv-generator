@@ -10,13 +10,16 @@ export const WorkExperience = z.object({
   location: z.string(),
   icon: z.string(),
   years: z.string(),
-  bubbles: z.array(z.string()),
+  bubbles: z.array(z.string()).optional(),
   lines: Lines,
+});
+export const urlString = z.string().refine((val) => !/^https?:\/\//.test(val), {
+  message: "URL must not include http:// or https://",
 });
 export const ProjectLink = z.object({
   name: z.string(),
   icon: z.string().optional(),
-  link: z.string(),
+  link: urlString,
 });
 export const Project = z.object({
   name: z.string(),

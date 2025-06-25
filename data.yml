@@ -2,7 +2,7 @@ info:
   firstName: Trillium
   lastName: Smith
   role: Software Developer
-  email: Trillium@trilliumsmith
+  email: Trillium@trilliumsmith.com
   phone: 818.738.5344
   website: www.trilliumsmith.com
   bluesky: bsky.app/profile/trillium.is
@@ -10,9 +10,9 @@ info:
   github: www.github.com/trillium/
 careerSummary:
   - title: Experience
-    text: 5+ years as Software Developer with 3 small/medium companies in the Technology and Consulting industries
+    text: 4+ years building and owning production web applications for technology, consulting, nonprofit, and open source organizations, with a focus on performance, accessibility, and developer experience.
   - title: Skill Highlight
-    text: 5+ years building accessible, modern web applications at 3 companies across technology, consulting, and nonprofit sectors
+    text: Specialized in building fast, accessible, and intuitive web applications using React, TypeScript, and modern tooling. Experienced in leading technical direction, collaborating with designers and engineers, and implementing design systems for consistent, high-quality UIs.
   - title: Languages
     text: JavaScript, TypeScript, Python, HTML, CSS
   - title: Tools
@@ -20,7 +20,7 @@ careerSummary:
 header:
   name: Trillium Smith
   resume:
-    - Full-stack developer with a focus on front-end experience, accessibility, and modern tooling. Builder of hands-free tools and responsive client sites, from early concept to production.
+    - Full-stack developer focused on front-end experience, accessibility, and modern tooling. Builder of hands-free tools and responsive sites from concept to production.
   title:
     - Software Developer
 workExperience:
@@ -29,12 +29,6 @@ workExperience:
     location: Los Angeles, CA
     icon: Remote
     years: Oct 2022 - Present
-    bubbles:
-      - React.js
-      - Vite
-      - JavaScript
-      - TypeScript
-      - Redux
     lines:
       - text: >-
           Led front-end modernization by migrating from Create React App to Vite, reducing build times by 20% and improving developer experience through faster local feedback and leaner builds.
@@ -48,17 +42,15 @@ workExperience:
           Contributed to team collaboration by introducing code quality tools (linting, reviews, shared configs) and supporting remote onboarding workflows.
 
 
+      - text: >-
+          Modernized stack with React, Vite, and Vitest; built full-stack features with MongoDB and Express.
+
+
   - position: Software Engineer
     company: TS Consulting
     location: Los Angeles, CA
     icon: Remote
     years: Jul 2021 - Present
-    bubbles:
-      - WordPress
-      - UI/UX
-      - JavaScript
-      - Client-Facing
-      - Site Maintenance
     lines:
       - text: >-
           Diagnosed and resolved layout, CSS, and plugin issues in custom WordPress themes inherited from prior developers, restoring site functionality and improving visual consistency for small business clients.
@@ -78,35 +70,34 @@ projects:
       - name: Live Site
         icon: None
         link: flossy.com
-    bubbles:
-      - React
-      - Material UI
     lines:
-      - text:
-          - Translated client vision into a fully responsive, production-ready website.
-      - text:
-          - Collaborated closely with clients during revisions, translating feedback into precise UI changes without compromising UX or responsive behavior.
-      - text:
-          - Diagnosed and restored broken inbound marketing pipelines, recovering lead flow and enabling campaign tracking.
+      - text: >-
+          Translated client vision into a fully responsive, production-ready website.
+
+
+      - text: >-
+          Collaborated closely with clients during revisions, translating feedback into precise UI changes without compromising UX or responsive behavior.
+
+
+      - text: >-
+          Diagnosed and restored broken inbound marketing pipelines, recovering lead flow and enabling campaign tracking.
+
+
+      - text: >-
+          Brought a client’s Figma design to life in WebFlow, delivering a pixel-perfect, visually striking site.
+
 
   - name: Massage Therapy Booking Application
     links:
       - name: GitHub
-        link: https://github.com/trillium/www-massage
+        link: github.com/trillium/www-massage
         icon: None
       - name: Live Site
-        link: https://trilliummassage.la/
+        link: trilliummassage.la/
         icon: None
-    bubbles:
-      - Next.js
-      - Tailwind CSS
-      - TypeScript
-      - Redux
-      - Google Calendar API
-      - Serverless
     lines:
       - text: >-
-          Built a full-stack serverless scheduling tool, with therapist-side availability controls, travel buffers, and calendar integration.
+          Built a serverless booking app with Next.js, Tailwind, TypeScript, Redux, and Google Calendar integration.
 
 
       - text: >-
@@ -114,14 +105,6 @@ projects:
 
 
   - name: Spoken Form Test Case Visualizer
-    bubbles:
-      - HTML
-      - Shiki
-      - YAML
-      - VSCode Extension
-      - Node
-      - TypeScript
-      - Docusaurus
     lines:
       - text: >-
           Built a visualizer that converts YAML-based test cases into syntax-highlighted HTML for Cursorless, a voice-powered dev tool.
@@ -131,16 +114,23 @@ projects:
           Improved contributor experience and test readability in an open source project focused on accessibility and developer ergonomics.
 
 
+      - text: >-
+          Built automated test case visualizations for Cursorless, utilizing Shiki to create visualizations from YAML files within pnpm monorepo.
+
+
   - name: Voice Accessibility Speaking
     links:
       - name: Video Link
-        link: http://trillium.is/voice_tools_talk_2025_05
+        link: trillium.is/voice_tools_talk_2025_05
         icon: None
-    bubbles:
-      - Accessibility
-      - Public Speaking
     lines:
-      - text: Presented a live demo of voice-driven development using Talon Voice and open-source tools like Cursorless. Focused on accessibility, developer ergonomics, and sustainable workflows.
+      - text: >-
+          Presented a live demo of voice-driven development with Talon Voice and open-source tools like Cursorless, focusing on accessibility and sustainable workflows.
+
+
+      - text: >-
+          Advocated for accessibility in tech through public speaking, live demos, and community education on voice-driven development.
+
 
 profile:
   shouldDisplayProfileImage: false
@@ -158,9 +148,9 @@ profile:
     - name: trilliumsmith.com
       icon: Website
       link: trilliumsmith.com
-    - name: bsky.app/trillium.is
+    - name: bsky.app/profile/trillium.is
       icon: Bluesky
-      link: bsky.app/trillium.is
+      link: bsky.app/profile/trillium.is
 
 technical:
   - category: Programming Languages
@@ -216,7 +206,6 @@ technical:
     bubbles:
       - GitHub Copilot
 
-education: [{ "school": "College of the Redwoods 2012" }]
 coverLetter:
   - Dear Hiring Manager,
   -

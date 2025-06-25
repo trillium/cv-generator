@@ -44,14 +44,23 @@ const ProfileLink = ({ icon, link, name, className }: ProfileLinkProps) => {
       break;
   }
 
+  let href: string;
+  let anchorProps: React.AnchorHTMLAttributes<HTMLAnchorElement> = {
+    className: "font-semibold text-inherit flex items-center gap-2",
+  };
+
+  if (icon === "Email") {
+    href = `mailto:${link}`;
+  } else if (icon === "Phone") {
+    href = `tel:${link}`;
+  } else {
+    href = `https://${link}`;
+    anchorProps.rel = "noopener noreferrer";
+  }
+
   return (
     <div className={clsx("text-inherit flex items-center gap-2", className)}>
-      <a
-        href={`https://${link}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="font-semibold text-inherit flex items-center gap-2"
-      >
+      <a href={href} {...anchorProps} target="_blank">
         {Icon}
         <span className="text-sm">{name || icon}</span>
       </a>
