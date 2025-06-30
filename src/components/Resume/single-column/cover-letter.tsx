@@ -1,5 +1,5 @@
 import type { CVData } from "../../../types";
-import Header from "../ui/Header";
+import Header from "./ui/Header";
 import Title from "../../Title/Title";
 import Footer from "./ui/Footer";
 

@@ -125,6 +125,20 @@ async function promptForResumeType(): Promise<string> {
   });
 }
 
+// Parse print option from args, default to both
+const printArg = userArgv.find((arg) => arg.startsWith("--print="));
+let printOptions: Array<"resume" | "cover"> = ["resume", "cover"];
+if (printArg) {
+  const val = printArg.split("=")[1].toLowerCase();
+  printOptions = val
+    .split(",")
+    .map((v) => v.trim())
+    .filter((v) => v === "resume" || v === "cover") as Array<
+    "resume" | "cover"
+  >;
+  if (printOptions.length === 0) printOptions = ["resume", "cover"];
+}
+
 let resumeTypePromise: Promise<string>;
 if (resumeTypeArg) {
   resumeTypePromise = Promise.resolve(resumeTypeArg.split("=")[1]);
@@ -186,18 +200,22 @@ async function main(dataObj, resumeType) {
   ).toString();
   const browser = await puppeteer.launch();
 
-  await generateAndSavePdf({ url, dataObj, type: "Resume", outDir, browser });
-  const coverLetterUrl = new URL(
-    `/${resumeType}/cover-letter`,
-    server.resolvedUrls?.local[0] as string,
-  ).toString();
-  await generateAndSavePdf({
-    url: coverLetterUrl,
-    dataObj,
-    type: "CoverLetter",
-    outDir,
-    browser,
-  });
+  if (printOptions.includes("resume")) {
+    await generateAndSavePdf({ url, dataObj, type: "Resume", outDir, browser });
+  }
+  if (printOptions.includes("cover")) {
+    const coverLetterUrl = new URL(
+      `/${resumeType}/cover-letter`,
+      server.resolvedUrls?.local[0] as string,
+    ).toString();
+    await generateAndSavePdf({
+      url: coverLetterUrl,
+      dataObj,
+      type: "CoverLetter",
+      outDir,
+      browser,
+    });
+  }
   await browser.close();
   console.log("💾 Saving PDF");
 

@@ -1,8 +1,8 @@
 import type { CVData } from "../../../types";
-import Header from "../ui/Header";
+import Header from "./ui/Header";
 import ProjectsList from "../../Projects/ProjectsList";
-import CareerSummary from "../ui/CareerSummary";
-import Footer from "../ui/Footer";
+import CareerSummary from "./ui/CareerSummary";
+import Footer from "./ui/Footer";
 import WorkExperience from "../../WorkExperience/WorkExperience";
 
 function TwoColumnResume({ data }: { data: CVData }) {

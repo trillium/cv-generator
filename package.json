@@ -12,6 +12,8 @@
     "preview": "vite preview",
     "pdf": "tsx pdf.ts --resumeType=single-column",
     "pdf:anon": "tsx pdf.ts --anon --resumeType=single-column",
+    "pdf:resume": "tsx pdf.ts --resumeType=single-column --print=resume",
+    "pdf:cover": "tsx pdf.ts --resumeType=single-column --print=cover",
     "typecheck": "tsc",
     "prepare": "husky",
     "watch:data": "nodemon --exec \"node watcher.cjs data.yml src/data.json\" --watch data.yml",

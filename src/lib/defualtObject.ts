@@ -34,6 +34,7 @@ const defaultCVData: CVData = {
   education: [],
   languages: [],
   coverLetter: [],
+  careerSummary: [],
 };
 
 /**

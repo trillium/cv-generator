@@ -6,8 +6,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: teal,
-        secondary: blue,
+        primary: { ...teal, DEFAULT: teal[800] },
+        secondary: bluspacere,
       },
       fontFamily: {
         sans: [

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { resumeComponentMap } from "./$resumeType.resume";
 import { coverLetterComponentMap } from "./$resumeType.cover-letter";
 import { allVariants } from "../lib/allVariants";

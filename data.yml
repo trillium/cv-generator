@@ -1,7 +1,7 @@
 info:
   firstName: Trillium
   lastName: Smith
-  role: Software Developer
+  role: Frontend Engineer
   email: Trillium@trilliumsmith.com
   phone: 818.738.5344
   website: www.trilliumsmith.com
@@ -16,7 +16,7 @@ careerSummary:
   - title: Languages
     text: JavaScript, TypeScript, Python, HTML, CSS
   - title: Tools
-    text: React.js, Next.js, Vite, Tailwind CSS, Redux, Node.js, Express.js, Flask, Django, MongoDB, Git, GitHub, AWS, Docker, Figma, Postman, GitHub Copilot, Selenium, Jest, Pytest
+    text: React.js, Next.js, Vite, Tailwind CSS, Redux, Node.js, Express.js, Flask, Django, MongoDB, Git, GitHub, AWS, Docker, Figma, GitHub Copilot, Selenium, Jest, Pytest, Cypress
 header:
   name: Trillium Smith
   resume:
@@ -35,15 +35,15 @@ workExperience:
 
 
       - text: >-
-          Co-designed and implemented a shared UI component library, standardizing accessibility and visual consistency across internal projects.
+          Co-designed and implemented a shared UI component library, standardizing accessibility and visual consistency across internal projects, and contributed to a component-based design system in close partnership with designers using Figma.
 
 
       - text: >-
-          Contributed to team collaboration by introducing code quality tools (linting, reviews, shared configs) and supporting remote onboarding workflows.
+          Contributed to team collaboration by introducing code quality tools (linting, reviews, shared configs) and supporting remote onboarding workflows, thriving in async, distributed teams.
 
 
       - text: >-
-          Modernized stack with React, Vite, and Vitest; built full-stack features with MongoDB and Express.
+          Modernized stack with React, Vite, and Vitest; built full-stack features with MongoDB and Express, and collaborated on REST API integrations.
 
 
   - position: Software Engineer
@@ -111,7 +111,7 @@ projects:
 
 
       - text: >-
-          Improved contributor experience and test readability in an open source project focused on accessibility and developer ergonomics.
+          Improved contributor experience and test readability in an open source project focused on accessibility and ergonomics.
 
 
       - text: >-
@@ -205,13 +205,12 @@ technical:
   - category: AI & Automation Tools
     bubbles:
       - GitHub Copilot
-
 coverLetter:
   - Dear Hiring Manager,
   -
 
   - >-
-    I am excited to apply for the Software Developer position. With extensive experience in full-stack development, a strong focus on front-end technologies, and a passion for accessibility and modern tooling, I have successfully led projects from concept to production. My work at HackForLA and TS Consulting demonstrates my ability to modernize codebases, implement shared UI libraries, and improve developer workflows. I am adept at collaborating with cross-functional teams, introducing code quality tools, and supporting remote onboarding. My technical expertise spans React, Next.js, TypeScript, Node.js, AWS, and CI/CD pipelines, complemented by a commitment to building accessible and user-friendly applications. I am eager to bring my skills and enthusiasm to your team and contribute to impactful projects.
+    I am excited to apply for the Frontend Engineer position at Help Scout. With 4+ years of experience building and owning production web applications, I have a strong focus on front-end technologies, accessibility, and modern tooling. My work at HackForLA and TS Consulting demonstrates my ability to modernize codebases, implement shared UI libraries, and improve developer workflows. I have contributed to component-based design systems in close partnership with designers using Figma, and I thrive in async, distributed teams. My technical expertise spans React, Next.js, TypeScript, Redux, CSS, Jest, and Cypress, complemented by a commitment to building accessible and user-friendly applications. I am passionate about crafting delightful user experiences and am excited to contribute to customer-centric products at Help Scout. I am eager to bring my skills and enthusiasm to your team.
 
 
   -
