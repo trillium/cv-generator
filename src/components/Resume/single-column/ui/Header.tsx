@@ -25,7 +25,7 @@ function isInfo(obj: any): obj is {
 export default function Header({ data }: { data: CVData }) {
   if (!isInfo(data.info)) return null;
   const { firstName, lastName, role, email, phone, website } = data.info;
-  const singleLineNameAndRole = false;
+  const singleLineNameAndRole = true;
   return (
     <header>
       <div
