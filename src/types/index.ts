@@ -15,7 +15,7 @@ export type Project = {
   duration?: string;
   bubbles?: string[];
   lines?: Lines;
-  links?: ProfileLinkProps;
+  links?: ProfileLinkProps[];
 };
 
 export type TechnicalCategory = {

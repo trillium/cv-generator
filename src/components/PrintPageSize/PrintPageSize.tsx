@@ -38,7 +38,8 @@ export default function PrintPageSize({
   dpi = 96,
 }: PrintPageSizeProps) {
   const [pageCount, setPageCount] = useState<number>(1);
-  const [isCalculating, setIsCalculating] = useState<boolean>(false);
+  const [pendingPageCount, setPendingPageCount] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const observersRef = useRef<{
     resizeObserver?: ResizeObserver;
     mutationObserver?: MutationObserver;
@@ -66,58 +67,49 @@ export default function PrintPageSize({
   );
 
   const calculatePageCount = useCallback(() => {
-    const params = calculationParams();
-
-    // Calculate usable dimensions
-    const usableHeight =
-      params.pageHeightPx - (params.topMarginPx + params.bottomMarginPx);
-    const usableWidth =
-      params.pageWidthPx - (params.leftMarginPx + params.rightMarginPx);
-
-    // Find the target content element
-    const targetElement = document.querySelector(targetSelector);
-
-    if (!targetElement) {
-      console.warn(
-        `PrintPageSize: Could not find element with selector "${targetSelector}"`,
+    setError(null);
+    try {
+      const params = calculationParams();
+      const usableHeight =
+        params.pageHeightPx - (params.topMarginPx + params.bottomMarginPx);
+      const usableWidth =
+        params.pageWidthPx - (params.leftMarginPx + params.rightMarginPx);
+      const targetElement = document.querySelector(targetSelector);
+      if (!targetElement) {
+        setError(
+          `PrintPageSize: Could not find element with selector "${targetSelector}"`,
+        );
+        return;
+      }
+      const clone = targetElement.cloneNode(true) as HTMLElement;
+      clone.style.position = "absolute";
+      clone.style.left = "-9999px";
+      clone.style.top = "-9999px";
+      clone.style.width = `${usableWidth}px`;
+      clone.style.visibility = "hidden";
+      clone.style.pointerEvents = "none";
+      const originalMedia =
+        document.documentElement.style.getPropertyValue("--print-simulation");
+      document.documentElement.style.setProperty("--print-simulation", "true");
+      document.body.appendChild(clone);
+      const contentHeight = clone.scrollHeight;
+      document.body.removeChild(clone);
+      if (originalMedia) {
+        document.documentElement.style.setProperty(
+          "--print-simulation",
+          originalMedia,
+        );
+      } else {
+        document.documentElement.style.removeProperty("--print-simulation");
+      }
+      const calculatedPages = Math.max(
+        1,
+        Math.ceil(contentHeight / usableHeight),
       );
-      return;
+      setPendingPageCount(calculatedPages);
+    } catch (e: any) {
+      setError(e?.message || "Unknown error during page calculation");
     }
-
-    // Create a temporary clone of the element to measure in print conditions
-    const clone = targetElement.cloneNode(true) as HTMLElement;
-    clone.style.position = "absolute";
-    clone.style.left = "-9999px";
-    clone.style.top = "-9999px";
-    clone.style.width = `${usableWidth}px`;
-    clone.style.visibility = "hidden";
-    clone.style.pointerEvents = "none";
-
-    // Apply print media styles temporarily
-    const originalMedia =
-      document.documentElement.style.getPropertyValue("--print-simulation");
-    document.documentElement.style.setProperty("--print-simulation", "true");
-
-    document.body.appendChild(clone);
-
-    // Get the actual rendered height in print conditions
-    const contentHeight = clone.scrollHeight;
-
-    // Clean up
-    document.body.removeChild(clone);
-    if (originalMedia) {
-      document.documentElement.style.setProperty(
-        "--print-simulation",
-        originalMedia,
-      );
-    } else {
-      document.documentElement.style.removeProperty("--print-simulation");
-    }
-
-    // Calculate number of pages needed
-    const calculatedPages = Math.ceil(contentHeight / usableHeight);
-
-    setPageCount(Math.max(1, calculatedPages));
   }, [targetSelector, calculationParams]);
 
   useEffect(() => {
@@ -134,31 +126,22 @@ export default function PrintPageSize({
 
     // Set up ResizeObserver to watch for content changes
     const targetElement = document.querySelector(targetSelector);
-
     if (!targetElement) {
       return;
     }
-
     let debounceTimeout: NodeJS.Timeout | null = null;
-
     const debouncedCalculation = () => {
       if (debounceTimeout) {
         clearTimeout(debounceTimeout);
       }
-      setIsCalculating(true);
       debounceTimeout = setTimeout(() => {
         calculatePageCount();
-        setIsCalculating(false);
         debounceTimeout = null;
       }, 150);
     };
-
     const resizeObserver = new ResizeObserver(debouncedCalculation);
     const mutationObserver = new MutationObserver(debouncedCalculation);
-
-    // Store observers in ref for cleanup
     observersRef.current = { resizeObserver, mutationObserver };
-
     resizeObserver.observe(targetElement);
     mutationObserver.observe(targetElement, {
       childList: true,
@@ -166,7 +149,6 @@ export default function PrintPageSize({
       attributes: true,
       characterData: true,
     });
-
     // Cleanup
     return () => {
       if (debounceTimeout) {
@@ -175,71 +157,33 @@ export default function PrintPageSize({
       resizeObserver.disconnect();
       mutationObserver.disconnect();
     };
-  }, [targetSelector]); // Remove calculatePageCount dependency to prevent excessive re-runs
+  }, [targetSelector]);
 
   // Separate effect for when calculation parameters change
   useEffect(() => {
     calculatePageCount();
   }, [calculationParams]);
 
+  // When a new calculation finishes, update the visible page count
+  useEffect(() => {
+    if (pendingPageCount !== null) {
+      setPageCount(pendingPageCount);
+      setPendingPageCount(null);
+    }
+  }, [pendingPageCount]);
+
   // Recalculate when window is resized (affects print layout)
   useEffect(() => {
     let resizeTimeout: NodeJS.Timeout | null = null;
-
     const handleResize = () => {
       if (resizeTimeout) {
         clearTimeout(resizeTimeout);
       }
       resizeTimeout = setTimeout(() => {
-        // Call calculatePageCount directly to avoid dependency issues
-        const params = calculationParams();
-
-        const usableHeight =
-          params.pageHeightPx - (params.topMarginPx + params.bottomMarginPx);
-        const usableWidth =
-          params.pageWidthPx - (params.leftMarginPx + params.rightMarginPx);
-
-        const targetElement = document.querySelector(targetSelector);
-
-        if (!targetElement) {
-          return;
-        }
-
-        const clone = targetElement.cloneNode(true) as HTMLElement;
-        clone.style.position = "absolute";
-        clone.style.left = "-9999px";
-        clone.style.top = "-9999px";
-        clone.style.width = `${usableWidth}px`;
-        clone.style.visibility = "hidden";
-        clone.style.pointerEvents = "none";
-
-        const originalMedia =
-          document.documentElement.style.getPropertyValue("--print-simulation");
-        document.documentElement.style.setProperty(
-          "--print-simulation",
-          "true",
-        );
-
-        document.body.appendChild(clone);
-        const contentHeight = clone.scrollHeight;
-        document.body.removeChild(clone);
-
-        if (originalMedia) {
-          document.documentElement.style.setProperty(
-            "--print-simulation",
-            originalMedia,
-          );
-        } else {
-          document.documentElement.style.removeProperty("--print-simulation");
-        }
-
-        const calculatedPages = Math.ceil(contentHeight / usableHeight);
-        setPageCount(Math.max(1, calculatedPages));
-
+        calculatePageCount();
         resizeTimeout = null;
       }, 300);
     };
-
     window.addEventListener("resize", handleResize);
     return () => {
       if (resizeTimeout) {
@@ -265,8 +209,8 @@ export default function PrintPageSize({
         />
       </svg>
       <span className="font-medium">
-        {isCalculating ? (
-          <span className="text-gray-500">Calculating...</span>
+        {error ? (
+          <span className="text-red-500">Error</span>
         ) : (
           <>
             {pageCount} page{pageCount !== 1 ? "s" : ""}
@@ -274,6 +218,11 @@ export default function PrintPageSize({
         )}
       </span>
       <span className="text-xs text-gray-500 ml-1">({pageSize.name})</span>
+      {error && (
+        <span className="text-xs text-red-500 ml-2" title={error}>
+          {error}
+        </span>
+      )}
     </div>
   );
 }

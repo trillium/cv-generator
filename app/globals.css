@@ -36,3 +36,41 @@
   --line-height-normal: 1.5;
   --font-weight-normal: 400;
 }
+
+/* EditableField styles */
+.editable-hover {
+  background-color: #eff6ff;
+  box-shadow: 0 0 0 1px #bfdbfe;
+  border-radius: 2px;
+}
+
+.editable-editing {
+  box-shadow: 0 0 0 2px #3b82f6;
+  border-radius: 2px;
+}
+
+/* Focus styles for keyboard navigation */
+[role="button"]:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  background-color: #eff6ff;
+  border-radius: 2px;
+}
+
+/* Print compatibility - hide all edit UI */
+@media print {
+  .editable-hover,
+  .editable-editing {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  [role="button"]:focus {
+    outline: none !important;
+    background-color: transparent !important;
+  }
+
+  .print\\:hidden {
+    display: none !important;
+  }
+}

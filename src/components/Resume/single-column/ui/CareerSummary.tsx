@@ -1,4 +1,5 @@
 import Title from "../../../Title/Title";
+import EditableField from "../../../EditableField";
 import type { CVData } from "../../../../types";
 import React from "react";
 
@@ -12,9 +13,23 @@ export default function CareerSummary({ data }: { data: CVData }) {
         {careerSummary.map(({ title, text }, idx) => (
           <React.Fragment key={title}>
             <div className="col-span-2 list-none" key={idx}>
-              <span className="font-semibold">{title}</span>
+              <EditableField
+                yamlPath={`careerSummary.${idx}.title`}
+                value={title}
+                fieldType="text"
+              >
+                <span className="font-semibold">{title}</span>
+              </EditableField>
             </div>
-            <div className="col-span-8 list-none">{text}</div>
+            <div className="col-span-8 list-none">
+              <EditableField
+                yamlPath={`careerSummary.${idx}.text`}
+                value={text}
+                fieldType="textarea"
+              >
+                <span>{text}</span>
+              </EditableField>
+            </div>
           </React.Fragment>
         ))}
       </div>

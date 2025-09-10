@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import ProfileLink from "../../../Profile/ProfileLink/ProfileLink";
+import EditableField from "../../../EditableField/EditableField";
 import type { CVData } from "../../../../types";
 
 function isInfo(obj: any): obj is {
@@ -36,8 +37,22 @@ export default function Header({ data }: { data: CVData }) {
       >
         <div className="flex justify-center">
           <h1 className="text-4xl">
-            <span className=" font-semibold text-primary-500">{firstName}</span>{" "}
-            <span className="font-normal">{lastName}</span>
+            <EditableField
+              yamlPath="info.firstName"
+              value={firstName}
+              fieldType="text"
+            >
+              <span className=" font-semibold text-primary-500">
+                {firstName}
+              </span>
+            </EditableField>{" "}
+            <EditableField
+              yamlPath="info.lastName"
+              value={lastName}
+              fieldType="text"
+            >
+              <span className="font-normal">{lastName}</span>
+            </EditableField>
           </h1>
         </div>
         <div
@@ -47,15 +62,31 @@ export default function Header({ data }: { data: CVData }) {
             "text-2xl": !singleLineNameAndRole,
           })}
         >
-          <h2 className="">{role}</h2>
+          <EditableField
+            yamlPath="info.role"
+            value={role || ""}
+            fieldType="text"
+          >
+            <h2 className="">{role}</h2>
+          </EditableField>
         </div>
       </div>
       <div className="flex justify-center">
         <ul>
           <li className="flex justify-center pt-2 gap-x-4">
-            <ProfileLink icon="Email" link={email} name={email} />
-            <ProfileLink icon="Phone" link={phone} name={phone} />
-            <ProfileLink icon="Website" link={website} name={website} />
+            <EditableField yamlPath="info.email" value={email} fieldType="text">
+              <ProfileLink icon="Email" link={email} name={email} />
+            </EditableField>
+            <EditableField yamlPath="info.phone" value={phone} fieldType="text">
+              <ProfileLink icon="Phone" link={phone} name={phone} />
+            </EditableField>
+            <EditableField
+              yamlPath="info.website"
+              value={website}
+              fieldType="text"
+            >
+              <ProfileLink icon="Website" link={website} name={website} />
+            </EditableField>
           </li>
         </ul>
       </div>
