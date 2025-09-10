@@ -10,16 +10,6 @@
     "linkedIn": "www.linkedin.com/in/trilliumsmith/",
     "github": "www.github.com/trillium/"
   },
-  "careerSummary": [
-    {
-      "title": "Experience",
-      "text": "4+ years building and owning production web applications with a focus on front-end technologies, accessibility, and developer experience. Specialized in creating scalable, efficient, and user-friendly systems for high-traffic platforms."
-    },
-    {
-      "title": "Skills and Languages",
-      "text": "Expertise in building fast, accessible, and intuitive web applications using React, TypeScript, and Next.js. Skilled in collaborating with cross-functional teams to deliver high-quality, scalable solutions. Proficient in JavaScript, TypeScript, Python, HTML, and CSS."
-    }
-  ],
   "header": {
     "name": "Trillium Smith",
     "resume": [
@@ -82,13 +72,6 @@
   "projects": [
     {
       "name": "Flossy",
-      "links": [
-        {
-          "name": "Live Site",
-          "icon": "None",
-          "link": "flossy.com"
-        }
-      ],
       "lines": [
         {
           "text": "Translated client vision into a fully responsive, production-ready website."
@@ -96,28 +79,35 @@
         {
           "text": "Collaborated closely with clients during revisions, translating feedback into precise UI changes without compromising UX or responsive behavior."
         }
+      ],
+      "links": [
+        {
+          "name": "Live Site",
+          "icon": "None",
+          "link": "flossy.com"
+        }
       ]
     },
     {
       "name": "Massage Therapy Booking Application",
-      "links": [
-        {
-          "name": "GitHub",
-          "link": "github.com/trillium/massage",
-          "icon": "None"
-        },
-        {
-          "name": "Live Site",
-          "link": "trilliummassage.la/?utm_source=openai&utm_medium=referral&utm_campaign=frontend_engineer_intuit",
-          "icon": "None"
-        }
-      ],
       "lines": [
         {
           "text": "Built a serverless booking app with Next.js, Tailwind, TypeScript, Redux, and Google Calendar integration."
         },
         {
           "text": "Designed around real-world constraints for solo practitioners and flexible appointment management."
+        }
+      ],
+      "links": [
+        {
+          "name": "GitHub",
+          "icon": "None",
+          "link": "github.com/trillium/massage"
+        },
+        {
+          "name": "Live Site",
+          "icon": "None",
+          "link": "trilliummassage.la/?utm_source=openai&utm_medium=referral&utm_campaign=frontend_engineer_intuit"
         }
       ]
     },
@@ -140,19 +130,19 @@
     },
     {
       "name": "Voice Accessibility Speaking",
-      "links": [
-        {
-          "name": "Video Link",
-          "link": "trillium.is/voice_tools_talk_2025_05",
-          "icon": "None"
-        }
-      ],
       "lines": [
         {
           "text": "Presented a live demo of voice-driven development with Talon Voice and open-source tools like Cursorless, focusing on accessibility and sustainable workflows."
         },
         {
           "text": "Advocated for accessibility in tech through public speaking, live demos, and community education on voice-driven development."
+        }
+      ],
+      "links": [
+        {
+          "name": "Video Link",
+          "icon": "None",
+          "link": "trillium.is/voice_tools_talk_2025_05"
         }
       ]
     }
@@ -194,5 +184,15 @@
     null,
     "Sincerely,",
     "Trillium Smith"
+  ],
+  "careerSummary": [
+    {
+      "title": "Experience",
+      "text": "4+ years building and owning production web applications with a focus on front-end technologies, accessibility, and developer experience. Specialized in creating scalable, efficient, and user-friendly systems for high-traffic platforms."
+    },
+    {
+      "title": "Skills and Languages",
+      "text": "Expertise in building fast, accessible, and intuitive web applications using React, TypeScript, and Next.js. Skilled in collaborating with cross-functional teams to deliver high-quality, scalable solutions. Proficient in JavaScript, TypeScript, Python, HTML, and CSS."
+    }
   ]
 }

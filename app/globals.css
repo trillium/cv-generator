@@ -1,0 +1,38 @@
+@import url("https://fonts.googleapis.com/css2?family=Sacramento&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  /* Teal color palette for primary (matching teal[800] as default) */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+  --color-primary-950: #042f2e;
+  --color-primary: var(--color-primary-800);
+
+  /* Blue color palette for secondary */
+  --color-secondary-50: #eff6ff;
+  --color-secondary-100: #dbeafe;
+  --color-secondary-200: #bfdbfe;
+  --color-secondary-300: #93c5fd;
+  --color-secondary-400: #60a5fa;
+  --color-secondary-500: #3b82f6;
+  --color-secondary-600: #2563eb;
+  --color-secondary-700: #1d4ed8;
+  --color-secondary-800: #1e40af;
+  --color-secondary-900: #1e3a8a;
+  --color-secondary-950: #172554;
+  --color-secondary: var(--color-secondary-500);
+
+  /* Font configuration */
+  --font-sans: "Inter", "system-ui", "Avenir", "Helvetica", "Arial", sans-serif;
+  --line-height-normal: 1.5;
+  --font-weight-normal: 400;
+}

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { resumeComponentMap } from "./$resumeType.resume";
 import { coverLetterComponentMap } from "./$resumeType.cover-letter";
-import { allVariants } from "../lib/allVariants";
+import { allVariants } from "../../lib/allVariants";
 
 /**
  * For two or more objects, for their matching keys, put the values in an array.

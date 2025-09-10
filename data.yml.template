@@ -1,0 +1,67 @@
+info:
+  firstName: Your First Name
+  lastName: Your Last Name
+  role: Your Professional Title
+  email: your.email@example.com
+  phone: 555-123-4567
+  website: www.yourwebsite.com
+  bluesky: bsky.app/profile/yourusername
+  linkedIn: www.linkedin.com/in/yourusername/
+  github: www.github.com/yourusername/
+
+careerSummary:
+  - title: Experience
+    text: Brief description of your years of experience and key focus areas.
+  - title: Skills and Languages
+    text: List your technical skills, programming languages, and tools.
+
+header:
+  name: Your Full Name
+  resume:
+    - A brief professional summary for your resume header.
+  title:
+    - Your Professional Title
+
+workExperience:
+  - position: Job Title
+    company: Company Name
+    location: City, State
+    icon: Remote # or other icon
+    years: Month Year - Present
+    lines:
+      - text: Description of key responsibility or achievement.
+      - text: Another key responsibility or quantified achievement.
+
+projects:
+  - name: Project Name
+    links:
+      - name: Live Site
+        icon: None
+        link: projecturl.com
+    lines:
+      - text: Brief description of what you built and technologies used.
+
+profile:
+  shouldDisplayProfileImage: false
+  lines:
+    - City, State
+    - (555) 123-4567
+    - your.email@example.com
+  links:
+    - name: linkedin.com/in/yourusername/
+      icon: LinkedIn
+      link: linkedin.com/in/yourusername/
+    - name: github.com/yourusername
+      icon: GitHub
+      link: github.com/yourusername
+    - name: yourwebsite.com
+      icon: Website
+      link: yourwebsite.com
+
+coverLetter:
+  - Dear Hiring team,
+  - 
+  - Your cover letter content goes here.
+  - 
+  - Sincerely,
+  - Your Name

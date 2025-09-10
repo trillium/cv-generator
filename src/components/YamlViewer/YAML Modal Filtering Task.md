@@ -1,0 +1,7 @@
+YAML Modal Filtering Task Task Description I was asked to modify the existing YAML data modal component to show only the relevant data sections based on the current route/page the user is viewing.
+
+Requirements Current Behavior YAML modal shows ALL data from data.yml file regardless of which page user is on User sees irrelevant sections (e.g., technical sections on pages that don't use them) Desired Behavior Route-specific filtering: Show only data sections relevant to current page Resume vs Cover Letter: Different data sections for different page types Component-specific: Hide unused sections (e.g., technical section not used by certain resume layouts) Implementation Plan
+
+1. Create Data Filtering System
+2. Update Modal Component
+3. Integration Points Route Mapping Examples Resume Pages Cover Letter Pages Layout-Specific Filtering Technical Approach Route Detection: Use Next.js router to determine current page Data Filtering: YAML parsing with section filtering based on route Component Props: Pass filtered data and metadata to modal Type Safety: Maintain TypeScript types throughout filtering process Success Criteria User sees only relevant YAML sections for their current page Modal title reflects current page type (e.g., "Resume Data" vs "Cover Letter Data") No irrelevant sections displayed Maintains existing scrollable modal behavior Type-safe implementation with proper error handling

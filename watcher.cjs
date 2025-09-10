@@ -3,6 +3,9 @@ const fs = require("fs");
 const path = require("path");
 const diff = require("diff");
 
+// Load environment variables from .env file
+require("dotenv").config();
+
 let yaml;
 try {
   yaml = require("js-yaml");
@@ -11,8 +14,21 @@ try {
   process.exit(1);
 }
 
-const yamlPath = path.join(__dirname, "data.yml");
+// Use PII_PATH environment variable, fallback to current directory
+const piiPath = process.env.PII_PATH || __dirname;
+const yamlPath = path.join(piiPath, "data.yml");
 const jsonPath = path.join(__dirname, "src", "data.json");
+
+console.log(`Looking for data.yml at: ${yamlPath}`);
+
+// Check if the YAML file exists
+if (!fs.existsSync(yamlPath)) {
+  console.error(`❌ data.yml not found at ${yamlPath}`);
+  console.error(
+    `Please ensure your PII_PATH environment variable is set correctly or that data.yml exists in the specified location.`,
+  );
+  process.exit(1);
+}
 
 let lastData = null;
 

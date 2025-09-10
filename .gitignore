@@ -30,3 +30,13 @@ src/assets/profile.*
 !src/assets/profile.example.png 
 src/data.json
 src/script-data.json
+
+# PII Files - These should be in a separate repository
+data.yml
+data-backup.yml
+data_anon.yml
+*.pdf
+!examples/*.pdf
+
+.next
+.env

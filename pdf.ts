@@ -1,24 +1,59 @@
 import puppeteer, { Page, Browser } from "puppeteer";
 import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { createServer } from "vite";
+import { spawn } from "node:child_process";
+import { config } from "dotenv";
 import path from "node:path";
 import { CVData } from "./src/types";
 import { anonymizeData } from "./lib/anonymous";
 import { parseAndWriteDataFile } from "./lib/parseAndWriteDataFile";
-import { allVariants } from "./src/lib/allVariants";
+import { allVariants } from "./lib/allVariants";
 import readline from "readline";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
+// Load environment variables from .env file
+config();
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-async function startViteServer(rootDir: string) {
-  const server = await createServer({
-    configFile: "vite.config.ts",
-    root: rootDir,
+async function startNextServer(rootDir: string) {
+  const nextProcess = spawn("pnpm", ["dev"], {
+    cwd: rootDir,
+    stdio: ["pipe", "pipe", "pipe"],
   });
-  await server.listen();
-  return server;
+
+  // Wait for the server to be ready
+  return new Promise<{ process: any; url: string }>((resolve, reject) => {
+    let resolved = false;
+    const timeout = setTimeout(() => {
+      if (!resolved) {
+        nextProcess.kill();
+        reject(new Error("Next.js server failed to start within 30 seconds"));
+      }
+    }, 30000);
+
+    nextProcess.stdout?.on("data", (data) => {
+      const output = data.toString();
+      console.log(output);
+      if (output.includes("Ready") && !resolved) {
+        resolved = true;
+        clearTimeout(timeout);
+        resolve({ process: nextProcess, url: "http://localhost:3000" });
+      }
+    });
+
+    nextProcess.stderr?.on("data", (data) => {
+      console.error(data.toString());
+    });
+
+    nextProcess.on("error", (error) => {
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timeout);
+        reject(error);
+      }
+    });
+  });
 }
 
 async function generatePdf(url: string, pdfOptions: object, page: Page) {
@@ -94,8 +129,11 @@ async function generateAndSavePdf({
 // Main script
 // Find the first argument that does not start with '-' or '--' as the data file path
 const userArgv = process.argv.slice(2);
+const defaultDataPath = process.env.PII_PATH
+  ? path.join(process.env.PII_PATH, "data.yml")
+  : "./src/data.json";
 const dataPath =
-  userArgv.find((arg) => !arg.startsWith("-")) || "./src/data.json";
+  userArgv.find((arg) => !arg.startsWith("-")) || defaultDataPath;
 const isAnon = userArgv.includes("--anon");
 const skipPdf = userArgv.includes("--no-pdf");
 
@@ -186,18 +224,15 @@ if (resumeTypeArg) {
   }
 })();
 
-async function main(dataObj, resumeType) {
+async function main(dataObj: CVData, resumeType: string) {
   console.log(dataObj.header.name);
 
-  console.log("⏳ Starting Vite server");
-  const server = await startViteServer(__dirname);
+  console.log("⏳ Starting Next.js server");
+  const server = await startNextServer(__dirname);
 
   console.log("🐾 Opening Puppeteer and generating PDF");
   const outDir = path.join(__dirname, "out");
-  const url = new URL(
-    `/${resumeType}/resume`,
-    server.resolvedUrls?.local[0] as string,
-  ).toString();
+  const url = new URL(`/${resumeType}/resume`, server.url).toString();
   const browser = await puppeteer.launch();
 
   if (printOptions.includes("resume")) {
@@ -206,7 +241,7 @@ async function main(dataObj, resumeType) {
   if (printOptions.includes("cover")) {
     const coverLetterUrl = new URL(
       `/${resumeType}/cover-letter`,
-      server.resolvedUrls?.local[0] as string,
+      server.url,
     ).toString();
     await generateAndSavePdf({
       url: coverLetterUrl,
@@ -219,7 +254,7 @@ async function main(dataObj, resumeType) {
   await browser.close();
   console.log("💾 Saving PDF");
 
-  await server.close();
+  server.process.kill();
   console.log("🏁 Done");
 
   resetScriptDataJson(path.join(__dirname, "src", "script-data.json"));

@@ -60,19 +60,20 @@ const ProfileSkills = ({ technical }: { technical: TechnicalCategory[] }) => {
   return (
     <div className="flex flex-col gap-2 w-full">
       <Title text="Technical Skills" />
-      {technical.map((tech, index) => {
-        return (
-          <div className="flex flex-col gap-1" key={index}>
-            <span className="font-semibold text-sm text-neutral-700 mb-1">
-              {tech.category}
-            </span>
-            <BubbleList
-              bubbles={tech.bubbles}
-              className="flex-wrap gap-0.5 gap-y-1"
-            />
-          </div>
-        );
-      })}
+      {technical &&
+        technical.map((tech, index) => {
+          return (
+            <div key={`${tech}${index}`} className="flex flex-col gap-1">
+              <span className="font-semibold text-sm text-neutral-700 mb-1">
+                {tech.category}
+              </span>
+              <BubbleList
+                bubbles={tech.bubbles}
+                className="flex-wrap gap-0.5 gap-y-1"
+              />
+            </div>
+          );
+        })}
     </div>
   );
 };

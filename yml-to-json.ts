@@ -1,7 +1,14 @@
 #!/usr/bin/env tsx
 import { parseAndWriteDataFile } from "./lib/parseAndWriteDataFile";
+import { config } from "dotenv";
+import path from "path";
 
-const inputPath = "data.yml";
+// Load environment variables from .env file
+config();
+
+// Use PII_PATH environment variable, fallback to current directory
+const piiPath = process.env.PII_PATH || process.cwd();
+const inputPath = path.join(piiPath, "data.yml");
 const outputPath = "src/data.json";
 
 try {

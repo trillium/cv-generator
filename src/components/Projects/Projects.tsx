@@ -15,8 +15,10 @@ const Projects = ({
     <section className="flex flex-col items-start gap-2">
       <Title text="Projects" />
       <div>
-        {data.map((item) => {
-          return <ProjectItem data={item} showBubbles={showBubbles} />;
+        {data.map((item, num) => {
+          return (
+            <ProjectItem key={num} data={item} showBubbles={showBubbles} />
+          );
         })}
       </div>
     </section>
