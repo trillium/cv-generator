@@ -15,7 +15,18 @@ export default function Footer({ data }: { data: CVData }) {
       <Separator className="" />
       <footer className="flex justify-center pt-2 gap-x-4">
         {footerLinks.map((link, index) => {
-          return <ProfileLink key={index} {...link} />;
+          // Find the original index in the links array for proper YAML path
+          const originalIndex = links.findIndex(
+            (l) => l.icon === link.icon && l.link === link.link,
+          );
+          return (
+            <ProfileLink
+              key={index}
+              {...link}
+              nameYamlPath={`profile.links.${originalIndex}.name`}
+              linkYamlPath={`profile.links.${originalIndex}.link`}
+            />
+          );
         })}
       </footer>
     </>

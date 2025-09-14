@@ -3,6 +3,8 @@ import { FaSquareXTwitter, FaBluesky, FaPhone } from "react-icons/fa6";
 import { BsGlobe } from "react-icons/bs";
 import { MdEmail } from "react-icons/md";
 import { clsx } from "clsx";
+import EditableField from "../../EditableField";
+import { useYamlPathUpdater } from "../../../hooks/useYamlPathUpdater";
 
 export type ProfileLinkProps = {
   /** Only GitHub Twitter LinkedIn Website */
@@ -14,38 +16,50 @@ export type ProfileLinkProps = {
   className?: string;
 };
 
-const ProfileLink = ({ icon, link, name, className }: ProfileLinkProps) => {
-  let Icon;
+interface EditableProfileLinkProps extends ProfileLinkProps {
+  /** YAML path for the link field - required for editing */
+  linkYamlPath: string;
+  /** YAML path for the name field - required for editing */
+  nameYamlPath: string;
+}
 
-  switch (icon) {
-    case "GitHub":
-      Icon = <FaGithub />;
-      break;
-    case "Twitter":
-      Icon = <FaSquareXTwitter />;
-      break;
-    case "LinkedIn":
-      Icon = <FaLinkedin />;
-      break;
-    case "Website":
-      Icon = <BsGlobe />;
-      break;
-    case "Bluesky":
-      Icon = <FaBluesky />;
-      break;
-    case "Email":
-      Icon = <MdEmail />;
-      break;
-    case "Phone":
-      Icon = <FaPhone />;
-      break;
-    case "None":
-      Icon = <></>;
-      break;
-  }
+const ProfileLink = ({
+  icon,
+  link,
+  name,
+  className,
+  linkYamlPath,
+  nameYamlPath,
+}: EditableProfileLinkProps) => {
+  const { updateYamlPath } = useYamlPathUpdater();
+
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case "GitHub":
+        return <FaGithub />;
+      case "Twitter":
+        return <FaSquareXTwitter />;
+      case "LinkedIn":
+        return <FaLinkedin />;
+      case "Website":
+        return <BsGlobe />;
+      case "Bluesky":
+        return <FaBluesky />;
+      case "Email":
+        return <MdEmail />;
+      case "Phone":
+        return <FaPhone />;
+      case "None":
+        return <></>;
+      default:
+        return null;
+    }
+  };
+
+  const Icon = getIcon(icon);
 
   let href: string;
-  let anchorProps: React.AnchorHTMLAttributes<HTMLAnchorElement> = {
+  const anchorProps: React.AnchorHTMLAttributes<HTMLAnchorElement> = {
     className: "font-semibold text-inherit flex items-center gap-2",
   };
 
@@ -56,14 +70,51 @@ const ProfileLink = ({ icon, link, name, className }: ProfileLinkProps) => {
   } else {
     href = `https://${link}`;
     anchorProps.rel = "noopener noreferrer";
+    anchorProps.target = "_blank";
   }
 
+  const handleSaveLink = async (text: string, url: string) => {
+    try {
+      // Update both text and URL fields
+      await updateYamlPath(nameYamlPath, text);
+      await updateYamlPath(linkYamlPath, url);
+    } catch (error) {
+      console.error("Failed to save link:", error);
+    }
+  };
+
+  // Use the unified link editing approach
   return (
     <div className={clsx("text-inherit flex items-center gap-2", className)}>
-      <a href={href} {...anchorProps} target="_blank">
-        {Icon}
-        <span className="text-sm">{name || icon}</span>
-      </a>
+      {Icon}
+      <EditableField
+        fieldType="link"
+        value={name || icon}
+        yamlPath={nameYamlPath}
+        linkData={{
+          text: name || icon,
+          url: link,
+          icon: Icon,
+          textYamlPath: nameYamlPath,
+          urlYamlPath: linkYamlPath,
+          onSaveLink: handleSaveLink,
+        }}
+      >
+        <>
+          <a href={href} {...anchorProps} className="print:block hidden">
+            <span className="text-sm">{name || icon}</span>
+            <span className="ml-2 text-xs opacity-60">({link})</span>
+          </a>
+          <a
+            href="javascript:void(0)"
+            {...anchorProps}
+            className="block print:hidden"
+          >
+            <span className="text-sm">{name || icon}</span>
+            <span className="ml-2 text-xs opacity-60">({link})</span>
+          </a>
+        </>
+      </EditableField>
     </div>
   );
 };

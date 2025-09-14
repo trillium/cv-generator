@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navigation from "../src/components/Navigation/Navigation";
-import { getYamlData } from "../lib/getYamlData";
-import { YamlDataProvider } from "../src/contexts/YamlDataContext";
+import { ResumeProvider } from "../src/contexts/ResumeContext";
+import { ModalProvider } from "../src/contexts/ModalContext";
+import Modal from "../src/components/ui/modal";
 
 export const metadata: Metadata = {
   title: "CV Generator",
@@ -11,20 +12,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  searchParams,
 }: {
   children: React.ReactNode;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const initialYamlContent = getYamlData();
-
   return (
     <html lang="en">
       <body>
-        <YamlDataProvider initialYamlContent={initialYamlContent}>
-          <Navigation />
-          <div className="m-6 print:m-0">
-            <main className="resume-content">{children}</main>
-          </div>
-        </YamlDataProvider>
+        <ResumeProvider>
+          <ModalProvider>
+            <Navigation />
+            <div className="m-6 print:m-0">
+              <main className="resume-content">{children}</main>
+            </div>
+            <Modal />
+          </ModalProvider>
+        </ResumeProvider>
       </body>
     </html>
   );

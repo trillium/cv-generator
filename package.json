@@ -21,10 +21,12 @@
     "prepare": "husky",
     "watch:data": "nodemon --exec \"node watcher.cjs\" --watch \"$PII_PATH/data.yml\" --watch data.yml",
     "yml-to-json": "tsx lib/ymlToJson.ts",
-    "yml-to-json:watch": "nodemon --watch . --ext yml --exec 'tsx lib/ymlToJson.ts'"
+    "yml-to-json:watch": "nodemon --watch . --ext yml --exec 'tsx lib/ymlToJson.ts'",
+    "init:multi-resume": "node scripts/init-multi-resume.js"
   },
   "packageManager": "pnpm@10.11.0",
   "dependencies": {
+    "@headlessui/react": "^2.2.7",
     "clsx": "^2.1.0",
     "diff": "^8.0.2",
     "dotenv": "^17.2.2",

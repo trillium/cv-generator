@@ -78,7 +78,7 @@ interface EditableFieldProps<T> {
 
 ## Implementation Notes
 
-- Uses existing `YamlDataContext` for state management
+- Uses existing `ResumeContext` for state management
 - Leverages `useYamlPathUpdater` hook for data persistence
 - Maintains layout during editing via invisible placeholder
 - Auto-saves on blur/Enter, cancels on Escape

@@ -33,7 +33,7 @@ vi.mock("../src/components/Navigation/Navigation", () => ({
 }));
 
 // Import test components
-import { YamlDataProvider } from "../src/contexts/YamlDataContext";
+import { ResumeProvider } from "../src/contexts/ResumeContext";
 import Header from "../src/components/Header/Header";
 
 const TestResumePage = () => {
@@ -73,11 +73,7 @@ profile:
   links: []
 `;
 
-  return (
-    <YamlDataProvider initialYamlContent={initialYamlContent}>
-      {children}
-    </YamlDataProvider>
-  );
+  return <ResumeProvider>{children}</ResumeProvider>;
 }
 
 describe("YAML Data Integration - Name Update Flow", () => {
@@ -158,7 +154,7 @@ profile:
     expect(screen.getByText("Test User Name")).toBeInTheDocument();
   });
 
-  it("should initialize YamlDataContext with correct initial content", () => {
+  it("should initialize ResumeContext with correct initial content", () => {
     const TestComponent = () => {
       // This would be imported from the context
       return <div data-testid="yaml-context">Context loaded</div>;

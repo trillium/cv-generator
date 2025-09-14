@@ -1,11 +1,13 @@
 import * as yaml from "js-yaml";
-import { useYamlData } from "../contexts/YamlDataContext";
+import { useYamlData } from "../contexts/ResumeContext";
+import { useContextAwareYamlUpdater } from "./useContextAwareYamlUpdater";
 
 /**
  * Hook for updating specific YAML paths granularly
  */
 export function useYamlPathUpdater() {
-  const { yamlContent, updateYamlContent } = useYamlData();
+  const { yamlContent } = useYamlData();
+  const { updateYamlContent, currentContext, isFileBasedMode } = useContextAwareYamlUpdater();
 
   /**
    * Update a specific path in the YAML data
@@ -14,11 +16,21 @@ export function useYamlPathUpdater() {
    */
   const updateYamlPath = async (path: string, newValue: any) => {
     try {
+      console.log(`🎯 useYamlPathUpdater.updateYamlPath called with:`, {
+        path,
+        newValue,
+        currentContext,
+        isFileBasedMode,
+        yamlContentLength: yamlContent.length
+      });
+
       // Parse current YAML
       const data = yaml.load(yamlContent) as Record<string, any>;
+      console.log("📋 Parsed current YAML data:", data);
 
       // Update the specific path
       setNestedValue(data, path, newValue);
+      console.log("🔄 Updated data after setNestedValue:", data);
 
       // Convert back to YAML
       const updatedYaml = yaml.dump(data, {
@@ -27,16 +39,23 @@ export function useYamlPathUpdater() {
         noRefs: true,
         skipInvalid: true,
       });
+      console.log("📄 Generated updated YAML:", {
+        length: updatedYaml.length,
+        preview: updatedYaml.substring(0, 200) + "..."
+      });
 
-      // Update via context
+      // Update via context-aware updater
+      console.log("🚀 Calling updateYamlContent...");
       await updateYamlContent(updatedYaml);
+
+      console.log(`✅ YAML path "${path}" updated successfully`);
     } catch (error) {
-      console.error("Error updating YAML path:", path, error);
+      console.error("❌ Error updating YAML path:", path, error);
       throw error;
     }
   };
 
-  return { updateYamlPath };
+  return { updateYamlPath, currentContext, isFileBasedMode };
 }
 
 /**

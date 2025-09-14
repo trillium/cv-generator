@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SingleColumnResume from "../../../src/components/Resume/single-column/resume";
-import { useYamlData } from "../../../src/contexts/YamlDataContext";
+import { useYamlData } from "../../../src/contexts/ResumeContext";
 import * as yaml from "js-yaml";
 import type { CVData } from "../../../src/types";
 

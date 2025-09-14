@@ -1,48 +1,26 @@
+"use client";
+
 import type { CVData } from "../../../types";
 import Header from "./ui/Header";
 import Title from "../../Title/Title";
 import Footer from "./ui/Footer";
-import ClickableSection from "../../ClickableSection/ClickableSection";
-import SectionEditorModal from "../../SectionEditorModal/SectionEditorModal";
-import { useSectionEditor } from "../../../hooks/useSectionEditor";
+import EditableField from "../../EditableField/EditableField";
 
 function SingleColumnCoverLetter({ data }: { data: CVData }) {
-  const { currentEditingSection, openSectionEditor, closeSectionEditor } =
-    useSectionEditor();
-
   return (
     <>
       <div className="min-h-screen w-full bg-white flex flex-col items-center justify-between">
         <div className="w-full max-w-5xl mx-auto rounded-md bg-white">
-          <ClickableSection
-            yamlPath="header"
-            onSectionClick={openSectionEditor}
-          >
-            <Header data={data} />
-          </ClickableSection>
+          <Header data={data} />
 
           <Title text="Cover Letter" />
 
-          <ClickableSection
-            yamlPath="coverLetter"
-            onSectionClick={openSectionEditor}
-          >
-            <CoverLetterContent coverLetterLines={data.coverLetter || []} />
-          </ClickableSection>
+          <CoverLetterContent coverLetterLines={data.coverLetter || []} />
         </div>
         <div className="w-full">
           <Footer data={data} />
         </div>
       </div>
-
-      {/* Section Editor Modal */}
-      {currentEditingSection && (
-        <SectionEditorModal
-          isOpen={true}
-          onClose={closeSectionEditor}
-          yamlPath={currentEditingSection}
-        />
-      )}
     </>
   );
 }
@@ -52,14 +30,26 @@ function CoverLetterContent({
 }: {
   coverLetterLines: string[];
 }) {
+  console.log("CoverLetterContent received:", coverLetterLines);
   return (
     <div>
       {coverLetterLines.map((line, index) => {
         const text = line !== null ? line : "\u00A0";
+        console.log(`Line ${index}:`, {
+          line,
+          text,
+          yamlPath: `coverLetter.${index}`,
+        });
         return (
-          <p key={index} className="my-2 leading-loose">
-            {text}
-          </p>
+          <EditableField
+            key={index}
+            yamlPath={`coverLetter.${index}`}
+            value={line || ""}
+            fieldType="text"
+            className="!block !relative w-full"
+          >
+            <p className="my-2 leading-loose">{text}</p>
+          </EditableField>
         );
       })}
     </div>

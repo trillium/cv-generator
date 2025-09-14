@@ -24,7 +24,7 @@ describe("Data Propagation Issue Analysis", () => {
     console.log("SOLUTION NEEDED:");
     console.log("1. Client-side data fetching after YAML updates");
     console.log("2. Force page revalidation after changes");
-    console.log("3. Update components to use YamlDataContext for rendering");
+    console.log("3. Update components to use ResumeContext for rendering");
     console.log("");
     console.log("CURRENT FLOW (BROKEN):");
     console.log(
@@ -44,14 +44,14 @@ describe("Data Propagation Issue Analysis", () => {
     console.log("🔧 SPECIFIC FIXES REQUIRED:");
     console.log("");
     console.log(
-      "1. Update page components to use YamlDataContext instead of getDefaultData()",
+      "1. Update page components to use ResumeContext instead of getDefaultData()",
     );
     console.log(
       "   - Current: SingleColumnResumePage uses getDefaultData() (static)",
     );
-    console.log("   - Needed: Use yamlData from YamlDataContext (dynamic)");
+    console.log("   - Needed: Use yamlData from ResumeContext (dynamic)");
     console.log("");
-    console.log("2. Ensure YamlDataContext loads fresh data after updates");
+    console.log("2. Ensure ResumeContext loads fresh data after updates");
     console.log("   - Context should fetch from API after successful saves");
     console.log("   - Components should re-render when context data changes");
     console.log("");

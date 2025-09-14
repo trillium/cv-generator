@@ -49,7 +49,14 @@ export const ProfileHeader = ({
       </div>
       <div className="flex flex-row flex-wrap gap-2 mt-2">
         {links.map((link, index) => {
-          return <ProfileLink key={index} {...link} />;
+          return (
+            <ProfileLink
+              key={index}
+              {...link}
+              nameYamlPath={`profile.links.${index}.name`}
+              linkYamlPath={`profile.links.${index}.link`}
+            />
+          );
         })}
       </div>
     </div>
