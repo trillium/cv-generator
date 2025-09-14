@@ -9,8 +9,8 @@ import EditableField from "../../EditableField/EditableField";
 function SingleColumnCoverLetter({ data }: { data: CVData }) {
   return (
     <>
-      <div className="min-h-screen w-full bg-white flex flex-col items-center justify-between">
-        <div className="w-full max-w-5xl mx-auto rounded-md bg-white">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex flex-col items-center justify-between">
+        <div className="w-full max-w-5xl mx-auto rounded-md bg-white dark:bg-gray-800">
           <Header data={data} />
 
           <Title text="Cover Letter" />

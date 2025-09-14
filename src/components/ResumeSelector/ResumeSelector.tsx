@@ -116,7 +116,7 @@ const ResumeSelector: React.FC = () => {
         <button
           onClick={openResumeNavigator}
           disabled={loading}
-          className="flex items-center space-x-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+          className="flex items-center space-x-2 rounded-md bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
         >
           {/* Status indicator */}
           <div
@@ -130,7 +130,7 @@ const ResumeSelector: React.FC = () => {
           <div className="text-left">
             <span className="font-medium">{formatResumeTitle()}</span>
             {formatResumeSubtitle() && (
-              <span className="ml-2 text-xs text-gray-500">
+              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
                 {formatResumeSubtitle()}
               </span>
             )}
@@ -158,7 +158,7 @@ const ResumeSelector: React.FC = () => {
           <button
             onClick={openResumeCreator}
             disabled={loading}
-            className="rounded-md bg-blue-600 px-3 py-3 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            className="rounded-md bg-blue-600 dark:bg-blue-700 px-3 py-3 text-sm font-medium text-white shadow-sm hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
             title="Create New Resume"
           >
             <svg
@@ -180,7 +180,7 @@ const ResumeSelector: React.FC = () => {
 
       {/* Current Resume Info */}
       {currentResume && (
-        <div className="mt-2 text-xs text-gray-500">
+        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
           {currentResume.info?.role && (
             <span className=" whitespace-nowrap block">
               Role: {currentResume.info.role}

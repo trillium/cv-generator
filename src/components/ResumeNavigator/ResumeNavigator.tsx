@@ -105,8 +105,10 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
   return (
     <div>
       <div className="mb-4">
-        <h3 className="text-lg font-medium text-gray-900">Resume Navigator</h3>
-        <p className="text-sm text-gray-600">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+          Resume Navigator
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-300">
           Select a resume file to view or manage your resume files
         </p>
       </div>
@@ -114,16 +116,18 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
       {loading && (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading files...</p>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">
+            Loading files...
+          </p>
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
-          <p className="text-red-800">{error}</p>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-md p-4 mb-4">
+          <p className="text-red-800 dark:text-red-300">{error}</p>
           <button
             onClick={() => setError(null)}
-            className="mt-2 text-sm text-red-600 hover:text-red-800"
+            className="mt-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
           >
             Dismiss
           </button>
@@ -132,7 +136,9 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
 
       {!loading && !error && files && files.length === 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-600">No resume files found</p>
+          <p className="text-gray-600 dark:text-gray-300">
+            No resume files found
+          </p>
         </div>
       )}
 
@@ -145,15 +151,15 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
             return (
               <div
                 key={filePath}
-                className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+                className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-600"
               >
                 <div className="flex-1">
                   <button
                     onClick={() => handleSelectResume(filePath)}
-                    className="text-left hover:text-blue-600 font-medium w-full"
+                    className="text-left hover:text-blue-600 dark:hover:text-blue-400 font-medium w-full"
                   >
                     <div className="font-semibold">{displayName}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       File: {filePath}
                     </div>
                   </button>
@@ -163,7 +169,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
                   {/* Duplicate button */}
                   <button
                     onClick={() => setDuplicateSource(filePath)}
-                    className="px-2 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                    className="px-2 py-1 text-sm bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30"
                     title="Duplicate file"
                   >
                     Copy
@@ -172,7 +178,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
                   {/* Delete button */}
                   <button
                     onClick={() => setDeleteConfirm(filePath)}
-                    className="px-2 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                    className="px-2 py-1 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800/30"
                     title="Delete file"
                   >
                     Delete
@@ -187,13 +193,13 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
       <div className="flex justify-between items-center pt-4 border-t mt-4">
         <button
           onClick={loadFiles}
-          className="px-4 py-2 text-blue-600 hover:text-blue-800 font-medium"
+          className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
         >
           Refresh
         </button>
         <button
           onClick={closeModal}
-          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+          className="px-4 py-2 bg-gray-600 dark:bg-gray-700 text-white rounded hover:bg-gray-700 dark:hover:bg-gray-600"
         >
           Close
         </button>
@@ -202,18 +208,18 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
       {/* Delete Confirmation - show inline when deleteConfirm is set */}
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-            <h4 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4">
+            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               Delete Resume File
             </h4>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
               Are you sure you want to delete "{deleteConfirm}"? This action
               cannot be undone, but a backup will be created.
             </p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Cancel
               </button>
@@ -221,7 +227,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
                 onClick={() =>
                   deleteConfirm && handleDeleteResume(deleteConfirm)
                 }
-                className="rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                className="rounded-md border border-transparent bg-red-600 dark:bg-red-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
                 Delete
               </button>
@@ -233,11 +239,11 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
       {/* Duplicate form - show inline when duplicateSource is set */}
       {duplicateSource && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-            <h4 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4">
+            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               Duplicate Resume
             </h4>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
               Create a copy of "{duplicateSource}"
             </p>
 
@@ -245,7 +251,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
               <div>
                 <label
                   htmlFor="duplicateTarget"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
                   New filename
                 </label>
@@ -255,7 +261,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
                   value={duplicateTarget}
                   onChange={(e) => setDuplicateTarget(e.target.value)}
                   placeholder="Enter new filename (e.g., resume-copy.yml)"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 
@@ -265,14 +271,14 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
                     setDuplicateSource(null);
                     setDuplicateTarget("");
                   }}
-                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDuplicateResume}
                   disabled={!duplicateTarget.trim()}
-                  className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-md border border-transparent bg-blue-600 dark:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Duplicate
                 </button>

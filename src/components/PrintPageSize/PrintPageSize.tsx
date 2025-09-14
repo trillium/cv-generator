@@ -194,9 +194,9 @@ export default function PrintPageSize({
   }, [targetSelector, calculationParams]);
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 bg-gray-50 rounded-md border border-gray-300">
+    <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600">
       <svg
-        className="w-4 h-4 text-gray-500"
+        className="w-4 h-4 text-gray-500 dark:text-gray-400"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -210,16 +210,21 @@ export default function PrintPageSize({
       </svg>
       <span className="font-medium">
         {error ? (
-          <span className="text-red-500">Error</span>
+          <span className="text-red-500 dark:text-red-400">Error</span>
         ) : (
           <>
             {pageCount} page{pageCount !== 1 ? "s" : ""}
           </>
         )}
       </span>
-      <span className="text-xs text-gray-500 ml-1">({pageSize.name})</span>
+      <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+        ({pageSize.name})
+      </span>
       {error && (
-        <span className="text-xs text-red-500 ml-2" title={error}>
+        <span
+          className="text-xs text-red-500 dark:text-red-400 ml-2"
+          title={error}
+        >
           {error}
         </span>
       )}

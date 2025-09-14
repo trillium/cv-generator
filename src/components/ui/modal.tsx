@@ -41,7 +41,7 @@ export default function Modal() {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="bg-opacity-75 fixed inset-0 bg-gray-500/75 transition-opacity" />
+          <div className="bg-opacity-75 fixed inset-0 bg-gray-500/75 dark:bg-gray-900/75 transition-opacity" />
         </TransitionChild>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -57,7 +57,7 @@ export default function Modal() {
             >
               <DialogPanel
                 className={clsx(
-                  "border-primary-600 relative flex-grow transform overflow-hidden rounded-lg border bg-slate-100 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6",
+                  "border-primary-600 relative flex-grow transform overflow-hidden rounded-lg border bg-slate-100 dark:bg-gray-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6",
                   getSizeClasses(size),
                 )}
               >

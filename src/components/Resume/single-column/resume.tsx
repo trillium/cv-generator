@@ -9,8 +9,8 @@ function TwoColumnResume({ data }: { data: CVData }) {
   const showBubbles = false;
 
   return (
-    <div className="min-h-screen w-full bg-white flex flex-col items-center justify-between">
-      <div className="w-full max-w-5xl mx-auto rounded-md bg-white">
+    <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex flex-col items-center justify-between">
+      <div className="w-full max-w-5xl mx-auto rounded-md bg-white dark:bg-gray-800">
         <Header data={data} />
         <CareerSummary data={data} />
         <WorkExperience data={data.workExperience} showBubbles={showBubbles} />

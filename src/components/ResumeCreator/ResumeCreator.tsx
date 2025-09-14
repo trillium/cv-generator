@@ -80,10 +80,10 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-medium text-gray-900">
+        <h2 className="text-lg font-medium text-gray-900 dark:text-white">
           Create New Resume
         </h2>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
           Create a new resume file with a basic template
         </p>
       </div>
@@ -99,7 +99,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
         <div>
           <label
             htmlFor="position"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
             Position <span className="text-red-500">*</span>
           </label>
@@ -109,7 +109,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
             value={position}
             onChange={(e) => setPosition(e.target.value)}
             placeholder="e.g., software-engineer, frontend-developer"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             required
           />
         </div>
@@ -118,7 +118,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
         <div>
           <label
             htmlFor="company"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
             Company
           </label>
@@ -128,7 +128,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
             value={company}
             onChange={(e) => setCompany(e.target.value)}
             placeholder="Company name (optional)"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
 
@@ -136,7 +136,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
         <div>
           <label
             htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
             Description
           </label>
@@ -146,14 +146,16 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
             placeholder="Brief description of this resume version"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="rounded-md bg-red-50 p-4">
-            <div className="text-sm text-red-700">{error}</div>
+          <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
+            <div className="text-sm text-red-700 dark:text-red-300">
+              {error}
+            </div>
           </div>
         )}
 
@@ -162,14 +164,14 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            className="rounded-md border border-transparent bg-blue-600 dark:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
           >
             {loading ? "Creating..." : "Create Resume"}
           </button>

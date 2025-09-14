@@ -23,7 +23,7 @@ export default function ActionButtons({
     <>
       {/* Delete button on the left */}
       {canShowAddButtons && (
-        <div className="absolute top-1/2 -left-5 transform -translate-y-1/2 z-10 print:hidden">
+        <div className="absolute top-1/2 -left-5 transform -translate-y-1/2 z-10 print:hidden hidden group-hover:block">
           <button
             onClick={onDelete}
             className="bg-red-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-red-600 transition-colors"
@@ -48,7 +48,7 @@ export default function ActionButtons({
 
       {/* Add above button - centered at top */}
       {canShowAddButtons && (
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10 print:hidden">
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10 print:hidden hidden group-hover:block">
           <button
             onClick={onAddAbove}
             className="bg-green-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-green-600 transition-colors"
@@ -73,7 +73,7 @@ export default function ActionButtons({
 
       {/* Add below button - centered at bottom */}
       {canShowAddButtons && (
-        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-10 print:hidden">
+        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-10 print:hidden hidden group-hover:block">
           <button
             onClick={onAddBelow}
             className="bg-green-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-green-600 transition-colors"
@@ -97,7 +97,7 @@ export default function ActionButtons({
       )}
 
       {/* Edit button on the right */}
-      <div className="absolute top-1/2 -right-5 transform -translate-y-1/2 z-10 print:hidden">
+      <div className="absolute top-1/2 -right-5 transform -translate-y-1/2 z-10 print:hidden hidden group-hover:block">
         <button
           onClick={onEdit}
           className="bg-blue-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-blue-600 transition-colors"

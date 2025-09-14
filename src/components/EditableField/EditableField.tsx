@@ -46,7 +46,6 @@ export default function EditableField<T extends string | string[]>({
   const [editValue, setEditValue] = useState<string>(
     Array.isArray(value) ? value.join("\n") : String(value || ""),
   );
-  const [isHovered, setIsHovered] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const { updateYamlPath } = useYamlPathUpdater();
@@ -57,6 +56,19 @@ export default function EditableField<T extends string | string[]>({
 
   const canShowAddButtons = shouldShowAddButtons(yamlPath, parsedData);
   const isEmpty = isFieldEmpty(value);
+
+  // Function to check if children contain a link tag
+  const hasLinkTag = (node: ReactNode): boolean => {
+    return React.Children.toArray(node).some((child) => {
+      if (React.isValidElement(child)) {
+        if (child.type === "a") return true;
+        if (child.props.children) return hasLinkTag(child.props.children);
+      }
+      return false;
+    });
+  };
+
+  const containsLink = hasLinkTag(children);
 
   // Safety check: if yamlPath is not provided, just render children without editing functionality
   if (!yamlPath || typeof yamlPath !== "string") {
@@ -158,11 +170,11 @@ export default function EditableField<T extends string | string[]>({
 
   // Base styles with CSS-only visual feedback
   const wrapperStyles = `
-    relative inline-block
+    relative inline-block group
     transition-all duration-200
-    ${!isEditing && !error ? "cursor-pointer" : ""}
-    ${isHovered && !isEditing && !error ? "editable-hover" : ""}
-    ${isEditing ? "editable-editing" : ""}
+    ${!isEditing && !error ? "cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/50 hover:shadow hover:shadow-blue-200/50 dark:hover:shadow-blue-700/50 hover:rounded" : ""}
+    ${isEditing ? "ring-2 ring-blue-500 rounded" : ""}
+    ${containsLink ? "underline decoration-blue-500 underline-offset-2 print:no-underline" : ""}
     ${className}
   `.trim();
 
@@ -172,8 +184,6 @@ export default function EditableField<T extends string | string[]>({
       className={wrapperStyles}
       onClick={handleClick}
       onKeyDown={handleWrapperKeyDown}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       tabIndex={!error ? 0 : -1}
       role="button"
       aria-label={`Edit ${yamlPath?.split(".").pop() || "field"}`}
@@ -192,7 +202,7 @@ export default function EditableField<T extends string | string[]>({
       </EmptyFieldPlaceholder>
 
       {/* Action buttons container */}
-      {isHovered && !isEditing && !error && (
+      {!isEditing && !error && (
         <ActionButtons
           canShowAddButtons={canShowAddButtons}
           onDelete={handleDelete}

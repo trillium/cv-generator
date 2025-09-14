@@ -51,13 +51,13 @@ export default function Header({ data }: { data: CVData }) {
               value={lastName}
               fieldType="text"
             >
-              <span className="font-normal">{lastName}</span>
+              <span className="font-normal dark:text-white">{lastName}</span>
             </EditableField>
           </h1>
         </div>
         <div
           className={clsx("flex justify-center", {
-            "font-light border-l-2 border-black px-3 text-gray-700":
+            "font-light border-l-2 border-black dark:border-white px-3 text-gray-700 dark:text-gray-300":
               singleLineNameAndRole,
             "text-2xl": !singleLineNameAndRole,
           })}
@@ -67,7 +67,7 @@ export default function Header({ data }: { data: CVData }) {
             value={role || ""}
             fieldType="text"
           >
-            <h2 className="">{role}</h2>
+            <h2 className="dark:text-gray-300">{role}</h2>
           </EditableField>
         </div>
       </div>
@@ -75,17 +75,35 @@ export default function Header({ data }: { data: CVData }) {
         <ul>
           <li className="flex justify-center pt-2 gap-x-4">
             <EditableField yamlPath="info.email" value={email} fieldType="text">
-              <ProfileLink icon="Email" link={email} name={email} />
+              <ProfileLink
+                icon="Email"
+                link={email}
+                name={email}
+                linkYamlPath="info.email"
+                nameYamlPath="info.email"
+              />
             </EditableField>
             <EditableField yamlPath="info.phone" value={phone} fieldType="text">
-              <ProfileLink icon="Phone" link={phone} name={phone} />
+              <ProfileLink
+                icon="Phone"
+                link={phone}
+                name={phone}
+                linkYamlPath="info.phone"
+                nameYamlPath="info.phone"
+              />
             </EditableField>
             <EditableField
               yamlPath="info.website"
               value={website}
               fieldType="text"
             >
-              <ProfileLink icon="Website" link={website} name={website} />
+              <ProfileLink
+                icon="Website"
+                link={website}
+                name={website}
+                linkYamlPath="info.website"
+                nameYamlPath="info.website"
+              />
             </EditableField>
           </li>
         </ul>

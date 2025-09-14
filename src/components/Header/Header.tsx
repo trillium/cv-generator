@@ -19,7 +19,7 @@ const Header = ({
   return (
     <>
       <div className="flex flex-col gap-1">
-        <h1 className="font-sans font-bold leading-tight m-0 text-3xl">
+        <h1 className="font-sans font-bold leading-tight m-0 text-3xl dark:text-white">
           <EditableField yamlPath="header.name" value={name} fieldType="text">
             <span>
               <span className="text-primary-500">{first}</span>{" "}
@@ -36,7 +36,9 @@ const Header = ({
                 value={line}
                 fieldType="text"
               >
-                <p className="m-0 text-xl leading-1.5">{line}</p>
+                <p className="m-0 text-xl leading-1.5 dark:text-white">
+                  {line}
+                </p>
               </EditableField>
             ))}
           </div>
@@ -50,7 +52,9 @@ const Header = ({
                 value={line}
                 fieldType="textarea"
               >
-                <p className="m-0 text-md leading-[1.3]">{line}</p>
+                <p className="m-0 text-md leading-[1.3] dark:text-white">
+                  {line}
+                </p>
               </EditableField>
             ))}
           </div>
