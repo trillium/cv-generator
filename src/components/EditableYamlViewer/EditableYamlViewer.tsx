@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { clsx } from "clsx";
 import * as yaml from "js-yaml";
 
 interface EditableYamlViewerProps {
@@ -64,7 +65,7 @@ const EditableYamlViewer: React.FC<EditableYamlViewerProps> = ({
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={clsx("space-y-4", className)}>
       {/* Header with actions */}
       <div className="flex justify-between items-center pb-4 border-b border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800">Edit YAML Data</h3>
@@ -112,11 +113,14 @@ const EditableYamlViewer: React.FC<EditableYamlViewerProps> = ({
         <textarea
           value={editContent}
           onChange={(e) => handleContentChange(e.target.value)}
-          className={`w-full h-96 px-3 py-2 font-mono text-sm border rounded-md focus:outline-none focus:ring-2 resize-none ${
-            error
-              ? "border-red-300 focus:ring-red-500 focus:border-red-500"
-              : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-          }`}
+          className={clsx(
+            "w-full h-96 px-3 py-2 font-mono text-sm border rounded-md focus:outline-none focus:ring-2 resize-none",
+            {
+              "border-red-300 focus:ring-red-500 focus:border-red-500": error,
+              "border-gray-300 focus:ring-blue-500 focus:border-blue-500":
+                !error,
+            },
+          )}
           placeholder="Enter your YAML content here..."
           spellCheck={false}
         />

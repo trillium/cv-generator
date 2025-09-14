@@ -2,14 +2,15 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
+import { clsx } from "clsx";
 import PrintPageSize, { DEFAULT_PAGE_SIZES } from "../PrintPageSize";
-import YamlViewer from "../YamlViewer/YamlViewer";
+import ResumeSelector from "../ResumeSelector/ResumeSelector";
 import {
   filterYamlForRoute,
   getRouteTypeFromPath,
   getModalConfig,
 } from "../../../lib/filterYaml";
-import { useYamlData } from "../../contexts/YamlDataContext";
+import { useYamlData } from "../../contexts/ResumeContext";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,14 +51,38 @@ export default function Navigation() {
   ];
 
   const handleLayoutChange = (newLayout: string) => {
-    const newPath = `/${newLayout}/${currentType}`;
-    router.push(newPath);
+    // Check if we're currently on a dynamic route with a resume path
+    const pathParts = pathname.split("/").filter(Boolean);
+
+    if (pathParts.length >= 3) {
+      // We're on a dynamic route like /single-column/resume/[resume-path]
+      // Preserve the resume path when switching layouts
+      const resumePath = pathParts.slice(2).join("/"); // Get everything after layout/type
+      const newPath = `/${newLayout}/${currentType}/${resumePath}`;
+      router.push(newPath);
+    } else {
+      // We're on a base route, just switch the layout
+      const newPath = `/${newLayout}/${currentType}`;
+      router.push(newPath);
+    }
     setIsOpen(false);
   };
 
   const handleTypeChange = (newType: string) => {
-    const newPath = `/${currentLayout}/${newType}`;
-    router.push(newPath);
+    // Check if we're currently on a dynamic route with a resume path
+    const pathParts = pathname.split("/").filter(Boolean);
+
+    if (pathParts.length >= 3) {
+      // We're on a dynamic route like /single-column/resume/[resume-path]
+      // Preserve the resume path when switching types
+      const resumePath = pathParts.slice(2).join("/"); // Get everything after layout/type
+      const newPath = `/${currentLayout}/${newType}/${resumePath}`;
+      router.push(newPath);
+    } else {
+      // We're on a base route, just switch the type
+      const newPath = `/${currentLayout}/${newType}`;
+      router.push(newPath);
+    }
   };
 
   return (
@@ -106,10 +131,16 @@ export default function Navigation() {
       )}
 
       <nav
-        className={`print:hidden top-4 right-4 z-40 ${hasUnsavedChanges ? "mt-12" : ""}`}
+        className={clsx(
+          "print:hidden top-4 right-4 z-40",
+          hasUnsavedChanges && "mt-12",
+        )}
       >
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
+            {/* Resume Selector - New Multi-Resume Feature */}
+            <ResumeSelector />
+
             {/* Print Page Size Indicator - Show for both resume and cover letter */}
             <PrintPageSize
               pageSize={DEFAULT_PAGE_SIZES.letter}
@@ -124,7 +155,10 @@ export default function Navigation() {
               >
                 {layouts.find((l) => l.value === currentLayout)?.label}
                 <svg
-                  className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                  className={clsx(
+                    "w-4 h-4 transition-transform",
+                    isOpen && "rotate-180",
+                  )}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -144,11 +178,14 @@ export default function Navigation() {
                     <button
                       key={layout.value}
                       onClick={() => handleLayoutChange(layout.value)}
-                      className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 first:rounded-t-md last:rounded-b-md ${
-                        currentLayout === layout.value
-                          ? "bg-primary-50 text-primary-700 font-medium"
-                          : "text-gray-700"
-                      }`}
+                      className={clsx(
+                        "w-full text-left px-3 py-2 text-sm hover:bg-gray-50 first:rounded-t-md last:rounded-b-md",
+                        {
+                          "bg-primary-50 text-primary-700 font-medium":
+                            currentLayout === layout.value,
+                          "text-gray-700": currentLayout !== layout.value,
+                        },
+                      )}
                     >
                       {layout.label}
                     </button>
@@ -163,19 +200,20 @@ export default function Navigation() {
                 <button
                   key={type.value}
                   onClick={() => handleTypeChange(type.value)}
-                  className={`px-3 py-1 text-sm font-medium rounded transition-colors ${
-                    currentType === type.value
-                      ? "bg-white text-primary-700 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
+                  className={clsx(
+                    "px-3 py-1 text-sm font-medium rounded transition-colors",
+                    {
+                      "bg-white text-primary-700 shadow-sm":
+                        currentType === type.value,
+                      "text-gray-600 hover:text-gray-900":
+                        currentType !== type.value,
+                    },
+                  )}
                 >
                   {type.label}
                 </button>
               ))}
             </div>
-
-            {/* YAML Data Button */}
-            {filteredYamlContent && <YamlViewer />}
 
             {/* Home Link */}
             <button

@@ -12,9 +12,10 @@ function LineList({
   className?: string;
   yamlBasePath?: string;
 }) {
+  const lines_ = lines.length > 0 ? lines : [{ text: "", bulletPoint: true }];
   return (
-    <ul className={`flex flex-col list-none p-0 m-0 ${className}`}>
-      {lines.map((line, line_index) => {
+    <ul className={clsx("flex flex-col list-none p-0 m-0", className)}>
+      {lines_.map((line, line_index) => {
         const showBullet = line.bulletPoint !== false;
         const yamlPath = yamlBasePath
           ? `${yamlBasePath}.lines.${line_index}.text`
@@ -27,7 +28,7 @@ function LineList({
               "list-disc ml-4": showBullet,
             })}
           >
-            {showBullet && <span className="text-gray-600 mr-2 mt-1">•</span>}
+            {showBullet && <span className="text-gray-600 mr-2">•</span>}
             {yamlPath ? (
               <EditableField
                 yamlPath={yamlPath}
