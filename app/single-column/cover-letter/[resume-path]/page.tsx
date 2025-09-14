@@ -114,10 +114,10 @@ export default function DynamicSingleColumnCoverLetterPage() {
   // Loading state - combine local loading and context loading
   if (loading || contextLoading) {
     return (
-      <div className="min-h-screen w-full bg-white flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Loading cover letter: {resumePath || encodedResumePath}...
           </p>
         </div>
@@ -129,16 +129,18 @@ export default function DynamicSingleColumnCoverLetterPage() {
   const displayError = error || contextError;
   if (displayError) {
     return (
-      <div className="min-h-screen w-full bg-white flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">❌</div>
-          <h1 className="text-2xl font-bold text-red-600 mb-2">
+          <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
             Cover Letter Not Found
           </h1>
-          <p className="text-gray-600 mb-4">{displayError}</p>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
+            {displayError}
+          </p>
           <button
             onClick={() => router.push("/single-column/cover-letter")}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+            className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 transition-colors"
           >
             Go to Default Cover Letter
           </button>
@@ -150,13 +152,13 @@ export default function DynamicSingleColumnCoverLetterPage() {
   // Success state - render the cover letter using ResumeContext data
   if (!currentResume) {
     return (
-      <div className="min-h-screen w-full bg-white flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-yellow-600 mb-2">
+          <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
             No Cover Letter Data
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             The cover letter file was found but contains no data.
           </p>
         </div>
