@@ -4,6 +4,7 @@ import Navigation from "../src/components/Navigation/Navigation";
 import { ResumeProvider } from "../src/contexts/ResumeContext";
 import { ModalProvider } from "../src/contexts/ModalContext";
 import Modal from "../src/components/ui/modal";
+import { ThemeProviders } from "./theme-providers";
 
 export const metadata: Metadata = {
   title: "CV Generator",
@@ -18,17 +19,19 @@ export default function RootLayout({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <ResumeProvider>
-          <ModalProvider>
-            <Navigation />
-            <div className="m-6 print:m-0">
-              <main className="resume-content">{children}</main>
-            </div>
-            <Modal />
-          </ModalProvider>
-        </ResumeProvider>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body className="bg-white text-black dark:text-white">
+        <ThemeProviders>
+          <ResumeProvider>
+            <ModalProvider>
+              <Navigation />
+              <div className="m-6 print:m-0">
+                <main className="resume-content">{children}</main>
+              </div>
+              <Modal />
+            </ModalProvider>
+          </ResumeProvider>
+        </ThemeProviders>
       </body>
     </html>
   );
