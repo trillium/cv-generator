@@ -1,7 +1,6 @@
 "use client";
 
 import React, { ReactNode, cloneElement, isValidElement } from "react";
-import EditableField from "./EditableField";
 
 interface EmptyFieldPlaceholderProps {
   children: ReactNode;
@@ -82,20 +81,6 @@ export default function EmptyFieldPlaceholder({
       isEmpty &&
       (fieldType === "link" || yamlPath.includes("links"))
     ) {
-      if (fieldType === "link" && linkData) {
-        return (
-          <EditableField
-            fieldType="link"
-            value=""
-            yamlPath={yamlPath}
-            linkData={linkData}
-          >
-            <span className="text-gray-400 italic opacity-70 hover:opacity-90 transition-opacity block print:hidden">
-              {getPlaceholderMessage()}
-            </span>
-          </EditableField>
-        );
-      }
       return (
         <span className="text-gray-400 italic opacity-70 hover:opacity-90 transition-opacity block print:hidden">
           {getPlaceholderMessage()}
@@ -122,26 +107,6 @@ export default function EmptyFieldPlaceholder({
         (!newProps.href || newProps.href.trim() === "")
       ) {
         newProps.href = "#";
-      }
-
-      if (fieldType === "link" && linkData) {
-        return (
-          <EditableField
-            fieldType="link"
-            value=""
-            yamlPath={yamlPath}
-            linkData={linkData}
-          >
-            <React.Fragment key={`placeholder-${yamlPath}`}>
-              <span className="text-gray-400 italic opacity-70 hover:opacity-90 transition-opacity block print:hidden">
-                {getPlaceholderMessage()}
-              </span>
-              <span className="text-gray-400 italic opacity-70 hover:opacity-90 transition-opacity print:inline-block hidden">
-                {" "}
-              </span>
-            </React.Fragment>
-          </EditableField>
-        );
       }
 
       return cloneElement(

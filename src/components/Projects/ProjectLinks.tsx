@@ -1,3 +1,4 @@
+import React from "react";
 import ProfileLink, {
   ProfileLinkProps,
 } from "../Profile/ProfileLink/ProfileLink";
@@ -12,7 +13,7 @@ const ProjectLinks = ({ links, projectIndex }: ProjectLinksProps) => {
     !links || links.length === 0
       ? [
           {
-            icon: "None",
+            icon: "",
             link: "",
             name: "",
           },

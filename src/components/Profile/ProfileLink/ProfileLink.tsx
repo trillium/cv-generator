@@ -1,3 +1,4 @@
+import React from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaSquareXTwitter, FaBluesky, FaPhone } from "react-icons/fa6";
 import { BsGlobe } from "react-icons/bs";
