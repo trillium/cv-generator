@@ -11,8 +11,8 @@ export default function DiagnosticPage() {
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <p className="text-gray-600 mb-6">
-            This page shows raw API responses from the multi-resume system to
-            help diagnose issues.
+            This page shows raw API responses from the file system to help
+            diagnose issues with file operations.
           </p>
 
           <Suspense

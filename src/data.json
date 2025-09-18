@@ -15,9 +15,7 @@
     "resume": [
       "Frontend developer focused on creating seamless user experiences and scalable systems. Passionate about accessibility and modern web technologies."
     ],
-    "title": [
-      "Software Developer"
-    ]
+    "title": ["Software Developer"]
   },
   "workExperience": [
     {
@@ -177,13 +175,19 @@
       }
     ]
   },
-  "coverLetter": [
-    "Dear Hiring team,",
-    null,
-    "Omitted",
-    null,
-    "Sincerely,",
-    "Trillium Smith"
+  "technical": [
+    {
+      "category": "Frontend",
+      "bubbles": ["React", "TypeScript", "Next.js", "Tailwind CSS"]
+    },
+    {
+      "category": "Backend",
+      "bubbles": ["Node.js", "Python", "PostgreSQL", "MongoDB"]
+    },
+    {
+      "category": "Tools",
+      "bubbles": ["Git", "Docker", "AWS", "Jest"]
+    }
   ],
   "careerSummary": [
     {

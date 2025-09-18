@@ -222,7 +222,25 @@ export function ResumeProvider({ children }: ResumeProviderProps) {
             "📊 Resume data keys:",
             Object.keys(result.data[filePath]),
           );
-          setCurrentResume(result.data[filePath]);
+
+          // Initialize missing optional fields
+          const loadedData = result.data[filePath];
+          const initializedData: CVData = {
+            ...loadedData,
+            technical: loadedData.technical || [],
+            languages: loadedData.languages || [],
+            education: loadedData.education || [],
+            projects: loadedData.projects || [],
+            coverLetter: loadedData.coverLetter || [],
+            careerSummary: loadedData.careerSummary || [],
+          };
+
+          // Clear previous YAML content and unsaved changes when loading a new file
+          setYamlContent("");
+          setHasUnsavedChanges(false);
+          setError(null);
+
+          setCurrentResume(initializedData);
           setCurrentResumeFile(filePath);
         } else {
           const errorMsg = result.error || `File not found: ${filePath}`;
@@ -311,6 +329,10 @@ export function ResumeProvider({ children }: ResumeProviderProps) {
             links: [],
           },
           technical: [],
+          languages: [],
+          education: [],
+          projects: [],
+          coverLetter: [],
           ...templateData,
         };
 
@@ -394,6 +416,12 @@ export function ResumeProvider({ children }: ResumeProviderProps) {
     await loadAvailableFiles();
     if (currentResumeFile) {
       await loadResumeFile(currentResumeFile);
+    } else {
+      // If no current file is set, try to load the default data.yml
+      console.log("🔄 No current file set, loading default data.yml");
+      await loadResumeFile("data.yml").catch((error) => {
+        console.log("❌ Failed to load default file in refreshData:", error);
+      });
     }
   }, [loadAvailableFiles, loadResumeFile, currentResumeFile]);
 
@@ -407,9 +435,20 @@ export function ResumeProvider({ children }: ResumeProviderProps) {
         // Parse YAML to CVData
         const parsed = yaml.load(newContent) as CVData;
 
+        // Initialize missing optional fields
+        const initializedData: CVData = {
+          ...parsed,
+          technical: parsed.technical || [],
+          languages: parsed.languages || [],
+          education: parsed.education || [],
+          projects: parsed.projects || [],
+          coverLetter: parsed.coverLetter || [],
+          careerSummary: parsed.careerSummary || [],
+        };
+
         // Update both states
         setYamlContent(newContent);
-        setCurrentResume(parsed);
+        setCurrentResume(initializedData);
         setHasUnsavedChanges(true);
 
         // IMMEDIATELY save the new content to avoid state race conditions

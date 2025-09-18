@@ -57,7 +57,7 @@ export default function Modal() {
             >
               <DialogPanel
                 className={clsx(
-                  "border-primary-600 relative flex-grow transform overflow-hidden rounded-lg border bg-slate-100 dark:bg-gray-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6",
+                  "border-primary-600 relative flex-grow transform overflow-auto rounded-lg border bg-slate-100 dark:bg-gray-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6",
                   getSizeClasses(size),
                 )}
               >

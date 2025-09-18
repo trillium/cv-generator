@@ -9,7 +9,7 @@ import EditableField from "../../EditableField/EditableField";
 function SingleColumnCoverLetter({ data }: { data: CVData }) {
   return (
     <>
-      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex flex-col items-center justify-between">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex flex-col items-center justify-between">
         <div className="w-full max-w-5xl mx-auto rounded-md bg-white dark:bg-gray-800">
           <Header data={data} />
 
@@ -31,6 +31,25 @@ function CoverLetterContent({
   coverLetterLines: string[];
 }) {
   console.log("CoverLetterContent received:", coverLetterLines);
+
+  // If no cover letter lines exist, show a placeholder to start editing
+  if (!coverLetterLines || coverLetterLines.length === 0) {
+    return (
+      <div className="my-4">
+        <EditableField
+          yamlPath="coverLetter.0"
+          value=""
+          fieldType="text"
+          className="!block !relative w-full"
+        >
+          <p className="my-2 leading-loose text-gray-400 italic">
+            Click here to start writing your cover letter...
+          </p>
+        </EditableField>
+      </div>
+    );
+  }
+
   return (
     <div>
       {coverLetterLines.map((line, index) => {

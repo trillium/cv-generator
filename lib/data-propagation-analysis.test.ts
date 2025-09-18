@@ -1,7 +1,6 @@
 // Simple test to verify the data flow issue
 // @vitest-environment node
 
-import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
 

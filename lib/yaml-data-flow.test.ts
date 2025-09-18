@@ -1,7 +1,7 @@
 // @vitest-environment node
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import fs from "fs";
 import path from "path";
+import { tmpdir } from "os";
 import { config } from "dotenv";
 import { NextRequest, NextResponse } from "next/server";
 import { GET, POST } from "../app/api/yaml-data/route";
@@ -11,7 +11,7 @@ import { getYamlData } from "./getYamlData";
 config();
 
 // Mock environment
-const mockPiiPath = "/tmp/test-pii";
+const mockPiiPath = path.join(tmpdir(), "cv-generator-yaml-test");
 process.env.PII_PATH = mockPiiPath;
 
 // Test YAML data
@@ -100,7 +100,7 @@ describe("YAML Data Flow Integration", () => {
 
       const result = getYamlData();
       expect(result).toContain("Error: Could not read data.yml file");
-      expect(result).toContain("data.yml not found");
+      expect(result).toContain("No data.yml file found in PII directory");
     });
   });
 
@@ -112,7 +112,7 @@ describe("YAML Data Flow Integration", () => {
 
         expect(response.status).toBe(200);
         expect(data.yamlContent).toBe(testYamlContent);
-        expect(data.hasTempChanges).toBe(false);
+        expect(data.hasChanges).toBe(false);
         expect(Array.isArray(data.changelog)).toBe(true);
       });
 
@@ -129,7 +129,7 @@ describe("YAML Data Flow Integration", () => {
 
         expect(response.status).toBe(200);
         expect(data.yamlContent).toBe(updatedYamlContent);
-        expect(data.hasTempChanges).toBe(true);
+        expect(data.hasChanges).toBe(true);
       });
 
       it("should handle missing PII_PATH environment variable", async () => {
@@ -140,7 +140,9 @@ describe("YAML Data Flow Integration", () => {
         const data = await response.json();
 
         expect(response.status).toBe(500);
-        expect(data.error).toContain("PII_PATH environment variable not set");
+        expect(data.error).toContain(
+          "PII_PATH environment variable is required",
+        );
 
         // Restore environment
         process.env.PII_PATH = originalPath;
@@ -160,7 +162,7 @@ describe("YAML Data Flow Integration", () => {
 
         expect(response.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(data.message).toContain("temporary file");
+        expect(data.message).toContain("Changes saved to file system");
 
         // Verify temp file was created
         const tempPath = path.join(mockPiiPath, "data.temp.yml");
@@ -177,7 +179,6 @@ describe("YAML Data Flow Integration", () => {
         expect(Array.isArray(changelog)).toBe(true);
         expect(changelog.length).toBe(1);
         expect(changelog[0].action).toBe("update");
-        expect(changelog[0].hasUnsavedChanges).toBe(true);
       });
 
       it("should reject invalid YAML", async () => {
@@ -248,7 +249,7 @@ name: Test User
 
       expect(loadResponse.status).toBe(200);
       expect(loadData.yamlContent).toBe(updatedYamlContent);
-      expect(loadData.hasTempChanges).toBe(true);
+      expect(loadData.hasChanges).toBe(true);
 
       // Step 3: Verify getYamlData also returns updated content
       const fileContent = getYamlData();
@@ -281,14 +282,13 @@ name: Test User
       expect(changelog.length).toBe(3);
       changelog.forEach((entry: any) => {
         expect(entry.action).toBe("update");
-        expect(entry.hasUnsavedChanges).toBe(true);
         expect(entry.timestamp).toBeDefined();
       });
     });
 
     it("should limit changelog size to prevent unbounded growth", async () => {
-      // Create more than 50 updates to test limiting
-      for (let i = 0; i < 55; i++) {
+      // Create more than 100 updates to test limiting
+      for (let i = 0; i < 105; i++) {
         const request = new Request("http://localhost/api/yaml-data", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -298,14 +298,14 @@ name: Test User
         await POST(request as NextRequest);
       }
 
-      // Verify changelog is limited to 50 entries
+      // Verify changelog is limited to 100 entries
       const changelogPath = path.join(mockPiiPath, "changelog.json");
       const changelog = JSON.parse(fs.readFileSync(changelogPath, "utf8"));
 
-      expect(changelog.length).toBe(50);
-      // Should contain the last 50 updates (5-54)
+      expect(changelog.length).toBe(100);
+      // Should contain the last 100 updates (5-104)
       expect(changelog[0].timestamp).toBeDefined();
-      expect(changelog[49].timestamp).toBeDefined();
+      expect(changelog[99].timestamp).toBeDefined();
     });
   });
 });

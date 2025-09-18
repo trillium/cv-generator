@@ -10,18 +10,21 @@ export function mergeData(fallback: any, script: any): CVData {
     omitTitle: script.header?.omitTitle ?? fallback.header?.omitTitle ?? false,
     omitBlurb: script.header?.omitBlurb ?? fallback.header?.omitBlurb ?? false,
   };
+
   return {
     ...fallback,
     ...script,
     header: mergedHeader,
+    // Ensure optional fields are initialized
+    technical: script.technical ?? fallback.technical ?? [],
+    languages: script.languages ?? fallback.languages ?? [],
+    education: script.education ?? fallback.education ?? [],
+    projects: script.projects ?? fallback.projects ?? [],
+    coverLetter: script.coverLetter ?? fallback.coverLetter ?? [],
+    careerSummary: script.careerSummary ?? fallback.careerSummary ?? [],
   };
 }
 
 export function getDefaultData(): CVData {
   return mergeData(fallbackData, scriptData);
-}
-
-export interface DataWithYaml {
-  data: CVData;
-  yamlContent: string;
 }

@@ -102,10 +102,10 @@ const ProfileLink = ({
       >
         <>
           <a href={href} {...anchorProps} className="print:block hidden">
-            <span className="text-sm font-bold">{name || icon}</span>
+            <span className="text-sm font-bold">{name}</span>
           </a>
           <div className="block print:hidden">
-            <span className="text-sm font-bold">{name || icon}</span>
+            <span className="text-sm font-bold">{name}</span>
           </div>
         </>
       </EditableField>

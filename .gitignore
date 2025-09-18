@@ -35,6 +35,8 @@ src/script-data.json
 data.yml
 data-backup.yml
 data_anon.yml
+pii/*
+!pii/.gitkeep
 *.pdf
 !examples/*.pdf
 

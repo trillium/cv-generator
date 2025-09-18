@@ -1,8 +1,13 @@
 import React from "react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  within,
+} from "@testing-library/react";
+import { ModalProvider } from "../../contexts/ModalContext";
 import ResumeNavigator from "./ResumeNavigator";
-import * as utilityFunctions from "../../../lib/utility";
 
 // Mock the utility functions
 vi.mock("../../../lib/utility", () => ({
@@ -11,226 +16,255 @@ vi.mock("../../../lib/utility", () => ({
   duplicateResume: vi.fn(),
 }));
 
-const mockUtility = utilityFunctions as any;
+// Mock Next.js router
+vi.mock("next/navigation", () => ({
+  useRouter: vi.fn(),
+}));
+
+// Mock URL encoding utility
+vi.mock("../../utils/urlSafeEncoding", () => ({
+  encodeFilePathForUrl: vi.fn(),
+}));
+
+// Mock useModal hook
+vi.mock("../../contexts/ModalContext", () => ({
+  ModalProvider: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  useModal: vi.fn(),
+}));
+
+import {
+  listAllResumeFiles,
+  deleteResumeWithBackup,
+  duplicateResume,
+} from "../../../lib/utility";
+import { useRouter } from "next/navigation";
+import { encodeFilePathForUrl } from "../../utils/urlSafeEncoding";
+import { useModal } from "../../contexts/ModalContext";
 
 describe("ResumeNavigator", () => {
-  const defaultProps = {
-    isOpen: true,
-    onClose: vi.fn(),
-    onSelectResume: vi.fn(),
+  const mockRouter = {
+    push: vi.fn(),
+  };
+
+  const mockModal = {
+    closeModal: vi.fn(),
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+    (useRouter as any).mockReturnValue(mockRouter);
+    (useModal as any).mockReturnValue(mockModal);
+    (encodeFilePathForUrl as any).mockImplementation((path: string) => path);
   });
 
-  it("should not render when isOpen is false", () => {
-    render(<ResumeNavigator {...defaultProps} isOpen={false} />);
-    expect(screen.queryByText("Resume Navigator")).not.toBeInTheDocument();
-  });
+  const renderWithModalProvider = (component: React.ReactElement) => {
+    return render(<ModalProvider>{component}</ModalProvider>);
+  };
 
-  it("should render and load files when opened", async () => {
-    mockUtility.listAllResumeFiles.mockResolvedValue({
-      success: true,
-      data: {
-        allFiles: ["resume1.yml", "resume2.yml", "resumes/frontend.yml"],
-        totalFiles: 3,
-      },
+  it("should render loading state initially", () => {
+    (listAllResumeFiles as any).mockResolvedValue({
+      success: false,
+      error: "Loading...",
     });
 
-    render(<ResumeNavigator {...defaultProps} />);
+    renderWithModalProvider(<ResumeNavigator />);
 
-    expect(screen.getByText("Resume Navigator")).toBeInTheDocument();
     expect(screen.getByText("Loading files...")).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.getByText("resume1.yml")).toBeInTheDocument();
-      expect(screen.getByText("resume2.yml")).toBeInTheDocument();
-      expect(screen.getByText("resumes/frontend.yml")).toBeInTheDocument();
-    });
-
-    expect(mockUtility.listAllResumeFiles).toHaveBeenCalledTimes(1);
   });
 
-  it("should handle file selection", async () => {
-    mockUtility.listAllResumeFiles.mockResolvedValue({
+  it("should load and display resume files", async () => {
+    const mockFiles = [
+      "resume1.yml",
+      "resume2.yml",
+      "data.yml.template",
+      "resume.backup.123.yml",
+    ];
+    (listAllResumeFiles as any).mockResolvedValue({
       success: true,
       data: {
-        allFiles: ["resume1.yml"],
-        totalFiles: 1,
+        allFiles: mockFiles,
       },
     });
 
-    const onSelectResume = vi.fn();
-    const onClose = vi.fn();
+    renderWithModalProvider(<ResumeNavigator />);
 
-    render(
-      <ResumeNavigator
-        {...defaultProps}
-        onSelectResume={onSelectResume}
-        onClose={onClose}
-      />,
+    await waitFor(() => {
+      expect(screen.getByText("resume1")).toBeInTheDocument();
+      expect(screen.getByText("resume2")).toBeInTheDocument();
+    });
+
+    // Should filter out template and backup files
+    expect(screen.queryByText("data")).not.toBeInTheDocument();
+    expect(screen.queryByText("resume")).not.toBeInTheDocument(); // backup file
+  });
+
+  it("should handle file selection and navigation", async () => {
+    const mockFiles = ["resume1.yml"];
+    (listAllResumeFiles as any).mockResolvedValue({
+      success: true,
+      data: {
+        allFiles: mockFiles,
+      },
+    });
+
+    renderWithModalProvider(<ResumeNavigator />);
+
+    await waitFor(() => {
+      expect(screen.getByText("resume1")).toBeInTheDocument();
+    });
+
+    const selectButton = screen.getByText("resume1");
+    fireEvent.click(selectButton);
+
+    expect(mockRouter.push).toHaveBeenCalledWith(
+      "/single-column/resume/resume1.yml",
     );
-
-    await waitFor(() => {
-      expect(screen.getByText("resume1.yml")).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByText("resume1.yml"));
-
-    expect(onSelectResume).toHaveBeenCalledWith("resume1.yml");
-    expect(onClose).toHaveBeenCalled();
+    expect(mockModal.closeModal).toHaveBeenCalled();
   });
 
-  it("should handle file deletion with confirmation", async () => {
-    mockUtility.listAllResumeFiles.mockResolvedValue({
+  it("should handle delete confirmation flow", async () => {
+    const mockFiles = ["resume1.yml"];
+    (listAllResumeFiles as any).mockResolvedValue({
       success: true,
       data: {
-        allFiles: ["resume1.yml"],
-        totalFiles: 1,
+        allFiles: mockFiles,
       },
     });
-
-    mockUtility.deleteResumeWithBackup.mockResolvedValue({
+    (deleteResumeWithBackup as any).mockResolvedValue({
       success: true,
-      data: { filePath: "resume1.yml", backupCreated: true },
     });
 
-    render(<ResumeNavigator {...defaultProps} />);
+    renderWithModalProvider(<ResumeNavigator />);
 
     await waitFor(() => {
-      expect(screen.getByText("resume1.yml")).toBeInTheDocument();
+      expect(screen.getByText("resume1")).toBeInTheDocument();
     });
 
-    // First click - should show confirmation
-    const deleteButton = screen.getByText("Delete");
+    // Click delete button
+    const deleteButton = screen.getByTitle("Delete file");
     fireEvent.click(deleteButton);
 
-    expect(screen.getByText("Confirm")).toBeInTheDocument();
+    // Should show confirmation modal
+    const deleteModal = screen
+      .getByText("Delete Resume File")
+      .closest(".fixed");
+    expect(deleteModal).toBeInTheDocument();
+    expect(
+      screen.getByText(/Are you sure you want to delete/),
+    ).toBeInTheDocument();
 
-    // Second click - should actually delete
-    fireEvent.click(screen.getByText("Confirm"));
+    // Click confirm delete
+    const modalWithin = within(deleteModal as HTMLElement);
+    const confirmButton = modalWithin.getByText("Delete");
+    fireEvent.click(confirmButton);
 
     await waitFor(() => {
-      expect(mockUtility.deleteResumeWithBackup).toHaveBeenCalledWith(
-        "resume1.yml",
-      );
+      expect(deleteResumeWithBackup).toHaveBeenCalledWith("resume1.yml");
+      expect(listAllResumeFiles).toHaveBeenCalledTimes(2); // Initial load + refresh
     });
   });
 
-  it("should handle file duplication", async () => {
-    mockUtility.listAllResumeFiles.mockResolvedValue({
+  it("should handle duplicate flow", async () => {
+    const mockFiles = ["resume1.yml"];
+    (listAllResumeFiles as any).mockResolvedValue({
       success: true,
       data: {
-        allFiles: ["resume1.yml"],
-        totalFiles: 1,
+        allFiles: mockFiles,
       },
     });
-
-    mockUtility.duplicateResume.mockResolvedValue({
+    (duplicateResume as any).mockResolvedValue({
       success: true,
-      data: {
-        sourcePath: "resume1.yml",
-        destinationPath: "resume1-copy.yml",
-        overwritten: false,
-      },
     });
 
-    render(<ResumeNavigator {...defaultProps} />);
+    renderWithModalProvider(<ResumeNavigator />);
 
     await waitFor(() => {
-      expect(screen.getByText("resume1.yml")).toBeInTheDocument();
+      expect(screen.getByText("resume1")).toBeInTheDocument();
     });
 
-    // Click copy button
-    fireEvent.click(screen.getByText("Copy"));
+    // Click duplicate button
+    const duplicateButton = screen.getByTitle("Duplicate file");
+    fireEvent.click(duplicateButton);
 
     // Should show duplicate modal
     expect(screen.getByText("Duplicate Resume")).toBeInTheDocument();
-    expect(screen.getByText("Duplicating: resume1.yml")).toBeInTheDocument();
 
-    // Enter new filename
+    // Fill in new filename
     const input = screen.getByPlaceholderText(
       "Enter new filename (e.g., resume-copy.yml)",
     );
-    fireEvent.change(input, { target: { value: "resume1-copy.yml" } });
+    fireEvent.change(input, { target: { value: "resume-copy.yml" } });
 
     // Click duplicate button
-    fireEvent.click(screen.getByRole("button", { name: "Duplicate" }));
+    const confirmDuplicateButton = screen.getByText("Duplicate");
+    fireEvent.click(confirmDuplicateButton);
 
     await waitFor(() => {
-      expect(mockUtility.duplicateResume).toHaveBeenCalledWith(
+      expect(duplicateResume).toHaveBeenCalledWith(
         "resume1.yml",
-        "resume1-copy.yml",
+        "resume-copy.yml",
       );
+      expect(listAllResumeFiles).toHaveBeenCalledTimes(2); // Initial load + refresh
     });
   });
 
   it("should handle errors gracefully", async () => {
-    mockUtility.listAllResumeFiles.mockResolvedValue({
+    (listAllResumeFiles as any).mockResolvedValue({
       success: false,
-      error: "Network error",
+      error: "Failed to load files",
     });
 
-    render(<ResumeNavigator {...defaultProps} />);
+    renderWithModalProvider(<ResumeNavigator />);
 
     await waitFor(() => {
-      expect(screen.getByText("Network error")).toBeInTheDocument();
+      expect(screen.getByText("Failed to load files")).toBeInTheDocument();
     });
-
-    // Should show dismiss button
-    const dismissButton = screen.getByText("Dismiss");
-    fireEvent.click(dismissButton);
-
-    expect(screen.queryByText("Network error")).not.toBeInTheDocument();
   });
 
-  it("should handle empty file list", async () => {
-    mockUtility.listAllResumeFiles.mockResolvedValue({
+  it("should refresh files when refresh button is clicked", async () => {
+    const mockFiles = ["resume1.yml"];
+    (listAllResumeFiles as any).mockResolvedValue({
       success: true,
       data: {
-        allFiles: [],
-        totalFiles: 0,
+        allFiles: mockFiles,
       },
     });
 
-    render(<ResumeNavigator {...defaultProps} />);
+    renderWithModalProvider(<ResumeNavigator />);
 
     await waitFor(() => {
-      expect(screen.getByText("No resume files found")).toBeInTheDocument();
+      expect(screen.getByText("resume1")).toBeInTheDocument();
+    });
+
+    // Click refresh button
+    const refreshButton = screen.getByText("Refresh");
+    fireEvent.click(refreshButton);
+
+    await waitFor(() => {
+      expect(listAllResumeFiles).toHaveBeenCalledTimes(2);
     });
   });
 
-  it("should handle close button", () => {
-    mockUtility.listAllResumeFiles.mockResolvedValue({
+  it("should close modal when close button is clicked", async () => {
+    const mockFiles = ["resume1.yml"];
+    (listAllResumeFiles as any).mockResolvedValue({
       success: true,
-      data: { allFiles: [], totalFiles: 0 },
+      data: {
+        allFiles: mockFiles,
+      },
     });
 
-    const onClose = vi.fn();
-    render(<ResumeNavigator {...defaultProps} onClose={onClose} />);
-
-    fireEvent.click(screen.getByText("×"));
-    expect(onClose).toHaveBeenCalled();
-
-    fireEvent.click(screen.getByText("Close"));
-    expect(onClose).toHaveBeenCalledTimes(2);
-  });
-
-  it("should handle refresh button", async () => {
-    mockUtility.listAllResumeFiles.mockResolvedValue({
-      success: true,
-      data: { allFiles: ["resume1.yml"], totalFiles: 1 },
-    });
-
-    render(<ResumeNavigator {...defaultProps} />);
+    renderWithModalProvider(<ResumeNavigator />);
 
     await waitFor(() => {
-      expect(screen.getByText("resume1.yml")).toBeInTheDocument();
+      expect(screen.getByText("resume1")).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText("Refresh"));
+    const closeButton = screen.getByText("Close");
+    fireEvent.click(closeButton);
 
-    expect(mockUtility.listAllResumeFiles).toHaveBeenCalledTimes(2);
+    expect(mockModal.closeModal).toHaveBeenCalled();
   });
 });

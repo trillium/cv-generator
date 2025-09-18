@@ -5,10 +5,14 @@ import { ResumeProvider } from "../src/contexts/ResumeContext";
 import { ModalProvider } from "../src/contexts/ModalContext";
 import Modal from "../src/components/ui/modal";
 import { ThemeProviders } from "./theme-providers";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "CV Generator",
   description: "Generate professional resumes and cover letters",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -20,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body className="bg-white text-black dark:text-white">
+      <body className="bg-white dark:bg-gray-800">
         <ThemeProviders>
           <ResumeProvider>
             <ModalProvider>
@@ -29,6 +33,7 @@ export default function RootLayout({
                 <main className="resume-content">{children}</main>
               </div>
               <Modal />
+              <Toaster />
             </ModalProvider>
           </ResumeProvider>
         </ThemeProviders>

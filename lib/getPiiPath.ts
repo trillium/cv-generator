@@ -3,18 +3,12 @@ import fs from "fs";
 
 /**
  * Gets the path to PII data files using the PII_PATH environment variable
+ * Defaults to /pii if PII_PATH is not set
  * @param filename - The filename to join with the PII path (defaults to 'data.yml')
  * @returns The full path to the PII data file
  */
 export function getPiiPath(filename: string = "data.yml"): string {
-  const piiPath = process.env.PII_PATH;
-
-  if (!piiPath) {
-    throw new Error(
-      "PII_PATH environment variable is not set. " +
-        "Please set it to the directory containing your data.yml file.",
-    );
-  }
+  const piiPath = process.env.PII_PATH || "/pii";
 
   const fullPath = path.join(piiPath, filename);
 
@@ -31,17 +25,11 @@ export function getPiiPath(filename: string = "data.yml"): string {
 
 /**
  * Gets the PII directory path from the environment variable
+ * Defaults to /pii if PII_PATH is not set
  * @returns The PII directory path
  */
 export function getPiiDirectory(): string {
-  const piiPath = process.env.PII_PATH;
-
-  if (!piiPath) {
-    throw new Error(
-      "PII_PATH environment variable is not set. " +
-        "Please set it to the directory containing your PII files.",
-    );
-  }
+  const piiPath = process.env.PII_PATH || "/pii";
 
   if (!fs.existsSync(piiPath)) {
     throw new Error(

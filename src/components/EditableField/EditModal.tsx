@@ -11,7 +11,7 @@ interface EditModalProps {
   parsedData: any;
   isSaving: boolean;
   value: any;
-  onSave: (newValue: string) => Promise<void>;
+  onSave: (newValue: string | any[]) => Promise<void>;
   onCancel: () => void;
   // For link fieldType
   linkData?: {
@@ -40,6 +40,9 @@ export default function EditModal({
   const [linkText, setLinkText] = useState(linkData?.text || "");
   const [linkUrl, setLinkUrl] = useState(linkData?.url || "");
   const modalInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+
+  // Determine if this is a links array that should show link editing
+  const isLinksArray = fieldType === "array" && yamlPath.includes("links");
 
   useEffect(() => {
     if (modalInputRef.current) {
@@ -71,9 +74,23 @@ export default function EditModal({
   };
 
   const handleModalSave = async () => {
-    if (fieldType === "link" && linkData?.onSaveLink) {
+    if (
+      (fieldType === "link" || isLinksArray) &&
+      (linkData?.onSaveLink || isLinksArray)
+    ) {
       // Handle link save with both text and URL
-      await linkData.onSaveLink(linkText, linkUrl);
+      if (isLinksArray) {
+        // For links arrays, add the first link to the empty array
+        const newLink = {
+          name: linkText.trim() || "Link",
+          link: linkUrl.trim() || "",
+          icon: "None",
+        };
+        // Save the new array with the first link
+        await onSave([newLink]);
+      } else if (linkData?.onSaveLink) {
+        await linkData.onSaveLink(linkText, linkUrl);
+      }
       return;
     }
 
@@ -97,19 +114,26 @@ export default function EditModal({
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-semibold text-gray-800">Edit Field</h3>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+          Edit Field
+        </h3>
       </div>
 
-      {fieldType === "link" ? (
+      {fieldType === "link" || isLinksArray ? (
         <div className="space-y-3">
           {linkData?.icon && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               {linkData.icon}
               <span>Edit Link</span>
             </div>
           )}
+          {!linkData?.icon && isLinksArray && (
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <span>Add Link</span>
+            </div>
+          )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Display Text
             </label>
             <input
@@ -117,21 +141,21 @@ export default function EditModal({
               type="text"
               value={linkText}
               onChange={(e) => setLinkText(e.target.value)}
-              className="w-full border border-blue-400 rounded p-2"
+              className="w-full border border-blue-400 dark:border-blue-500 rounded p-2"
               disabled={isSaving}
               autoFocus
               placeholder="Link display name"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               URL
             </label>
             <input
               type="text"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
-              className="w-full border border-blue-400 rounded p-2"
+              className="w-full border border-blue-400 dark:border-blue-500 rounded p-2"
               disabled={isSaving}
               placeholder="https://example.com"
             />
@@ -143,7 +167,7 @@ export default function EditModal({
           value={modalEditValue}
           onChange={(e) => setModalEditValue(e.target.value)}
           onKeyDown={handleModalKeyDown}
-          className="w-full min-h-[8rem] focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none bg-white text-black shadow-md box-border border border-blue-400 rounded p-2"
+          className="w-full min-h-[8rem] focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none bg-white dark:bg-gray-800 text-black dark:text-white shadow-md box-border border border-blue-400 rounded p-2"
           rows={Math.max(4, modalEditValue.split("\n").length)}
           autoFocus
         />
@@ -154,14 +178,14 @@ export default function EditModal({
           value={modalEditValue}
           onChange={(e) => setModalEditValue(e.target.value)}
           onKeyDown={handleModalKeyDown}
-          className="w-full border border-blue-400 rounded p-2"
+          className="w-full border border-blue-400 dark:border-blue-500 rounded p-2"
           disabled={isSaving}
           autoFocus
         />
       )}
 
-      <div className="text-xs text-gray-500">
-        {fieldType === "link"
+      <div className="text-xs text-gray-500 dark:text-gray-400">
+        {fieldType === "link" || isLinksArray
           ? "Edit both text and URL, then save"
           : fieldType === "textarea"
             ? "Ctrl+Enter to save, Esc to cancel, Tab to next field"
@@ -172,7 +196,7 @@ export default function EditModal({
       <DebugInfo
         yamlPath={yamlPath}
         canShowAddButtons={canShowAddButtons}
-        fieldType={fieldType}
+        fieldType={isLinksArray ? "link" : fieldType}
         parsedData={parsedData}
       />
 
@@ -182,23 +206,27 @@ export default function EditModal({
             onMouseDown={(e) => e.preventDefault()}
             onClick={handleModalSave}
             disabled={isSaving}
-            className="text-xs bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+            className="text-xs bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
             title="Save (Enter)"
           >
             {isSaving ? "⏳" : "✓"}
           </button>
-          <span className="text-[10px] text-blue-700 mt-1">Save</span>
+          <span className="text-[10px] text-blue-700 dark:text-blue-300 mt-1">
+            Save
+          </span>
         </div>
         <div className="flex flex-col items-center">
           <button
             onMouseDown={(e) => e.preventDefault()}
             onClick={onCancel}
-            className="text-xs bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            className="text-xs bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-800 text-white px-4 py-2 rounded"
             title="Cancel (Esc)"
           >
             ✕
           </button>
-          <span className="text-[10px] text-gray-700 mt-1">Cancel</span>
+          <span className="text-[10px] text-red-500 dark:text-red-400 mt-1">
+            Cancel
+          </span>
         </div>
       </div>
     </div>

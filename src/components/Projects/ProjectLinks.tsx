@@ -8,10 +8,19 @@ interface ProjectLinksProps {
 }
 
 const ProjectLinks = ({ links, projectIndex }: ProjectLinksProps) => {
-  if (!links || links.length === 0) return null;
+  const linksToRender =
+    !links || links.length === 0
+      ? [
+          {
+            icon: "None",
+            link: "",
+            name: "",
+          },
+        ]
+      : links;
   return (
     <ul className="flex flex-row mt">
-      {links.map((link, index) => (
+      {linksToRender.map((link, index) => (
         <li
           key={index}
           className="flex items-center leading-none  border-primary-500"
@@ -22,7 +31,9 @@ const ProjectLinks = ({ links, projectIndex }: ProjectLinksProps) => {
             nameYamlPath={`projects.${projectIndex}.links.${index}.name`}
             linkYamlPath={`projects.${projectIndex}.links.${index}.link`}
           />
-          {index !== links.length - 1 && <span className="mx-1">·</span>}
+          {index !== linksToRender.length - 1 && (
+            <span className="mx-1">·</span>
+          )}
         </li>
       ))}
     </ul>

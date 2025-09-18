@@ -28,7 +28,13 @@ export class FileSystemManager {
   private changelogPath: string;
 
   constructor() {
-    this.piiPath = process.env.PII_PATH || process.cwd();
+    const piiPath = process.env.PII_PATH;
+    if (!piiPath) {
+      throw new Error(
+        "PII_PATH environment variable is required. Please set PII_PATH to the directory containing your data.yml file.",
+      );
+    }
+    this.piiPath = piiPath;
     this.originalDataPath = path.join(this.piiPath, "data.yml");
     this.tempDataPath = path.join(this.piiPath, "data.temp.yml");
     this.changelogPath = path.join(this.piiPath, "changelog.json");

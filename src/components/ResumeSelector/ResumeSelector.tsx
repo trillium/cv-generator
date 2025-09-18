@@ -44,6 +44,7 @@ const ResumeSelector: React.FC = () => {
         onResumeCreated={handleResumeCreated}
         onClose={closeModal}
       />,
+      "xl",
     );
   };
 

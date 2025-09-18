@@ -1,0 +1,47 @@
+/* TAILWIND COLORS - CSS-BASED APPROACH */
+
+/*
+This file contains all standard Tailwind CSS colors as CSS custom properties.
+The ColorPicker component now uses these CSS variables instead of hardcoded JavaScript objects.
+
+BENEFITS:
+- Better performance (no need to load color data in JS)
+- Smaller bundle size (color data not included in JS bundle)
+- Better maintainability (colors defined in CSS where they belong)
+- Direct CSS usage (colors can be used in CSS without importing components)
+
+USAGE:
+
+1. DIRECT CSS USAGE:
+   .my-element {
+     background-color: var(--color-blue-500);
+     color: var(--color-slate-900);
+   }
+
+2. UTILITY CLASSES:
+   <div class="bg-blue-500 text-slate-900">
+     This uses the CSS utility classes defined in this file
+   </div>
+
+3. JAVASCRIPT ACCESS:
+   const blue500 = getComputedStyle(document.documentElement)
+     .getPropertyValue('--color-blue-500');
+
+4. COMPONENT USAGE:
+   The ColorPicker component automatically uses these CSS variables
+   and provides the same interface as before.
+
+COLOR FAMILIES AVAILABLE:
+- slate, gray, zinc, neutral, stone
+- red, orange, amber, yellow, lime
+- green, emerald, teal, cyan, sky
+- blue, indigo, violet, purple, fuchsia
+- pink, rose
+
+SHADES AVAILABLE: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900
+
+All colors are available as:
+- CSS custom properties: --color-{family}-{shade}
+- Background utility classes: .bg-{family}-{shade}
+- Text color utility classes: .text-{family}-{shade}
+*/

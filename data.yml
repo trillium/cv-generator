@@ -155,6 +155,25 @@ profile:
     - name: bsky.app/profile/trillium.is
       icon: Bluesky
       link: bsky.app/profile/trillium.is
+technical:
+  - category: Frontend
+    bubbles:
+      - React
+      - TypeScript
+      - Next.js
+      - Tailwind CSS
+  - category: Backend
+    bubbles:
+      - Node.js
+      - Python
+      - PostgreSQL
+      - MongoDB
+  - category: Tools
+    bubbles:
+      - Git
+      - Docker
+      - AWS
+      - Jest
 coverLetter:
   - Dear Hiring team,
   -

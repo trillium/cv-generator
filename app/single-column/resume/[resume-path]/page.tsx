@@ -50,42 +50,34 @@ export default function DynamicSingleColumnResumePage() {
         const { allFiles } = filesResponse.data;
 
         // Check if the requested resume path exists in the available files
-        // Support both exact matches and partial matches
-        const possiblePaths = [
-          resumePath,
-          resumePath.endsWith(".yml") ? resumePath.slice(0, -4) : resumePath,
-          resumePath.endsWith(".yml") ? resumePath : `${resumePath}.yml`,
-        ];
+        // Look for exact match first, then try with/without extension
+        let fileToLoad = null;
 
-        const validPath = possiblePaths.find((path) =>
-          allFiles.some(
-            (file) =>
-              file === path ||
-              file.endsWith(`/${path}`) ||
-              // Handle nested paths properly (e.g., resumes/software-engineer/data.yml)
-              file.includes(path),
-          ),
-        );
-
-        if (!validPath) {
-          throw new Error(
-            `Resume file not found: ${encodedResumePath} (decoded: ${resumePath}). Available files: ${allFiles.join(", ")}`,
-          );
+        // First try exact match
+        if (allFiles.includes(resumePath)) {
+          fileToLoad = resumePath;
         }
-
-        // Determine the actual file path to load
-        const fileToLoad = allFiles.find(
-          (file) =>
-            file === validPath ||
-            file.endsWith(`/${validPath}`) ||
-            file === `${validPath}.yml` ||
-            file.endsWith(`/${validPath}.yml`) ||
-            file.includes(validPath),
-        );
+        // Then try adding .yml extension if not present
+        else if (
+          !resumePath.endsWith(".yml") &&
+          !resumePath.endsWith(".yaml")
+        ) {
+          const withExtension = `${resumePath}.yml`;
+          if (allFiles.includes(withExtension)) {
+            fileToLoad = withExtension;
+          }
+        }
+        // Finally try removing extension if present
+        else if (resumePath.endsWith(".yml") || resumePath.endsWith(".yaml")) {
+          const withoutExtension = resumePath.replace(/\.(yml|yaml)$/i, "");
+          if (allFiles.includes(withoutExtension)) {
+            fileToLoad = withoutExtension;
+          }
+        }
 
         if (!fileToLoad) {
           throw new Error(
-            `Could not resolve file path for: ${encodedResumePath} (decoded: ${resumePath})`,
+            `Resume file not found: ${resumePath}. Available files: ${allFiles.join(", ")}`,
           );
         }
 
@@ -114,10 +106,10 @@ export default function DynamicSingleColumnResumePage() {
   // Loading state - combine local loading and context loading
   if (loading || contextLoading) {
     return (
-      <div className="min-h-screen w-full bg-white flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 dark:border-primary-400 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">
             Loading resume: {resumePath || encodedResumePath}...
           </p>
         </div>
@@ -129,16 +121,18 @@ export default function DynamicSingleColumnResumePage() {
   const displayError = error || contextError;
   if (displayError) {
     return (
-      <div className="min-h-screen w-full bg-white flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">❌</div>
-          <h1 className="text-2xl font-bold text-red-600 mb-2">
+          <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
             Resume Not Found
           </h1>
-          <p className="text-gray-600 mb-4">{displayError}</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            {displayError}
+          </p>
           <button
             onClick={() => router.push("/single-column/resume")}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+            className="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
           >
             Go to Default Resume
           </button>
@@ -150,13 +144,13 @@ export default function DynamicSingleColumnResumePage() {
   // Success state - render the resume using ResumeContext data
   if (!currentResume) {
     return (
-      <div className="min-h-screen w-full bg-white flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-yellow-600 mb-2">
+          <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
             No Resume Data
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             The resume file was found but contains no data.
           </p>
         </div>

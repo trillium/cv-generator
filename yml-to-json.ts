@@ -7,7 +7,13 @@ import path from "path";
 config();
 
 // Use PII_PATH environment variable, fallback to current directory
-const piiPath = process.env.PII_PATH || process.cwd();
+const piiPath = process.env.PII_PATH;
+if (!piiPath) {
+  console.error(
+    "PII_PATH environment variable is required. Please set PII_PATH to the directory containing your data.yml file.",
+  );
+  process.exit(1);
+}
 const inputPath = path.join(piiPath, "data.yml");
 const outputPath = "src/data.json";
 

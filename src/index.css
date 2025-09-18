@@ -2,3 +2,6 @@
 
 @import "tailwindcss";
 @config "../tailwind.config.js";
+
+/* Import Tailwind color definitions */
+/* @import "./tailwind-colors.css"; */

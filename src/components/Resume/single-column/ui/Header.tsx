@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useEffect, useRef } from "react";
 import ProfileLink from "../../../Profile/ProfileLink/ProfileLink";
 import EditableField from "../../../EditableField/EditableField";
 import type { CVData } from "../../../../types";
@@ -24,8 +25,26 @@ function isInfo(obj: any): obj is {
 }
 
 export default function Header({ data }: { data: CVData }) {
+  const firstNameRef = useRef<HTMLSpanElement>(null);
+  const lastNameRef = useRef<HTMLSpanElement>(null);
+
   if (!isInfo(data.info)) return null;
   const { firstName, lastName, role, email, phone, website } = data.info;
+
+  useEffect(() => {
+    if (firstNameRef.current) {
+      const computedStyle = window.getComputedStyle(firstNameRef.current);
+      console.log("🚨 First name text color:", computedStyle.color);
+    }
+  }, [firstName]);
+
+  useEffect(() => {
+    if (lastNameRef.current) {
+      const computedStyle = window.getComputedStyle(lastNameRef.current);
+      console.log("🚨 Last name text color:", computedStyle.color);
+    }
+  }, [lastName]);
+
   const singleLineNameAndRole = true;
   return (
     <header>
@@ -42,7 +61,10 @@ export default function Header({ data }: { data: CVData }) {
               value={firstName}
               fieldType="text"
             >
-              <span className=" font-semibold text-primary-500">
+              <span
+                ref={firstNameRef}
+                className=" font-semibold text-primary-500"
+              >
                 {firstName}
               </span>
             </EditableField>{" "}
@@ -51,7 +73,9 @@ export default function Header({ data }: { data: CVData }) {
               value={lastName}
               fieldType="text"
             >
-              <span className="font-normal dark:text-white">{lastName}</span>
+              <span ref={lastNameRef} className="font-normal dark:text-white">
+                {lastName}
+              </span>
             </EditableField>
           </h1>
         </div>

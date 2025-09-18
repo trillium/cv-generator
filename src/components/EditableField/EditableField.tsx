@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, ReactNode } from "react";
+import clsx from "clsx";
 import {
   useYamlPathUpdater,
   getNestedValue,
@@ -51,8 +52,13 @@ export default function EditableField<T extends string | string[]>({
   const { updateYamlPath } = useYamlPathUpdater();
   const { parsedData, error } = useYamlData();
   const { openModal, closeModal } = useModal();
-  const { handleAddAbove, handleAddBelow, handleDelete } =
-    useArrayOperations(yamlPath);
+  const {
+    handleAddAbove,
+    handleAddBelow,
+    handleDelete,
+    handleMoveUp,
+    handleMoveDown,
+  } = useArrayOperations(yamlPath);
 
   const canShowAddButtons = shouldShowAddButtons(yamlPath, parsedData);
   const isEmpty = isFieldEmpty(value);
@@ -95,18 +101,18 @@ export default function EditableField<T extends string | string[]>({
     }
   };
 
-  const handleSave = async (modalEditValue: string) => {
+  const handleSave = async (modalEditValue: string | any[]) => {
     const currentValue = Array.isArray(value)
       ? value.join("\n")
       : String(value || "");
 
-    if (modalEditValue !== currentValue) {
+    if (JSON.stringify(modalEditValue) !== JSON.stringify(currentValue)) {
       setIsSaving(true);
       try {
-        let newValue: any = modalEditValue.trim();
+        let newValue: any = modalEditValue;
 
         // Handle different field types
-        if (fieldType === "array") {
+        if (fieldType === "array" && typeof modalEditValue === "string") {
           newValue = modalEditValue
             .split("\n")
             .map((line) => line.trim())
@@ -114,7 +120,10 @@ export default function EditableField<T extends string | string[]>({
         }
 
         await updateYamlPath(yamlPath, newValue);
-        setEditValue(modalEditValue);
+        const stringValue = Array.isArray(newValue)
+          ? newValue.join("\n")
+          : String(newValue || "");
+        setEditValue(stringValue);
       } catch (error) {
         console.error("Error saving field:", yamlPath, error);
         // Revert to original value on error
@@ -155,7 +164,7 @@ export default function EditableField<T extends string | string[]>({
       />
     );
 
-    openModal(<ModalContent />);
+    openModal(<ModalContent />, "md");
   };
 
   const handleWrapperKeyDown = (e: React.KeyboardEvent) => {
@@ -169,48 +178,73 @@ export default function EditableField<T extends string | string[]>({
   };
 
   // Base styles with CSS-only visual feedback
-  const wrapperStyles = `
-    relative inline-block group
-    transition-all duration-200
-    ${!isEditing && !error ? "cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/50 hover:shadow hover:shadow-blue-200/50 dark:hover:shadow-blue-700/50 hover:rounded" : ""}
-    ${isEditing ? "ring-2 ring-blue-500 rounded" : ""}
-    ${containsLink ? "underline decoration-blue-500 underline-offset-2 print:no-underline" : ""}
-    ${className}
-  `.trim();
+  const cursorClasses = "cursor-pointer";
+  const baseLayoutClasses =
+    "relative inline-block group relative transition-all duration-200";
+
+  const interactiveClasses =
+    "cursor-pointer active:bg-blue-100 dark:active:bg-blue-800/50 active:scale-[0.98]";
+
+  const editingStateClasses = "ring-2 ring-blue-500 rounded";
+
+  const linkStylingClasses =
+    "underline decoration-blue-500 underline-offset-2 print:no-underline";
+
+  const wrapperStyles = clsx(
+    baseLayoutClasses,
+    cursorClasses,
+    {
+      interactiveClasses: !isEditing && !error,
+      editingStateClasses: isEditing,
+      linkStylingClasses: containsLink,
+    },
+    className,
+  );
+
+  // Highlight overlay div that sits on top of all content
+  const HighlightOverlay = () => (
+    <div className="absolute inset-0 group-hover:bg-blue-500/20 dark:group-hover:bg-blue-900/50 group-hover:shadow group-hover:shadow-blue-200/50 dark:group-hover:shadow-blue-700/50 group-hover:rounded active:bg-blue-100 dark:active:bg-blue-800/50 active:scale-[0.98] z-10 pointer-events-none top-0 right-0 left-0 bottom-0 rounded-lg bg-transparent print:group-hover:bg-transparent print:group-hover:shadow-transparent" />
+  );
 
   // Render view mode
   return (
-    <div
-      className={wrapperStyles}
-      onClick={handleClick}
-      onKeyDown={handleWrapperKeyDown}
-      tabIndex={!error ? 0 : -1}
-      role="button"
-      aria-label={`Edit ${yamlPath?.split(".").pop() || "field"}`}
-      title={
-        !error
-          ? "Click to edit (or press Enter/Space)"
-          : "Cannot edit: YAML has errors"
-      }
-    >
-      <EmptyFieldPlaceholder
-        fieldType={fieldType}
-        isEmpty={isEmpty}
-        yamlPath={yamlPath}
+    <>
+      <div
+        className={wrapperStyles}
+        onClick={handleClick}
+        onKeyDown={handleWrapperKeyDown}
+        tabIndex={!error ? 0 : -1}
+        role="button"
+        aria-label={`Edit ${yamlPath?.split(".").pop() || "field"}`}
+        title={
+          !error
+            ? "Click to edit (or press Enter/Space)"
+            : "Cannot edit: YAML has errors"
+        }
       >
-        {children}
-      </EmptyFieldPlaceholder>
+        <HighlightOverlay />
+        <EmptyFieldPlaceholder
+          fieldType={fieldType}
+          isEmpty={isEmpty}
+          yamlPath={yamlPath}
+          linkData={linkData}
+        >
+          {children}
+        </EmptyFieldPlaceholder>
 
-      {/* Action buttons container */}
-      {!isEditing && !error && (
-        <ActionButtons
-          canShowAddButtons={canShowAddButtons}
-          onDelete={handleDelete}
-          onAddAbove={handleAddAbove}
-          onAddBelow={handleAddBelow}
-          onEdit={handleClick}
-        />
-      )}
-    </div>
+        {/* Action buttons container */}
+        {!isEditing && !error && (
+          <ActionButtons
+            canShowAddButtons={canShowAddButtons}
+            onDelete={handleDelete}
+            onAddAbove={handleAddAbove}
+            onAddBelow={handleAddBelow}
+            onMoveUp={handleMoveUp}
+            onMoveDown={handleMoveDown}
+            onEdit={handleClick}
+          />
+        )}
+      </div>
+    </>
   );
 }

@@ -1,12 +1,15 @@
 "use client";
 
 import React from "react";
+import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 
 interface ActionButtonsProps {
   canShowAddButtons: boolean;
   onDelete: (e: React.MouseEvent) => void;
   onAddAbove: (e: React.MouseEvent) => void;
   onAddBelow: (e: React.MouseEvent) => void;
+  onMoveUp: (e: React.MouseEvent) => void;
+  onMoveDown: (e: React.MouseEvent) => void;
   onEdit: (e: React.MouseEvent) => void;
 }
 
@@ -17,10 +20,12 @@ export default function ActionButtons({
   onDelete,
   onAddAbove,
   onAddBelow,
+  onMoveUp,
+  onMoveDown,
   onEdit,
 }: ActionButtonsProps) {
   return (
-    <>
+    <div className="print:hidden">
       {/* Delete button on the left */}
       {canShowAddButtons && (
         <div className="absolute top-1/2 -left-5 transform -translate-y-1/2 z-10 print:hidden hidden group-hover:block">
@@ -48,7 +53,14 @@ export default function ActionButtons({
 
       {/* Add above button - centered at top */}
       {canShowAddButtons && (
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10 print:hidden hidden group-hover:block">
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10 print:hidden hidden group-hover:flex space-x-1">
+          <button
+            onClick={onMoveUp}
+            className="bg-blue-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-blue-600 transition-colors"
+            title="Move up"
+          >
+            <FiChevronUp className={buttonSizeClassses} />
+          </button>
           <button
             onClick={onAddAbove}
             className="bg-green-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-green-600 transition-colors"
@@ -73,7 +85,14 @@ export default function ActionButtons({
 
       {/* Add below button - centered at bottom */}
       {canShowAddButtons && (
-        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-10 print:hidden hidden group-hover:block">
+        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-40 print:hidden hidden group-hover:flex space-x-1">
+          <button
+            onClick={onMoveDown}
+            className="bg-blue-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-blue-600 transition-colors"
+            title="Move down"
+          >
+            <FiChevronDown className={buttonSizeClassses} />
+          </button>
           <button
             onClick={onAddBelow}
             className="bg-green-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-green-600 transition-colors"
@@ -118,6 +137,6 @@ export default function ActionButtons({
           </svg>
         </button>
       </div>
-    </>
+    </div>
   );
 }

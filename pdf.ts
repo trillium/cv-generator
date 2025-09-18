@@ -25,7 +25,9 @@ async function killProcessOnPort(port: number): Promise<void> {
     if (process.platform === "win32") {
       // Windows
       const { stdout } = await execAsync(`netstat -ano | findstr :${port}`);
-      const lines = stdout.split('\n').filter(line => line.includes('LISTENING'));
+      const lines = stdout
+        .split("\n")
+        .filter((line) => line.includes("LISTENING"));
       for (const line of lines) {
         const parts = line.trim().split(/\s+/);
         const pid = parts[parts.length - 1];
@@ -37,7 +39,10 @@ async function killProcessOnPort(port: number): Promise<void> {
     } else {
       // macOS/Linux
       const { stdout } = await execAsync(`lsof -ti:${port}`);
-      const pids = stdout.trim().split('\n').filter(pid => pid);
+      const pids = stdout
+        .trim()
+        .split("\n")
+        .filter((pid) => pid);
       for (const pid of pids) {
         if (pid && !isNaN(Number(pid))) {
           await execAsync(`kill -9 ${pid}`);
@@ -69,72 +74,92 @@ async function startNextServer(rootDir: string, preferredPort: number = 7542) {
       });
 
       // Wait for the server to be ready
-      const result = await new Promise<{ process: any; url: string }>((resolve, reject) => {
-        let resolved = false;
-        const timeout = setTimeout(() => {
-          if (!resolved) {
-            nextProcess.kill();
-            reject(new Error(`Next.js server failed to start on port ${port} within 30 seconds`));
-          }
-        }, 30000);
+      const result = await new Promise<{ process: any; url: string }>(
+        (resolve, reject) => {
+          let resolved = false;
+          const timeout = setTimeout(() => {
+            if (!resolved) {
+              nextProcess.kill();
+              reject(
+                new Error(
+                  `Next.js server failed to start on port ${port} within 30 seconds`,
+                ),
+              );
+            }
+          }, 30000);
 
-        nextProcess.stdout?.on("data", (data) => {
-          const output = data.toString();
-          if (output.includes("Local:") || output.includes("Ready")) {
-            console.log(output.trim());
-          }
-          if (output.includes("Ready") && !resolved) {
-            resolved = true;
-            clearTimeout(timeout);
-            resolve({ process: nextProcess, url: `http://localhost:${port}` });
-          }
-        });
+          nextProcess.stdout?.on("data", (data) => {
+            const output = data.toString();
+            if (output.includes("Local:") || output.includes("Ready")) {
+              console.log(output.trim());
+            }
+            if (output.includes("Ready") && !resolved) {
+              resolved = true;
+              clearTimeout(timeout);
+              resolve({
+                process: nextProcess,
+                url: `http://localhost:${port}`,
+              });
+            }
+          });
 
-        nextProcess.stderr?.on("data", (data) => {
-          const errorOutput = data.toString();
+          nextProcess.stderr?.on("data", (data) => {
+            const errorOutput = data.toString();
 
-          // Only log actual errors, not info messages
-          if (errorOutput.includes("Error") || errorOutput.includes("EADDRINUSE")) {
-            console.error(errorOutput.trim());
-          }
+            // Only log actual errors, not info messages
+            if (
+              errorOutput.includes("Error") ||
+              errorOutput.includes("EADDRINUSE")
+            ) {
+              console.error(errorOutput.trim());
+            }
 
-          // Check for port in use error
-          if (errorOutput.includes("EADDRINUSE") || errorOutput.includes("address already in use")) {
+            // Check for port in use error
+            if (
+              errorOutput.includes("EADDRINUSE") ||
+              errorOutput.includes("address already in use")
+            ) {
+              if (!resolved) {
+                resolved = true;
+                clearTimeout(timeout);
+                nextProcess.kill();
+                reject(new Error(`Port ${port} is already in use`));
+              }
+            }
+          });
+
+          nextProcess.on("error", (error) => {
             if (!resolved) {
               resolved = true;
               clearTimeout(timeout);
-              nextProcess.kill();
-              reject(new Error(`Port ${port} is already in use`));
+              reject(error);
             }
-          }
-        });
+          });
 
-        nextProcess.on("error", (error) => {
-          if (!resolved) {
-            resolved = true;
-            clearTimeout(timeout);
-            reject(error);
-          }
-        });
-
-        nextProcess.on("exit", (code) => {
-          if (code !== 0 && !resolved) {
-            resolved = true;
-            clearTimeout(timeout);
-            reject(new Error(`Next.js process exited with code ${code}`));
-          }
-        });
-      });
+          nextProcess.on("exit", (code) => {
+            if (code !== 0 && !resolved) {
+              resolved = true;
+              clearTimeout(timeout);
+              reject(new Error(`Next.js process exited with code ${code}`));
+            }
+          });
+        },
+      );
 
       console.log(`✅ Successfully started Next.js server on port ${port}`);
       return result;
-
     } catch (error) {
-      console.log(`❌ Failed to start server on port ${port}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.log(
+        `❌ Failed to start server on port ${port}: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
 
       if (attempt === maxAttempts - 1) {
-        console.error(`💥 Failed to start server after ${maxAttempts} attempts`);
-        console.error(`💡 Try manually stopping any processes using ports ${preferredPort}-${port} and run again`);
+        console.error(
+          `💥 Failed to start server after ${maxAttempts} attempts`,
+        );
+        console.error(
+          `💡 Try manually stopping any processes using ports ${preferredPort}-${port} and run again`,
+        );
         process.exit(1);
       }
 
@@ -279,8 +304,8 @@ if (printArg) {
     .split(",")
     .map((v) => v.trim())
     .filter((v) => v === "resume" || v === "cover") as Array<
-      "resume" | "cover"
-    >;
+    "resume" | "cover"
+  >;
   if (printOptions.length === 0) printOptions = ["resume", "cover"];
 }
 
@@ -305,8 +330,12 @@ if (resumeTypeArg) {
 
   console.log(
     `Using data file: ${dataPath}${isAnon ? " (anonymized)" : ""}${skipPdf ? " (no PDF/server)" : ""}
-Resume type: ${resumeType}${resumePath ? `
-Resume path: ${resumePath}` : ""}`,
+Resume type: ${resumeType}${
+      resumePath
+        ? `
+Resume path: ${resumePath}`
+        : ""
+    }`,
   );
 
   let dataObj: CVData;
@@ -364,25 +393,42 @@ async function main(dataObj: CVData, resumeType: string, resumePath?: string) {
 
     if (resumePath) {
       // Ensure the resumePath is URL-encoded for the dynamic route
-      const encodedResumePath = resumePath.includes('-ashes-')
-        ? resumePath  // Already encoded
+      const encodedResumePath = resumePath.includes("-ashes-")
+        ? resumePath // Already encoded
         : encodeFilePathForUrl(resumePath); // Encode if not already encoded
 
       // Use dynamic routes with specific resume path
-      resumeUrl = new URL(`/${resumeType}/resume/${encodedResumePath}`, server.url).toString();
-      coverLetterUrl = new URL(`/${resumeType}/cover-letter/${encodedResumePath}`, server.url).toString();
-      console.log(`📄 Using specific resume path: ${resumePath} (encoded: ${encodedResumePath})`);
+      resumeUrl = new URL(
+        `/${resumeType}/resume/${encodedResumePath}`,
+        server.url,
+      ).toString();
+      coverLetterUrl = new URL(
+        `/${resumeType}/cover-letter/${encodedResumePath}`,
+        server.url,
+      ).toString();
+      console.log(
+        `📄 Using specific resume path: ${resumePath} (encoded: ${encodedResumePath})`,
+      );
     } else {
       // Use default routes
       resumeUrl = new URL(`/${resumeType}/resume`, server.url).toString();
-      coverLetterUrl = new URL(`/${resumeType}/cover-letter`, server.url).toString();
+      coverLetterUrl = new URL(
+        `/${resumeType}/cover-letter`,
+        server.url,
+      ).toString();
       console.log(`📄 Using default data.yml`);
     }
 
     browser = await puppeteer.launch();
 
     if (printOptions.includes("resume")) {
-      await generateAndSavePdf({ url: resumeUrl, dataObj, type: "Resume", outDir, browser });
+      await generateAndSavePdf({
+        url: resumeUrl,
+        dataObj,
+        type: "Resume",
+        outDir,
+        browser,
+      });
     }
     if (printOptions.includes("cover")) {
       await generateAndSavePdf({
@@ -396,7 +442,6 @@ async function main(dataObj: CVData, resumeType: string, resumePath?: string) {
 
     console.log("💾 Saving PDF");
     console.log("🏁 Done");
-
   } catch (error) {
     console.error("💥 Error during PDF generation:", error);
     throw error;

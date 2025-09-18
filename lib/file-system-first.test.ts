@@ -1,7 +1,6 @@
 // Test the file-system-first approach
 // @vitest-environment node
 
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
 import { FileSystemManager } from "./fileSystemManager";

@@ -43,21 +43,12 @@ export default function DebugInfo({
   }
 
   return (
-    <div className="bg-gray-100 p-3 rounded text-xs space-y-1 border">
-      <div className="font-semibold text-gray-700">Debug Info:</div>
-      <div>
-        <strong>YAML Path:</strong> {yamlPath}
-      </div>
-      <div>
-        <strong>Can Show Add Buttons:</strong>{" "}
-        {canShowAddButtons ? "✅ Yes" : "❌ No"}
+    <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded text-xs space-y-1 border dark:border-gray-600">
+      <div className="font-semibold text-gray-700 dark:text-gray-300">
+        Debug Info:
       </div>
       <div>
         <strong>Field Type:</strong> {fieldType}
-      </div>
-      <div>
-        <strong>Is Array Item:</strong>{" "}
-        {arrayInfo.isArrayItem ? "✅ Yes" : "❌ No"}
       </div>
       {arrayInfo.isArrayItem && (
         <>
@@ -65,17 +56,10 @@ export default function DebugInfo({
             <strong>Array Index:</strong> {arrayInfo.arrayIndex}
           </div>
           <div>
-            <strong>Parent Path:</strong> {arrayInfo.parentPath}
-          </div>
-          <div>
-            <strong>Parent is Array:</strong>{" "}
-            {arrayInfo.isParentArray ? "✅ Yes" : "❌ No"}
-          </div>
-          <div>
             <strong>Array Length:</strong> {arrayInfo.arrayLength}
           </div>
           <div>
-            <strong>Path Level:</strong> {arrayInfo.pathLevel} (0 = root)
+            <strong>Parent Path:</strong> {arrayInfo.parentPath}
           </div>
         </>
       )}

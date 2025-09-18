@@ -114,7 +114,7 @@ export default function DynamicSingleColumnCoverLetterPage() {
   // Loading state - combine local loading and context loading
   if (loading || contextLoading) {
     return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-300">
@@ -129,7 +129,7 @@ export default function DynamicSingleColumnCoverLetterPage() {
   const displayError = error || contextError;
   if (displayError) {
     return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">❌</div>
           <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
@@ -152,7 +152,7 @@ export default function DynamicSingleColumnCoverLetterPage() {
   // Success state - render the cover letter using ResumeContext data
   if (!currentResume) {
     return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">⚠️</div>
           <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">

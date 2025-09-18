@@ -169,7 +169,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
                   {/* Duplicate button */}
                   <button
                     onClick={() => setDuplicateSource(filePath)}
-                    className="px-2 py-1 text-sm bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30"
+                    className="px-2 py-1 text-sm bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30 hover:text-blue-800 dark:hover:text-blue-200 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
                     title="Duplicate file"
                   >
                     Copy
@@ -178,7 +178,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
                   {/* Delete button */}
                   <button
                     onClick={() => setDeleteConfirm(filePath)}
-                    className="px-2 py-1 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800/30"
+                    className="px-2 py-1 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800/30 hover:text-red-800 dark:hover:text-red-200 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
                     title="Delete file"
                   >
                     Delete

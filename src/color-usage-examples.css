@@ -1,0 +1,37 @@
+/* Example: Using Tailwind Colors in CSS */
+
+/* Direct CSS usage with custom properties */
+.accent-button {
+  background-color: var(--color-blue-500);
+  color: var(--color-white);
+  border: 2px solid var(--color-blue-600);
+}
+
+.accent-button:hover {
+  background-color: var(--color-blue-600);
+}
+
+/* Using the utility classes */
+/*
+<div class="bg-blue-500 text-white border-2 border-blue-600 hover:bg-blue-600">
+  Click me!
+</div>
+*/
+
+/* Dynamic color application via JavaScript */
+/*
+const applyThemeColor = (colorName, shade) => {
+  document.documentElement.style.setProperty(
+    '--theme-primary',
+    `var(--color-${colorName}-${shade})`
+  );
+};
+
+// Usage
+applyThemeColor('blue', '500');
+*/
+
+/* Then use in CSS */
+.themed-element {
+  background-color: var(--theme-primary);
+}

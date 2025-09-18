@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useModal } from "../../contexts/ModalContext";
 
 interface PageSize {
   name: string;
@@ -18,6 +19,7 @@ interface PrintPageSizeProps {
     right: number; // in inches
   };
   dpi?: number;
+  onPageSizeChange?: (pageSize: PageSize) => void;
 }
 
 const DEFAULT_PAGE_SIZES: Record<string, PageSize> = {
@@ -36,6 +38,7 @@ export default function PrintPageSize({
   pageSize = DEFAULT_PAGE_SIZES.letter,
   margins = { top: 0.25, bottom: 0.25, left: 0.25, right: 0.25 },
   dpi = 96,
+  onPageSizeChange,
 }: PrintPageSizeProps) {
   const [pageCount, setPageCount] = useState<number>(1);
   const [pendingPageCount, setPendingPageCount] = useState<number | null>(null);
@@ -44,6 +47,8 @@ export default function PrintPageSize({
     resizeObserver?: ResizeObserver;
     mutationObserver?: MutationObserver;
   }>({});
+
+  const { openModal, closeModal } = useModal();
 
   // Memoize the calculation parameters to prevent unnecessary recalculations
   const calculationParams = useCallback(
@@ -172,29 +177,72 @@ export default function PrintPageSize({
     }
   }, [pendingPageCount]);
 
-  // Recalculate when window is resized (affects print layout)
-  useEffect(() => {
-    let resizeTimeout: NodeJS.Timeout | null = null;
-    const handleResize = () => {
-      if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
-      }
-      resizeTimeout = setTimeout(() => {
-        calculatePageCount();
-        resizeTimeout = null;
-      }, 300);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
-      }
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [targetSelector, calculationParams]);
+  // Handle opening the paper size selection modal
+  const handleOpenPaperSizeModal = () => {
+    const PaperSizeModalContent = () => (
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+            Select Paper Size
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Choose the paper size for your resume
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          {Object.entries(DEFAULT_PAGE_SIZES).map(([key, size]) => (
+            <button
+              key={key}
+              onClick={() => {
+                onPageSizeChange?.(size);
+                closeModal();
+              }}
+              className={`p-3 rounded-lg border text-left transition-all hover:shadow-md ${
+                size.name === pageSize.name
+                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
+                  : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500"
+              }`}
+            >
+              <div className="font-medium text-sm">{size.name}</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {size.width}" × {size.height}"
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <div className="flex justify-end gap-2 pt-4 border-t border-gray-200 dark:border-gray-600">
+          <button
+            onClick={closeModal}
+            className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+
+    openModal(<PaperSizeModalContent />, "md");
+  };
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600">
+    <div
+      className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-600 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+      onClick={onPageSizeChange ? handleOpenPaperSizeModal : undefined}
+      role={onPageSizeChange ? "button" : undefined}
+      tabIndex={onPageSizeChange ? 0 : -1}
+      onKeyDown={
+        onPageSizeChange
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleOpenPaperSizeModal();
+              }
+            }
+          : undefined
+      }
+    >
       <svg
         className="w-4 h-4 text-gray-500 dark:text-gray-400"
         fill="none"

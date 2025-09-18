@@ -1,4 +1,6 @@
+import React from "react";
 import EditableField from "../EditableField";
+import { useYamlData } from "../../contexts/ResumeContext";
 
 export type HeaderProps = {
   name: string;
@@ -15,7 +17,9 @@ const Header = ({
   omitTitle = false,
   omitBlurb = false,
 }: HeaderProps) => {
-  const [first, last] = name.split(" ");
+  const parts = name.split(" ");
+  const first = parts[0] || "";
+  const last = parts.slice(1).join(" ") || "";
   return (
     <>
       <div className="flex flex-col gap-1">
