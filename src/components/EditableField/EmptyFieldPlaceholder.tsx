@@ -28,7 +28,7 @@ export default function EmptyFieldPlaceholder({
   // Generate specific placeholder messages for technical skills
   const getPlaceholderMessage = () => {
     if (fieldType === "link" || yamlPath.includes("links")) {
-      return "Click to add a link";
+      return `Click to add ${yamlPath}`;
     }
     if (yamlPath.includes("technical")) {
       if (yamlPath.includes(".category")) {
