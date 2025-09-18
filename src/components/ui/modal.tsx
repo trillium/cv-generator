@@ -12,7 +12,7 @@ import { Fragment } from "react";
 import { useModal } from "../../contexts/ModalContext";
 
 export default function Modal() {
-  const { isOpen, content, size, closeModal } = useModal();
+  const { isOpen, content, size, closeModal, onClose } = useModal();
 
   const getSizeClasses = (size?: "sm" | "md" | "lg" | "xl") => {
     switch (size) {
@@ -31,7 +31,15 @@ export default function Modal() {
 
   return (
     <Transition show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={closeModal}>
+      <Dialog
+        key={isOpen ? "open" : "closed"}
+        as="div"
+        className="relative z-50"
+        onClose={() => {
+          onClose?.();
+          closeModal();
+        }}
+      >
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"

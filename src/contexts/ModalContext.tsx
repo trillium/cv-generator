@@ -6,15 +6,18 @@ interface ModalState {
   isOpen: boolean;
   content: React.ReactNode | null;
   size?: "sm" | "md" | "lg" | "xl";
+  onClose?: () => void;
 }
 
 interface ModalContextValue {
   isOpen: boolean;
   content: React.ReactNode | null;
   size?: "sm" | "md" | "lg" | "xl";
+  onClose?: () => void;
   openModal: (
     content: React.ReactNode,
     size?: "sm" | "md" | "lg" | "xl",
+    onClose?: () => void,
   ) => void;
   closeModal: () => void;
 }
@@ -26,14 +29,20 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     isOpen: false,
     content: null,
     size: "md",
+    onClose: undefined,
   });
 
   const openModal = useCallback(
-    (content: React.ReactNode, size: "sm" | "md" | "lg" | "xl" = "md") => {
+    (
+      content: React.ReactNode,
+      size: "sm" | "md" | "lg" | "xl" = "md",
+      onClose?: () => void,
+    ) => {
       setModal({
         isOpen: true,
         content,
         size,
+        onClose,
       });
     },
     [],
@@ -44,6 +53,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       isOpen: false,
       content: null,
       size: "md",
+      onClose: undefined,
     });
   }, []);
 
@@ -53,6 +63,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         isOpen: modal.isOpen,
         content: modal.content,
         size: modal.size,
+        onClose: modal.onClose,
         openModal,
         closeModal,
       }}

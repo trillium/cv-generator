@@ -164,7 +164,7 @@ export default function EditableField<T extends string | string[]>({
       />
     );
 
-    openModal(<ModalContent />, "md");
+    openModal(<ModalContent />, "md", handleCancel);
   };
 
   const handleWrapperKeyDown = (e: React.KeyboardEvent) => {
