@@ -13,7 +13,7 @@ interface FileSystemResponse {
   error?: string;
 }
 
-function DiagnosticView({}) {
+function DiagnosticView() {
   const [data, setData] = useState<FileSystemResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
