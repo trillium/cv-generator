@@ -46,10 +46,14 @@ function normalizeProject(project: Partial<Project>): Project {
   return {
     ...project,
     lines: Array.isArray(project.lines)
-      ? project.lines.flatMap((line: any) =>
-          Array.isArray(line.text)
-            ? line.text.map((t: string) => ({ text: t }))
-            : [{ text: line.text }],
+      ? project.lines.flatMap((line: string | { text: string }) =>
+          typeof line === "string"
+            ? [{ text: line }]
+            : Array.isArray((line as { text: string }).text)
+              ? (line as { text: string }).text.map((t: string) => ({
+                  text: t,
+                }))
+              : [{ text: (line as { text: string }).text }],
         )
       : [],
   };

@@ -104,10 +104,10 @@ export class UnifiedFileManager {
 
     // Extract role and metadata from YAML
     let role: string | undefined;
-    let resumeMetadata: any | undefined;
+    let resumeMetadata: Record<string, unknown> | undefined;
     try {
       const content = await fs.readFile(fullPath, "utf-8");
-      const data = yaml.load(content) as any;
+      const data = yaml.load(content) as Record<string, unknown>;
 
       // Try different paths for role based on file type
       if (data?.info?.role) {

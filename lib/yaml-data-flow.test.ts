@@ -280,7 +280,7 @@ name: Test User
       const changelog = JSON.parse(fs.readFileSync(changelogPath, "utf8"));
 
       expect(changelog.length).toBe(3);
-      changelog.forEach((entry: any) => {
+      changelog.forEach((entry: Record<string, unknown>) => {
         expect(entry.action).toBe("update");
         expect(entry.timestamp).toBeDefined();
       });

@@ -167,7 +167,7 @@ profile:
 
   it("should parse YAML content with correct structure and values", () => {
     const yamlContent = mockGetYamlData();
-    const parsedData = yaml.load(yamlContent) as any;
+    const parsedData = yaml.load(yamlContent) as Record<string, unknown>;
 
     // Check header section
     expect(parsedData).toHaveProperty("header");

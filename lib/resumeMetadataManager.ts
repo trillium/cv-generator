@@ -118,7 +118,7 @@ export class ResumeMetadataManager {
   /**
    * Validate metadata structure
    */
-  static validateMetadata(metadata: any): metadata is ResumeMetadata {
+  static validateMetadata(metadata: unknown): metadata is ResumeMetadata {
     return (
       typeof metadata === "object" &&
       metadata !== null &&
@@ -135,7 +135,7 @@ export class ResumeMetadataManager {
   /**
    * Migrate metadata from old format (if needed)
    */
-  static migrateMetadata(oldMetadata: any): ResumeMetadata {
+  static migrateMetadata(oldMetadata: unknown): ResumeMetadata {
     // If already in correct format, return as-is
     if (this.validateMetadata(oldMetadata)) {
       return oldMetadata;
