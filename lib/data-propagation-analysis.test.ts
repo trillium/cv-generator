@@ -1,9 +1,6 @@
 // Simple test to verify the data flow issue
 // @vitest-environment node
 
-import fs from "fs";
-import path from "path";
-
 describe("Data Propagation Issue Analysis", () => {
   it("should identify the core problem with data propagation", () => {
     console.log("🔍 ANALYSIS: Data Propagation Issue in CV Generator");

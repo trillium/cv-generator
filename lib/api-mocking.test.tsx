@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import React from "react";
 
@@ -41,7 +41,7 @@ import { ResumeProvider } from "../src/contexts/ResumeContext";
 import { ModalProvider } from "../src/contexts/ModalContext";
 import Header from "../src/components/Header/Header";
 
-const TestResumePage = () => {
+function TestResumePage() {
   return (
     <div data-testid="resume-page">
       <Header
@@ -51,7 +51,7 @@ const TestResumePage = () => {
       />
     </div>
   );
-};
+}
 
 // Test wrapper component
 function TestWrapper({

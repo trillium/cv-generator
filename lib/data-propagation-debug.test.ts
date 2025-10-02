@@ -12,15 +12,10 @@ const piiPath =
   process.env.PII_PATH || "/Users/trilliumsmith/code/cv-generator/pii";
 
 describe("YAML Data Propagation Test", () => {
-  let originalDataExists = false;
   let tempDataExists = false;
-  let changelogExists = false;
 
   beforeEach(() => {
-    // Check what files exist before test
-    originalDataExists = fs.existsSync(path.join(piiPath, "data.yml"));
     tempDataExists = fs.existsSync(path.join(piiPath, "data.temp.yml"));
-    changelogExists = fs.existsSync(path.join(piiPath, "changelog.json"));
   });
 
   afterEach(() => {
