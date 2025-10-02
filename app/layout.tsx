@@ -17,10 +17,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  searchParams,
 }: {
   children: React.ReactNode;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>

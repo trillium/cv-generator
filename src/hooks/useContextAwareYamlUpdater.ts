@@ -1,9 +1,8 @@
 import { useCallback } from "react";
 import { useFileManager } from "../contexts/FileManagerContext";
-import * as yaml from "js-yaml";
 
 export function useContextAwareYamlUpdater() {
-  const { currentFile, content, updateContent, saveFile } = useFileManager();
+  const { currentFile, updateContent, saveFile } = useFileManager();
 
   const updateYamlContent = useCallback(
     async (newContent: string) => {

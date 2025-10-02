@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import SingleColumnCoverLetter from "../../../../src/components/Resume/single-column/cover-letter";
-import type { CVData } from "../../../../src/types";
 import { listAllResumeFiles } from "../../../../lib/utility";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
 import { useFileManager } from "../../../../src/contexts/FileManagerContext";

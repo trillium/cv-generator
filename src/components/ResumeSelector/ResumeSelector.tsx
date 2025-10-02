@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { clsx } from "clsx";
 import { useFileManager } from "../../contexts/FileManagerContext";
 import { useModal } from "../../contexts/ModalContext";
