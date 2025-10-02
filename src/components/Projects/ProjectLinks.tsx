@@ -1,7 +1,5 @@
-import React from "react";
-import ProfileLink, {
-  ProfileLinkProps,
-} from "../Profile/ProfileLink/ProfileLink";
+import { ProfileLinkProps } from "../Profile/ProfileLink/ProfileLink";
+import ProfileLink from "../Profile/ProfileLink/ProfileLink";
 
 interface ProjectLinksProps {
   links?: ProfileLinkProps[];
