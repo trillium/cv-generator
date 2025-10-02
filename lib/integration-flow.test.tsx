@@ -153,7 +153,7 @@ profile:
   });
 
   it("should demonstrate complete name update integration flow", async () => {
-    let currentYamlContent = `
+    const currentYamlContent = `
 header:
   name: "Original Integration Name"
   title: ["Software Developer"]

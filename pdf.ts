@@ -62,7 +62,7 @@ async function startNextServer(rootDir: string, preferredPort: number = 7542) {
 
   // Try to find an available port starting from the preferred port
   let port = preferredPort;
-  let maxAttempts = 5; // Reduced attempts since we're cleaning up first
+  const maxAttempts = 5; // Reduced attempts since we're cleaning up first
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
