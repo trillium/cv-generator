@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { ResumeMetadata } from "../../types";
 import { FiCalendar, FiBriefcase, FiFileText, FiEdit2 } from "react-icons/fi";
 
