@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Version, Diff } from "../../types/fileManager";
 import {
   ClockIcon,
   ArrowPathIcon,
-  DocumentArrowDownIcon,
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@heroicons/react/24/outline";
@@ -26,11 +25,7 @@ export default function VersionHistory({
   const [diff, setDiff] = useState<Diff | null>(null);
   const [loadingDiff, setLoadingDiff] = useState(false);
 
-  useEffect(() => {
-    loadVersions();
-  }, [filePath]);
-
-  async function loadVersions() {
+  const loadVersions = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/files/${filePath}/versions`);
@@ -46,7 +41,11 @@ export default function VersionHistory({
     } finally {
       setLoading(false);
     }
-  }
+  }, [filePath]);
+
+  useEffect(() => {
+    loadVersions();
+  }, [loadVersions]);
 
   async function loadDiff(versionPath: string) {
     try {
