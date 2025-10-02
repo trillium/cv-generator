@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   FileManagerProvider,
   useFileManager,
@@ -33,7 +33,6 @@ function FileManagerPage() {
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<Version | null>(null);
-  const [fileToDelete, setFileToDelete] = useState<FileMetadata | null>(null);
 
   useEffect(() => {
     refreshFiles();
@@ -43,7 +42,7 @@ function FileManagerPage() {
     await loadFile(file.path);
   }
 
-  async function handleDuplicateFile(file: FileMetadata) {
+  async function handleDuplicateFile() {
     setShowDuplicateModal(true);
   }
 
@@ -195,9 +194,7 @@ function FileManagerPage() {
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                 <VersionHistory
                   filePath={currentFile.path}
-                  onRestore={(version) => {
-                    // Find the version object
-                    // For now, just show the modal
+                  onRestore={() => {
                     setShowRestoreModal(true);
                   }}
                 />
