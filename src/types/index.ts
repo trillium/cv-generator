@@ -49,6 +49,7 @@ export type CVData = {
   languages?: Language[];
   education?: Education[];
   coverLetter?: string[];
+  metadata?: ResumeMetadata;
 };
 
 export type InfoType = {
@@ -69,3 +70,20 @@ export type CareerSummaryItem = {
 };
 
 export type CareerSummary = CareerSummaryItem[];
+
+export type ResumeMetadata = {
+  targetCompany?: string;
+  targetPosition?: string;
+  targetJobUrl?: string;
+  applicationDate?: string;
+  applicationStatus?:
+    | "draft"
+    | "applied"
+    | "interview"
+    | "offer"
+    | "rejected"
+    | "withdrawn";
+  notes?: string;
+  tailoredFor?: string[];
+  lastModified?: string;
+};
