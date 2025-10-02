@@ -6,7 +6,7 @@ import yaml from "js-yaml";
  * Takes a list of files from a post, finds them all, processes the data from yml to json
  */
 export async function readFiles(paths: string[], baseDirectory: string) {
-  const results: { [key: string]: any } = {};
+  const results: Record<string, unknown> = {};
 
   for (const filePath of paths) {
     try {

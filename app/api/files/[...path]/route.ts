@@ -78,7 +78,7 @@ export async function POST(
       const piiPath = process.env.PII_PATH || join(process.cwd(), "pii");
       const fullPath = join(piiPath, filePath);
       const content = await readFile(fullPath, "utf-8");
-      const data = yaml.load(content) as any;
+      const data = yaml.load(content) as Record<string, unknown>;
       data.metadata = metadata;
       const updatedYaml = yaml.dump(data, {
         indent: 2,

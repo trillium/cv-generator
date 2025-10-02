@@ -19,7 +19,7 @@ interface WriteFileOptions {
   createDiff?: boolean;
 }
 
-export async function writeFile(json: Object, options: WriteFileOptions) {
+export async function writeFile(json: object, options: WriteFileOptions) {
   const {
     filePath,
     baseDirectory = process.env.PII_PATH || ".",

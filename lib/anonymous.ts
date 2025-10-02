@@ -2,8 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import yaml from "js-yaml";
 
-type CVDataPartial = Partial<CVData>;
-
 import type { CVData } from "../src/types";
 
 // Use import.meta.url to get __dirname in ESM
