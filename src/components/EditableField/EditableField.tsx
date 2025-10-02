@@ -6,7 +6,7 @@ import {
   useYamlPathUpdater,
   getNestedValue,
 } from "../../hooks/useYamlPathUpdater";
-import { useYamlData } from "../../contexts/ResumeContext";
+import { useFileManager } from "../../contexts/FileManagerContext";
 import { useModal } from "../../contexts/ModalContext";
 import ActionButtons from "./ActionButtons";
 import EmptyFieldPlaceholder from "./EmptyFieldPlaceholder";
@@ -50,7 +50,7 @@ export default function EditableField<T extends string | string[]>({
   const [isSaving, setIsSaving] = useState(false);
 
   const { updateYamlPath } = useYamlPathUpdater();
-  const { parsedData, error } = useYamlData();
+  const { parsedData, error } = useFileManager();
   const { openModal, closeModal } = useModal();
   const {
     handleAddAbove,

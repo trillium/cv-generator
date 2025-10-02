@@ -1,87 +1,53 @@
-import { useContext, useCallback } from "react";
-import { useResumeContext } from "../contexts/ResumeContext";
-import { useYamlData } from "../contexts/ResumeContext";
-import { CVData } from "../types";
+import { useCallback } from "react";
+import { useFileManager } from "../contexts/FileManagerContext";
+import * as yaml from "js-yaml";
 
-/**
- * Hook that provides context-aware YAML updating
- * Routes updates to the correct system (file-based or legacy)
- */
 export function useContextAwareYamlUpdater() {
-  const {
-    currentResume,
-    currentResumeFile,
-    saveCurrentResume,
-    loadResumeFile,
-    updateYamlContent: contextUpdateYamlContent,
-    commitChanges,
-  } = useResumeContext();
-  const { updateYamlContent: legacyUpdateYamlContent } = useYamlData();
+  const { currentFile, content, updateContent, saveFile } = useFileManager();
 
   const updateYamlContent = useCallback(
     async (newContent: string) => {
       console.log("🔍 useContextAwareYamlUpdater called with:", {
-        currentResumeFile,
-        hasCurrentResume: !!currentResume,
+        currentFilePath: currentFile?.path,
+        hasCurrentFile: !!currentFile,
         newContentLength: newContent.length,
         newContentPreview: newContent.substring(0, 100) + "...",
       });
 
-      if (currentResumeFile && currentResume) {
-        // Use file-based system with ResumeContext's updateYamlContent
-        console.log("🎯 Updating via file-based system:", {
-          filePath: currentResumeFile,
+      if (currentFile) {
+        console.log("🎯 Updating file:", {
+          filePath: currentFile.path,
         });
 
         try {
-          // Use the context's updateYamlContent which now handles immediate saving
-          console.log(
-            "📝 Calling contextUpdateYamlContent (will save immediately)...",
-          );
-          await contextUpdateYamlContent(newContent);
-          console.log(
-            "✅ contextUpdateYamlContent completed with immediate save",
-          );
+          updateContent(newContent);
+          await saveFile(true);
+          console.log("✅ File update completed");
 
-          // No need to call commitChanges since saving happened immediately
-          console.log("✅ File-based update completed (saved immediately)");
-
-          return { success: true, filePath: currentResumeFile };
+          return { success: true, filePath: currentFile.path };
         } catch (error) {
-          console.error("❌ File-based update failed:", error);
+          console.error("❌ File update failed:", error);
           throw error;
         }
       } else {
-        // Use legacy system
-        console.log("📝 Updating via legacy system (default data.yml):", {
-          reason: !currentResumeFile
-            ? "No currentResumeFile"
-            : "No currentResume",
-        });
-        return await legacyUpdateYamlContent(newContent);
+        throw new Error("No file loaded");
       }
     },
-    [
-      currentResumeFile,
-      currentResume,
-      contextUpdateYamlContent,
-      commitChanges,
-      legacyUpdateYamlContent,
-    ],
+    [currentFile, updateContent, saveFile],
   );
 
   return {
     updateYamlContent,
-    currentContext: currentResumeFile
+    currentContext: currentFile
       ? {
-          filePath: currentResumeFile,
+          filePath: currentFile.path,
           fileName:
-            currentResumeFile
+            currentFile.path
               .split("/")
               .pop()
               ?.replace(/\.(yml|yaml)$/i, "") || "resume",
         }
       : null,
-    isFileBasedMode: !!(currentResumeFile && currentResume),
+    isFileBasedMode: !!currentFile,
   };
 }

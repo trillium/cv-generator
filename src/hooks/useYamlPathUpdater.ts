@@ -1,12 +1,9 @@
 import * as yaml from "js-yaml";
-import { useYamlData } from "../contexts/ResumeContext";
+import { useFileManager } from "../contexts/FileManagerContext";
 import { useContextAwareYamlUpdater } from "./useContextAwareYamlUpdater";
 
-/**
- * Hook for updating specific YAML paths granularly
- */
 export function useYamlPathUpdater() {
-  const { yamlContent } = useYamlData();
+  const { content: yamlContent } = useFileManager();
   const { updateYamlContent, currentContext, isFileBasedMode } =
     useContextAwareYamlUpdater();
 

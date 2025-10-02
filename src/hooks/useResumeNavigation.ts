@@ -2,26 +2,19 @@
 
 import { useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useResumeContext } from "../contexts/ResumeContext";
+import { useFileManager } from "../contexts/FileManagerContext";
 import { encodeFilePathForUrl } from "../utils/urlSafeEncoding";
 
-/**
- * Hook for navigating to different resumes via URL parameters
- * This version works with server-side searchParams and avoids rerender loops
- */
 export function useResumeNavigation() {
   const router = useRouter();
   const pathname = usePathname();
-  const { loadResumeFile } = useResumeContext();
+  const { loadFile } = useFileManager();
 
-  // Function to switch to a different resume and update URL
   const navigateToResume = useCallback(
     async (resumePath: string) => {
       try {
-        // First load the resume in the context
-        await loadResumeFile(resumePath);
+        await loadFile(resumePath);
 
-        // Then update the URL
         const encodedPath = encodeFilePathForUrl(resumePath);
         const searchParams = new URLSearchParams(window.location.search);
 
@@ -38,10 +31,9 @@ export function useResumeNavigation() {
         throw error;
       }
     },
-    [loadResumeFile, router, pathname],
+    [loadFile, router, pathname],
   );
 
-  // Function to clear current resume and URL parameter
   const clearResume = useCallback(() => {
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.delete("resume");
@@ -49,7 +41,6 @@ export function useResumeNavigation() {
     router.push(newUrl);
   }, [router, pathname]);
 
-  // Function to get a URL for a specific resume
   const getResumeUrl = useCallback(
     (resumePath: string) => {
       const encodedPath = encodeFilePathForUrl(resumePath);
