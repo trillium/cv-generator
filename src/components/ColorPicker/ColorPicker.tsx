@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { clsx } from "clsx";
 import { LuPaintbrushVertical } from "react-icons/lu";
 import colors from "tailwindcss/colors";
 import { useModal } from "../../contexts/ModalContext";
-import { toast } from "sonner";
 import { ColorPickerProps, TailwindColor } from "./types";
 import { COLOR_FAMILIES, COLOR_SHADES } from "./constants";
 import { getColorFromTailwind } from "./utils";
@@ -37,7 +36,9 @@ export default function ColorPicker({
     // Apply the color to CSS custom properties for theme customization
     if (typeof window !== "undefined") {
       // Set primary theme colors to the selected color family's shades
-      const colorFamily = (colors as any)[colorName];
+      const colorFamily = (
+        colors as unknown as Record<string, Record<string, string>>
+      )[colorName];
       if (colorFamily && typeof colorFamily === "object") {
         document.documentElement.style.setProperty(
           "--color-primary",
