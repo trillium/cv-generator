@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useModal } from "../../contexts/ModalContext";
 import ResumeNavigator from "../ResumeNavigator/ResumeNavigator";
 
