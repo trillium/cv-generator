@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import React from "react";
 import EmptyFieldPlaceholder from "./EmptyFieldPlaceholder";
 
 // Mock the context hooks to avoid FileManagerProvider requirement
