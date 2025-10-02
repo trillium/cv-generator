@@ -43,3 +43,4 @@ pii/*
 .next
 .env
 tsconfig.tsbuildinfo
+.claude/
