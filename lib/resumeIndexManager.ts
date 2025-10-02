@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import {
   ResumeIndex,
-  PositionGroup,
   CompanyVersion,
   ResumeMetadata,
 } from "./types/multiResume";

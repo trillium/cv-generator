@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import React from "react";
 import yaml from "js-yaml";
@@ -55,30 +55,7 @@ const TestResumePage = () => {
 };
 
 // Test wrapper component
-function TestWrapper({
-  children,
-  initialName = "Original Test Name",
-}: {
-  children: React.ReactNode;
-  initialName?: string;
-}) {
-  const initialYamlContent = `
-header:
-  name: "${initialName}"
-  title: ["Software Developer"]
-  resume: ["Test resume description"]
-info:
-  firstName: "Original"
-  lastName: "Test Name"
-  email: "test@example.com"
-workExperience: []
-projects: []
-profile:
-  shouldDisplayProfileImage: false
-  lines: []
-  links: []
-`;
-
+function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ModalProvider>
       <ResumeProvider>{children}</ResumeProvider>
@@ -171,17 +148,37 @@ profile:
 
     // Check header section
     expect(parsedData).toHaveProperty("header");
-    expect(parsedData.header).toHaveProperty("name", "Original Test Name");
-    expect(parsedData.header).toHaveProperty("title");
-    expect(parsedData.header.title).toEqual(["Software Developer"]);
-    expect(parsedData.header).toHaveProperty("resume");
-    expect(parsedData.header.resume).toEqual(["Test resume description"]);
+    expect(parsedData.header as Record<string, unknown>).toHaveProperty(
+      "name",
+      "Original Test Name",
+    );
+    expect(parsedData.header as Record<string, unknown>).toHaveProperty(
+      "title",
+    );
+    expect((parsedData.header as Record<string, unknown>).title).toEqual([
+      "Software Developer",
+    ]);
+    expect(parsedData.header as Record<string, unknown>).toHaveProperty(
+      "resume",
+    );
+    expect((parsedData.header as Record<string, unknown>).resume).toEqual([
+      "Test resume description",
+    ]);
 
     // Check info section
     expect(parsedData).toHaveProperty("info");
-    expect(parsedData.info).toHaveProperty("firstName", "Original");
-    expect(parsedData.info).toHaveProperty("lastName", "Test Name");
-    expect(parsedData.info).toHaveProperty("email", "test@example.com");
+    expect(parsedData.info as Record<string, unknown>).toHaveProperty(
+      "firstName",
+      "Original",
+    );
+    expect(parsedData.info as Record<string, unknown>).toHaveProperty(
+      "lastName",
+      "Test Name",
+    );
+    expect(parsedData.info as Record<string, unknown>).toHaveProperty(
+      "email",
+      "test@example.com",
+    );
 
     // Check other sections exist
     expect(parsedData).toHaveProperty("workExperience");
@@ -193,15 +190,23 @@ profile:
     expect(parsedData.projects).toEqual([]);
 
     expect(parsedData).toHaveProperty("profile");
-    expect(parsedData.profile).toHaveProperty(
+    expect(parsedData.profile as Record<string, unknown>).toHaveProperty(
       "shouldDisplayProfileImage",
       false,
     );
-    expect(parsedData.profile).toHaveProperty("lines");
-    expect(Array.isArray(parsedData.profile.lines)).toBe(true);
-    expect(parsedData.profile.lines).toEqual([]);
-    expect(parsedData.profile).toHaveProperty("links");
-    expect(Array.isArray(parsedData.profile.links)).toBe(true);
-    expect(parsedData.profile.links).toEqual([]);
+    expect(parsedData.profile as Record<string, unknown>).toHaveProperty(
+      "lines",
+    );
+    expect(
+      Array.isArray((parsedData.profile as Record<string, unknown>).lines),
+    ).toBe(true);
+    expect((parsedData.profile as Record<string, unknown>).lines).toEqual([]);
+    expect(parsedData.profile as Record<string, unknown>).toHaveProperty(
+      "links",
+    );
+    expect(
+      Array.isArray((parsedData.profile as Record<string, unknown>).links),
+    ).toBe(true);
+    expect((parsedData.profile as Record<string, unknown>).links).toEqual([]);
   });
 });

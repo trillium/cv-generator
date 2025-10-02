@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import React from "react";
 
@@ -39,45 +39,9 @@ vi.mock("../src/components/EditableField/EditableField", () => ({
 // Import test components
 import { ResumeProvider } from "../src/contexts/ResumeContext";
 import { ModalProvider } from "../src/contexts/ModalContext";
-import Header from "../src/components/Header/Header";
-
-const TestResumePage = () => {
-  return (
-    <div data-testid="resume-page">
-      <Header
-        name="Test User Name"
-        title={["Software Developer"]}
-        resume={["Test description"]}
-      />
-    </div>
-  );
-};
 
 // Test wrapper component
-function TestWrapper({
-  children,
-  initialName = "Original Test Name",
-}: {
-  children: React.ReactNode;
-  initialName?: string;
-}) {
-  const initialYamlContent = `
-header:
-  name: "${initialName}"
-  title: ["Software Developer"]
-  resume: ["Test resume description"]
-info:
-  firstName: "Original"
-  lastName: "Test Name"
-  email: "test@example.com"
-workExperience: []
-projects: []
-profile:
-  shouldDisplayProfileImage: false
-  lines: []
-  links: []
-`;
-
+function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ModalProvider>
       <ResumeProvider>{children}</ResumeProvider>
@@ -159,7 +123,7 @@ profile:
     };
 
     render(
-      <TestWrapper initialName="Context Test Name">
+      <TestWrapper>
         <TestComponent />
       </TestWrapper>,
     );

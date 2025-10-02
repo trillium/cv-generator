@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { tmpdir } from "os";
 import { config } from "dotenv";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { GET, POST } from "../app/api/yaml-data/route";
 import { getYamlData } from "./getYamlData";
 

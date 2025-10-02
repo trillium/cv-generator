@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import Navigation from "../src/components/Navigation/Navigation";
 import { FileManagerProvider } from "../src/contexts/FileManagerContext";
@@ -6,7 +5,6 @@ import { ModalProvider } from "../src/contexts/ModalContext";
 import Modal from "../src/components/ui/modal";
 import { ThemeProviders } from "./theme-providers";
 import { Toaster } from "sonner";
-import { metadata } from "./layout.constants";
 
 export default function RootLayout({
   children,
