@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import React from "react";
 import ProjectLinks from "./ProjectLinks";
 import { ProfileLinkProps } from "../Profile/ProfileLink/ProfileLink";
 
