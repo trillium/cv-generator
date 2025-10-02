@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import React from "react";
 
@@ -35,55 +34,6 @@ vi.mock("../src/components/EditableField/EditableField", () => ({
   default: ({ children }: { children: React.ReactNode }) =>
     React.createElement("div", null, children),
 }));
-
-// Import test components
-import { ResumeProvider } from "../src/contexts/ResumeContext";
-import { ModalProvider } from "../src/contexts/ModalContext";
-import Header from "../src/components/Header/Header";
-
-function TestResumePage() {
-  return (
-    <div data-testid="resume-page">
-      <Header
-        name="Test User Name"
-        title={["Software Developer"]}
-        resume={["Test description"]}
-      />
-    </div>
-  );
-}
-
-// Test wrapper component
-function TestWrapper({
-  children,
-  initialName = "Original Test Name",
-}: {
-  children: React.ReactNode;
-  initialName?: string;
-}) {
-  const initialYamlContent = `
-header:
-  name: "${initialName}"
-  title: ["Software Developer"]
-  resume: ["Test resume description"]
-info:
-  firstName: "Original"
-  lastName: "Test Name"
-  email: "test@example.com"
-workExperience: []
-projects: []
-profile:
-  shouldDisplayProfileImage: false
-  lines: []
-  links: []
-`;
-
-  return (
-    <ModalProvider>
-      <ResumeProvider>{children}</ResumeProvider>
-    </ModalProvider>
-  );
-}
 
 describe("YAML Data Integration - Name Update Flow", () => {
   beforeEach(() => {
