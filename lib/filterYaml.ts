@@ -27,7 +27,7 @@ export function filterYamlForRoute(
 ): string {
   try {
     // Parse the YAML string into an object
-    const data = yaml.load(yamlString) as Record<string, any>;
+    const data = yaml.load(yamlString) as Record<string, unknown>;
 
     if (!data || typeof data !== "object") {
       return yamlString; // Return original if parsing fails
@@ -37,7 +37,7 @@ export function filterYamlForRoute(
     const allowedFields = ROUTE_FILTERS[routeType];
 
     // Filter the data to only include allowed fields
-    const filteredData: Record<string, any> = {};
+    const filteredData: Record<string, unknown> = {};
 
     allowedFields.forEach((field) => {
       if (data[field] !== undefined) {

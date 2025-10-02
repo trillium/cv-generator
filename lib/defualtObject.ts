@@ -42,7 +42,7 @@ const defaultCVData: CVData = {
  * @param project - The project object to normalize.
  * @returns The normalized project.
  */
-function normalizeProject(project: any): Project {
+function normalizeProject(project: Partial<Project>): Project {
   return {
     ...project,
     lines: Array.isArray(project.lines)
@@ -60,7 +60,7 @@ function normalizeProject(project: any): Project {
  * @param projects - The array of project objects to normalize.
  * @returns The normalized array of projects.
  */
-function normalizeProjects(projects: any[] = []): Project[] {
+function normalizeProjects(projects: Partial<Project>[] = []): Project[] {
   return projects.map(normalizeProject);
 }
 
@@ -69,7 +69,7 @@ function normalizeProjects(projects: any[] = []): Project[] {
  * @param data - The data to check.
  * @returns True if valid, false otherwise.
  */
-function isValidData(data: any): data is CVData {
+function isValidData(data: unknown): data is CVData {
   const result = CVDataSchema.safeParse(data);
   return result.success;
 }
@@ -79,7 +79,7 @@ function isValidData(data: any): data is CVData {
  * @param base - The object to extract languages from.
  * @returns The languages array or an empty array.
  */
-function extractLanguages(base: any): CVData["languages"] {
+function extractLanguages(base: unknown): CVData["languages"] {
   if (typeof base !== "object" || base === null) {
     return [];
   }
@@ -100,7 +100,10 @@ function extractLanguages(base: any): CVData["languages"] {
  * @param fallbackData - The fallback data source (should be complete and valid).
  * @returns A fully-populated CVData object.
  */
-function defualtObject(scriptData: any, fallbackData: any): CVData {
+function defualtObject(
+  scriptData: Partial<CVData>,
+  fallbackData: Partial<CVData>,
+): CVData {
   const base = isValidData(scriptData) ? scriptData : fallbackData;
   const languages = extractLanguages(base);
   const result: CVData = {

@@ -9,7 +9,7 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const dataAnonPath = path.join(__dirname, "../data_anon.yml");
 const dataAnon = yaml.load(fs.readFileSync(dataAnonPath, "utf-8")) as CVData;
 
-export function anonymizeData(obj: Object): CVData {
+export function anonymizeData(obj: object): CVData {
   // Use the replace function to anonymize obj using dataAnon as the source of anonymized values
   return replace(obj, dataAnon);
 }
@@ -22,10 +22,10 @@ export function anonymizeData(obj: Object): CVData {
  * @returns A new object with values replaced
  */
 export function replace(
-  obj: any,
-  newObj: any,
+  obj: unknown,
+  newObj: unknown,
   path: Array<string | number> = [],
-): any {
+): unknown {
   if (typeof obj !== "object" || obj === null) return newObj;
   if (typeof newObj !== "object" || newObj === null) return newObj;
 
@@ -35,12 +35,14 @@ export function replace(
   }
 
   // If both are objects, recursively replace each key
-  const result: any = Array.isArray(obj) ? [] : {};
+  const result: Record<string, unknown> | unknown[] = Array.isArray(obj)
+    ? []
+    : {};
   const keys = new Set([...Object.keys(obj), ...Object.keys(newObj)]);
   for (const key of keys) {
     const currentPath = path.concat(key);
     const pathStr = currentPath.join(".");
-    const truncate = (val: any) => {
+    const truncate = (val: unknown) => {
       const str = JSON.stringify(val);
       return str && str.length > 50 ? str.slice(0, 47) + "..." : str;
     };

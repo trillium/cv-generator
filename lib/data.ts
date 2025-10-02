@@ -2,7 +2,10 @@ import type { CVData } from "../src/types";
 import fallbackData from "../src/data.json";
 import scriptData from "../src/script-data.json";
 
-export function mergeData(fallback: any, script: any): CVData {
+export function mergeData(
+  fallback: Partial<CVData>,
+  script: Partial<CVData>,
+): CVData {
   // Ensure header has omitTitle and omitBlurb
   const mergedHeader = {
     ...fallback.header,
