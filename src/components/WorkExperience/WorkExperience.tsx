@@ -1,4 +1,3 @@
-import BubbleList from "../Bubble/BubbleList";
 import Title from "../Title/Title";
 import LineList from "./LineList";
 import EditableField from "../EditableField";
