@@ -43,7 +43,7 @@ export default function LayoutSelector() {
   const currentLayoutOption = layouts.find((l) => l.value === currentLayout);
 
   return (
-    <Menu as="div" className="relative">
+    <Menu>
       <MenuButton className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
         {currentLayoutOption?.label || "Single Column"}
         <svg
@@ -61,7 +61,10 @@ export default function LayoutSelector() {
         </svg>
       </MenuButton>
 
-      <MenuItems className="absolute top-full mt-1 right-0 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 min-w-[140px] z-50 focus:outline-none">
+      <MenuItems
+        anchor={{ to: "bottom", padding: "20px" }}
+        className="bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 min-w-[140px] z-50 focus:outline-none"
+      >
         {layouts.map((layout) => (
           <MenuItem key={layout.value}>
             {({ active }) => (

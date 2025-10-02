@@ -28,9 +28,15 @@ export default function TwoColumnResumePageClient({
   const [isInitializing, setIsInitializing] = useState(true);
 
   // Extract resume path from server-side searchParams
+  // Support both 'file' (old navigation) and 'resume' (new navigation) parameters
+  const fileParam =
+    typeof searchParams.file === "string" ? searchParams.file : null;
   const resumeParam =
     typeof searchParams.resume === "string" ? searchParams.resume : null;
-  const resumePath = resumeParam ? decodeFilePathFromUrl(resumeParam) : null;
+
+  // Prefer 'file' parameter if present, otherwise use 'resume'
+  const rawPath = fileParam || resumeParam;
+  const resumePath = rawPath ? decodeFilePathFromUrl(rawPath) : null;
 
   // Initialize resume loading from server-side searchParams
   useEffect(() => {

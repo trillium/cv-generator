@@ -182,14 +182,6 @@ export default function EditableField<T extends string | string[]>({
   const baseLayoutClasses =
     "relative inline-block group relative transition-all duration-200";
 
-  const interactiveClasses =
-    "cursor-pointer active:bg-blue-100 dark:active:bg-blue-800/50 active:scale-[0.98]";
-
-  const editingStateClasses = "ring-2 ring-blue-500 rounded";
-
-  const linkStylingClasses =
-    "underline decoration-blue-500 underline-offset-2 print:no-underline";
-
   const wrapperStyles = clsx(
     baseLayoutClasses,
     cursorClasses,
