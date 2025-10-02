@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { size, contentType } from "./icon.constants";
+import { size } from "./icon.constants";
 
 export default function Icon() {
   return new ImageResponse(<InlineStyles />, {
