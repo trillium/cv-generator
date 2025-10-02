@@ -163,3 +163,9 @@ status: completed
 - Async mode runs in background; check PID or status for completion
 - Sync mode waits and updates status immediately
 - Files are named rcode_YYYYMMDD_HHMMSS_query.md
+
+### Commit workflow
+
+- You stage and commit your work in blocks that go together
+- You stage and commit as you go
+- Small commits are preferable to large ones
