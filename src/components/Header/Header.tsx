@@ -1,6 +1,5 @@
 import React from "react";
 import EditableField from "../EditableField";
-import { useYamlData } from "../../contexts/ResumeContext";
 
 export type HeaderProps = {
   name: string;

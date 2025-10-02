@@ -2,39 +2,32 @@
 
 import React, { useState, useEffect } from "react";
 import { clsx } from "clsx";
-import { useResumeContext } from "../../contexts/ResumeContext";
+import { useFileManager } from "../../contexts/FileManagerContext";
 import { useModal } from "../../contexts/ModalContext";
 import ResumeNavigator from "../ResumeNavigator/ResumeNavigator";
 import ResumeCreator from "../ResumeCreator/ResumeCreator";
+import type { CVData } from "../../types";
 
 const ResumeSelector: React.FC = () => {
-  const {
-    currentResume,
-    currentResumeFile,
-    availableFiles,
-    loadAvailableFiles,
-    loadResumeFile,
-    loading,
-  } = useResumeContext();
+  const { parsedData, currentFile, files, refreshFiles, loadFile, loading } =
+    useFileManager();
 
   const { openModal, closeModal } = useModal();
 
-  // Load available files on mount
   useEffect(() => {
-    loadAvailableFiles();
-  }, [loadAvailableFiles]);
+    refreshFiles();
+  }, [refreshFiles]);
 
   const handleResumeCreated = async (resume: {
     fileName: string;
     position: string;
     company?: string;
   }) => {
-    await loadResumeFile(resume.fileName);
+    await loadFile(resume.fileName);
     closeModal();
   };
 
   const openResumeNavigator = () => {
-    // ResumeNavigator now handles navigation automatically
     openModal(<ResumeNavigator />, "xl");
   };
 
@@ -49,18 +42,16 @@ const ResumeSelector: React.FC = () => {
   };
 
   const formatResumeTitle = () => {
-    if (!currentResume || !currentResumeFile) {
+    if (!parsedData || !currentFile) {
       return "No Resume Selected";
     }
 
-    // Extract filename without extension
     const fileName =
-      currentResumeFile
+      currentFile.path
         .split("/")
         .pop()
         ?.replace(/\.(yml|yaml)$/i, "") || "Resume";
 
-    // Format the filename to be more readable
     const formattedName = fileName
       .replace(/[-_]/g, " ")
       .replace(/\b\w/g, (l: string) => l.toUpperCase());
@@ -69,57 +60,54 @@ const ResumeSelector: React.FC = () => {
   };
 
   const formatResumeSubtitle = () => {
-    if (!currentResume) {
+    if (!parsedData) {
       return null;
     }
 
+    const cvData = parsedData as CVData;
     const parts = [];
 
-    // Show role if available
-    if (currentResume.info?.role) {
-      parts.push(currentResume.info.role);
+    if (cvData.info?.role) {
+      parts.push(cvData.info.role);
     }
 
-    // Show file path for context
-    if (currentResumeFile && parts.length === 0) {
-      parts.push(currentResumeFile);
+    if (currentFile && parts.length === 0) {
+      parts.push(currentFile.path);
     }
 
     return parts.length > 0 ? parts.join(" • ") : null;
   };
 
   const getStatusColor = () => {
-    if (!currentResume) return "gray";
+    if (!parsedData) return "gray";
 
-    // Simple heuristic based on resume completeness
-    const hasBasicInfo =
-      currentResume.info?.firstName && currentResume.info?.lastName;
+    const cvData = parsedData as CVData;
+
+    const hasBasicInfo = cvData.info?.firstName && cvData.info?.lastName;
     const hasWorkExperience =
-      currentResume.workExperience && currentResume.workExperience.length > 0;
+      cvData.workExperience && cvData.workExperience.length > 0;
 
     if (hasBasicInfo && hasWorkExperience) {
-      return "green"; // Complete
+      return "green";
     } else if (hasBasicInfo) {
-      return "yellow"; // Partial
+      return "yellow";
     } else {
-      return "gray"; // Draft
+      return "gray";
     }
   };
 
   const getFileCount = () => {
-    return availableFiles?.totalFiles || 0;
+    return files?.length || 0;
   };
 
   return (
     <>
-      {/* Resume Selector Button */}
       <div className="flex">
         <button
           onClick={openResumeNavigator}
           disabled={loading}
           className="flex items-center space-x-2 rounded-md bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
         >
-          {/* Status indicator */}
           <div
             className={clsx("w-2 h-2 rounded-full", {
               "bg-green-500": getStatusColor() === "green",
@@ -154,7 +142,6 @@ const ResumeSelector: React.FC = () => {
           </div>
         </button>
 
-        {/* Quick Actions */}
         <div className="ml-2 inline-flex my-auto">
           <button
             onClick={openResumeCreator}
@@ -179,17 +166,16 @@ const ResumeSelector: React.FC = () => {
         </div>
       </div>
 
-      {/* Current Resume Info */}
-      {currentResume && (
+      {parsedData && (
         <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          {currentResume.info?.role && (
+          {(parsedData as CVData).info?.role && (
             <span className=" whitespace-nowrap block">
-              Role: {currentResume.info.role}
+              Role: {(parsedData as CVData).info.role}
             </span>
           )}
-          {currentResumeFile && (
+          {currentFile && (
             <span className=" whitespace-nowrap block">
-              File: {currentResumeFile}
+              File: {currentFile.path}
             </span>
           )}
           <span className=" whitespace-nowrap block">

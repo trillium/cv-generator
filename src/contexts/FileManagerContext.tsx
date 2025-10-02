@@ -40,6 +40,11 @@ interface FileManagerContextType {
   updateContent: (newContent: string) => void;
 
   // File operations
+  createNewFile: (
+    path: string,
+    content: string,
+    commit?: boolean,
+  ) => Promise<void>;
   duplicateFile: (
     path: string,
     name?: string,
@@ -273,6 +278,41 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     }
   }, []);
 
+  const createNewFile = useCallback(
+    async (path: string, content: string, commit = true): Promise<void> => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(`/api/files/${path}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content,
+            commit,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          await refreshFiles();
+          await loadFile(path);
+        } else {
+          throw new Error(data.error || "Failed to create file");
+        }
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to create file";
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [refreshFiles, loadFile],
+  );
+
   const duplicateFile = useCallback(
     async (
       path: string,
@@ -474,6 +514,7 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     commitChanges,
     discardChanges,
     updateContent,
+    createNewFile,
     duplicateFile,
     deleteFile,
     restoreVersion,

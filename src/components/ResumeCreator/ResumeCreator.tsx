@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FiClipboard } from "react-icons/fi";
-import { useResumeContext } from "../../contexts/ResumeContext";
+import { useFileManager } from "../../contexts/FileManagerContext";
+import * as yaml from "js-yaml";
 import {
   listAllResumeFiles,
   duplicateResume,
@@ -24,7 +25,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
   onResumeCreated,
 }) => {
   const router = useRouter();
-  const { createNewResume, loading } = useResumeContext();
+  const { createNewFile, loading } = useFileManager();
 
   // Form state
   const [position, setPosition] = useState("");
@@ -227,7 +228,6 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
     }
 
     try {
-      // Create basic template data
       const templateData = {
         info: {
           firstName: "",
@@ -236,14 +236,35 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
           phone: "",
           role: position.trim(),
         },
+        header: {
+          name: "",
+          title: [],
+          resume: [],
+        },
+        workExperience: [],
+        profile: {
+          shouldDisplayProfileImage: false,
+          lines: [],
+          links: [],
+        },
+        technical: [],
+        languages: [],
+        education: [],
+        projects: [],
+        coverLetter: [],
+        careerSummary: [],
       };
 
-      // Generate filename from position
       const fileName = `${position.trim().toLowerCase().replace(/\s+/g, "-")}.yml`;
+      const yamlContent = yaml.dump(templateData, {
+        indent: 2,
+        lineWidth: -1,
+        noRefs: true,
+        sortKeys: false,
+      });
 
-      await createNewResume(fileName, templateData);
+      await createNewFile(fileName, yamlContent, true);
 
-      // Call the callback with a simple object
       onResumeCreated({
         position: position.trim(),
         company: company.trim(),
@@ -251,8 +272,6 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
       });
 
       onClose();
-
-      // Reset form
       resetForm();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create resume");
