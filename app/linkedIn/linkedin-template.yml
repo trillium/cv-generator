@@ -1,0 +1,91 @@
+firstName:
+lastName:
+role:
+about:
+location:
+email:
+phone:
+linkedinUrl:
+profilePhotoUrl:
+
+experience:
+  - company:
+    title:
+    startDate:
+    endDate:
+    location:
+    description:
+
+education:
+  - institution:
+    degree:
+    fieldOfStudy:
+    startDate:
+    endDate:
+    location:
+    description:
+
+skills:
+  -
+
+certifications:
+  - name:
+    issuer:
+    date:
+
+languages:
+  - name:
+    proficiency:
+
+projects:
+  - name:
+    description:
+    url:
+
+volunteer:
+  - organization:
+    role:
+    startDate:
+    endDate:
+    description:
+
+awards:
+  - name:
+    issuer:
+    date:
+    description:
+
+interests:
+  -
+
+services:
+  - name:
+    description:
+    url:
+
+featured:
+  - type:
+    title:
+    description:
+    url:
+    imageUrl:
+
+recommendations:
+  received:
+    - recommender:
+      recommenderTitle:
+      recommenderRelationship:
+      date:
+      text:
+  given:
+    - recommendee:
+      recommendeeTitle:
+      date:
+      text:
+
+activity:
+  - type:
+    date:
+    content:
+    url:
+    engagement:
