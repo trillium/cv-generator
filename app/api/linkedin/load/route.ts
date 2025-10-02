@@ -5,11 +5,17 @@ import { join } from "path";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const filePath = searchParams.get("path") || "app/linkedIn/linkedin.yml";
+    const fileName = searchParams.get("path") || "linkedin.yml";
+    const piiPath = process.env.PII_PATH || join(process.cwd(), "pii");
 
-    console.log("[LinkedIn API] Loading file:", filePath);
+    console.log(
+      "[LinkedIn API] Loading file:",
+      fileName,
+      "from PII path:",
+      piiPath,
+    );
 
-    const fullPath = join(process.cwd(), filePath);
+    const fullPath = join(piiPath, fileName);
     const content = await readFile(fullPath, "utf-8");
 
     console.log(
@@ -20,7 +26,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       content,
-      filePath,
+      filePath: fileName,
     });
   } catch (error) {
     console.error("[LinkedIn API] Error loading file:", error);

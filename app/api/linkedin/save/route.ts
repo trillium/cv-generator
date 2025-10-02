@@ -14,10 +14,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("[LinkedIn API] Saving file:", filePath);
+    const piiPath = process.env.PII_PATH || join(process.cwd(), "pii");
+
+    console.log(
+      "[LinkedIn API] Saving file:",
+      filePath,
+      "to PII path:",
+      piiPath,
+    );
     console.log("[LinkedIn API] Content length:", content.length);
 
-    const fullPath = join(process.cwd(), filePath);
+    const fullPath = join(piiPath, filePath);
 
     await writeFile(fullPath, content, "utf-8");
 

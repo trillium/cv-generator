@@ -12,7 +12,7 @@ function LinkedInPageContent() {
     useLinkedInData();
 
   useEffect(() => {
-    loadLinkedInFile("app/linkedIn/linkedin.yml");
+    loadLinkedInFile("linkedin.yml");
   }, [loadLinkedInFile]);
 
   if (loading) {
