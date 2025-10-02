@@ -6,14 +6,7 @@ import { ModalProvider } from "../src/contexts/ModalContext";
 import Modal from "../src/components/ui/modal";
 import { ThemeProviders } from "./theme-providers";
 import { Toaster } from "sonner";
-
-export const metadata: Metadata = {
-  title: "CV Generator",
-  description: "Generate professional resumes and cover letters",
-  icons: {
-    icon: "/icon.svg",
-  },
-};
+import { metadata } from "./layout.constants";
 
 export default function RootLayout({
   children,
