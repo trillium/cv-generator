@@ -1,1 +1,9 @@
 lint-staged
+output_files="eslint-errors.txt output_*.pdf *.log *.tmp *.bak"
+
+for pattern in $output_files; do
+	if git diff --cached --name-only | grep -E "^$pattern$"; then
+		echo "❌ Commit rejected: Output files ($pattern) must not be committed."
+		exit 1
+	fi
+done
