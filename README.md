@@ -79,12 +79,11 @@ Of course, no one template will serve all projects since your needs may be diffe
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project.
-
 - [![Next][Next.js]][Next-url]
 - [![React][React.js]][React-url]
 - [![Tailwind][Tailwind.css]][Tailwind-url]
 - [![Puppeteer][Puppeteer.js]][Puppeteer-url]
+- [![Vitest][Vitest.js]][Vitest-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -207,3 +206,5 @@ Project Link: [https://github.com/trillium/cv-generator](https://github.com/tril
 [Tailwind-url]: https://tailwindcss.com/
 [Puppeteer.js]: https://img.shields.io/badge/Puppeteer-40B5A4?style=for-the-badge&logo=puppeteer&logoColor=white
 [Puppeteer-url]: https://pptr.dev/
+[Vitest.js]: https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white
+[Vitest-url]: https://vitest.dev/
