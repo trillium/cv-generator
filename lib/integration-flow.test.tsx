@@ -54,30 +54,7 @@ const TestResumePage = () => {
 };
 
 // Test wrapper component
-function TestWrapper({
-  children,
-  initialName = "Original Test Name",
-}: {
-  children: React.ReactNode;
-  initialName?: string;
-}) {
-  const initialYamlContent = `
-header:
-  name: "${initialName}"
-  title: ["Software Developer"]
-  resume: ["Test resume description"]
-info:
-  firstName: "Original"
-  lastName: "Test Name"
-  email: "test@example.com"
-workExperience: []
-projects: []
-profile:
-  shouldDisplayProfileImage: false
-  lines: []
-  links: []
-`;
-
+function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ModalProvider>
       <ResumeProvider>{children}</ResumeProvider>
@@ -164,7 +141,7 @@ header:
     mockGetYamlData.mockReturnValue(currentYamlContent);
 
     render(
-      <TestWrapper initialName="Original Integration Name">
+      <TestWrapper>
         <TestResumePage />
       </TestWrapper>,
     );
@@ -201,7 +178,7 @@ header:
       return <div data-testid="updated-name">{name}</div>;
     };
 
-    const { rerender } = render(
+    render(
       <TestWrapper>
         <TestComponentWithNewData />
       </TestWrapper>,
