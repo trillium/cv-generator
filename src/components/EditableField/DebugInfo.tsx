@@ -1,18 +1,16 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
 import { getNestedValue } from "../../hooks/useYamlPathUpdater";
+import { CVData } from "../../types";
 
 interface DebugInfoProps {
   yamlPath: string;
-  canShowAddButtons: boolean;
   fieldType: "text" | "textarea" | "array" | "link";
-  parsedData: any;
+  parsedData: CVData;
 }
 
 export default function DebugInfo({
   yamlPath,
-  canShowAddButtons,
   fieldType,
   parsedData,
 }: DebugInfoProps) {
