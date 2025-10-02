@@ -69,7 +69,7 @@ function setNestedValue(
   let current = obj;
 
   // Validate the path structure against CVData schema
-  validatePathStructure(path, value);
+  validatePathStructure(path);
 
   // Navigate to the parent of the target field
   for (let i = 0; i < keys.length - 1; i++) {
@@ -155,7 +155,7 @@ export function getNestedValue(obj: unknown, path: string): unknown {
 /**
  * Validate path structure against CVData schema
  */
-function validatePathStructure(path: string, _value: unknown): void {
+function validatePathStructure(path: string): void {
   const keys = path.split(".");
 
   // Basic path validation
