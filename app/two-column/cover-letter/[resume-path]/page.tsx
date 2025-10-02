@@ -6,17 +6,17 @@ import TwoColumnCoverLetter from "../../../../src/components/Resume/two-column/c
 import type { CVData } from "../../../../src/types";
 import { listAllResumeFiles } from "../../../../lib/utility";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useResumeContext } from "../../../../src/contexts/ResumeContext";
+import { useFileManager } from "../../../../src/contexts/FileManagerContext";
 
 export default function DynamicTwoColumnCoverLetterPage() {
   const params = useParams();
   const router = useRouter();
   const {
-    currentResume,
-    loadResumeFile,
+    parsedData,
+    loadFile,
     loading: contextLoading,
     error: contextError,
-  } = useResumeContext();
+  } = useFileManager();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -94,7 +94,7 @@ export default function DynamicTwoColumnCoverLetterPage() {
           "🔄 Loading cover letter file through ResumeContext:",
           fileToLoad,
         );
-        await loadResumeFile(fileToLoad);
+        await loadFile(fileToLoad);
         setResolvedFilePath(fileToLoad);
       } catch (err) {
         const errorMessage =
@@ -109,7 +109,7 @@ export default function DynamicTwoColumnCoverLetterPage() {
     }
 
     validateAndLoadResume();
-  }, [encodedResumePath, resumePath, loadResumeFile]); // Listen to both encoded and decoded paths
+  }, [encodedResumePath, resumePath, loadFile]); // Listen to both encoded and decoded paths
 
   // Loading state - combine local loading and context loading
   if (loading || contextLoading) {
@@ -151,7 +151,7 @@ export default function DynamicTwoColumnCoverLetterPage() {
   }
 
   // Success state - render the cover letter using ResumeContext data
-  if (!currentResume) {
+  if (!parsedData) {
     return (
       <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center">
@@ -174,7 +174,7 @@ export default function DynamicTwoColumnCoverLetterPage() {
         Currently displaying cover letter:{" "}
         {resolvedFilePath || resumePath || encodedResumePath}
       </div>
-      <TwoColumnCoverLetter data={currentResume} />
+      <TwoColumnCoverLetter data={parsedData} />
     </div>
   );
 }

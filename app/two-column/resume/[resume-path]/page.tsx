@@ -6,23 +6,22 @@ import TwoColumnResume from "../../../../src/components/Resume/two-column/resume
 import type { CVData } from "../../../../src/types";
 import { listAllResumeFiles } from "../../../../lib/utility";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useResumeContext } from "../../../../src/contexts/ResumeContext";
+import { useFileManager } from "../../../../src/contexts/FileManagerContext";
 
 export default function DynamicTwoColumnResumePage() {
   const params = useParams();
   const router = useRouter();
   const {
-    currentResume,
-    loadResumeFile,
+    parsedData,
+    loadFile,
     loading: contextLoading,
     error: contextError,
-  } = useResumeContext();
+  } = useFileManager();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [resolvedFilePath, setResolvedFilePath] = useState<string | null>(null);
 
-  // Extract resume path from params and decode it
   const encodedResumePath = params["resume-path"] as string;
   const resumePath = encodedResumePath
     ? decodeFilePathFromUrl(encodedResumePath)
@@ -40,7 +39,6 @@ export default function DynamicTwoColumnResumePage() {
         setLoading(true);
         setError(null);
 
-        // First, validate that the resume path exists
         const filesResponse = await listAllResumeFiles();
 
         if (!filesResponse.success || !filesResponse.data) {
@@ -49,16 +47,11 @@ export default function DynamicTwoColumnResumePage() {
 
         const { allFiles } = filesResponse.data;
 
-        // Check if the requested resume path exists in the available files
-        // Look for exact match first, then try with/without extension
         let fileToLoad = null;
 
-        // First try exact match
         if (allFiles.includes(resumePath)) {
           fileToLoad = resumePath;
-        }
-        // Then try adding .yml extension if not present
-        else if (
+        } else if (
           !resumePath.endsWith(".yml") &&
           !resumePath.endsWith(".yaml")
         ) {
@@ -66,9 +59,10 @@ export default function DynamicTwoColumnResumePage() {
           if (allFiles.includes(withExtension)) {
             fileToLoad = withExtension;
           }
-        }
-        // Finally try removing extension if present
-        else if (resumePath.endsWith(".yml") || resumePath.endsWith(".yaml")) {
+        } else if (
+          resumePath.endsWith(".yml") ||
+          resumePath.endsWith(".yaml")
+        ) {
           const withoutExtension = resumePath.replace(/\.(yml|yaml)$/i, "");
           if (allFiles.includes(withoutExtension)) {
             fileToLoad = withoutExtension;
@@ -81,12 +75,8 @@ export default function DynamicTwoColumnResumePage() {
           );
         }
 
-        // Use ResumeContext to load the file - this will handle all the data management
-        console.log(
-          "🔄 Loading resume file through ResumeContext:",
-          fileToLoad,
-        );
-        await loadResumeFile(fileToLoad);
+        console.log("🔄 Loading resume file:", fileToLoad);
+        await loadFile(fileToLoad);
         setResolvedFilePath(fileToLoad);
       } catch (err) {
         const errorMessage =
@@ -101,9 +91,8 @@ export default function DynamicTwoColumnResumePage() {
     }
 
     validateAndLoadResume();
-  }, [encodedResumePath, resumePath, loadResumeFile]); // Listen to both encoded and decoded paths
+  }, [encodedResumePath, resumePath, loadFile]);
 
-  // Loading state - combine local loading and context loading
   if (loading || contextLoading) {
     return (
       <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
@@ -117,7 +106,6 @@ export default function DynamicTwoColumnResumePage() {
     );
   }
 
-  // Error state - check both local and context errors
   const displayError = error || contextError;
   if (displayError) {
     return (
@@ -141,8 +129,7 @@ export default function DynamicTwoColumnResumePage() {
     );
   }
 
-  // Success state - render the resume using ResumeContext data
-  if (!currentResume) {
+  if (!parsedData) {
     return (
       <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center">
@@ -160,12 +147,11 @@ export default function DynamicTwoColumnResumePage() {
 
   return (
     <div>
-      {/* Optional: Show which resume is being displayed */}
       <div className="sr-only">
         Currently displaying resume:{" "}
         {resolvedFilePath || resumePath || encodedResumePath}
       </div>
-      <TwoColumnResume data={currentResume} />
+      <TwoColumnResume data={parsedData as CVData} />
     </div>
   );
 }
