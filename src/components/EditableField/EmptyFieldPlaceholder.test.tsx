@@ -4,19 +4,16 @@ import "@testing-library/jest-dom";
 import React from "react";
 import EmptyFieldPlaceholder from "./EmptyFieldPlaceholder";
 
-// Mock the context hooks to avoid ResumeProvider requirement
-vi.mock("../../contexts/ResumeContext", () => ({
-  useYamlData: () => ({
+// Mock the context hooks to avoid FileManagerProvider requirement
+vi.mock("../../contexts/FileManagerContext", () => ({
+  useFileManager: () => ({
     parsedData: {},
     error: null,
-  }),
-  useModal: () => ({
-    openModal: vi.fn(),
-    closeModal: vi.fn(),
-  }),
-  useResumeContext: () => ({
-    parsedData: {},
-    error: null,
+    content: "",
+    currentFile: null,
+    files: [],
+    loading: false,
+    loadFile: vi.fn(),
   }),
 }));
 
