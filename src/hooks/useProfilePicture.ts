@@ -13,7 +13,7 @@ const useProfilePicture = (): string | null => {
           const module = await import(`../assets/profile.${extension}`);
           setProfilePicture(module.default);
           break;
-        } catch (error) {
+        } catch {
           // Ignore error and try next extension
         }
       }
