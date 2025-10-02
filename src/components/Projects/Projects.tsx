@@ -1,5 +1,4 @@
 import Title from "../Title/Title";
-import BubbleList from "../Bubble/BubbleList";
 import LineList from "../WorkExperience/LineList";
 import ProjectLinks from "./ProjectLinks";
 import EditableField from "../EditableField";
