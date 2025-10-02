@@ -48,7 +48,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
       } else {
         setError(result.error || "Failed to load files");
       }
-    } catch (err) {
+    } catch {
       setError("Failed to load files");
     } finally {
       setLoading(false);
@@ -80,7 +80,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
       } else {
         setError(result.error || "Failed to delete file");
       }
-    } catch (err) {
+    } catch {
       setError("Failed to delete file");
     }
   };
@@ -97,7 +97,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
       } else {
         setError(result.error || "Failed to duplicate file");
       }
-    } catch (err) {
+    } catch {
       setError("Failed to duplicate file");
     }
   };
@@ -213,8 +213,8 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
               Delete Resume File
             </h4>
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              Are you sure you want to delete "{deleteConfirm}"? This action
-              cannot be undone, but a backup will be created.
+              Are you sure you want to delete &quot;{deleteConfirm}&quot;? This
+              action cannot be undone, but a backup will be created.
             </p>
             <div className="flex justify-end space-x-3">
               <button
@@ -244,7 +244,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
               Duplicate Resume
             </h4>
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              Create a copy of "{duplicateSource}"
+              Create a copy of &quot;{duplicateSource}&quot;
             </p>
 
             <div className="space-y-4">
