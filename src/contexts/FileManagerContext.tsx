@@ -1,6 +1,6 @@
 "use client";
 
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -357,7 +357,7 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
         setLoading(false);
       }
     },
-    [refreshFiles],
+    [refreshFiles, updateTags, updateDescription],
   );
 
   const deleteFile = useCallback(

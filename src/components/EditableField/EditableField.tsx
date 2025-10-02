@@ -63,6 +63,17 @@ export default function EditableField<T extends string | string[]>({
   const canShowAddButtons = shouldShowAddButtons(yamlPath, parsedData);
   const isEmpty = isFieldEmpty(value);
 
+  // Update edit value when the YAML data changes externally
+  useEffect(() => {
+    if (yamlPath && typeof yamlPath === "string") {
+      const currentValue = getNestedValue(parsedData, yamlPath);
+      const stringValue = Array.isArray(currentValue)
+        ? currentValue.join("\n")
+        : String(currentValue || "");
+      setEditValue(stringValue);
+    }
+  }, [parsedData, yamlPath]);
+
   // Function to check if children contain a link tag
   const hasLinkTag = (node: ReactNode): boolean => {
     return React.Children.toArray(node).some((child) => {
@@ -84,15 +95,6 @@ export default function EditableField<T extends string | string[]>({
     return <div className={className}>{children}</div>;
   }
 
-  // Update edit value when the YAML data changes externally
-  useEffect(() => {
-    const currentValue = getNestedValue(parsedData, yamlPath);
-    const stringValue = Array.isArray(currentValue)
-      ? currentValue.join("\n")
-      : String(currentValue || "");
-    setEditValue(stringValue);
-  }, [parsedData, yamlPath]);
-
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!isEditing && !error) {
@@ -101,7 +103,7 @@ export default function EditableField<T extends string | string[]>({
     }
   };
 
-  const handleSave = async (modalEditValue: string | any[]) => {
+  const handleSave = async (modalEditValue: string | string[]) => {
     const currentValue = Array.isArray(value)
       ? value.join("\n")
       : String(value || "");
@@ -109,7 +111,7 @@ export default function EditableField<T extends string | string[]>({
     if (JSON.stringify(modalEditValue) !== JSON.stringify(currentValue)) {
       setIsSaving(true);
       try {
-        let newValue: any = modalEditValue;
+        let newValue: string | string[] = modalEditValue;
 
         // Handle different field types
         if (fieldType === "array" && typeof modalEditValue === "string") {
@@ -127,9 +129,10 @@ export default function EditableField<T extends string | string[]>({
       } catch (error) {
         console.error("Error saving field:", yamlPath, error);
         // Revert to original value on error
-        const originalValue = Array.isArray(value)
+        const revertValue = Array.isArray(value)
           ? value.join("\n")
           : String(value || "");
+        setEditValue(revertValue);
         throw error; // Let the modal handle the error
       } finally {
         setIsSaving(false);

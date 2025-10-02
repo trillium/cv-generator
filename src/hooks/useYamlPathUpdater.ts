@@ -12,7 +12,7 @@ export function useYamlPathUpdater() {
    * @param path - Dot-separated path to the field (e.g., 'workExperience.0.position')
    * @param newValue - New value to set
    */
-  const updateYamlPath = async (path: string, newValue: any) => {
+  const updateYamlPath = async (path: string, newValue: unknown) => {
     try {
       console.log(`🎯 useYamlPathUpdater.updateYamlPath called with:`, {
         path,
@@ -23,7 +23,7 @@ export function useYamlPathUpdater() {
       });
 
       // Parse current YAML
-      const data = yaml.load(yamlContent) as Record<string, any>;
+      const data = yaml.load(yamlContent) as Record<string, unknown>;
       console.log("📋 Parsed current YAML data:", data);
 
       // Update the specific path
@@ -60,7 +60,11 @@ export function useYamlPathUpdater() {
  * Set a nested value in an object using a dot-separated path
  * Validates against CVData type constraints
  */
-function setNestedValue(obj: any, path: string, value: any) {
+function setNestedValue(
+  obj: Record<string, unknown>,
+  path: string,
+  value: unknown,
+) {
   const keys = path.split(".");
   let current = obj;
 
@@ -127,7 +131,7 @@ function setNestedValue(obj: any, path: string, value: any) {
 /**
  * Get a nested value from an object using a dot-separated path
  */
-export function getNestedValue(obj: any, path: string): any {
+export function getNestedValue(obj: unknown, path: string): unknown {
   const keys = path.split(".");
   let current = obj;
 
@@ -151,7 +155,7 @@ export function getNestedValue(obj: any, path: string): any {
 /**
  * Validate path structure against CVData schema
  */
-function validatePathStructure(path: string, value: any): void {
+function validatePathStructure(path: string, _value: unknown): void {
   const keys = path.split(".");
 
   // Basic path validation
@@ -181,7 +185,7 @@ function validatePathStructure(path: string, value: any): void {
 /**
  * Validate array structure based on path
  */
-function validateArrayStructure(path: string, array: any[]): void {
+function validateArrayStructure(path: string, array: unknown[]): void {
   if (!Array.isArray(array)) {
     throw new Error(`Expected array at path ${path}, but got ${typeof array}`);
   }
@@ -232,7 +236,7 @@ function validateArrayStructure(path: string, array: any[]): void {
 /**
  * Validate object structure based on path
  */
-function validateObjectStructure(path: string, obj: any): void {
+function validateObjectStructure(path: string, obj: unknown): void {
   if (typeof obj !== "object" || obj === null) {
     throw new Error(`Expected object at path ${path}, but got ${typeof obj}`);
   }
@@ -270,7 +274,7 @@ function validateObjectStructure(path: string, obj: any): void {
 /**
  * Create default object for path
  */
-function createDefaultObjectForPath(path: string): any {
+function createDefaultObjectForPath(path: string): Record<string, unknown> {
   if (path.startsWith("workExperience.")) {
     return {
       position: "",
@@ -304,7 +308,7 @@ function createDefaultObjectForPath(path: string): any {
 /**
  * Create default value for path
  */
-function createDefaultValueForPath(path: string): any {
+function createDefaultValueForPath(path: string): unknown {
   if (path.includes("lines")) {
     return [];
   } else if (path.includes("bubbles")) {
@@ -320,7 +324,7 @@ function createDefaultValueForPath(path: string): any {
 /**
  * Validate array item type
  */
-function validateArrayItemType(arrayPath: string, value: any): void {
+function validateArrayItemType(arrayPath: string, value: unknown): void {
   if (arrayPath === "technical") {
     if (typeof value !== "object" || value === null) {
       throw new Error("Technical category must be an object");
@@ -354,7 +358,7 @@ function validateArrayItemType(arrayPath: string, value: any): void {
 /**
  * Validate property type
  */
-function validatePropertyType(path: string, value: any): void {
+function validatePropertyType(path: string, value: unknown): void {
   // Validate specific property types
   if (
     path.endsWith("position") ||
