@@ -1,18 +1,14 @@
 // Watches for changes to data.yml and writes the parsed JSON to src/data.json
-const fs = require("fs");
-const path = require("path");
-const diff = require("diff");
+import fs from "fs";
+import path from "path";
+import diff from "diff";
+import dotenv from "dotenv";
+import yamlLib from "js-yaml";
 
 // Load environment variables from .env file
-require("dotenv").config();
+dotenv.config();
 
-let yaml;
-try {
-  yaml = require("js-yaml");
-} catch (e) {
-  console.error("Please install js-yaml: pnpm add js-yaml");
-  process.exit(1);
-}
+const yaml = yamlLib;
 
 // Use PII_PATH environment variable, fallback to current directory
 const piiPath = process.env.PII_PATH || __dirname;
