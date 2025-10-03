@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { clsx } from "clsx";
-import { useFileManager } from "../../contexts/FileManagerContext";
+import { useFileManager } from "../../contexts/FileManagerContext.hook";
 import { useModal } from "../../contexts/ModalContext";
 import ResumeNavigator from "../ResumeNavigator/ResumeNavigator";
 import ResumeCreator from "../ResumeCreator/ResumeCreator";
