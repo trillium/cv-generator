@@ -7,7 +7,7 @@ import { CVData } from "../types";
 import { LinkedInData } from "../types/linkedin";
 import * as yaml from "js-yaml";
 
-interface FileManagerContextType {
+export interface FileManagerContextType {
   // Current file state
   currentFile: FileMetadata | null;
   content: string;
