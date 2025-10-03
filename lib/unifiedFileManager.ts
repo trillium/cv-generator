@@ -110,15 +110,15 @@ export class UnifiedFileManager {
       const data = yaml.load(content) as Record<string, unknown>;
 
       // Try different paths for role based on file type
-      if (data?.info?.role) {
-        role = data.info.role; // Resume format
+      if ((data?.info as Record<string, unknown>)?.role) {
+        role = (data.info as Record<string, unknown>).role as string; // Resume format
       } else if (data?.role) {
-        role = data.role; // LinkedIn format
+        role = data.role as string; // LinkedIn format
       }
 
       // Extract resume metadata if it exists
       if (data?.metadata) {
-        resumeMetadata = data.metadata;
+        resumeMetadata = data.metadata as Record<string, unknown>;
       }
     } catch {
       // If we can't read the role/metadata, that's ok
