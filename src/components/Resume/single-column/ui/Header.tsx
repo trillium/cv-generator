@@ -4,7 +4,7 @@ import ProfileLink from "../../../Profile/ProfileLink/ProfileLink";
 import EditableField from "../../../EditableField/EditableField";
 import type { CVData } from "../../../../types";
 
-function isInfo(obj: any): obj is {
+function isInfo(obj: Record<string, unknown>): obj is {
   firstName: string;
   lastName: string;
   email: string;
@@ -16,11 +16,11 @@ function isInfo(obj: any): obj is {
   return (
     obj &&
     typeof obj === "object" &&
-    typeof obj.firstName === "string" &&
-    typeof obj.lastName === "string" &&
-    typeof obj.email === "string" &&
-    typeof obj.phone === "string" &&
-    typeof obj.website === "string"
+    typeof (obj as Record<string, unknown>).firstName === "string" &&
+    typeof (obj as Record<string, unknown>).lastName === "string" &&
+    typeof (obj as Record<string, unknown>).email === "string" &&
+    typeof (obj as Record<string, unknown>).phone === "string" &&
+    typeof (obj as Record<string, unknown>).website === "string"
   );
 }
 
@@ -28,8 +28,14 @@ export default function Header({ data }: { data: CVData }) {
   const firstNameRef = useRef<HTMLSpanElement>(null);
   const lastNameRef = useRef<HTMLSpanElement>(null);
 
-  if (!isInfo(data.info)) return null;
-  const { firstName, lastName, role, email, phone, website } = data.info;
+  // Always call hooks unconditionally
+  const infoIsValid = isInfo(data.info as Record<string, unknown>);
+  const firstName = infoIsValid ? String(data.info.firstName) : "";
+  const lastName = infoIsValid ? String(data.info.lastName) : "";
+  const role = infoIsValid ? String(data.info.role ?? "") : "";
+  const email = infoIsValid ? String(data.info.email) : "";
+  const phone = infoIsValid ? String(data.info.phone) : "";
+  const website = infoIsValid ? String(data.info.website) : "";
 
   useEffect(() => {
     if (firstNameRef.current) {
@@ -44,6 +50,8 @@ export default function Header({ data }: { data: CVData }) {
       console.log("🚨 Last name text color:", computedStyle.color);
     }
   }, [lastName]);
+
+  if (!infoIsValid) return null;
 
   const singleLineNameAndRole = true;
   return (

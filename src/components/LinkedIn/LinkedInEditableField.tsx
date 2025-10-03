@@ -39,20 +39,21 @@ export default function LinkedInEditableField<T extends string | string[]>({
 
   const isEmpty = isFieldEmpty(value);
 
-  if (!yamlPath || typeof yamlPath !== "string") {
-    console.warn(
-      "LinkedInEditableField: yamlPath is required but was not provided",
-    );
-    return <div className={className}>{children}</div>;
-  }
-
   useEffect(() => {
+    if (!yamlPath || typeof yamlPath !== "string") return;
     const currentValue = getNestedValue(parsedData, yamlPath);
     const stringValue = Array.isArray(currentValue)
       ? currentValue.join("\n")
       : String(currentValue || "");
     setEditValue(stringValue);
   }, [parsedData, yamlPath]);
+
+  if (!yamlPath || typeof yamlPath !== "string") {
+    console.warn(
+      "LinkedInEditableField: yamlPath is required but was not provided",
+    );
+    return <div className={className}>{children}</div>;
+  }
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -62,7 +63,7 @@ export default function LinkedInEditableField<T extends string | string[]>({
     }
   };
 
-  const handleSave = async (modalEditValue: string | any[]) => {
+  const handleSave = async (modalEditValue: string | string[]) => {
     const currentValue = Array.isArray(value)
       ? value.join("\n")
       : String(value || "");
@@ -70,7 +71,7 @@ export default function LinkedInEditableField<T extends string | string[]>({
     if (JSON.stringify(modalEditValue) !== JSON.stringify(currentValue)) {
       setIsSaving(true);
       try {
-        let newValue: any = modalEditValue;
+        let newValue: string | string[] = modalEditValue;
 
         if (fieldType === "array" && typeof modalEditValue === "string") {
           newValue = modalEditValue
