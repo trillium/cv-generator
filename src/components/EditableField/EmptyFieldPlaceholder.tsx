@@ -7,7 +7,6 @@ interface EmptyFieldPlaceholderProps {
   fieldType: "text" | "textarea" | "array" | "link";
   isEmpty: boolean;
   yamlPath: string;
-  // For link fieldType
   linkData?: {
     text: string;
     url: string;
@@ -23,7 +22,6 @@ export default function EmptyFieldPlaceholder({
   fieldType,
   isEmpty,
   yamlPath,
-  linkData,
 }: EmptyFieldPlaceholderProps) {
   // Generate specific placeholder messages for technical skills
   const getPlaceholderMessage = () => {
@@ -47,8 +45,7 @@ export default function EmptyFieldPlaceholder({
     return `Click to edit ${yamlPath} (not visible in print view)`;
   };
 
-  // Function to check if content is blank or just spaces
-  const isContentBlank = (content: any): boolean => {
+  const isContentBlank = (content: unknown): boolean => {
     if (typeof content === "string") {
       return content.trim() === "";
     }

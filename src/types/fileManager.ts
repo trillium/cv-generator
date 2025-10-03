@@ -90,5 +90,5 @@ export interface FileMetadataJson {
   tags: string[];
   description?: string;
   created: string;
-  customFields?: Record<string, any>;
+  customFields?: Record<string, unknown>;
 }

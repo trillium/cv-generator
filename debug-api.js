@@ -44,22 +44,6 @@ async function debugAPI() {
   }
 }
 
-// Test the listAllResumeFiles function directly
-async function testListFunction() {
-  console.log("\n🧪 Testing listAllResumeFiles function directly...");
-
-  try {
-    // Import the function (this won't work in pure JS, but shows the intent)
-    const { listAllResumeFiles } = await import("./lib/utility/fileManager.js");
-    const result = await listAllResumeFiles();
-
-    console.log("✅ Function result:");
-    console.log(JSON.stringify(result, null, 2));
-  } catch (error) {
-    console.log("❌ Function test error:", error.message);
-  }
-}
-
 debugAPI()
   .then(() => {
     console.log("\n✅ API debug complete");

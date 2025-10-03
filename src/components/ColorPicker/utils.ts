@@ -1,15 +1,19 @@
 import colors from "tailwindcss/colors";
 
-// Utility function to get color from Tailwind colors
+type TailwindColors = typeof colors;
+type ColorShadeValue = string | Record<string, string>;
+
 export const getColorFromTailwind = (
   colorName: string,
   shade: string,
 ): string => {
-  const colorFamily = (colors as any)[colorName];
+  const colorFamily = (colors as TailwindColors)[
+    colorName as keyof TailwindColors
+  ] as ColorShadeValue;
   if (colorFamily && typeof colorFamily === "object" && colorFamily[shade]) {
     return colorFamily[shade];
   }
-  return `#${colorName}-${shade}`; // Fallback
+  return `#${colorName}-${shade}`;
 };
 
 // Utility function to create color with alpha

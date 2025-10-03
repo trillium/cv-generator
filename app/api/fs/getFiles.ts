@@ -18,7 +18,7 @@ export async function getFilesInDirectory(dirPath: string): Promise<string[]> {
         files.push(item);
       }
     }
-  } catch (error) {
+  } catch {
     // Silently handle directory read errors and return empty array
     // This is expected behavior when directory doesn't exist
   }
@@ -52,7 +52,7 @@ export async function getAllFilesRecursively(
         allFiles.push(relativePath);
       }
     }
-  } catch (error) {
+  } catch {
     // Silently handle directory read errors and return empty array
     // This is expected behavior when directory doesn't exist
   }

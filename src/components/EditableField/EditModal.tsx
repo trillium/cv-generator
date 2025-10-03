@@ -8,12 +8,11 @@ interface EditModalProps {
   fieldType: "text" | "textarea" | "array" | "link";
   yamlPath: string;
   canShowAddButtons: boolean;
-  parsedData: any;
+  parsedData: unknown;
   isSaving: boolean;
-  value: any;
-  onSave: (newValue: string | any[]) => Promise<void>;
+  value: string | string[];
+  onSave: (newValue: string | string[]) => Promise<void>;
   onCancel: () => void;
-  // For link fieldType
   linkData?: {
     text: string;
     url: string;

@@ -54,9 +54,9 @@ describe("ResumeNavigator", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useRouter as any).mockReturnValue(mockRouter);
-    (useModal as any).mockReturnValue(mockModal);
-    (encodeFilePathForUrl as any).mockImplementation((path: string) => path);
+    vi.mocked(useRouter).mockReturnValue(mockRouter);
+    vi.mocked(useModal).mockReturnValue(mockModal);
+    vi.mocked(encodeFilePathForUrl).mockImplementation((path: string) => path);
   });
 
   const renderWithModalProvider = (component: React.ReactElement) => {
@@ -64,7 +64,7 @@ describe("ResumeNavigator", () => {
   };
 
   it("should render loading state initially", () => {
-    (listAllResumeFiles as any).mockResolvedValue({
+    vi.mocked(listAllResumeFiles).mockResolvedValue({
       success: false,
       error: "Loading...",
     });
@@ -81,7 +81,7 @@ describe("ResumeNavigator", () => {
       "data.yml.template",
       "resume.backup.123.yml",
     ];
-    (listAllResumeFiles as any).mockResolvedValue({
+    vi.mocked(listAllResumeFiles).mockResolvedValue({
       success: true,
       data: {
         allFiles: mockFiles,
@@ -102,7 +102,7 @@ describe("ResumeNavigator", () => {
 
   it("should handle file selection and navigation", async () => {
     const mockFiles = ["resume1.yml"];
-    (listAllResumeFiles as any).mockResolvedValue({
+    vi.mocked(listAllResumeFiles).mockResolvedValue({
       success: true,
       data: {
         allFiles: mockFiles,
@@ -126,13 +126,13 @@ describe("ResumeNavigator", () => {
 
   it("should handle delete confirmation flow", async () => {
     const mockFiles = ["resume1.yml"];
-    (listAllResumeFiles as any).mockResolvedValue({
+    vi.mocked(listAllResumeFiles).mockResolvedValue({
       success: true,
       data: {
         allFiles: mockFiles,
       },
     });
-    (deleteResumeWithBackup as any).mockResolvedValue({
+    vi.mocked(deleteResumeWithBackup).mockResolvedValue({
       success: true,
     });
 
@@ -168,13 +168,13 @@ describe("ResumeNavigator", () => {
 
   it("should handle duplicate flow", async () => {
     const mockFiles = ["resume1.yml"];
-    (listAllResumeFiles as any).mockResolvedValue({
+    vi.mocked(listAllResumeFiles).mockResolvedValue({
       success: true,
       data: {
         allFiles: mockFiles,
       },
     });
-    (duplicateResume as any).mockResolvedValue({
+    vi.mocked(duplicateResume).mockResolvedValue({
       success: true,
     });
 
@@ -211,7 +211,7 @@ describe("ResumeNavigator", () => {
   });
 
   it("should handle errors gracefully", async () => {
-    (listAllResumeFiles as any).mockResolvedValue({
+    vi.mocked(listAllResumeFiles).mockResolvedValue({
       success: false,
       error: "Failed to load files",
     });
@@ -225,7 +225,7 @@ describe("ResumeNavigator", () => {
 
   it("should refresh files when refresh button is clicked", async () => {
     const mockFiles = ["resume1.yml"];
-    (listAllResumeFiles as any).mockResolvedValue({
+    vi.mocked(listAllResumeFiles).mockResolvedValue({
       success: true,
       data: {
         allFiles: mockFiles,
@@ -249,7 +249,7 @@ describe("ResumeNavigator", () => {
 
   it("should close modal when close button is clicked", async () => {
     const mockFiles = ["resume1.yml"];
-    (listAllResumeFiles as any).mockResolvedValue({
+    vi.mocked(listAllResumeFiles).mockResolvedValue({
       success: true,
       data: {
         allFiles: mockFiles,

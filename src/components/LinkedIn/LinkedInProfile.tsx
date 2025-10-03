@@ -334,7 +334,7 @@ function RecommendationsSection({
               </div>
             </div>
             <p className="text-sm text-gray-700 dark:text-gray-300 italic">
-              "{rec.text}"
+              &ldquo;{rec.text}&rdquo;
             </p>
           </div>
         ))}

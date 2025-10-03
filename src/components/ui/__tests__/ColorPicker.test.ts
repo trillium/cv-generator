@@ -137,12 +137,11 @@ describe("ColorPicker Color Generation", () => {
         { name: "orange", hex: "#F97316" },
       ];
 
-      colorFamilies.forEach(({ name, hex }) => {
+      colorFamilies.forEach(({ hex }) => {
         alphaValues.forEach((alpha) => {
           const variation = generateColorVariation(hex, alpha);
           expect(isValidHexColorWithAlpha(variation)).toBe(true);
 
-          // Verify the base color is preserved
           expect(variation.slice(0, 7)).toBe(hex);
           expect(variation.slice(7)).toBe(alpha);
         });

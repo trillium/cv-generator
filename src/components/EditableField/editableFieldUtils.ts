@@ -5,7 +5,7 @@ import { getNestedValue } from "../../hooks/useYamlPathUpdater";
  */
 export function shouldShowAddButtons(
   yamlPath: string,
-  parsedData: any,
+  parsedData: unknown,
 ): boolean {
   // Safety check: ensure yamlPath is a valid string
   if (!yamlPath || typeof yamlPath !== "string") {
@@ -60,17 +60,16 @@ export function shouldShowAddButtons(
 /**
  * Creates a new item template based on the current item structure
  */
-export function createNewItemFromTemplate(currentItem: any): any {
+export function createNewItemFromTemplate(currentItem: unknown): unknown {
   if (typeof currentItem === "string") {
-    return ""; // Empty string for string arrays
+    return "";
   }
 
   if (typeof currentItem === "object" && currentItem !== null) {
-    // Create a template object with empty/default values
-    const template: any = {};
+    const template: Record<string, unknown> = {};
 
     Object.keys(currentItem).forEach((key) => {
-      const value = currentItem[key];
+      const value = (currentItem as Record<string, unknown>)[key];
 
       if (typeof value === "string") {
         template[key] = "";
@@ -90,13 +89,13 @@ export function createNewItemFromTemplate(currentItem: any): any {
     return template;
   }
 
-  return currentItem; // Fallback to current item structure
+  return currentItem;
 }
 
 /**
  * Finds the array index and parent path for array operations
  */
-export function findArrayInfo(yamlPath: string, parsedData: any) {
+export function findArrayInfo(yamlPath: string, parsedData: unknown) {
   // Safety check: ensure yamlPath is a valid string
   if (!yamlPath || typeof yamlPath !== "string") {
     return null;
@@ -128,7 +127,7 @@ export function findArrayInfo(yamlPath: string, parsedData: any) {
 /**
  * Checks if a field value is empty
  */
-export function isFieldEmpty(value: any): boolean {
+export function isFieldEmpty(value: unknown): boolean {
   return (
     !value ||
     (typeof value === "string" && value.trim() === "") ||

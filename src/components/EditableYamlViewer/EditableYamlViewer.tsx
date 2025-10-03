@@ -6,7 +6,7 @@ import * as yaml from "js-yaml";
 
 interface EditableYamlViewerProps {
   yamlContent: string;
-  onSave: (content: any) => void;
+  onSave: (content: unknown) => void;
   className?: string;
 }
 
@@ -100,7 +100,8 @@ const EditableYamlViewer: React.FC<EditableYamlViewerProps> = ({
       {hasChanges && !error && (
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
           <div className="text-blue-800 text-sm">
-            You have unsaved changes. Click "Save Changes" to apply them.
+            You have unsaved changes. Click &ldquo;Save Changes&rdquo; to apply
+            them.
           </div>
         </div>
       )}

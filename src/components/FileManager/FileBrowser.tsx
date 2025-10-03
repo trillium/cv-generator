@@ -21,10 +21,8 @@ interface FileBrowserProps {
 type ViewMode = "grid" | "list";
 
 export default function FileBrowser({
-  onSelectFile,
   onDuplicateFile,
   onDeleteFile,
-  selectedFile,
 }: FileBrowserProps) {
   const router = useRouter();
   const [files, setFiles] = useState<FileMetadata[]>([]);
@@ -44,6 +42,7 @@ export default function FileBrowser({
 
   useEffect(() => {
     filterFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, searchQuery, fileType, selectedTags]);
 
   async function loadFiles() {

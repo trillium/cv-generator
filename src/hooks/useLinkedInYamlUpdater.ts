@@ -1,9 +1,9 @@
 import * as yaml from "js-yaml";
 import { useLinkedInData } from "../contexts/LinkedInContext";
 
-export function getNestedValue(obj: any, path: string): any {
+export function getNestedValue(obj: unknown, path: string): unknown {
   const keys = path.split(".");
-  let current = obj;
+  let current: unknown = obj;
 
   for (const key of keys) {
     if (current === null || current === undefined) {
@@ -18,16 +18,20 @@ export function getNestedValue(obj: any, path: string): any {
         return undefined;
       }
     } else {
-      current = current[key];
+      current = (current as Record<string, unknown>)[key];
     }
   }
 
   return current;
 }
 
-function setNestedValue(obj: any, path: string, value: any) {
+function setNestedValue(
+  obj: Record<string, unknown>,
+  path: string,
+  value: unknown,
+) {
   const keys = path.split(".");
-  let current = obj;
+  let current: unknown = obj;
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
@@ -41,11 +45,12 @@ function setNestedValue(obj: any, path: string, value: any) {
       }
       current = current[index];
     } else {
-      if (current[key] === undefined) {
+      const currentObj = current as Record<string, unknown>;
+      if (currentObj[key] === undefined) {
         const nextKey = keys[i + 1];
-        current[key] = !isNaN(Number(nextKey)) ? [] : {};
+        currentObj[key] = !isNaN(Number(nextKey)) ? [] : {};
       }
-      current = current[key];
+      current = currentObj[key];
     }
   }
 
@@ -58,7 +63,7 @@ function setNestedValue(obj: any, path: string, value: any) {
       throw new Error(`Expected array at path "${path}"`);
     }
   } else {
-    current[lastKey] = value;
+    (current as Record<string, unknown>)[lastKey] = value;
   }
 }
 
@@ -66,7 +71,7 @@ export function useLinkedInYamlUpdater() {
   const { yamlContent, updateYamlContent, currentLinkedInFile } =
     useLinkedInData();
 
-  const updateYamlPath = async (path: string, newValue: any) => {
+  const updateYamlPath = async (path: string, newValue: unknown) => {
     try {
       console.log(`🎯 useLinkedInYamlUpdater.updateYamlPath called with:`, {
         path,
@@ -75,7 +80,7 @@ export function useLinkedInYamlUpdater() {
         yamlContentLength: yamlContent.length,
       });
 
-      const data = yaml.load(yamlContent) as Record<string, any>;
+      const data = yaml.load(yamlContent) as Record<string, unknown>;
       console.log("📋 Parsed current YAML data:", data);
 
       setNestedValue(data, path, newValue);

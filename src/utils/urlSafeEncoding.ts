@@ -41,7 +41,7 @@ export function decodeFilePathFromUrl(encodedPath: string): string {
  */
 export function updateUrlWithResumePath(
   resumePath: string,
-  router: any,
+  router: unknown,
   pathname: string,
 ): void {
   const encodedPath = encodeFilePathForUrl(resumePath);
@@ -54,7 +54,15 @@ export function updateUrlWithResumePath(
   }
 
   const newUrl = `${pathname}?${searchParams.toString()}`;
-  router.replace(newUrl, { scroll: false });
+  if (
+    typeof router === "object" &&
+    router !== null &&
+    typeof (router as { replace?: unknown }).replace === "function"
+  ) {
+    (
+      router as { replace: (url: string, opts: { scroll: boolean }) => void }
+    ).replace(newUrl, { scroll: false });
+  }
 }
 
 /**

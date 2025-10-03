@@ -31,8 +31,12 @@ export function ColorPickerSwitch() {
     setSelectedColor(colorKey);
     localStorage.setItem("selectedColor", colorKey);
 
-    // Set primary theme colors to the selected color family's shades
-    const colorFamily = (colors as any)[color.name];
+    type TailwindColors = typeof colors;
+    type ColorShadeValue = string | Record<string, string>;
+
+    const colorFamily = (colors as TailwindColors)[
+      color.name as keyof TailwindColors
+    ] as ColorShadeValue;
     if (colorFamily && typeof colorFamily === "object") {
       document.documentElement.style.setProperty(
         "--color-primary",
