@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import SingleColumnCoverLetter from "../../../../src/components/Resume/single-column/cover-letter";
 import { listAllResumeFiles } from "../../../../lib/utility";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useFileManager } from "../../../../src/contexts/FileManagerContext";
+import { useFileManager } from "../../../../src/contexts/FileManagerContext.hook";
 
 export default function DynamicSingleColumnCoverLetterPage() {
   const params = useParams();
