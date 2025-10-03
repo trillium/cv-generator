@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { ResumeMetadata } from "./types/multiResume";
+import type { ResumeMetadata } from "../src/types";
 
 export class ResumeMetadataManager {
   /**
@@ -35,21 +35,16 @@ export class ResumeMetadataManager {
     } = {},
   ): ResumeMetadata {
     const now = new Date().toISOString();
-    const id = this.generateId(position, company);
 
     return {
-      id,
-      position,
-      company,
-      dateCreated: now,
+      targetPosition: position,
+      targetCompany: company,
+      targetJobUrl: options.jobUrl,
+      applicationDate: now,
       lastModified: now,
-      basedOn: options.basedOn,
-      status: "draft",
-      description: options.description,
-      tags: options.tags || [],
-      applicationDeadline: options.applicationDeadline,
-      jobUrl: options.jobUrl,
+      applicationStatus: "draft",
       notes: options.notes,
+      tailoredFor: options.tags,
     };
   }
 
@@ -119,16 +114,20 @@ export class ResumeMetadataManager {
    * Validate metadata structure
    */
   static validateMetadata(metadata: unknown): metadata is ResumeMetadata {
+    const m = metadata as Record<string, unknown>;
     return (
       typeof metadata === "object" &&
       metadata !== null &&
-      typeof metadata.id === "string" &&
-      typeof metadata.position === "string" &&
-      typeof metadata.dateCreated === "string" &&
-      typeof metadata.lastModified === "string" &&
-      (metadata.company === undefined ||
-        typeof metadata.company === "string") &&
-      ["draft", "active", "submitted", "archived"].includes(metadata.status)
+      (m.targetPosition === undefined ||
+        typeof m.targetPosition === "string") &&
+      (m.targetCompany === undefined ||
+        typeof m.targetCompany === "string") &&
+      (m.applicationDate === undefined ||
+        typeof m.applicationDate === "string") &&
+      (m.lastModified === undefined ||
+        typeof m.lastModified === "string") &&
+      (m.applicationStatus === undefined ||
+        ["draft", "applied", "interview", "offer", "rejected", "withdrawn"].includes(m.applicationStatus as string))
     );
   }
 
@@ -143,20 +142,16 @@ export class ResumeMetadataManager {
 
     // Create new metadata from old format
     const now = new Date().toISOString();
+    const m = oldMetadata as Record<string, unknown>;
 
     return {
-      id: oldMetadata.id || "migrated-" + Date.now(),
-      position: oldMetadata.position || "unknown",
-      company: oldMetadata.company,
-      dateCreated: oldMetadata.dateCreated || now,
-      lastModified: oldMetadata.lastModified || now,
-      basedOn: oldMetadata.basedOn,
-      status: oldMetadata.status || "draft",
-      description: oldMetadata.description,
-      tags: Array.isArray(oldMetadata.tags) ? oldMetadata.tags : [],
-      applicationDeadline: oldMetadata.applicationDeadline,
-      jobUrl: oldMetadata.jobUrl,
-      notes: oldMetadata.notes,
+      targetPosition: (m.position || m.targetPosition || "unknown") as string,
+      targetCompany: (m.company || m.targetCompany) as string | undefined,
+      applicationDate: (m.dateCreated || m.applicationDate || now) as string,
+      lastModified: (m.lastModified || now) as string,
+      applicationStatus: (m.status || m.applicationStatus || "draft") as ResumeMetadata["applicationStatus"],
+      notes: m.notes as string | undefined,
+      tailoredFor: Array.isArray(m.tags) ? m.tags as string[] : undefined,
     };
   }
 
@@ -173,12 +168,15 @@ export class ResumeMetadataManager {
   /**
    * Get human-readable status
    */
-  static getStatusDisplay(status: ResumeMetadata["status"]): string {
+  static getStatusDisplay(status?: ResumeMetadata["applicationStatus"]): string {
+    if (!status) return "Unknown";
     const statusMap = {
       draft: "Draft",
-      active: "Active",
-      submitted: "Submitted",
-      archived: "Archived",
+      applied: "Applied",
+      interview: "Interview",
+      offer: "Offer",
+      rejected: "Rejected",
+      withdrawn: "Withdrawn",
     };
     return statusMap[status] || status;
   }
@@ -186,12 +184,15 @@ export class ResumeMetadataManager {
   /**
    * Get status color for UI
    */
-  static getStatusColor(status: ResumeMetadata["status"]): string {
+  static getStatusColor(status?: ResumeMetadata["applicationStatus"]): string {
+    if (!status) return "gray";
     const colorMap = {
       draft: "gray",
-      active: "blue",
-      submitted: "green",
-      archived: "yellow",
+      applied: "blue",
+      interview: "yellow",
+      offer: "green",
+      rejected: "red",
+      withdrawn: "purple",
     };
     return colorMap[status] || "gray";
   }
