@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import DebugInfo from "./DebugInfo";
+import { CVData } from "../../types";
 
 interface EditModalProps {
   editValue: string;
@@ -11,7 +12,7 @@ interface EditModalProps {
   parsedData: unknown;
   isSaving: boolean;
   value: string | string[];
-  onSave: (newValue: string | string[]) => Promise<void>;
+  onSave: (newValue: string | string[] | unknown[]) => Promise<void>;
   onCancel: () => void;
   linkData?: {
     text: string;
@@ -27,7 +28,6 @@ export default function EditModal({
   editValue,
   fieldType,
   yamlPath,
-  canShowAddButtons,
   parsedData,
   isSaving,
   value,
@@ -194,9 +194,8 @@ export default function EditModal({
       {/* Debug information */}
       <DebugInfo
         yamlPath={yamlPath}
-        canShowAddButtons={canShowAddButtons}
         fieldType={isLinksArray ? "link" : fieldType}
-        parsedData={parsedData}
+        parsedData={parsedData as CVData}
       />
 
       <div className="flex gap-4 justify-end items-center pt-4 border-t">
