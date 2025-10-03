@@ -8,26 +8,28 @@ export function mergeData(
 ): CVData {
   // Ensure header has omitTitle and omitBlurb
   const mergedHeader = {
-    ...fallback.header,
-    ...script.header,
+    name: script.header?.name ?? fallback.header?.name ?? "",
+    title: script.header?.title ?? fallback.header?.title ?? [],
+    resume: script.header?.resume ?? fallback.header?.resume ?? [],
     omitTitle: script.header?.omitTitle ?? fallback.header?.omitTitle ?? false,
     omitBlurb: script.header?.omitBlurb ?? fallback.header?.omitBlurb ?? false,
   };
 
   return {
-    ...fallback,
-    ...script,
+    info: script.info ?? fallback.info!,
+    careerSummary: script.careerSummary ?? fallback.careerSummary ?? [],
     header: mergedHeader,
-    // Ensure optional fields are initialized
+    workExperience: script.workExperience ?? fallback.workExperience ?? [],
+    projects: script.projects ?? fallback.projects ?? [],
+    profile: script.profile ?? fallback.profile!,
     technical: script.technical ?? fallback.technical ?? [],
     languages: script.languages ?? fallback.languages ?? [],
     education: script.education ?? fallback.education ?? [],
-    projects: script.projects ?? fallback.projects ?? [],
     coverLetter: script.coverLetter ?? fallback.coverLetter ?? [],
-    careerSummary: script.careerSummary ?? fallback.careerSummary ?? [],
-  };
+    metadata: script.metadata ?? fallback.metadata,
+  } as CVData;
 }
 
 export function getDefaultData(): CVData {
-  return mergeData(fallbackData, scriptData);
+  return mergeData(fallbackData as Partial<CVData>, scriptData as Partial<CVData>);
 }
