@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  FileManagerProvider,
-  useFileManager,
-} from "../../src/contexts/FileManagerContext";
+import { FileManagerProvider } from "../../src/contexts/FileManagerContext";
+import { useFileManager } from "../../src/contexts/FileManagerContext.hook";
 import FileBrowser from "../../src/components/FileManager/FileBrowser";
 import VersionHistory from "../../src/components/FileManager/VersionHistory";
 import QuickActions from "../../src/components/FileManager/QuickActions";
