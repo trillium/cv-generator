@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import TwoColumnCoverLetter from "../../../../src/components/Resume/two-column/cover-letter";
 import { listAllResumeFiles } from "../../../../lib/utility";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useFileManager } from "../../../../src/contexts/FileManagerContext";
+import { useFileManager } from "../../../../src/contexts/FileManagerContext.hook";
 
 export default function DynamicTwoColumnCoverLetterPage() {
   const params = useParams();
