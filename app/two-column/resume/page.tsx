@@ -1,11 +1,12 @@
 import TwoColumnResumePageClient from "./client";
 
 interface TwoColumnResumePageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default function TwoColumnResumePage({
+export default async function TwoColumnResumePage({
   searchParams,
 }: TwoColumnResumePageProps) {
-  return <TwoColumnResumePageClient searchParams={searchParams} />;
+  const params = await searchParams;
+  return <TwoColumnResumePageClient searchParams={params} />;
 }
