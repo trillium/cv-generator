@@ -6,7 +6,7 @@ import {
   useYamlPathUpdater,
   getNestedValue,
 } from "../../hooks/useYamlPathUpdater";
-import { useFileManager } from "../../contexts/FileManagerContext";
+import { useFileManager } from "../../contexts/FileManagerContext.hook";
 import { useModal } from "../../contexts/ModalContext";
 import ActionButtons from "./ActionButtons";
 import EmptyFieldPlaceholder from "./EmptyFieldPlaceholder";
