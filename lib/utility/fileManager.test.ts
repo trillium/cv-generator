@@ -467,7 +467,7 @@ describe("File Manager API Integration Tests", () => {
 
         // Log the actual response for debugging
         console.log("✅ Real API Response:", JSON.stringify(result, null, 2));
-      } catch (error) {
+      } catch {
         // If the test fails due to server not running, skip gracefully
         console.log(
           "⚠️  Server may not be running on port 4444. Skipping integration test.",
@@ -531,7 +531,7 @@ describe("File Manager API Integration Tests", () => {
           expect(rawData).toHaveProperty("allFiles");
           expect(Array.isArray(rawData.allFiles)).toBe(true);
         }
-      } catch (error) {
+      } catch {
         console.log("⚠️  Could not connect to API for structure validation");
       }
     }, 10000);
