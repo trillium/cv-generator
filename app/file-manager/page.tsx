@@ -165,7 +165,7 @@ function FileManagerPage() {
                         Tags:
                       </span>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {currentFile.tags.map((tag) => (
+                        {currentFile.tags.map((tag: string) => (
                           <span
                             key={tag}
                             className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs"
