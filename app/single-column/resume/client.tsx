@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SingleColumnResume from "../../../src/components/Resume/single-column/resume";
-import { useFileManager } from "../../../src/contexts/FileManagerContext";
+import { useFileManager } from "../../../src/contexts/FileManagerContext.hook";
 import { decodeFilePathFromUrl } from "../../../src/utils/urlSafeEncoding";
 import type { CVData } from "../../../src/types";
 
