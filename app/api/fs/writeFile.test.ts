@@ -131,7 +131,7 @@ describe("writeFile utility function", () => {
   });
 
   it("should handle null and empty data", async () => {
-    const result = await writeFile(null as unknown, {
+    const result = await writeFile({} as object, {
       filePath: "null-test.yml",
       baseDirectory: testDir,
       createDiff: false,

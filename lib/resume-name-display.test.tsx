@@ -38,7 +38,7 @@ vi.mock("../src/components/EditableField/EditableField", () => ({
 }));
 
 // Import test components
-import { ResumeProvider } from "../src/contexts/ResumeContext";
+import { FileManagerProvider } from "../src/contexts/FileManagerContext";
 import { ModalProvider } from "../src/contexts/ModalContext";
 import Header from "../src/components/Header/Header";
 
@@ -58,7 +58,7 @@ const TestResumePage = () => {
 function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ModalProvider>
-      <ResumeProvider>{children}</ResumeProvider>
+      <FileManagerProvider>{children}</FileManagerProvider>
     </ModalProvider>
   );
 }

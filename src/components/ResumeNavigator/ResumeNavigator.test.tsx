@@ -46,10 +46,18 @@ import { useModal } from "../../contexts/ModalContext";
 describe("ResumeNavigator", () => {
   const mockRouter = {
     push: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
   };
 
   const mockModal = {
     closeModal: vi.fn(),
+    isOpen: false,
+    content: null,
+    openModal: vi.fn(),
   };
 
   beforeEach(() => {
@@ -85,6 +93,9 @@ describe("ResumeNavigator", () => {
       success: true,
       data: {
         allFiles: mockFiles,
+        mainDirFiles: mockFiles,
+        resumeFiles: mockFiles,
+        totalFiles: mockFiles.length,
       },
     });
 
@@ -106,6 +117,9 @@ describe("ResumeNavigator", () => {
       success: true,
       data: {
         allFiles: mockFiles,
+        mainDirFiles: mockFiles,
+        resumeFiles: mockFiles,
+        totalFiles: mockFiles.length,
       },
     });
 
@@ -130,6 +144,9 @@ describe("ResumeNavigator", () => {
       success: true,
       data: {
         allFiles: mockFiles,
+        mainDirFiles: mockFiles,
+        resumeFiles: mockFiles,
+        totalFiles: mockFiles.length,
       },
     });
     vi.mocked(deleteResumeWithBackup).mockResolvedValue({
@@ -172,6 +189,9 @@ describe("ResumeNavigator", () => {
       success: true,
       data: {
         allFiles: mockFiles,
+        mainDirFiles: mockFiles,
+        resumeFiles: mockFiles,
+        totalFiles: mockFiles.length,
       },
     });
     vi.mocked(duplicateResume).mockResolvedValue({
@@ -229,6 +249,9 @@ describe("ResumeNavigator", () => {
       success: true,
       data: {
         allFiles: mockFiles,
+        mainDirFiles: mockFiles,
+        resumeFiles: mockFiles,
+        totalFiles: mockFiles.length,
       },
     });
 
@@ -253,6 +276,9 @@ describe("ResumeNavigator", () => {
       success: true,
       data: {
         allFiles: mockFiles,
+        mainDirFiles: mockFiles,
+        resumeFiles: mockFiles,
+        totalFiles: mockFiles.length,
       },
     });
 

@@ -37,14 +37,15 @@ vi.mock("../src/components/EditableField/EditableField", () => ({
 }));
 
 // Import test components
-import { ResumeProvider } from "../src/contexts/ResumeContext";
+
 import { ModalProvider } from "../src/contexts/ModalContext";
+import { FileManagerProvider } from "../src/contexts/FileManagerContext";
 
 // Test wrapper component
 function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ModalProvider>
-      <ResumeProvider>{children}</ResumeProvider>
+      <FileManagerProvider>{children}</FileManagerProvider>
     </ModalProvider>
   );
 }

@@ -2,6 +2,46 @@ import { ResumeMetadata } from "./index";
 
 export type FileType = "resume" | "linkedin" | "other";
 
+export interface FileManagerContextType {
+  currentFile: FileMetadata | null;
+  content: string;
+  parsedData: unknown;
+  hasUnsavedChanges: boolean;
+  files: FileMetadata[];
+  filteredFiles: FileMetadata[];
+  fileType: "all" | FileType;
+  searchQuery: string;
+  selectedTags: string[];
+  loading: boolean;
+  error: string | null;
+  loadFile: (path: string) => Promise<void>;
+  saveFile: (commit?: boolean, message?: string) => Promise<void>;
+  commitChanges: (message?: string) => Promise<void>;
+  discardChanges: () => Promise<void>;
+  updateContent: (newContent: string) => void;
+  createNewFile: (
+    path: string,
+    content: string,
+    commit?: boolean,
+  ) => Promise<void>;
+  duplicateFile: (
+    path: string,
+    name?: string,
+    tags?: string[],
+    description?: string,
+  ) => Promise<string>;
+  deleteFile: (path: string) => Promise<void>;
+  restoreVersion: (path: string, version: string) => Promise<void>;
+  getVersionHistory: (path: string) => Promise<Version[]>;
+  getFileDiff: (path: string, from: string, to: string) => Promise<Diff>;
+  updateTags: (path: string, tags: string[]) => Promise<void>;
+  updateDescription: (path: string, desc: string) => Promise<void>;
+  setFileType: (type: "all" | FileType) => void;
+  setSearchQuery: (query: string) => void;
+  setSelectedTags: (tags: string[]) => void;
+  refreshFiles: () => Promise<void>;
+}
+
 export interface FileMetadata {
   path: string;
   name: string;

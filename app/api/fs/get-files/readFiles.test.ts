@@ -109,6 +109,8 @@ describe("readFiles utility function", () => {
       "error",
       "Failed to read file",
     );
-    expect(typeof result["does-not-exist.yml"].message).toBe("string");
+    expect(
+      typeof (result["does-not-exist.yml"] as { message?: string }).message,
+    ).toBe("string");
   });
 });
