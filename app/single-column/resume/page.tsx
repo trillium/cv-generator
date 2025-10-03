@@ -1,11 +1,12 @@
 import SingleColumnResumePageClient from "./client";
 
 interface SingleColumnResumePageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default function SingleColumnResumePage({
+export default async function SingleColumnResumePage({
   searchParams,
 }: SingleColumnResumePageProps) {
-  return <SingleColumnResumePageClient searchParams={searchParams} />;
+  const params = await searchParams;
+  return <SingleColumnResumePageClient searchParams={params} />;
 }
