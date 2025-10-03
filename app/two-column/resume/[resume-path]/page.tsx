@@ -6,7 +6,7 @@ import TwoColumnResume from "../../../../src/components/Resume/two-column/resume
 import type { CVData } from "../../../../src/types";
 import { listAllResumeFiles } from "../../../../lib/utility";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useFileManager } from "../../../../src/contexts/FileManagerContext";
+import { useFileManager } from "../../../../src/contexts/FileManagerContext.hook";
 
 export default function DynamicTwoColumnResumePage() {
   const params = useParams();
