@@ -49,7 +49,14 @@ export default tseslint.config(
       ...reactHooksPlugin.configs.recommended.rules,
       "react-refresh/only-export-components": [
         "warn",
-        { allowConstantExport: true },
+        {
+          allowConstantExport: true,
+          allowExportNames: [
+            "useLinkedInContext",
+            "useLinkedInData",
+            "useModal",
+          ],
+        },
       ],
     },
     settings: {

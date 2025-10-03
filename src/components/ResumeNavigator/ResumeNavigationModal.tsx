@@ -6,7 +6,6 @@ import ResumeNavigator from "../ResumeNavigator/ResumeNavigator";
 interface ResumeNavigationModalProps {
   buttonText?: string;
   buttonClassName?: string;
-  showNavigationActions?: boolean;
   onSelectResume?: (filePath: string) => void;
 }
 
@@ -17,19 +16,12 @@ interface ResumeNavigationModalProps {
 export default function ResumeNavigationModal({
   buttonText = "Browse Resumes",
   buttonClassName = "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors",
-  showNavigationActions = true,
   onSelectResume,
 }: ResumeNavigationModalProps) {
   const { openModal } = useModal();
 
   const openNavigator = () => {
-    openModal(
-      <ResumeNavigator
-        onSelectResume={onSelectResume}
-        showNavigationActions={showNavigationActions}
-      />,
-      "xl",
-    );
+    openModal(<ResumeNavigator onSelectResume={onSelectResume} />, "xl");
   };
 
   return (
