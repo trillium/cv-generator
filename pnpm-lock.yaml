@@ -68,6 +68,9 @@ importers:
       "@commitlint/config-conventional":
         specifier: ^19.4.1
         version: 19.8.1
+      "@commitlint/types":
+        specifier: ^20.0.0
+        version: 20.0.0
       "@eslint/compat":
         specifier: ^1.4.0
         version: 1.4.0(eslint@9.36.0(jiti@2.4.2))
@@ -339,6 +342,13 @@ packages:
     resolution:
       {
         integrity: sha512-/yCrWGCoA1SVKOks25EGadP9Pnj0oAIHGpl2wH2M2Y46dPM2ueb8wyCVOD7O3WCTkaJ0IkKvzhl1JY7+uCT2Dw==,
+      }
+    engines: { node: ">=v18" }
+
+  "@commitlint/types@20.0.0":
+    resolution:
+      {
+        integrity: sha512-bVUNBqG6aznYcYjTjnc3+Cat/iBgbgpflxbIBTnsHTX0YVpnmINPEkSRWymT2Q8aSH3Y7aKnEbunilkYe8TybA==,
       }
     engines: { node: ">=v18" }
 
@@ -6431,6 +6441,11 @@ snapshots:
       find-up: 7.0.0
 
   "@commitlint/types@19.8.1":
+    dependencies:
+      "@types/conventional-commits-parser": 5.0.1
+      chalk: 5.4.1
+
+  "@commitlint/types@20.0.0":
     dependencies:
       "@types/conventional-commits-parser": 5.0.1
       chalk: 5.4.1

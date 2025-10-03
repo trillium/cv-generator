@@ -1,1 +1,8 @@
+# Auto-trim trailing whitespace from commit message
+sed -i '' -e 's/[[:space:]]*$//' "$1"
+
+# Auto-lowercase the first letter (after the type)
+# This handles patterns like "feat: Fix bug" -> "feat: fix bug"
+sed -i '' -E 's/^([a-z]+(\([^)]*\))?:[[:space:]]+)([A-Z])/\1\L\3/' "$1"
+
 commitlint --edit $1
