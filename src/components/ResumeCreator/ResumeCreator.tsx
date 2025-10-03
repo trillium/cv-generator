@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FiClipboard } from "react-icons/fi";
-import { useFileManager } from "../../contexts/FileManagerContext";
+import { useFileManager } from "../../contexts/FileManagerContext.hook";
 import * as yaml from "js-yaml";
 import {
   listAllResumeFiles,
