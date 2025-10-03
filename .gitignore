@@ -26,6 +26,8 @@ dist-ssr
 # Project related
 output.pdf
 src/assets/profile.*
+build-errors.txt
+eslint-errors.txt
 # Negative glob pattern to ignore example
 !src/assets/profile.example.png 
 src/data.json
