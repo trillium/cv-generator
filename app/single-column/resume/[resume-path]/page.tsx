@@ -6,7 +6,7 @@ import SingleColumnResume from "../../../../src/components/Resume/single-column/
 import type { CVData } from "../../../../src/types";
 import { listAllResumeFiles } from "../../../../lib/utility";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useFileManager } from "../../../../src/contexts/FileManagerContext";
+import { useFileManager } from "../../../../src/contexts/FileManagerContext.hook";
 
 export default function DynamicSingleColumnResumePage() {
   const params = useParams();
