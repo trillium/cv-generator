@@ -2,36 +2,10 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useModal } from "../../contexts/ModalContext";
-
-interface PageSize {
-  name: string;
-  width: number; // in inches
-  height: number; // in inches
-}
-
-interface PrintPageSizeProps {
-  targetSelector?: string;
-  pageSize?: PageSize;
-  margins?: {
-    top: number; // in inches
-    bottom: number; // in inches
-    left: number; // in inches
-    right: number; // in inches
-  };
-  dpi?: number;
-  onPageSizeChange?: (pageSize: PageSize) => void;
-}
-
-const DEFAULT_PAGE_SIZES: Record<string, PageSize> = {
-  letter: { name: "US Letter", width: 8.5, height: 11 },
-  a4: { name: "A4", width: 8.27, height: 11.69 },
-  legal: { name: "US Legal", width: 8.5, height: 14 },
-  tabloid: { name: "Tabloid", width: 11, height: 17 },
-};
-
-// Export the page sizes and types for use in other components
-export { DEFAULT_PAGE_SIZES };
-export type { PageSize, PrintPageSizeProps };
+import {
+  DEFAULT_PAGE_SIZES,
+  PrintPageSizeProps,
+} from "./PrintPageSize.constants";
 
 export default function PrintPageSize({
   targetSelector = ".resume-content",
@@ -112,8 +86,12 @@ export default function PrintPageSize({
         Math.ceil(contentHeight / usableHeight),
       );
       setPendingPageCount(calculatedPages);
-    } catch (e: any) {
-      setError(e?.message || "Unknown error during page calculation");
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Unknown error during page calculation",
+      );
     }
   }, [targetSelector, calculationParams]);
 
@@ -162,11 +140,12 @@ export default function PrintPageSize({
       resizeObserver.disconnect();
       mutationObserver.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetSelector]);
 
-  // Separate effect for when calculation parameters change
   useEffect(() => {
     calculatePageCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [calculationParams]);
 
   // When a new calculation finishes, update the visible page count
@@ -206,7 +185,7 @@ export default function PrintPageSize({
             >
               <div className="font-medium text-sm">{size.name}</div>
               <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {size.width}" × {size.height}"
+                {size.width}&rdquo; × {size.height}&rdquo;
               </div>
             </button>
           ))}

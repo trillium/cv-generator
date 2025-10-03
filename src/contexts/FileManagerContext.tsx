@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  ReactNode,
-} from "react";
+import { useState, useCallback, ReactNode } from "react";
+import { FileManagerContext } from "./FileManagerContext.constants";
 import { FileMetadata, FileType, Version, Diff } from "../types/fileManager";
 import { CVData } from "../types";
 import { LinkedInData } from "../types/linkedin";
@@ -71,15 +66,31 @@ interface FileManagerContextType {
   refreshFiles: () => Promise<void>;
 }
 
-const FileManagerContext = createContext<FileManagerContextType | undefined>(
-  undefined,
-);
-
 interface FileManagerProviderProps {
   children: ReactNode;
 }
 
 export function FileManagerProvider({ children }: FileManagerProviderProps) {
+  const updateTags = useCallback(async (path: string, tags: string[]) => {
+    try {
+      // This would need a dedicated API endpoint, for now we can update via metadata
+      // Implementation depends on backend support
+      console.log("Update tags:", path, tags);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update tags");
+    }
+  }, []);
+
+  const updateDescription = useCallback(async (path: string, desc: string) => {
+    try {
+      // This would need a dedicated API endpoint
+      console.log("Update description:", path, desc);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update description",
+      );
+    }
+  }, []);
   const [currentFile, setCurrentFile] = useState<FileMetadata | null>(null);
   const [content, setContent] = useState("");
   const [parsedData, setParsedData] = useState<CVData | LinkedInData | null>(
@@ -313,6 +324,8 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     [refreshFiles, loadFile],
   );
 
+  // ...existing code...
+
   const duplicateFile = useCallback(
     async (
       path: string,
@@ -476,26 +489,7 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     [],
   );
 
-  const updateTags = useCallback(async (path: string, tags: string[]) => {
-    try {
-      // This would need a dedicated API endpoint, for now we can update via metadata
-      // Implementation depends on backend support
-      console.log("Update tags:", path, tags);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update tags");
-    }
-  }, []);
-
-  const updateDescription = useCallback(async (path: string, desc: string) => {
-    try {
-      // This would need a dedicated API endpoint
-      console.log("Update description:", path, desc);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to update description",
-      );
-    }
-  }, []);
+  // ...existing code...
 
   const value: FileManagerContextType = {
     currentFile,
@@ -533,12 +527,4 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
       {children}
     </FileManagerContext.Provider>
   );
-}
-
-export function useFileManager() {
-  const context = useContext(FileManagerContext);
-  if (context === undefined) {
-    throw new Error("useFileManager must be used within a FileManagerProvider");
-  }
-  return context;
 }
