@@ -36,7 +36,7 @@ describe("getFiles utility functions", () => {
     // Clean up test directory
     try {
       await rm(testDir, { recursive: true });
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });

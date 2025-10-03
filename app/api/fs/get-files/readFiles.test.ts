@@ -34,7 +34,7 @@ describe("readFiles utility function", () => {
     // Clean up test directory
     try {
       await rm(testDir, { recursive: true });
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });
