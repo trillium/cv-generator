@@ -11,7 +11,7 @@ const dataAnon = yaml.load(fs.readFileSync(dataAnonPath, "utf-8")) as CVData;
 
 export function anonymizeData(obj: object): CVData {
   // Use the replace function to anonymize obj using dataAnon as the source of anonymized values
-  return replace(obj, dataAnon);
+  return replace(obj, dataAnon) as CVData;
 }
 
 /**
@@ -35,10 +35,10 @@ export function replace(
   }
 
   // If both are objects, recursively replace each key
-  const result: Record<string, unknown> | unknown[] = Array.isArray(obj)
-    ? []
-    : {};
-  const keys = new Set([...Object.keys(obj), ...Object.keys(newObj)]);
+  const result = (Array.isArray(obj) ? [] : {}) as Record<string, unknown>;
+  const objRecord = obj as Record<string, unknown>;
+  const newObjRecord = newObj as Record<string, unknown>;
+  const keys = new Set([...Object.keys(objRecord), ...Object.keys(newObjRecord)]);
   for (const key of keys) {
     const currentPath = path.concat(key);
     const pathStr = currentPath.join(".");
@@ -46,28 +46,28 @@ export function replace(
       const str = JSON.stringify(val);
       return str && str.length > 50 ? str.slice(0, 47) + "..." : str;
     };
-    if (key in newObj) {
+    if (key in newObjRecord) {
       // If newObj[key] is null or undefined, keep the original value
-      if (newObj[key] === null || newObj[key] === undefined) {
+      if (newObjRecord[key] === null || newObjRecord[key] === undefined) {
         console.debug(
-          `[anon] ${pathStr} ${truncate(obj[key])} -> ${truncate(obj[key])}`,
+          `[anon] ${pathStr} ${truncate(objRecord[key])} -> ${truncate(objRecord[key])}`,
         );
-        result[key] = obj[key];
+        result[key] = objRecord[key];
       } else if (
-        typeof obj[key] === "object" &&
-        typeof newObj[key] === "object" &&
-        obj[key] !== null &&
-        newObj[key] !== null
+        typeof objRecord[key] === "object" &&
+        typeof newObjRecord[key] === "object" &&
+        objRecord[key] !== null &&
+        newObjRecord[key] !== null
       ) {
-        result[key] = replace(obj[key], newObj[key], currentPath);
+        result[key] = replace(objRecord[key], newObjRecord[key], currentPath);
       } else {
         console.debug(
-          `[anon] ${pathStr} ${truncate(obj[key])} -> ${truncate(newObj[key])}`,
+          `[anon] ${pathStr} ${truncate(objRecord[key])} -> ${truncate(newObjRecord[key])}`,
         );
-        result[key] = replace(obj[key], newObj[key], currentPath);
+        result[key] = replace(objRecord[key], newObjRecord[key], currentPath);
       }
     } else {
-      result[key] = obj[key];
+      result[key] = objRecord[key];
     }
   }
   return result;
