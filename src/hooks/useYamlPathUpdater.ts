@@ -1,5 +1,5 @@
 import * as yaml from "js-yaml";
-import { useFileManager } from "../contexts/FileManagerContext";
+import { useFileManager } from "../contexts/FileManagerContext.hook";
 import { useContextAwareYamlUpdater } from "./useContextAwareYamlUpdater";
 
 export function useYamlPathUpdater() {
