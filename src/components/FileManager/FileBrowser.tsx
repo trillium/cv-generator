@@ -42,7 +42,6 @@ export default function FileBrowser({
 
   useEffect(() => {
     filterFiles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, searchQuery, fileType, selectedTags]);
 
   async function loadFiles() {

@@ -140,12 +140,10 @@ export default function PrintPageSize({
       resizeObserver.disconnect();
       mutationObserver.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetSelector]);
 
   useEffect(() => {
     calculatePageCount();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [calculationParams]);
 
   // When a new calculation finishes, update the visible page count
