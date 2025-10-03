@@ -1,10 +1,24 @@
 import fs from "fs";
 import path from "path";
-import {
-  ResumeIndex,
-  CompanyVersion,
-  ResumeMetadata,
-} from "./types/multiResume";
+import type { ResumeMetadata } from "../src/types";
+
+interface CompanyVersion {
+  date: string;
+  path: string;
+  lastModified: string;
+  status: string;
+}
+
+interface PositionGroup {
+  default: string;
+  companies: Record<string, CompanyVersion[]>;
+}
+
+interface ResumeIndex {
+  lastUpdated: string;
+  default: string;
+  positions: Record<string, PositionGroup>;
+}
 
 export class ResumeIndexManager {
   private indexPath: string;
@@ -55,12 +69,10 @@ export class ResumeIndexManager {
     fs.writeFileSync(this.indexPath, JSON.stringify(index, null, 2), "utf8");
   }
 
-  /**
-   * Add a new resume version to the index
-   */
   addResumeVersion(metadata: ResumeMetadata, resumePath: string): void {
     const index = this.readIndex();
-    const { position, company } = metadata;
+    const position = metadata.targetPosition || "default";
+    const company = metadata.targetCompany;
 
     // Initialize position group if it doesn't exist
     if (!index.positions[position]) {
@@ -77,10 +89,10 @@ export class ResumeIndexManager {
       }
 
       const companyVersion: CompanyVersion = {
-        date: metadata.dateCreated.split("T")[0], // Extract date part
+        date: metadata.applicationDate || new Date().toISOString().split("T")[0], // Extract date part
         path: resumePath,
-        lastModified: metadata.lastModified,
-        status: metadata.status,
+        lastModified: metadata.lastModified || new Date().toISOString(),
+        status: metadata.applicationStatus || "draft",
       };
 
       // Remove existing version for the same date if it exists
@@ -105,7 +117,8 @@ export class ResumeIndexManager {
    */
   updateResumeVersion(metadata: ResumeMetadata, resumePath: string): void {
     const index = this.readIndex();
-    const { position, company } = metadata;
+    const position = metadata.targetPosition || "default";
+    const company = metadata.targetCompany;
 
     if (!index.positions[position] || !company) {
       return;
@@ -116,15 +129,15 @@ export class ResumeIndexManager {
       return;
     }
 
-    const dateKey = metadata.dateCreated.split("T")[0];
+    const dateKey = metadata.applicationDate || new Date().toISOString().split("T")[0];
     const versionIndex = companyVersions.findIndex((v) => v.date === dateKey);
 
     if (versionIndex >= 0) {
       companyVersions[versionIndex] = {
         date: dateKey,
         path: resumePath,
-        lastModified: metadata.lastModified,
-        status: metadata.status,
+        lastModified: metadata.lastModified || new Date().toISOString(),
+        status: metadata.applicationStatus || "draft",
       };
 
       this.saveIndex(index);
