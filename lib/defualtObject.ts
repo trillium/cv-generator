@@ -43,18 +43,20 @@ const defaultCVData: CVData = {
  * @returns The normalized project.
  */
 function normalizeProject(project: Partial<Project>): Project {
-  const normalizedLines = Array.isArray(project.lines) ? project.lines.flatMap((line) => {
-    if (typeof line === "string") return [{ text: line }];
-    if (typeof line === "object" && line !== null && 'text' in line) {
-      const text = (line as { text: unknown }).text;
-      if (Array.isArray(text)) {
-        return (text as string[]).map(t => ({ text: t }));
-      } else if (typeof text === "string") {
-        return [{ text }];
-      }
-    }
-    return [];
-  }) : [];
+  const normalizedLines = Array.isArray(project.lines)
+    ? project.lines.flatMap((line) => {
+        if (typeof line === "string") return [{ text: line }];
+        if (typeof line === "object" && line !== null && "text" in line) {
+          const text = (line as { text: unknown }).text;
+          if (Array.isArray(text)) {
+            return (text as string[]).map((t) => ({ text: t }));
+          } else if (typeof text === "string") {
+            return [{ text }];
+          }
+        }
+        return [];
+      })
+    : [];
   return {
     name: project.name ?? "",
     ...project,

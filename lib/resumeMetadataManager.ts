@@ -120,14 +120,19 @@ export class ResumeMetadataManager {
       metadata !== null &&
       (m.targetPosition === undefined ||
         typeof m.targetPosition === "string") &&
-      (m.targetCompany === undefined ||
-        typeof m.targetCompany === "string") &&
+      (m.targetCompany === undefined || typeof m.targetCompany === "string") &&
       (m.applicationDate === undefined ||
         typeof m.applicationDate === "string") &&
-      (m.lastModified === undefined ||
-        typeof m.lastModified === "string") &&
+      (m.lastModified === undefined || typeof m.lastModified === "string") &&
       (m.applicationStatus === undefined ||
-        ["draft", "applied", "interview", "offer", "rejected", "withdrawn"].includes(m.applicationStatus as string))
+        [
+          "draft",
+          "applied",
+          "interview",
+          "offer",
+          "rejected",
+          "withdrawn",
+        ].includes(m.applicationStatus as string))
     );
   }
 
@@ -149,9 +154,11 @@ export class ResumeMetadataManager {
       targetCompany: (m.company || m.targetCompany) as string | undefined,
       applicationDate: (m.dateCreated || m.applicationDate || now) as string,
       lastModified: (m.lastModified || now) as string,
-      applicationStatus: (m.status || m.applicationStatus || "draft") as ResumeMetadata["applicationStatus"],
+      applicationStatus: (m.status ||
+        m.applicationStatus ||
+        "draft") as ResumeMetadata["applicationStatus"],
       notes: m.notes as string | undefined,
-      tailoredFor: Array.isArray(m.tags) ? m.tags as string[] : undefined,
+      tailoredFor: Array.isArray(m.tags) ? (m.tags as string[]) : undefined,
     };
   }
 
@@ -168,7 +175,9 @@ export class ResumeMetadataManager {
   /**
    * Get human-readable status
    */
-  static getStatusDisplay(status?: ResumeMetadata["applicationStatus"]): string {
+  static getStatusDisplay(
+    status?: ResumeMetadata["applicationStatus"],
+  ): string {
     if (!status) return "Unknown";
     const statusMap = {
       draft: "Draft",

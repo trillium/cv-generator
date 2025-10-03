@@ -89,7 +89,8 @@ export class ResumeIndexManager {
       }
 
       const companyVersion: CompanyVersion = {
-        date: metadata.applicationDate || new Date().toISOString().split("T")[0], // Extract date part
+        date:
+          metadata.applicationDate || new Date().toISOString().split("T")[0], // Extract date part
         path: resumePath,
         lastModified: metadata.lastModified || new Date().toISOString(),
         status: metadata.applicationStatus || "draft",
@@ -129,7 +130,8 @@ export class ResumeIndexManager {
       return;
     }
 
-    const dateKey = metadata.applicationDate || new Date().toISOString().split("T")[0];
+    const dateKey =
+      metadata.applicationDate || new Date().toISOString().split("T")[0];
     const versionIndex = companyVersions.findIndex((v) => v.date === dateKey);
 
     if (versionIndex >= 0) {

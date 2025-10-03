@@ -63,7 +63,7 @@ export default function LinkedInEditableField<T extends string | string[]>({
     }
   };
 
-  const handleSave = async (modalEditValue: string | string[]) => {
+  const handleSave = async (modalEditValue: string | string[] | unknown[]) => {
     const currentValue = Array.isArray(value)
       ? value.join("\n")
       : String(value || "");
@@ -71,7 +71,7 @@ export default function LinkedInEditableField<T extends string | string[]>({
     if (JSON.stringify(modalEditValue) !== JSON.stringify(currentValue)) {
       setIsSaving(true);
       try {
-        let newValue: string | string[] = modalEditValue;
+        let newValue: string | string[] | unknown[] = modalEditValue;
 
         if (fieldType === "array" && typeof modalEditValue === "string") {
           newValue = modalEditValue
@@ -82,7 +82,10 @@ export default function LinkedInEditableField<T extends string | string[]>({
 
         await updateYamlPath(yamlPath, newValue);
         const stringValue = Array.isArray(newValue)
-          ? newValue.join("\n")
+          ? Array.isArray(newValue[0]) ||
+            (newValue.length > 0 && typeof newValue[0] === "object")
+            ? JSON.stringify(newValue) // For object arrays like links
+            : newValue.join("\n") // For string arrays
           : String(newValue || "");
         setEditValue(stringValue);
       } catch (error) {

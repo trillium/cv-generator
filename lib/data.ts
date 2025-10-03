@@ -31,5 +31,8 @@ export function mergeData(
 }
 
 export function getDefaultData(): CVData {
-  return mergeData(fallbackData as Partial<CVData>, scriptData as Partial<CVData>);
+  return mergeData(
+    fallbackData as Partial<CVData>,
+    scriptData as Partial<CVData>,
+  );
 }

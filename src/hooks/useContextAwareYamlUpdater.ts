@@ -39,13 +39,13 @@ export function useContextAwareYamlUpdater() {
     updateYamlContent,
     currentContext: currentFile
       ? {
-        filePath: currentFile.path,
-        fileName:
-          currentFile.path
-            .split("/")
-            .pop()
-            ?.replace(/\.(yml|yaml)$/i, "") || "resume",
-      }
+          filePath: currentFile.path,
+          fileName:
+            currentFile.path
+              .split("/")
+              .pop()
+              ?.replace(/\.(yml|yaml)$/i, "") || "resume",
+        }
       : null,
     isFileBasedMode: !!currentFile,
   };

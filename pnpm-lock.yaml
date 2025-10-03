@@ -80,6 +80,9 @@ importers:
       "@next/eslint-plugin-next":
         specifier: ^15.0.0
         version: 15.5.2
+      "@rushstack/eslint-patch":
+        specifier: ^1.12.0
+        version: 1.12.0
       "@tailwindcss/postcss":
         specifier: ^4.0.5
         version: 4.1.10

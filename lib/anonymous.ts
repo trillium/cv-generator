@@ -38,7 +38,10 @@ export function replace(
   const result = (Array.isArray(obj) ? [] : {}) as Record<string, unknown>;
   const objRecord = obj as Record<string, unknown>;
   const newObjRecord = newObj as Record<string, unknown>;
-  const keys = new Set([...Object.keys(objRecord), ...Object.keys(newObjRecord)]);
+  const keys = new Set([
+    ...Object.keys(objRecord),
+    ...Object.keys(newObjRecord),
+  ]);
   for (const key of keys) {
     const currentPath = path.concat(key);
     const pathStr = currentPath.join(".");

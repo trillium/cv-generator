@@ -1,6 +1,4 @@
 {
-  "*.{js,jsx,ts,tsx}": [
-    "eslint --report-unused-disable-directives --max-warnings 0 --no-warn-ignored"
-  ],
+  "*.{js,jsx,ts,tsx}": ["scripts/eslint-lintstaged.sh"],
   "*.{js,jsx,ts,tsx,json,css,md,mdx,html,yml,yaml}": ["prettier --write"]
 }
