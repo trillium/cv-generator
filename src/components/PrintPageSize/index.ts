@@ -1,2 +1,3 @@
-export { default, DEFAULT_PAGE_SIZES } from "./PrintPageSize";
-export type { PageSize, PrintPageSizeProps } from "./PrintPageSize";
+export { default } from "./PrintPageSize";
+export { DEFAULT_PAGE_SIZES } from "./PrintPageSize.constants";
+export type { PageSize, PrintPageSizeProps } from "./PrintPageSize.constants";
