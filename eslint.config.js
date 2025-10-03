@@ -7,6 +7,12 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
+    files: ["next-env.d.ts"],
+    rules: {
+      "@typescript-eslint/triple-slash-reference": "off",
+    },
+  },
+  {
     ignores: [
       "dist/**",
       ".next/**",
@@ -15,6 +21,7 @@ export default tseslint.config(
       "node_modules/**",
       "*.temp",
       "*.backup",
+      "next-env.d.ts",
     ],
   },
   js.configs.recommended,
