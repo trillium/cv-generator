@@ -12,7 +12,7 @@
     "test:run": "vitest run",
     "format": "prettier . --write",
     "prelint": "prettier . --write",
-    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 > eslint-errors.txt",
+    "lint": "sh scripts/lint-with-count.sh",
     "pdf": "tsx pdf.ts --resumeType=single-column",
     "pdf:anon": "tsx pdf.ts --anon --resumeType=single-column",
     "pdf:resume": "tsx pdf.ts --resumeType=single-column --print=resume",
