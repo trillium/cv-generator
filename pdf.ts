@@ -9,7 +9,6 @@ import { anonymizeData } from "./lib/anonymous";
 import { parseAndWriteDataFile } from "./lib/parseAndWriteDataFile";
 import { allVariants } from "./lib/allVariants";
 import readline from "readline";
-import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { encodeFilePathForUrl } from "./src/utils/urlSafeEncoding";
 import { promisify } from "node:util";
 
@@ -50,7 +49,7 @@ async function killProcessOnPort(port: number): Promise<void> {
         }
       }
     }
-  } catch (error) {
+  } catch {
     // No process found on port, which is fine
     console.log(`✅ No process found on port ${port}`);
   }
@@ -74,77 +73,78 @@ async function startNextServer(rootDir: string, preferredPort: number = 7542) {
       });
 
       // Wait for the server to be ready
-      const result = await new Promise<{ process: any; url: string }>(
-        (resolve, reject) => {
-          let resolved = false;
-          const timeout = setTimeout(() => {
+      const result = await new Promise<{
+        process: import("node:child_process").ChildProcess;
+        url: string;
+      }>((resolve, reject) => {
+        let resolved = false;
+        const timeout = setTimeout(() => {
+          if (!resolved) {
+            nextProcess.kill();
+            reject(
+              new Error(
+                `Next.js server failed to start on port ${port} within 30 seconds`,
+              ),
+            );
+          }
+        }, 30000);
+
+        nextProcess.stdout?.on("data", (data) => {
+          const output = data.toString();
+          if (output.includes("Local:") || output.includes("Ready")) {
+            console.log(output.trim());
+          }
+          if (output.includes("Ready") && !resolved) {
+            resolved = true;
+            clearTimeout(timeout);
+            resolve({
+              process: nextProcess,
+              url: `http://localhost:${port}`,
+            });
+          }
+        });
+
+        nextProcess.stderr?.on("data", (data) => {
+          const errorOutput = data.toString();
+
+          // Only log actual errors, not info messages
+          if (
+            errorOutput.includes("Error") ||
+            errorOutput.includes("EADDRINUSE")
+          ) {
+            console.error(errorOutput.trim());
+          }
+
+          // Check for port in use error
+          if (
+            errorOutput.includes("EADDRINUSE") ||
+            errorOutput.includes("address already in use")
+          ) {
             if (!resolved) {
+              resolved = true;
+              clearTimeout(timeout);
               nextProcess.kill();
-              reject(
-                new Error(
-                  `Next.js server failed to start on port ${port} within 30 seconds`,
-                ),
-              );
+              reject(new Error(`Port ${port} is already in use`));
             }
-          }, 30000);
+          }
+        });
 
-          nextProcess.stdout?.on("data", (data) => {
-            const output = data.toString();
-            if (output.includes("Local:") || output.includes("Ready")) {
-              console.log(output.trim());
-            }
-            if (output.includes("Ready") && !resolved) {
-              resolved = true;
-              clearTimeout(timeout);
-              resolve({
-                process: nextProcess,
-                url: `http://localhost:${port}`,
-              });
-            }
-          });
+        nextProcess.on("error", (error) => {
+          if (!resolved) {
+            resolved = true;
+            clearTimeout(timeout);
+            reject(error);
+          }
+        });
 
-          nextProcess.stderr?.on("data", (data) => {
-            const errorOutput = data.toString();
-
-            // Only log actual errors, not info messages
-            if (
-              errorOutput.includes("Error") ||
-              errorOutput.includes("EADDRINUSE")
-            ) {
-              console.error(errorOutput.trim());
-            }
-
-            // Check for port in use error
-            if (
-              errorOutput.includes("EADDRINUSE") ||
-              errorOutput.includes("address already in use")
-            ) {
-              if (!resolved) {
-                resolved = true;
-                clearTimeout(timeout);
-                nextProcess.kill();
-                reject(new Error(`Port ${port} is already in use`));
-              }
-            }
-          });
-
-          nextProcess.on("error", (error) => {
-            if (!resolved) {
-              resolved = true;
-              clearTimeout(timeout);
-              reject(error);
-            }
-          });
-
-          nextProcess.on("exit", (code) => {
-            if (code !== 0 && !resolved) {
-              resolved = true;
-              clearTimeout(timeout);
-              reject(new Error(`Next.js process exited with code ${code}`));
-            }
-          });
-        },
-      );
+        nextProcess.on("exit", (code) => {
+          if (code !== 0 && !resolved) {
+            resolved = true;
+            clearTimeout(timeout);
+            reject(new Error(`Next.js process exited with code ${code}`));
+          }
+        });
+      });
 
       console.log(`✅ Successfully started Next.js server on port ${port}`);
       return result;
@@ -377,7 +377,10 @@ Resume path: ${resumePath}`
 async function main(dataObj: CVData, resumeType: string, resumePath?: string) {
   console.log(dataObj.header.name);
 
-  let server: { process: any; url: string } | null = null;
+  let server: {
+    process: import("node:child_process").ChildProcess;
+    url: string;
+  } | null = null;
   let browser: Browser | null = null;
 
   try {
