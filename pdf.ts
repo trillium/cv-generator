@@ -6,7 +6,9 @@ import { config } from "dotenv";
 import path from "node:path";
 import { CVData } from "./src/types";
 import { anonymizeData } from "./lib/anonymous";
-import { parseAndWriteDataFile } from "./lib/parseAndWriteDataFile";
+import { UnifiedFileManager } from "./lib/unifiedFileManager";
+import * as yaml from "js-yaml";
+import { validateCVData } from "./lib/validateCVData";
 import { allVariants } from "./lib/allVariants";
 import readline from "readline";
 import { encodeFilePathForUrl } from "./src/utils/urlSafeEncoding";
@@ -340,9 +342,12 @@ Resume path: ${resumePath}`
 
   let dataObj: CVData;
   try {
-    dataObj = parseAndWriteDataFile(
-      dataPath,
+    const fileManager = new UnifiedFileManager(process.env.PII_PATH);
+    const { content } = await fileManager.read("data.yml");
+    dataObj = validateCVData(yaml.load(content));
+    writeFileSync(
       path.join(__dirname, "src", "script-data.json"),
+      JSON.stringify(dataObj, null, 2),
     );
     if (isAnon) {
       dataObj = anonymizeData(dataObj);
