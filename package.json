@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 10300",
     "build": "sh scripts/build-with-count.sh",
     "start": "next start",
     "test": "vitest run",
