@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import TwoColumnResume from "../../../../src/components/Resume/two-column/resume";
 import type { CVData } from "../../../../src/types";
-import { listAllResumeFiles } from "../../../../lib/utility";
+
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
 import { useFileManager } from "../../../../src/contexts/FileManagerContext.hook";
 
@@ -22,7 +22,7 @@ export default function DynamicTwoColumnResumePage() {
   const [error, setError] = useState<string | null>(null);
   const [resolvedFilePath, setResolvedFilePath] = useState<string | null>(null);
 
-  const encodedResumePath = params["resume-path"] as string;
+  const encodedResumePath = params?.["resume-path"] as string | undefined;
   const resumePath = encodedResumePath
     ? decodeFilePathFromUrl(encodedResumePath)
     : null;
@@ -39,45 +39,9 @@ export default function DynamicTwoColumnResumePage() {
         setLoading(true);
         setError(null);
 
-        const filesResponse = await listAllResumeFiles();
-
-        if (!filesResponse.success || !filesResponse.data) {
-          throw new Error("Failed to fetch available resume files");
-        }
-
-        const { allFiles } = filesResponse.data;
-
-        let fileToLoad = null;
-
-        if (allFiles.includes(resumePath)) {
-          fileToLoad = resumePath;
-        } else if (
-          !resumePath.endsWith(".yml") &&
-          !resumePath.endsWith(".yaml")
-        ) {
-          const withExtension = `${resumePath}.yml`;
-          if (allFiles.includes(withExtension)) {
-            fileToLoad = withExtension;
-          }
-        } else if (
-          resumePath.endsWith(".yml") ||
-          resumePath.endsWith(".yaml")
-        ) {
-          const withoutExtension = resumePath.replace(/\.(yml|yaml)$/i, "");
-          if (allFiles.includes(withoutExtension)) {
-            fileToLoad = withoutExtension;
-          }
-        }
-
-        if (!fileToLoad) {
-          throw new Error(
-            `Resume file not found: ${resumePath}. Available files: ${allFiles.join(", ")}`,
-          );
-        }
-
-        console.log("🔄 Loading resume file:", fileToLoad);
-        await loadFile(fileToLoad);
-        setResolvedFilePath(fileToLoad);
+        // Just try to load the file directly; context will handle errors
+        await loadFile(resumePath);
+        setResolvedFilePath(resumePath);
       } catch (err) {
         const errorMessage =
           err instanceof Error
@@ -129,6 +93,7 @@ export default function DynamicTwoColumnResumePage() {
     );
   }
 
+  // Success state - render the resume using ResumeContext data
   if (!parsedData) {
     return (
       <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
@@ -137,7 +102,7 @@ export default function DynamicTwoColumnResumePage() {
           <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
             No Resume Data
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-300">
             The resume file was found but contains no data.
           </p>
         </div>
@@ -147,6 +112,7 @@ export default function DynamicTwoColumnResumePage() {
 
   return (
     <div>
+      {/* Optional: Show which resume is being displayed */}
       <div className="sr-only">
         Currently displaying resume:{" "}
         {resolvedFilePath || resumePath || encodedResumePath}

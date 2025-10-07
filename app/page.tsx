@@ -2,22 +2,24 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { listAllResumeFiles, type FileListResponse } from "../lib/utility";
 import { encodeFilePathForUrl } from "../src/utils/urlSafeEncoding";
+import type { FileMetadata } from "../src/types/fileManager";
 
 export default function HomePage() {
-  const [files, setFiles] = useState<FileListResponse | null>(null);
+  const [files, setFiles] = useState<FileMetadata[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadFiles() {
       try {
-        const response = await listAllResumeFiles();
-        if (response.success && response.data) {
-          setFiles(response.data);
+        const response = await fetch("/api/files/list");
+        const data = await response.json();
+
+        if (data.success) {
+          setFiles(data.files);
         } else {
-          throw new Error(response.error || "Failed to load files");
+          throw new Error(data.error || "Failed to load files");
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load files");
@@ -53,15 +55,12 @@ export default function HomePage() {
     );
   }
 
-  // Filter for YAML resume files
-  const resumeFiles =
-    files?.allFiles.filter(
-      (file: string) =>
-        file.endsWith(".yml") &&
-        !file.includes(".backup.") &&
-        !file.includes(".temp.") &&
-        file !== "data.yml.template",
-    ) || [];
+  const resumeFiles = files.filter(
+    (file) =>
+      (file.type === "resume" || file.type === "other") &&
+      !file.name.includes(".template") &&
+      !file.hasUnsavedChanges,
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-800 py-8">
@@ -77,7 +76,7 @@ export default function HomePage() {
               single-column format.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-500">
-              Total files in workspace: {files?.totalFiles || 0}
+              Total files in workspace: {files.length}
             </p>
           </div>
 
@@ -90,14 +89,13 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="grid gap-4">
-              {resumeFiles.map((file: string) => {
-                // Create a clean display name and URL-safe path using our encoding utility
-                const displayName = file.replace(".yml", "");
-                const urlPath = encodeFilePathForUrl(file);
+              {resumeFiles.map((file) => {
+                const displayName = file.name.replace(/\.(yml|yaml)$/i, "");
+                const urlPath = encodeFilePathForUrl(file.path);
 
                 return (
                   <div
-                    key={file}
+                    key={file.path}
                     className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-md dark:hover:shadow-lg transition-all bg-white dark:bg-gray-800 cursor-pointer"
                   >
                     <div className="flex items-center justify-between">
@@ -106,8 +104,25 @@ export default function HomePage() {
                           {displayName}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          File: {file}
+                          Path: {file.path}
                         </p>
+                        {file.description && (
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                            {file.description}
+                          </p>
+                        )}
+                        {file.tags.length > 0 && (
+                          <div className="flex gap-1 mt-2">
+                            {file.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <div className="flex gap-2">
                         <Link

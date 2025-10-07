@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import TwoColumnCoverLetter from "../../../../src/components/Resume/two-column/cover-letter";
-import { listAllResumeFiles } from "../../../../lib/utility";
+import type { CVData } from "../../../../src/types";
+
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
 import { useFileManager } from "../../../../src/contexts/FileManagerContext.hook";
 
@@ -22,7 +23,7 @@ export default function DynamicTwoColumnCoverLetterPage() {
   const [resolvedFilePath, setResolvedFilePath] = useState<string | null>(null);
 
   // Extract resume path from params and decode it
-  const encodedResumePath = params["resume-path"] as string;
+  const encodedResumePath = params?.["resume-path"] as string | undefined;
   const resumePath = encodedResumePath
     ? decodeFilePathFromUrl(encodedResumePath)
     : null;
@@ -39,62 +40,9 @@ export default function DynamicTwoColumnCoverLetterPage() {
         setLoading(true);
         setError(null);
 
-        // First, validate that the cover letter data exists
-        const filesResponse = await listAllResumeFiles();
-
-        if (!filesResponse.success || !filesResponse.data) {
-          throw new Error("Failed to fetch available resume files");
-        }
-
-        const { allFiles } = filesResponse.data;
-
-        // Check if the requested resume path exists in the available files
-        // Support both exact matches and partial matches
-        const possiblePaths = [
-          resumePath,
-          resumePath.endsWith(".yml") ? resumePath.slice(0, -4) : resumePath,
-          resumePath.endsWith(".yml") ? resumePath : `${resumePath}.yml`,
-        ];
-
-        const validPath = possiblePaths.find((path) =>
-          allFiles.some(
-            (file) =>
-              file === path ||
-              file.endsWith(`/${path}`) ||
-              // Handle nested paths properly (e.g., resumes/software-engineer/data.yml)
-              file.includes(path),
-          ),
-        );
-
-        if (!validPath) {
-          throw new Error(
-            `Cover letter file not found: ${encodedResumePath} (decoded: ${resumePath}). Available files: ${allFiles.join(", ")}`,
-          );
-        }
-
-        // Determine the actual file path to load
-        const fileToLoad = allFiles.find(
-          (file) =>
-            file === validPath ||
-            file.endsWith(`/${validPath}`) ||
-            file === `${validPath}.yml` ||
-            file.endsWith(`/${validPath}.yml`) ||
-            file.includes(validPath),
-        );
-
-        if (!fileToLoad) {
-          throw new Error(
-            `Could not resolve file path for: ${encodedResumePath} (decoded: ${resumePath})`,
-          );
-        }
-
-        // Use ResumeContext to load the file - this will handle all the data management
-        console.log(
-          "🔄 Loading cover letter file through ResumeContext:",
-          fileToLoad,
-        );
-        await loadFile(fileToLoad);
-        setResolvedFilePath(fileToLoad);
+        // Just try to load the file directly; context will handle errors
+        await loadFile(resumePath);
+        setResolvedFilePath(resumePath);
       } catch (err) {
         const errorMessage =
           err instanceof Error
@@ -173,7 +121,7 @@ export default function DynamicTwoColumnCoverLetterPage() {
         Currently displaying cover letter:{" "}
         {resolvedFilePath || resumePath || encodedResumePath}
       </div>
-      <TwoColumnCoverLetter data={parsedData} />
+      <TwoColumnCoverLetter data={parsedData as CVData} />
     </div>
   );
 }

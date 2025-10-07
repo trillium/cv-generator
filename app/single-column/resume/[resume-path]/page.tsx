@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import SingleColumnResume from "../../../../src/components/Resume/single-column/resume";
 import type { CVData } from "../../../../src/types";
-import { listAllResumeFiles } from "../../../../lib/utility";
+
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
 import { useFileManager } from "../../../../src/contexts/FileManagerContext.hook";
 
@@ -22,7 +22,8 @@ export default function DynamicSingleColumnResumePage() {
   const [error, setError] = useState<string | null>(null);
   const [resolvedFilePath, setResolvedFilePath] = useState<string | null>(null);
 
-  const encodedResumePath = params["resume-path"] as string;
+  // Extract resume path from params and decode it
+  const encodedResumePath = params?.["resume-path"] as string | undefined;
   const resumePath = encodedResumePath
     ? decodeFilePathFromUrl(encodedResumePath)
     : null;
@@ -39,45 +40,9 @@ export default function DynamicSingleColumnResumePage() {
         setLoading(true);
         setError(null);
 
-        const filesResponse = await listAllResumeFiles();
-
-        if (!filesResponse.success || !filesResponse.data) {
-          throw new Error("Failed to fetch available resume files");
-        }
-
-        const { allFiles } = filesResponse.data;
-
-        let fileToLoad = null;
-
-        if (allFiles.includes(resumePath)) {
-          fileToLoad = resumePath;
-        } else if (
-          !resumePath.endsWith(".yml") &&
-          !resumePath.endsWith(".yaml")
-        ) {
-          const withExtension = `${resumePath}.yml`;
-          if (allFiles.includes(withExtension)) {
-            fileToLoad = withExtension;
-          }
-        } else if (
-          resumePath.endsWith(".yml") ||
-          resumePath.endsWith(".yaml")
-        ) {
-          const withoutExtension = resumePath.replace(/\.(yml|yaml)$/i, "");
-          if (allFiles.includes(withoutExtension)) {
-            fileToLoad = withoutExtension;
-          }
-        }
-
-        if (!fileToLoad) {
-          throw new Error(
-            `Resume file not found: ${resumePath}. Available files: ${allFiles.join(", ")}`,
-          );
-        }
-
-        console.log("🔄 Loading resume file:", fileToLoad);
-        await loadFile(fileToLoad);
-        setResolvedFilePath(fileToLoad);
+        // Just try to load the file directly; context will handle errors
+        await loadFile(resumePath);
+        setResolvedFilePath(resumePath);
       } catch (err) {
         const errorMessage =
           err instanceof Error
