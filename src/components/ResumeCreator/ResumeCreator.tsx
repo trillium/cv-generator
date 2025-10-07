@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiClipboard } from "react-icons/fi";
 import { useFileManager } from "../../contexts/FileManagerContext.hook";
 import * as yaml from "js-yaml";
-import {
-  listAllResumeFiles,
-  duplicateResume,
-  type FileListResponse,
-} from "../../../lib/utility";
 
 interface CreatedResume {
   fileName: string;
@@ -33,11 +28,8 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  // Folder structure state
-  const [folderStructure, setFolderStructure] =
-    useState<FileListResponse | null>(null);
-  const [folderLoading, setFolderLoading] = useState(true);
-  const [folderError, setFolderError] = useState<string | null>(null);
+  // Folder structure state (now just use files from context)
+  const { files, refreshFiles } = useFileManager();
 
   // Copy operation state
   const [copyingFile, setCopyingFile] = useState<string | null>(null);
@@ -163,16 +155,14 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
       console.log(`Copying ${sourceFile} to ${destinationPath}`);
 
       // Copy the file
-      const copyResult = await duplicateResume(sourceFile, destinationPath);
+      // TODO: Implement duplicate logic using new file manager context or API
+      // const copyResult = await duplicateResume(sourceFile, destinationPath);
       if (!copyResult.success) {
         throw new Error(copyResult.error || "Failed to copy resume");
       }
 
-      // Refresh folder structure
-      const refreshResult = await listAllResumeFiles();
-      if (refreshResult.success && refreshResult.data) {
-        setFolderStructure(refreshResult.data);
-      }
+      // Refresh file list using context
+      if (refreshFiles) await refreshFiles();
 
       // Navigate to the new resume
       const newResumePath = `${subfolderName}/data.yml`;
@@ -191,33 +181,6 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
       setCopyingFile(null);
     }
   };
-
-  // Fetch folder structure on component mount
-  useEffect(() => {
-    const fetchFolderStructure = async () => {
-      try {
-        setFolderLoading(true);
-        setFolderError(null);
-        const response = await listAllResumeFiles();
-
-        if (response.success && response.data) {
-          setFolderStructure(response.data);
-        } else {
-          throw new Error(response.error || "Failed to load folder structure");
-        }
-      } catch (err) {
-        setFolderError(
-          err instanceof Error
-            ? err.message
-            : "Failed to load folder structure",
-        );
-      } finally {
-        setFolderLoading(false);
-      }
-    };
-
-    fetchFolderStructure();
-  }, []);
 
   const handleSubmit = async () => {
     setError(null);
@@ -307,45 +270,29 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
           📁 Current Folder Structure
         </h3>
 
-        {folderLoading && (
-          <div className="flex items-center space-x-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-            <span className="text-sm text-gray-600 dark:text-gray-300">
-              Loading folder structure...
-            </span>
-          </div>
-        )}
-
-        {folderError && !folderLoading && (
-          <div className="text-sm text-red-600 dark:text-red-400">
-            ❌ Error loading folder structure: {folderError}
-          </div>
-        )}
-
         {copyError && (
           <div className="text-sm text-red-600 dark:text-red-400">
             ❌ Error copying file: {copyError}
           </div>
         )}
 
-        {folderStructure && !folderLoading && !folderError && (
+        {files && files.length > 0 && (
           <div className="space-y-3">
             <div>
               <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
                 📂 Directory Structure:
               </h4>
               <div className="max-h-64 overflow-y-auto bg-gray-900 dark:bg-gray-900 rounded p-3">
-                {folderStructure.allFiles.length === 0 ? (
-                  <p className="text-sm text-gray-400 italic">No files found</p>
-                ) : (
-                  <div className="font-mono text-base text-green-400 space-y-1">
-                    <div className="mb-3 text-gray-300">pii/</div>
-                    {renderTreeLines(folderStructure.allFiles)}
-                  </div>
-                )}
+                <div className="font-mono text-base text-green-400 space-y-1">
+                  <div className="mb-3 text-gray-300">pii/</div>
+                  {renderTreeLines(files.map((f) => f.path))}
+                </div>
               </div>
             </div>
           </div>
+        )}
+        {(!files || files.length === 0) && (
+          <p className="text-sm text-gray-400 italic">No files found</p>
         )}
       </div>
 

@@ -111,7 +111,14 @@ function setNestedValue(
           keys.slice(0, i + 1).join("."),
         );
       }
-      current = current[key];
+      const next = current[key];
+      if (typeof next === "object" && next !== null && !Array.isArray(next)) {
+        current = next as Record<string, unknown>;
+      } else {
+        throw new Error(
+          `Expected object at path ${keys.slice(0, i + 1).join(".")}, but got ${typeof next}`,
+        );
+      }
     }
   }
 
@@ -142,8 +149,12 @@ export function getNestedValue(obj: unknown, path: string): unknown {
 
     if (!isNaN(Number(key)) && Array.isArray(current)) {
       current = current[Number(key)];
-    } else if (typeof current === "object") {
-      current = current[key];
+    } else if (
+      typeof current === "object" &&
+      current !== null &&
+      !Array.isArray(current)
+    ) {
+      current = (current as Record<string, unknown>)[key];
     } else {
       return undefined;
     }
@@ -194,16 +205,17 @@ function validateArrayStructure(path: string, array: unknown[]): void {
   if (path === "workExperience") {
     // Each work experience should have required fields
     array.forEach((item, index) => {
-      if (typeof item !== "object" || item === null) {
-        throw new Error(`workExperience[${index}] must be an object`);
+      if (typeof item !== "object" || item === null || Array.isArray(item)) {
+        throw new Error(`workExperience[${index}] must be a non-array object`);
       }
+      const obj = item as Record<string, unknown>;
       if (
-        !item.position ||
-        !item.company ||
-        !item.location ||
-        !item.icon ||
-        !item.years ||
-        !item.lines
+        !obj.position ||
+        !obj.company ||
+        !obj.location ||
+        !obj.icon ||
+        !obj.years ||
+        !obj.lines
       ) {
         throw new Error(`workExperience[${index}] is missing required fields`);
       }
@@ -211,10 +223,11 @@ function validateArrayStructure(path: string, array: unknown[]): void {
   } else if (path === "technical") {
     // Each technical category should have category and bubbles
     array.forEach((item, index) => {
-      if (typeof item !== "object" || item === null) {
-        throw new Error(`technical[${index}] must be an object`);
+      if (typeof item !== "object" || item === null || Array.isArray(item)) {
+        throw new Error(`technical[${index}] must be a non-array object`);
       }
-      if (!item.category || !Array.isArray(item.bubbles)) {
+      const obj = item as Record<string, unknown>;
+      if (!obj.category || !Array.isArray(obj.bubbles)) {
         throw new Error(
           `technical[${index}] must have category (string) and bubbles (array)`,
         );
@@ -223,10 +236,11 @@ function validateArrayStructure(path: string, array: unknown[]): void {
   } else if (path === "education") {
     // Each education should have school
     array.forEach((item, index) => {
-      if (typeof item !== "object" || item === null) {
-        throw new Error(`education[${index}] must be an object`);
+      if (typeof item !== "object" || item === null || Array.isArray(item)) {
+        throw new Error(`education[${index}] must be a non-array object`);
       }
-      if (!item.school) {
+      const obj = item as Record<string, unknown>;
+      if (typeof obj["school"] !== "string" || !obj["school"]) {
         throw new Error(`education[${index}] must have school field`);
       }
     });
@@ -326,21 +340,27 @@ function createDefaultValueForPath(path: string): unknown {
  */
 function validateArrayItemType(arrayPath: string, value: unknown): void {
   if (arrayPath === "technical") {
-    if (typeof value !== "object" || value === null) {
-      throw new Error("Technical category must be an object");
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+      throw new Error("Technical category must be a non-array object");
     }
-    if (!value.category || !Array.isArray(value.bubbles)) {
+    const obj = value as Record<string, unknown>;
+    if (!obj.category || !Array.isArray(obj.bubbles)) {
       throw new Error(
         "Technical category must have category (string) and bubbles (array)",
       );
     }
   } else if (arrayPath === "workExperience") {
-    if (typeof value !== "object" || value === null) {
-      throw new Error("Work experience must be an object");
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+      throw new Error("Work experience must be a non-array object");
     }
+    // Optionally add more workExperience field checks here
   } else if (arrayPath === "education") {
-    if (typeof value !== "object" || value === null) {
-      throw new Error("Education must be an object");
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+      throw new Error("Education must be a non-array object");
+    }
+    const obj = value as Record<string, unknown>;
+    if (typeof obj.school !== "string" || !obj.school) {
+      throw new Error("Education item must have school field");
     }
   } else if (arrayPath === "languages") {
     // Languages can be any type for flexibility

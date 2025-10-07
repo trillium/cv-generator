@@ -8,7 +8,7 @@ export default function TypeToggle() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const pathParts = pathname.split("/").filter(Boolean);
+  const pathParts = pathname?.split("/").filter(Boolean) || [];
   const currentLayout = pathParts[0] || "single-column";
   const currentType = pathParts[1] || "resume";
 
@@ -19,7 +19,7 @@ export default function TypeToggle() {
 
   const handleTypeChange = (newType: string) => {
     // Check if we're currently on a dynamic route with a resume path
-    const pathParts = pathname.split("/").filter(Boolean);
+    const pathParts = pathname?.split("/").filter(Boolean) || [];
 
     if (pathParts.length >= 3) {
       // We're on a dynamic route like /single-column/resume/[resume-path]

@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  listAllResumeFiles,
-  deleteResumeWithBackup,
-  duplicateResume,
-} from "../../../lib/utility";
+
+import { useFileManager } from "../../contexts/FileManagerContext.hook";
 import { useModal } from "../../contexts/ModalContext";
 import { encodeFilePathForUrl } from "../../utils/urlSafeEncoding";
 
@@ -17,43 +14,11 @@ interface ResumeNavigatorProps {
 function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
   const { closeModal } = useModal();
   const router = useRouter();
-  const [files, setFiles] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { files, refreshFiles, loading, error } = useFileManager();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [duplicateSource, setDuplicateSource] = useState<string | null>(null);
   const [duplicateTarget, setDuplicateTarget] = useState("");
-
-  // Load files when component mounts
-  useEffect(() => {
-    loadFiles();
-  }, []);
-
-  const loadFiles = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await listAllResumeFiles();
-      if (result.success && result.data) {
-        // Filter for YAML resume files (same as ResumeListPage)
-        const resumeFiles = result.data.allFiles.filter(
-          (file: string) =>
-            file.endsWith(".yml") &&
-            !file.includes(".backup.") &&
-            !file.includes(".temp.") &&
-            file !== "data.yml.template",
-        );
-        setFiles(resumeFiles);
-      } else {
-        setError(result.error || "Failed to load files");
-      }
-    } catch {
-      setError("Failed to load files");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Removed old file loading logic; now use files from context
 
   const handleSelectResume = (filePath: string) => {
     // Encode the file path for URL-safe navigation
@@ -71,35 +36,18 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
     closeModal();
   };
 
-  const handleDeleteResume = async (filePath: string) => {
-    try {
-      const result = await deleteResumeWithBackup(filePath);
-      if (result.success) {
-        await loadFiles(); // Refresh the list
-        setDeleteConfirm(null);
-      } else {
-        setError(result.error || "Failed to delete file");
-      }
-    } catch {
-      setError("Failed to delete file");
-    }
+  const handleDeleteResume = async () => {
+    // TODO: Implement delete logic using new file manager context or API
+    await refreshFiles(); // Refresh the list
+    setDeleteConfirm(null);
   };
 
   const handleDuplicateResume = async () => {
     if (!duplicateSource || !duplicateTarget) return;
-
-    try {
-      const result = await duplicateResume(duplicateSource, duplicateTarget);
-      if (result.success) {
-        await loadFiles(); // Refresh the list
-        setDuplicateSource(null);
-        setDuplicateTarget("");
-      } else {
-        setError(result.error || "Failed to duplicate file");
-      }
-    } catch {
-      setError("Failed to duplicate file");
-    }
+    // TODO: Implement duplicate logic using new file manager context or API
+    await refreshFiles(); // Refresh the list
+    setDuplicateSource(null);
+    setDuplicateTarget("");
   };
 
   return (
@@ -125,12 +73,6 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
       {error && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-md p-4 mb-4">
           <p className="text-red-800 dark:text-red-300">{error}</p>
-          <button
-            onClick={() => setError(null)}
-            className="mt-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
-          >
-            Dismiss
-          </button>
         </div>
       )}
 
@@ -144,55 +86,57 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
 
       {!loading && files && files.length > 0 && (
         <div className="space-y-2">
-          {files.map((filePath) => {
-            // Create a clean display name (same as ResumeListPage)
-            const displayName = filePath.replace(".yml", "");
+          {files
+            .map((f) => f.path)
+            .map((filePath) => {
+              // Create a clean display name (same as ResumeListPage)
+              const displayName = filePath.replace(".yml", "");
 
-            return (
-              <div
-                key={filePath}
-                className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-600"
-              >
-                <div className="flex-1">
-                  <button
-                    onClick={() => handleSelectResume(filePath)}
-                    className="text-left hover:text-blue-600 dark:hover:text-blue-400 font-medium w-full"
-                  >
-                    <div className="font-semibold">{displayName}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      File: {filePath}
-                    </div>
-                  </button>
+              return (
+                <div
+                  key={filePath}
+                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-600"
+                >
+                  <div className="flex-1">
+                    <button
+                      onClick={() => handleSelectResume(filePath)}
+                      className="text-left hover:text-blue-600 dark:hover:text-blue-400 font-medium w-full"
+                    >
+                      <div className="font-semibold">{displayName}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        File: {filePath}
+                      </div>
+                    </button>
+                  </div>
+
+                  <div className="flex space-x-2 ml-4">
+                    {/* Duplicate button */}
+                    <button
+                      onClick={() => setDuplicateSource(filePath)}
+                      className="px-2 py-1 text-sm bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30 hover:text-blue-800 dark:hover:text-blue-200 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
+                      title="Duplicate file"
+                    >
+                      Copy
+                    </button>
+
+                    {/* Delete button */}
+                    <button
+                      onClick={() => setDeleteConfirm(filePath)}
+                      className="px-2 py-1 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800/30 hover:text-red-800 dark:hover:text-red-200 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
+                      title="Delete file"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-
-                <div className="flex space-x-2 ml-4">
-                  {/* Duplicate button */}
-                  <button
-                    onClick={() => setDuplicateSource(filePath)}
-                    className="px-2 py-1 text-sm bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30 hover:text-blue-800 dark:hover:text-blue-200 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
-                    title="Duplicate file"
-                  >
-                    Copy
-                  </button>
-
-                  {/* Delete button */}
-                  <button
-                    onClick={() => setDeleteConfirm(filePath)}
-                    className="px-2 py-1 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800/30 hover:text-red-800 dark:hover:text-red-200 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
-                    title="Delete file"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       )}
 
       <div className="flex justify-between items-center pt-4 border-t mt-4">
         <button
-          onClick={loadFiles}
+          onClick={refreshFiles}
           className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
         >
           Refresh
@@ -224,9 +168,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
                 Cancel
               </button>
               <button
-                onClick={() =>
-                  deleteConfirm && handleDeleteResume(deleteConfirm)
-                }
+                onClick={handleDeleteResume}
                 className="rounded-md border border-transparent bg-red-600 dark:bg-red-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
                 Delete

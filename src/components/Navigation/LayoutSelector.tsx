@@ -19,13 +19,13 @@ export default function LayoutSelector() {
   const router = useRouter();
 
   // Extract current layout and type from pathname
-  const pathParts = pathname.split("/").filter(Boolean);
+  const pathParts = pathname?.split("/").filter(Boolean) || [];
   const currentLayout = pathParts[0] || "single-column";
   const currentType = pathParts[1] || "resume";
 
   const handleLayoutChange = (newLayout: string) => {
     // Check if we're currently on a dynamic route with a resume path
-    const pathParts = pathname.split("/").filter(Boolean);
+    const pathParts = pathname?.split("/").filter(Boolean) || [];
 
     if (pathParts.length >= 3) {
       // We're on a dynamic route like /single-column/resume/[resume-path]
