@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { UnifiedFileManager } from "../../../../lib/unifiedFileManager";
-import { FileFilters } from "../../../../src/types/fileManager";
+import { FileFilters, FileType } from "../../../../src/types/fileManager";
 
-const getFileManager = () => new UnifiedFileManager();
-
-/**
- * GET /api/files
- * List all YAML files with rich metadata
- */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get("type") as
-      | "resume"
-      | "linkedin"
-      | "other"
-      | null;
+    const type = searchParams.get("type") as FileType | null;
     const tags = searchParams.get("tags")?.split(",").filter(Boolean);
     const search = searchParams.get("search");
 
@@ -24,7 +14,7 @@ export async function GET(request: NextRequest) {
     if (tags && tags.length > 0) filters.tags = tags;
     if (search) filters.search = search;
 
-    const fileManager = getFileManager();
+    const fileManager = new UnifiedFileManager();
     const files = await fileManager.list(filters);
 
     return NextResponse.json({
@@ -32,7 +22,7 @@ export async function GET(request: NextRequest) {
       files,
     });
   } catch (error) {
-    console.error("[API /files] Error listing files:", error);
+    console.error("[API /files/list] Error listing files:", error);
     return NextResponse.json(
       {
         success: false,

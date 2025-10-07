@@ -1,13 +1,10 @@
-import { FileSystemManager } from "./fileSystemManager";
+import { UnifiedFileManager } from "./unifiedFileManager";
 
-// This function will be used server-side to read the YAML data
-// It always returns the most current data from the file system
-export function getYamlData(): string {
+export async function getYamlData(): Promise<string> {
   try {
-    // Use FileSystemManager for YAML data access
-    const fileManager = new FileSystemManager();
-    const state = fileManager.getCurrentState();
-    return state.yamlContent;
+    const fileManager = new UnifiedFileManager();
+    const fileContent = await fileManager.read("data.yml");
+    return fileContent.content;
   } catch (error) {
     console.error("Error reading YAML file:", error);
     return `# Error: Could not read data.yml file - ${error instanceof Error ? error.message : "Unknown error"}`;

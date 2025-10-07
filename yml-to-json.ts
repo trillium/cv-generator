@@ -1,5 +1,8 @@
 #!/usr/bin/env tsx
-import { parseAndWriteDataFile } from "./lib/parseAndWriteDataFile";
+import { UnifiedFileManager } from "./lib/unifiedFileManager";
+import * as yaml from "js-yaml";
+import { validateCVData } from "./lib/validateCVData";
+import { writeFileSync } from "node:fs";
 import { config } from "dotenv";
 import path from "path";
 
@@ -17,10 +20,18 @@ if (!piiPath) {
 const inputPath = path.join(piiPath, "data.yml");
 const outputPath = "src/data.json";
 
-try {
-  parseAndWriteDataFile(inputPath, outputPath);
-  console.log(`✅ Converted ${inputPath} to ${outputPath}`);
-} catch (err) {
-  console.error("❌ Failed to convert:", err);
-  process.exit(1);
+async function main() {
+  try {
+    const fileManager = new UnifiedFileManager(piiPath);
+    const { content } = await fileManager.read("data.yml");
+    const parsed = yaml.load(content);
+    const validated = validateCVData(parsed);
+    writeFileSync(outputPath, JSON.stringify(validated, null, 2));
+    console.log(`✅ Converted ${inputPath} to ${outputPath}`);
+  } catch (err) {
+    console.error("❌ Failed to convert:", err);
+    process.exit(1);
+  }
 }
+
+main();
