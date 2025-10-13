@@ -39,17 +39,17 @@ export function shouldShowAddButtons(
           "careerSummary",
         ];
 
+        // Check for exact match
+        if (supportedArrayPaths.includes(parentPath)) {
+          return true;
+        }
+
         // Also support nested arrays like workExperience.0.lines, projects.0.lines, etc.
         const isNestedLinesArray = parentPath.includes(".lines");
         const isNestedBubblesArray = parentPath.includes(".bubbles");
         const isNestedLinksArray = parentPath.includes(".links");
 
-        return (
-          supportedArrayPaths.includes(parentPath) ||
-          isNestedLinesArray ||
-          isNestedBubblesArray ||
-          isNestedLinksArray
-        );
+        return isNestedLinesArray || isNestedBubblesArray || isNestedLinksArray;
       }
     }
   }
