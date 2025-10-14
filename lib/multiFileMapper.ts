@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
+import { getPiiDirectory } from "./getPiiPath";
 
 export const FULL_DATA_FILENAMES = ["data", "resume"];
 
@@ -48,11 +49,13 @@ export function getFormat(filePath: string): "yaml" | "json" {
 }
 
 export function getAncestorDirectories(dirPath: string): string[] {
+  const piiPath = getPiiDirectory();
   const parts = dirPath.split(path.sep).filter(Boolean);
   const ancestors: string[] = [];
 
   for (let i = 0; i < parts.length; i++) {
-    ancestors.push(parts.slice(0, i + 1).join(path.sep));
+    const relativePath = parts.slice(0, i + 1).join(path.sep);
+    ancestors.push(path.join(piiPath, relativePath));
   }
 
   return ancestors;
