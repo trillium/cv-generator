@@ -89,3 +89,31 @@ export function findDataFilesInDirectory(dirPath: string): string[] {
 
   return dataFiles;
 }
+
+export function validateSectionSpecificFile(
+  filename: string,
+  sections: string[],
+): void {
+  const basename = path.basename(filename, path.extname(filename));
+
+  let expectedSection: string | null = null;
+  for (const [sectionKey, filenames] of Object.entries(
+    SECTION_KEY_TO_FILENAME,
+  )) {
+    if (filenames.includes(basename)) {
+      expectedSection = sectionKey;
+      break;
+    }
+  }
+
+  if (!expectedSection) {
+    return;
+  }
+
+  if (sections.length !== 1 || sections[0] !== expectedSection) {
+    throw new Error(
+      `Section-specific file '${filename}' must only contain '${expectedSection}' section.\n` +
+        `Found sections: [${sections.join(", ")}]`,
+    );
+  }
+}
