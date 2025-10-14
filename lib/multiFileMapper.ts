@@ -117,3 +117,58 @@ export function validateSectionSpecificFile(
     );
   }
 }
+
+export function validateNoConflicts(files: FileEntry[], dirPath: string): void {
+  const sectionToFiles = new Map<string, string[]>();
+  const basenameToFiles = new Map<string, string[]>();
+
+  for (const file of files) {
+    const basename = path.basename(file.path, path.extname(file.path));
+    const fullBasename = path.basename(file.path);
+
+    if (!basenameToFiles.has(basename)) {
+      basenameToFiles.set(basename, []);
+    }
+    basenameToFiles.get(basename)!.push(fullBasename);
+
+    for (const section of file.sections) {
+      if (!sectionToFiles.has(section)) {
+        sectionToFiles.set(section, []);
+      }
+      sectionToFiles.get(section)!.push(file.path);
+    }
+  }
+
+  const conflicts: string[] = [];
+
+  for (const [section, filePaths] of sectionToFiles.entries()) {
+    const sectionSpecificFiles = filePaths.filter(
+      (fp) => !isFullDataFilename(path.basename(fp)),
+    );
+
+    if (sectionSpecificFiles.length > 1) {
+      conflicts.push(
+        `Section '${section}' defined in multiple files:\n  ${sectionSpecificFiles.join("\n  ")}`,
+      );
+    }
+  }
+
+  for (const [basename, fullNames] of basenameToFiles.entries()) {
+    if (fullNames.length > 1) {
+      const uniqueExtensions = new Set(
+        fullNames.map((name) => path.extname(name)),
+      );
+      if (uniqueExtensions.size > 1) {
+        conflicts.push(
+          `Files with same basename '${basename}' exist in multiple formats in '${dirPath}':\n  ${fullNames.join("\n  ")}`,
+        );
+      }
+    }
+  }
+
+  if (conflicts.length > 0) {
+    throw new Error(
+      `Data conflicts detected in ${dirPath}:\n\n${conflicts.join("\n\n")}`,
+    );
+  }
+}
