@@ -57,3 +57,35 @@ export function getAncestorDirectories(dirPath: string): string[] {
 
   return ancestors;
 }
+
+export function findDataFilesInDirectory(dirPath: string): string[] {
+  if (!fs.existsSync(dirPath)) {
+    return [];
+  }
+
+  const files = fs.readdirSync(dirPath);
+  const dataFiles: string[] = [];
+
+  for (const file of files) {
+    const filePath = path.join(dirPath, file);
+    const stat = fs.statSync(filePath);
+
+    if (!stat.isFile()) continue;
+
+    const ext = path.extname(file);
+    if (!SUPPORTED_EXTENSIONS.includes(ext)) continue;
+
+    const basename = path.basename(file, ext);
+
+    const isFullData = FULL_DATA_FILENAMES.includes(basename);
+    const isSectionSpecific = Object.values(SECTION_KEY_TO_FILENAME)
+      .flat()
+      .includes(basename);
+
+    if (isFullData || isSectionSpecific) {
+      dataFiles.push(filePath);
+    }
+  }
+
+  return dataFiles;
+}
