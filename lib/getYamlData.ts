@@ -106,3 +106,49 @@ export function findSourceFile(dirPath: string, section: string): string {
 
   throw new Error(`No file found containing section '${section}'`);
 }
+
+function extractTopLevelKey(dataPath: string): string {
+  const parts = dataPath.split(/[.[\]]/);
+  return parts[0];
+}
+
+function setNestedValue(
+  obj: Record<string, unknown>,
+  path: string,
+  value: unknown,
+): void {
+  const keys = path.split(/[.[\]]/).filter(Boolean);
+  let current = obj;
+
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i];
+    if (!(key in current)) {
+      current[key] = {};
+    }
+    current = current[key] as Record<string, unknown>;
+  }
+
+  current[keys[keys.length - 1]] = value;
+}
+
+export async function updateDataPath(
+  dirPath: string,
+  dataPath: string,
+  value: unknown,
+): Promise<void> {
+  const section = extractTopLevelKey(dataPath);
+  const sourceFile = findSourceFile(dirPath, section);
+
+  const data = loadDataFile(sourceFile);
+  setNestedValue(data, dataPath, value);
+
+  const fileManager = new UnifiedFileManager();
+  const ext = path.extname(sourceFile);
+
+  if (ext === ".json") {
+    await fileManager.write(sourceFile, JSON.stringify(data, null, 2));
+  } else {
+    const yamlModule = await import("js-yaml");
+    await fileManager.write(sourceFile, yamlModule.dump(data));
+  }
+}
