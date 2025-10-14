@@ -89,3 +89,20 @@ export function loadFromDirectory(dirPath: string): CVData {
 
   return mergedData as CVData;
 }
+
+export function findSourceFile(dirPath: string, section: string): string {
+  const ancestors = getAncestorDirectories(dirPath).reverse();
+
+  for (const dir of ancestors) {
+    const files = findDataFilesInDirectory(dir);
+
+    for (const file of files) {
+      const data = loadDataFile(file);
+      if (section in data) {
+        return file;
+      }
+    }
+  }
+
+  throw new Error(`No file found containing section '${section}'`);
+}
