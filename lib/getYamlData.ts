@@ -29,6 +29,12 @@ interface DirectoryLoadResult {
   sources: Record<string, string>;
 }
 
+/**
+ * Loads all data files from a single directory
+ * @param dirPath - Absolute path to directory
+ * @returns Object containing files, merged data, and source tracking
+ * @throws Error if validation fails
+ */
 export function loadSingleDirectory(dirPath: string): DirectoryLoadResult {
   const files: FileEntry[] = [];
   const merged: Record<string, unknown> = {};
@@ -72,6 +78,15 @@ export function loadSingleDirectory(dirPath: string): DirectoryLoadResult {
   return { files, merged, sources };
 }
 
+/**
+ * Loads CV data from a directory hierarchy
+ * @param dirPath - Relative path from PII_PATH (e.g., 'base/google/python')
+ * @returns Merged CV data from all ancestor directories
+ * @throws Error if validation fails
+ * @example
+ * loadFromDirectory('base/google')
+ * // Loads from: base/, base/google/
+ */
 export function loadFromDirectory(dirPath: string): CVData {
   const ancestorDirs = getAncestorDirectories(dirPath);
 
@@ -90,6 +105,13 @@ export function loadFromDirectory(dirPath: string): CVData {
   return mergedData as CVData;
 }
 
+/**
+ * Finds the most specific file containing a section
+ * @param dirPath - Relative path from PII_PATH
+ * @param section - CVData section key to find
+ * @returns Absolute path to the file containing the section
+ * @throws Error if section not found in any file
+ */
 export function findSourceFile(dirPath: string, section: string): string {
   const ancestors = getAncestorDirectories(dirPath).reverse();
 
@@ -131,6 +153,13 @@ function setNestedValue(
   current[keys[keys.length - 1]] = value;
 }
 
+/**
+ * Updates a nested value in the appropriate source file
+ * @param dirPath - Relative path from PII_PATH
+ * @param dataPath - Dot-notation path to the value (e.g., 'workExperience[0].position')
+ * @param value - New value to set
+ * @throws Error if section not found
+ */
 export async function updateDataPath(
   dirPath: string,
   dataPath: string,

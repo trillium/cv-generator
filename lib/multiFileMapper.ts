@@ -27,6 +27,11 @@ export interface FileEntry {
   format: "yaml" | "json";
 }
 
+/**
+ * Loads a data file (YAML or JSON) and returns its parsed content
+ * @param filePath - Absolute path to the file
+ * @returns Parsed file content as a record
+ */
 export function loadDataFile(filePath: string): Record<string, unknown> {
   const ext = path.extname(filePath);
   const content = fs.readFileSync(filePath, "utf-8");
@@ -38,16 +43,34 @@ export function loadDataFile(filePath: string): Record<string, unknown> {
   return yaml.load(content) as Record<string, unknown>;
 }
 
+/**
+ * Checks if a filename is a full data file (data.yml, resume.json, etc.)
+ * @param filename - The filename to check
+ * @returns True if it's a full data file
+ */
 export function isFullDataFilename(filename: string): boolean {
   const basename = path.basename(filename, path.extname(filename));
   return FULL_DATA_FILENAMES.includes(basename);
 }
 
+/**
+ * Determines the format of a file based on extension
+ * @param filePath - Path to the file
+ * @returns 'yaml' or 'json'
+ */
 export function getFormat(filePath: string): "yaml" | "json" {
   const ext = path.extname(filePath);
   return ext === ".json" ? "json" : "yaml";
 }
 
+/**
+ * Resolves ancestor directories for a relative path
+ * @param dirPath - Relative path from PII_PATH (e.g., 'base/google/python')
+ * @returns Array of absolute paths to ancestor directories
+ * @example
+ * getAncestorDirectories('base/google/python')
+ * // Returns: ['/pii/base', '/pii/base/google', '/pii/base/google/python']
+ */
 export function getAncestorDirectories(dirPath: string): string[] {
   const piiPath = getPiiDirectory();
   const parts = dirPath.split(path.sep).filter(Boolean);
@@ -61,6 +84,11 @@ export function getAncestorDirectories(dirPath: string): string[] {
   return ancestors;
 }
 
+/**
+ * Finds all data files in a directory (non-recursive)
+ * @param dirPath - Absolute path to directory
+ * @returns Array of absolute file paths
+ */
 export function findDataFilesInDirectory(dirPath: string): string[] {
   if (!fs.existsSync(dirPath)) {
     return [];
@@ -93,6 +121,12 @@ export function findDataFilesInDirectory(dirPath: string): string[] {
   return dataFiles;
 }
 
+/**
+ * Validates that section-specific files only contain their designated section
+ * @param filename - Name of the file to validate
+ * @param sections - Array of section keys found in the file
+ * @throws Error if validation fails
+ */
 export function validateSectionSpecificFile(
   filename: string,
   sections: string[],
@@ -121,6 +155,15 @@ export function validateSectionSpecificFile(
   }
 }
 
+/**
+ * Validates that there are no conflicting files in a directory
+ * Checks for:
+ * - Same section in multiple section-specific files
+ * - Same basename with different extensions
+ * @param files - Array of file entries to validate
+ * @param dirPath - Directory path for error messages
+ * @throws Error if conflicts are detected
+ */
 export function validateNoConflicts(files: FileEntry[], dirPath: string): void {
   const sectionToFiles = new Map<string, string[]>();
   const basenameToFiles = new Map<string, string[]>();
