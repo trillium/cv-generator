@@ -6,9 +6,11 @@ import {
   validateSectionSpecificFile,
   validateNoConflicts,
   getFormat,
+  getAncestorDirectories,
   type FileEntry,
 } from "./multiFileMapper";
 import * as path from "path";
+import type { CVData } from "../src/types";
 
 export async function getYamlData(): Promise<string> {
   try {
@@ -68,4 +70,22 @@ export function loadSingleDirectory(dirPath: string): DirectoryLoadResult {
   validateNoConflicts(files, dirPath);
 
   return { files, merged, sources };
+}
+
+export function loadFromDirectory(dirPath: string): CVData {
+  const ancestorDirs = getAncestorDirectories(dirPath);
+
+  const mergedData: Record<string, unknown> = {};
+  const sectionSources = new Map<string, string>();
+
+  for (const dir of ancestorDirs) {
+    const dirData = loadSingleDirectory(dir);
+
+    for (const [section, value] of Object.entries(dirData.merged)) {
+      mergedData[section] = value;
+      sectionSources.set(section, dirData.sources[section]);
+    }
+  }
+
+  return mergedData as CVData;
 }
