@@ -46,3 +46,14 @@ export function getFormat(filePath: string): "yaml" | "json" {
   const ext = path.extname(filePath);
   return ext === ".json" ? "json" : "yaml";
 }
+
+export function getAncestorDirectories(dirPath: string): string[] {
+  const parts = dirPath.split(path.sep).filter(Boolean);
+  const ancestors: string[] = [];
+
+  for (let i = 0; i < parts.length; i++) {
+    ancestors.push(parts.slice(0, i + 1).join(path.sep));
+  }
+
+  return ancestors;
+}
