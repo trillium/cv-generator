@@ -17,6 +17,7 @@ export const SECTION_KEY_TO_FILENAME: Record<string, string[]> = {
   education: ["education"],
   coverLetter: ["cover-letter"],
   metadata: ["metadata"],
+  linkedIn: ["linkedIn", "linkedin"],
 };
 
 export const SUPPORTED_EXTENSIONS = [".yml", ".yaml", ".json"];
