@@ -1,4 +1,5 @@
 import * as React from "react";
+import SectionBadge from "./SectionBadge";
 import { DirectoryFileInfo } from "@/contexts/FileManagerContext";
 
 interface SelectedFileInfoProps {
@@ -45,12 +46,7 @@ const SelectedFileInfo: React.FC<SelectedFileInfoProps> = ({
             </span>
             <div className="flex flex-wrap gap-1 mt-1">
               {fileInfo.sections.map((section) => (
-                <span
-                  key={section}
-                  className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs"
-                >
-                  {section}
-                </span>
+                <SectionBadge key={section} section={section} />
               ))}
             </div>
           </div>
