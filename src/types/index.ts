@@ -8,6 +8,7 @@ export type WorkExperience = {
   years: string;
   bubbles: string[];
   lines: Lines;
+  notes?: string[];
 };
 
 export type Project = {
@@ -16,11 +17,13 @@ export type Project = {
   bubbles?: string[];
   lines?: Lines;
   links?: ProfileLinkProps[];
+  notes?: string[];
 };
 
 export type TechnicalCategory = {
   category: string;
   bubbles: string[];
+  notes?: string[];
 };
 
 export type Education = {
@@ -28,6 +31,7 @@ export type Education = {
   school: string;
   location: string;
   years: string;
+  notes?: string[];
 };
 
 import type { ProfileLinkProps } from "../components/Profile/ProfileLink/ProfileLink";
@@ -67,6 +71,7 @@ export type InfoType = {
 export type CareerSummaryItem = {
   title: string;
   text: string;
+  notes?: string[];
 };
 
 export type CareerSummary = CareerSummaryItem[];
