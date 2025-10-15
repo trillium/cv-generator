@@ -16,8 +16,7 @@ function PageHeader({ currentDirectory }: { currentDirectory: string | null }) {
         File Manager
       </h1>
       <p className="text-gray-600 dark:text-gray-400 mt-1">
-        Manage your resume directory:{" "}
-        {currentDirectory || "No directory loaded"}
+        Path: {currentDirectory || "No directory loaded"}
       </p>
     </div>
   );
