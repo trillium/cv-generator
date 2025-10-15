@@ -4,7 +4,14 @@ import { Browser, Page } from "puppeteer";
 import { launchBrowser, createPage, navigateTo } from "../helpers/browser";
 import { assertNoConsoleErrors } from "../helpers/assertions";
 
-const STATIC_ROUTES = ["/", "/file-manager", "/linkedIn", "/playground"];
+const STATIC_ROUTES = [
+  "/",
+  "/file-manager",
+  "/linkedIn",
+  "/playground",
+  "/two-column-multi/resume/demo",
+  "/two-column-multi/cover-letter/demo",
+];
 
 test("navigation smoke tests", async (t) => {
   let browser: Browser | null = null;

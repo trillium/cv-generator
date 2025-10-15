@@ -1,6 +1,6 @@
 import { ResumeMetadata } from "./index";
 
-export type FileType = "resume" | "linkedin" | "other";
+export type FileType = "resume" | "linkedin" | "other" | "directory";
 
 export interface FileManagerContextType {
   currentFile: FileMetadata | null;

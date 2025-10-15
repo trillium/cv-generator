@@ -14,12 +14,15 @@ export function buildTree(files: DirectoryFileInfo[]): TreeNode[] {
       currentPath = currentPath ? `${currentPath}/${part}` : part;
 
       if (!tree[currentPath]) {
+        // Check if this is a directory entry from the file list
+        const isDirectory = file.metadata.type === "directory" && isLast;
+
         tree[currentPath] = {
           name: part,
           path: currentPath,
-          type: isLast ? "file" : "directory",
+          type: isDirectory || !isLast ? "directory" : "file",
           children: [],
-          file: isLast ? file : undefined,
+          file: isLast && !isDirectory ? file : undefined,
         };
       }
 

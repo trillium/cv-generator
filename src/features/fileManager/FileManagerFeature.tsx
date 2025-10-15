@@ -185,7 +185,6 @@ export default function FileManagerFeature() {
               files={files}
               selectedFile={selectedFile}
               onSelectFile={setSelectedFile}
-              onSelectDirectory={(dirPath) => loadDirectory(dirPath)}
               loading={loading}
             />
           </div>

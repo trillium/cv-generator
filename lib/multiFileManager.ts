@@ -236,7 +236,7 @@ export class MultiFileManager extends UnifiedFileManager {
   /**
    * Recursively list all data files in a directory and subdirectories
    * @param dirPath - Relative path from PII_PATH
-   * @returns Array of file info objects from all subdirectories
+   * @returns Array of file info objects from all subdirectories, including empty directories
    */
   async listDirectoryFilesRecursive(
     dirPath: string,
@@ -256,6 +256,29 @@ export class MultiFileManager extends UnifiedFileManager {
       const absolutePath = path.join(fullPath, entry.name);
 
       if (entry.isDirectory()) {
+        // Add the directory itself as an entry (even if empty)
+        const stat = await fs.stat(absolutePath);
+        allFiles.push({
+          path: relativePath,
+          fullPath: absolutePath,
+          sections: [],
+          format: "yaml",
+          isFullData: false,
+          metadata: {
+            name: entry.name,
+            path: relativePath,
+            size: stat.size,
+            modified: stat.mtime,
+            created: stat.birthtime,
+            type: "directory",
+            versions: 0,
+            hasUnsavedChanges: false,
+            tags: [],
+            lastEditedBy: "system",
+          },
+        });
+
+        // Recursively get files from subdirectory
         const subFiles = await this.listDirectoryFilesRecursive(relativePath);
         allFiles.push(...subFiles);
       } else if (entry.isFile()) {
@@ -316,25 +339,58 @@ export class MultiFileManager extends UnifiedFileManager {
     directories: string[],
   ): Promise<Record<string, DirectoryTreeNode>> {
     const tree: Record<string, DirectoryTreeNode> = {};
+    const piiPath = getPiiDirectory();
 
-    for (const dir of directories) {
-      const files = findDataFilesInDirectory(dir);
-      const parts = dir.split(path.sep).filter(Boolean);
+    // Helper function to recursively build tree for a directory
+    const buildTreeRecursive = (
+      absolutePath: string,
+      relativePath: string,
+    ): DirectoryTreeNode => {
+      const node: DirectoryTreeNode = { files: [], children: {} };
 
-      let current = tree;
-      for (let i = 0; i < parts.length; i++) {
-        const part = parts[i];
-        if (!current[part]) {
-          current[part] = { files: [], children: {} };
-        }
-
-        if (i === parts.length - 1) {
-          current[part].files = files.map((f) => path.basename(f));
-        }
-
-        current = current[part].children;
+      if (!fsSync.existsSync(absolutePath)) {
+        return node;
       }
+
+      // Get all entries in the directory
+      const entries = fsSync.readdirSync(absolutePath, { withFileTypes: true });
+
+      // Process files - add data files to the node
+      const dataFiles = findDataFilesInDirectory(absolutePath);
+      node.files = dataFiles.map((f) => path.basename(f));
+
+      // Process subdirectories recursively
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const subAbsPath = path.join(absolutePath, entry.name);
+          const subRelPath = path.join(relativePath, entry.name);
+          node.children[entry.name] = buildTreeRecursive(
+            subAbsPath,
+            subRelPath,
+          );
+        }
+      }
+
+      return node;
+    };
+
+    // Build tree starting from the root ancestor, including all siblings
+    if (directories.length === 0) {
+      return tree;
     }
+
+    // Get the root ancestor (first directory in the path)
+    const firstDir = directories[0];
+    const parts = firstDir.replace(piiPath, "").split(path.sep).filter(Boolean);
+
+    if (parts.length === 0) {
+      return tree;
+    }
+
+    // Build complete tree from the root level, which will include all siblings
+    const rootName = parts[0];
+    const rootAbsPath = path.join(piiPath, rootName);
+    tree[rootName] = buildTreeRecursive(rootAbsPath, rootName);
 
     return tree;
   }

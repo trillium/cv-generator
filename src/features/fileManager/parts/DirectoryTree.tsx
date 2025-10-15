@@ -7,7 +7,6 @@ interface DirectoryTreeProps {
   files: DirectoryFileInfo[];
   selectedFile: string | null;
   onSelectFile: (path: string) => void;
-  onSelectDirectory: (path: string) => void;
   loading: boolean;
 }
 
@@ -15,7 +14,6 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
   files,
   selectedFile,
   onSelectFile,
-  onSelectDirectory,
   loading,
 }) => {
   const tree = buildTree(files);
@@ -40,7 +38,6 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
               depth={0}
               selectedFile={selectedFile}
               onSelectFile={onSelectFile}
-              onSelectDirectory={onSelectDirectory}
             />
           ))}
         </div>

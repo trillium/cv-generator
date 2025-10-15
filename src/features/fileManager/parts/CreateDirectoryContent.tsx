@@ -15,6 +15,7 @@ const CreateDirectoryContent: React.FC<CreateDirectoryContentProps> = ({
   const [directoryName, setDirectoryName] = useState("");
 
   function handleCreate() {
+    console.log("handleCreate", directoryName);
     if (directoryName.trim()) {
       onCreate(directoryName.trim());
     }

@@ -10,8 +10,8 @@ interface LayoutOption {
 }
 
 const layouts: LayoutOption[] = [
-  { value: "single-column", label: "Single Column" },
-  { value: "two-column", label: "Two Column" },
+  { value: "single-column-multi", label: "Single Column" },
+  { value: "two-column-multi", label: "Two Column" },
 ];
 
 export default function LayoutSelector() {
