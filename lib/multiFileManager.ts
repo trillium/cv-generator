@@ -249,7 +249,14 @@ export class MultiFileManager extends UnifiedFileManager {
     }
 
     const allFiles: DirectoryFileInfo[] = [];
-    const entries = await fs.readdir(fullPath, { withFileTypes: true });
+    let entries = await fs.readdir(fullPath, { withFileTypes: true });
+
+    // Sort entries: files first, then directories (both alphabetically within their group)
+    entries = entries.sort((a, b) => {
+      if (a.isDirectory() && !b.isDirectory()) return 1;
+      if (!a.isDirectory() && b.isDirectory()) return -1;
+      return a.name.localeCompare(b.name);
+    });
 
     for (const entry of entries) {
       const relativePath = path.join(dirPath, entry.name);
@@ -352,14 +359,19 @@ export class MultiFileManager extends UnifiedFileManager {
         return node;
       }
 
-      // Get all entries in the directory
-      const entries = fsSync.readdirSync(absolutePath, { withFileTypes: true });
+      // Get all entries in the directory and sort: files first, then directories
+      let entries = fsSync.readdirSync(absolutePath, { withFileTypes: true });
+      entries = entries.sort((a, b) => {
+        if (a.isDirectory() && !b.isDirectory()) return 1;
+        if (!a.isDirectory() && b.isDirectory()) return -1;
+        return a.name.localeCompare(b.name);
+      });
 
       // Process files - add data files to the node
       const dataFiles = findDataFilesInDirectory(absolutePath);
       node.files = dataFiles.map((f) => path.basename(f));
 
-      // Process subdirectories recursively
+      // Process subdirectories recursively (now after files)
       for (const entry of entries) {
         if (entry.isDirectory()) {
           const subAbsPath = path.join(absolutePath, entry.name);
@@ -432,6 +444,7 @@ export class MultiFileManager extends UnifiedFileManager {
       "education",
       "cover-letter",
       "metadata",
+      "llm",
     ];
     return sectionFiles.includes(basename);
   }

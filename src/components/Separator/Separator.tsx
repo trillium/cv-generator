@@ -1,7 +1,14 @@
 import { clsx } from "clsx";
 
 const Separator = ({ className = "my-2.5" }: { className?: string }) => {
-  return <div className={clsx("h-px w-full bg-primary-500", className)}></div>;
+  return (
+    <div
+      className={clsx(
+        "h-0 w-full bg-primary-500 border-b border-primary-500",
+        className,
+      )}
+    ></div>
+  );
 };
 
 export default Separator;

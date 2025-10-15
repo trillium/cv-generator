@@ -37,6 +37,15 @@ export type Education = {
 
 import type { ProfileLinkProps } from "../components/Profile/ProfileLink/ProfileLink";
 import type { Language } from "../components/Profile/ProfileLanguages/ProfileLanguages";
+
+export type LLMInfo =
+  | {
+      prompt: string;
+      notes?: Notes;
+      [key: string]: unknown;
+    }
+  | string;
+
 import { HeaderProps } from "../components/Header/Header";
 import type { LinkedInProfile } from "./linkedin";
 
@@ -59,7 +68,7 @@ export type CVData = {
   metadata?: ResumeMetadata & { notes?: Notes };
   linkedIn?: LinkedInProfile & { notes?: Notes };
   notes?: Notes;
-  llm?: string | Notes;
+  llm?: LLMInfo;
 };
 
 /**

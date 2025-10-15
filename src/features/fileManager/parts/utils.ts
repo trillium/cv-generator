@@ -36,10 +36,32 @@ export function buildTree(files: DirectoryFileInfo[]): TreeNode[] {
     });
   });
 
+  // Sort function: files first, then directories (both alphabetically)
+  const sortNodes = (nodes: TreeNode[]): TreeNode[] => {
+    return nodes.sort((a, b) => {
+      if (a.type === "file" && b.type === "directory") return -1;
+      if (a.type === "directory" && b.type === "file") return 1;
+      return a.name.localeCompare(b.name);
+    });
+  };
+
+  // Recursively sort all children
+  const sortTreeRecursively = (node: TreeNode): TreeNode => {
+    if (node.children && node.children.length > 0) {
+      node.children = sortNodes(node.children);
+      node.children.forEach(sortTreeRecursively);
+    }
+    return node;
+  };
+
   const rootNodes = Object.values(tree).filter((node) => {
     const depth = node.path.split("/").length;
     return depth === 1;
   });
 
-  return rootNodes;
+  // Sort root nodes and all their descendants
+  const sortedRootNodes = sortNodes(rootNodes);
+  sortedRootNodes.forEach(sortTreeRecursively);
+
+  return sortedRootNodes;
 }

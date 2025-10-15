@@ -115,7 +115,14 @@ export default function EditModal({
   // --- Copy button handler ---
   const handleCopy = async () => {
     try {
+      console.log("[EditModal] handleCopy - yamlPath:", yamlPath);
+      console.log("[EditModal] handleCopy - parsedData:", parsedData);
+      console.log(
+        "[EditModal] handleCopy - parsedData.llm:",
+        (parsedData as CVData)?.llm,
+      );
       const data = extractCopyData(yamlPath, parsedData as CVData);
+      console.log("[EditModal] handleCopy - extracted data:", data);
       if (data === undefined) {
         setCopied(false);
         return;
@@ -123,7 +130,8 @@ export default function EditModal({
       await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } catch (error) {
+      console.error("[EditModal] handleCopy - error:", error);
       setCopied(false);
     }
   };
