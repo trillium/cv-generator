@@ -408,14 +408,14 @@ const response = await fetch(`/api/files/${path}/versions`);
 ## Implementation Order
 
 1. ✅ Create directory API endpoints (`/api/directory/*`)
-2. ⬜ Update FileManagerContext types and state
-3. ⬜ Replace `refreshFiles` → use `/api/directory/files`
-4. ⬜ Replace `loadFile` → use `/api/directory/load`
-5. ⬜ Replace `saveFile` → use `/api/directory/update`
-6. ⬜ Update FileManagerFeature UI for directory context
-7. ⬜ Add directory selector/browser
-8. ⬜ Implement field-level editing
-9. ⬜ Update file operations (duplicate, delete, create)
+2. ✅ Update FileManagerContext types and state
+3. ✅ Replace `refreshFiles` → use `/api/directory/files`
+4. ✅ Replace `loadFile` → use `/api/directory/load`
+5. ✅ Replace `saveFile` → use `/api/directory/update`
+6. ✅ Update FileManagerFeature UI for directory context
+7. ⬜ Add directory selector/browser (basic implementation complete)
+8. ✅ Implement field-level editing (updateField method added)
+9. ⬜ Update file operations (duplicate, delete, create) - stubs in place
 10. ⬜ Add version history for directory
 11. ⬜ Test and validate migration
 12. ⬜ Remove old `/api/files/*` endpoints
