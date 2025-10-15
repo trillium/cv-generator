@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
+import { useModal } from "@/contexts/ModalContext";
 
 interface SplitSectionContentProps {
   selectedFile: string;
@@ -14,6 +15,8 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
 }) => {
   const [sectionKey, setSectionKey] = useState("");
   const [targetFileName, setTargetFileName] = useState("");
+  const { useAutoFocus } = useModal();
+  const inputRef = useAutoFocus<HTMLInputElement>();
 
   function handleSplit() {
     if (sectionKey.trim() && targetFileName.trim()) {
@@ -31,12 +34,12 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
           Source File: {selectedFile}
         </label>
         <input
+          ref={inputRef}
           type="text"
           value={sectionKey}
           onChange={(e) => setSectionKey(e.target.value)}
           placeholder="Section key (e.g., workExperience)"
           className="w-full px-3 py-2 mb-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-          autoFocus
         />
         <input
           type="text"

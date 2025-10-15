@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
+import { useModal } from "@/contexts/ModalContext";
 
 interface CreateDirectoryContentProps {
   currentDirectory: string;
@@ -13,6 +14,8 @@ const CreateDirectoryContent: React.FC<CreateDirectoryContentProps> = ({
   onCreate,
 }) => {
   const [directoryName, setDirectoryName] = useState("");
+  const { useAutoFocus } = useModal();
+  const inputRef = useAutoFocus<HTMLInputElement>();
 
   function handleCreate() {
     console.log("handleCreate", directoryName);
@@ -31,13 +34,13 @@ const CreateDirectoryContent: React.FC<CreateDirectoryContentProps> = ({
           Parent: {currentDirectory}
         </label>
         <input
+          ref={inputRef}
           type="text"
           value={directoryName}
           onChange={(e) => setDirectoryName(e.target.value)}
           placeholder="Directory name"
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-          autoFocus
         />
       </div>
       <div className="flex gap-3 justify-end">

@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 
 interface ModalState {
   isOpen: boolean;
@@ -20,6 +27,7 @@ interface ModalContextValue {
     onClose?: () => void,
   ) => void;
   closeModal: () => void;
+  useAutoFocus: <T extends HTMLElement>() => React.RefObject<T>;
 }
 
 const ModalContext = createContext<ModalContextValue | undefined>(undefined);
@@ -57,6 +65,21 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  // Hook that modal content components can use to auto-focus an element
+  const useAutoFocus = useCallback(<T extends HTMLElement>() => {
+    const elementRef = useRef<T>(null);
+
+    useEffect(() => {
+      // Delay to ensure modal transition is complete and element is rendered
+      const timer = setTimeout(() => {
+        elementRef.current?.focus();
+      }, 150);
+      return () => clearTimeout(timer);
+    }, []);
+
+    return elementRef;
+  }, []);
+
   return (
     <ModalContext.Provider
       value={{
@@ -66,6 +89,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         onClose: modal.onClose,
         openModal,
         closeModal,
+        useAutoFocus,
       }}
     >
       {children}
