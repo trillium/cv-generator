@@ -233,6 +233,64 @@ export class MultiFileManager extends UnifiedFileManager {
   }
 
   /**
+   * Recursively list all data files in a directory and subdirectories
+   * @param dirPath - Relative path from PII_PATH
+   * @returns Array of file info objects from all subdirectories
+   */
+  async listDirectoryFilesRecursive(
+    dirPath: string,
+  ): Promise<DirectoryFileInfo[]> {
+    const piiPath = getPiiDirectory();
+    const fullPath = path.join(piiPath, dirPath);
+
+    if (!fsSync.existsSync(fullPath)) {
+      return [];
+    }
+
+    const allFiles: DirectoryFileInfo[] = [];
+    const entries = await fs.readdir(fullPath, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const relativePath = path.join(dirPath, entry.name);
+      const absolutePath = path.join(fullPath, entry.name);
+
+      if (entry.isDirectory()) {
+        const subFiles = await this.listDirectoryFilesRecursive(relativePath);
+        allFiles.push(...subFiles);
+      } else if (entry.isFile()) {
+        try {
+          const ext = path.extname(entry.name);
+          if (!SUPPORTED_EXTENSIONS.includes(ext)) continue;
+
+          const basename = path.basename(entry.name, ext);
+          const isFullData = isFullDataFilename(basename);
+          const isSectionSpecific = this.isSectionSpecificFile(basename);
+
+          if (isFullData || isSectionSpecific) {
+            const data = loadDataFile(absolutePath);
+            const sections = Object.keys(data);
+            const fileMetadata = await this.getMinimalFileStats(relativePath);
+
+            allFiles.push({
+              path: relativePath,
+              fullPath: absolutePath,
+              sections,
+              format: ext === ".json" ? "json" : "yaml",
+              isFullData,
+              metadata: fileMetadata,
+            });
+          }
+        } catch (error) {
+          console.warn(`Skipping file ${entry.name}:`, error);
+          continue;
+        }
+      }
+    }
+
+    return allFiles;
+  }
+
+  /**
    * Get directory hierarchy structure
    * @param dirPath - Relative path from PII_PATH
    * @returns Hierarchy information including tree and section sources

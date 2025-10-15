@@ -138,7 +138,7 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
       setError(null);
 
       const response = await fetch(
-        `/api/directory/files?path=${encodeURIComponent(currentDirectory)}`,
+        `/api/directory/files?path=${encodeURIComponent(currentDirectory)}&recursive=true`,
       );
       const data = await response.json();
 

@@ -4,17 +4,13 @@ import { MultiFileManager } from "../../../../lib/multiFileManager";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const dirPath = searchParams.get("path");
-
-    if (!dirPath) {
-      return NextResponse.json(
-        { success: false, error: "Directory path is required" },
-        { status: 400 },
-      );
-    }
+    const dirPath = searchParams.get("path") || "";
+    const recursive = searchParams.get("recursive") === "true";
 
     const manager = new MultiFileManager();
-    const files = await manager.listDirectoryFiles(dirPath);
+    const files = recursive
+      ? await manager.listDirectoryFilesRecursive(dirPath)
+      : await manager.listDirectoryFiles(dirPath);
 
     return NextResponse.json({
       success: true,
