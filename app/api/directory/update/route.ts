@@ -4,7 +4,7 @@ import { MultiFileManager } from "../../../../lib/multiFileManager";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { directoryPath, yamlPath, value, commit, message, tags } = body;
+    const { directoryPath, yamlPath, value } = body;
 
     if (!directoryPath || !yamlPath || value === undefined) {
       return NextResponse.json(
@@ -17,11 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     const manager = new MultiFileManager();
-    const result = await manager.updatePath(directoryPath, yamlPath, value, {
-      commit,
-      message,
-      tags,
-    });
+    const result = await manager.updatePath(directoryPath, yamlPath, value);
 
     return NextResponse.json(result);
   } catch (error) {

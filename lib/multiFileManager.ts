@@ -1,10 +1,5 @@
 import { UnifiedFileManager } from "./unifiedFileManager";
 import {
-  loadFromDirectory,
-  loadSingleDirectory,
-  findSourceFile,
-} from "./getYamlData";
-import {
   findDataFilesInDirectory,
   loadDataFile,
   getAncestorDirectories,
@@ -12,10 +7,11 @@ import {
   SUPPORTED_EXTENSIONS,
 } from "./multiFileMapper";
 import type { CVData } from "../src/types";
-import type { SaveOptions, FileMetadata } from "../src/types/fileManager";
+import type { FileMetadata } from "../src/types/fileManager";
 import * as path from "path";
 import * as fs from "fs/promises";
 import fsSync from "fs";
+import { SECTION_KEY_TO_FILENAME } from "./multiFileMapper";
 import { getPiiDirectory } from "./getPiiPath";
 import * as yaml from "js-yaml";
 
@@ -91,25 +87,27 @@ export class MultiFileManager extends UnifiedFileManager {
    * @returns Merged data, source tracking, and metadata
    */
   async loadDirectory(dirPath: string): Promise<DirectoryLoadResult> {
+    // 1. Get all ancestor directories (from least to most specific)
     const ancestorDirs = getAncestorDirectories(dirPath);
-    const data = loadFromDirectory(dirPath);
-
-    // Track sources for each section
-    const sources: Record<string, string> = {};
+    // 2. For each directory, find all data files
     const filesLoaded: string[] = [];
-
+    const sources: Record<string, string> = {};
+    const mergedData: Record<string, unknown> = {};
     for (const dir of ancestorDirs) {
-      const dirData = loadSingleDirectory(dir);
-      filesLoaded.push(...dirData.files.map((f) => f.path));
-
-      // Update sources with most specific file
-      for (const [section, sourceFile] of Object.entries(dirData.sources)) {
-        sources[section] = sourceFile;
+      const dataFiles = findDataFilesInDirectory(dir);
+      for (const filePath of dataFiles) {
+        filesLoaded.push(filePath);
+        const fileData = loadDataFile(filePath);
+        // For each top-level key, track the source file and merge
+        for (const [section, value] of Object.entries(fileData)) {
+          mergedData[section] = value;
+          sources[section] = filePath;
+        }
       }
     }
 
     return {
-      data,
+      data: mergedData as CVData,
       sources,
       metadata: {
         directoryPath: dirPath,
@@ -132,48 +130,51 @@ export class MultiFileManager extends UnifiedFileManager {
     dirPath: string,
     yamlPath: string,
     value: unknown,
-    options?: SaveOptions,
   ): Promise<UpdateResult> {
+    // 1. Determine top-level section
     const section = this.extractTopLevelKey(yamlPath);
-    const sourceFile = findSourceFile(dirPath, section);
-
-    // Load the specific file
-    const data = loadDataFile(sourceFile);
-
-    // Update the nested value
-    this.setNestedValue(data, yamlPath, value);
-
-    // Serialize based on format
-    const content = this.serializeData(data, sourceFile);
-
-    // Get relative path for UnifiedFileManager
-    const piiPath = getPiiDirectory();
-    const relativePath = path.relative(piiPath, sourceFile);
-
-    // Save using UnifiedFileManager with commit: true (immediate save in directory mode)
-    // Directory mode doesn't use temp files - changes are applied immediately
-    const result = await this.save(relativePath, content, {
-      ...options,
-      commit: true,
-    });
-
+    const ancestorDirs = getAncestorDirectories(dirPath).reverse(); // most specific first
+    let targetFile: string | null = null;
+    // 2. Find the most specific file containing the section
+    for (const dir of ancestorDirs) {
+      const dataFiles = findDataFilesInDirectory(dir);
+      for (const filePath of dataFiles) {
+        const fileData = loadDataFile(filePath);
+        if (Object.prototype.hasOwnProperty.call(fileData, section)) {
+          targetFile = filePath;
+          break;
+        }
+      }
+      if (targetFile) break;
+    }
+    // 3. If not found, create a new section-specific file in the most specific dir
+    if (!targetFile) {
+      const piiPath = getPiiDirectory();
+      const dirAbs = path.join(piiPath, dirPath);
+      const sectionFilenames = SECTION_KEY_TO_FILENAME[section] || [section];
+      const filename = sectionFilenames[0] + ".yml";
+      targetFile = path.join(dirAbs, filename);
+      // If file doesn't exist, create it
+      if (!fsSync.existsSync(dirAbs)) {
+        await fs.mkdir(dirAbs, { recursive: true });
+      }
+      await fs.writeFile(targetFile, yaml.dump({ [section]: value }), "utf-8");
+      return {
+        success: true,
+        updatedFile: targetFile,
+        section,
+      };
+    }
+    // 4. Update the value in the file
+    const fileData = loadDataFile(targetFile);
+    this.setNestedValue(fileData, yamlPath, value);
+    // 5. Serialize and save
+    const content = this.serializeData(fileData, targetFile);
+    await fs.writeFile(targetFile, content, "utf-8");
     return {
       success: true,
-      updatedFile: sourceFile,
+      updatedFile: targetFile,
       section,
-      backup: result.backupCreated
-        ? {
-            path: result.backupCreated,
-            timestamp: new Date().toISOString(),
-          }
-        : undefined,
-      changelogEntry: {
-        timestamp: result.changelogEntry.timestamp,
-        action: result.changelogEntry.action,
-        file: result.changelogEntry.file,
-        yamlPath,
-        message: result.changelogEntry.message,
-      },
     };
   }
 
