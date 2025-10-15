@@ -1,4 +1,5 @@
 export type Lines = { text: string; bulletPoint?: boolean }[];
+export type Notes = string[];
 
 export type WorkExperience = {
   position: string;
@@ -8,7 +9,7 @@ export type WorkExperience = {
   years: string;
   bubbles: string[];
   lines: Lines;
-  notes?: string[];
+  notes?: Notes;
 };
 
 export type Project = {
@@ -17,13 +18,13 @@ export type Project = {
   bubbles?: string[];
   lines?: Lines;
   links?: ProfileLinkProps[];
-  notes?: string[];
+  notes?: Notes;
 };
 
 export type TechnicalCategory = {
   category: string;
   bubbles: string[];
-  notes?: string[];
+  notes?: Notes;
 };
 
 export type Education = {
@@ -31,30 +32,55 @@ export type Education = {
   school: string;
   location: string;
   years: string;
-  notes?: string[];
+  notes?: Notes;
 };
 
 import type { ProfileLinkProps } from "../components/Profile/ProfileLink/ProfileLink";
 import type { Language } from "../components/Profile/ProfileLanguages/ProfileLanguages";
 import { HeaderProps } from "../components/Header/Header";
+import type { LinkedInProfile } from "./linkedin";
 
 export type CVData = {
-  info: InfoType;
-  careerSummary: CareerSummary;
-  header: HeaderProps;
-  workExperience: WorkExperience[];
-  projects?: Project[];
+  info: InfoType & { notes?: Notes };
+  careerSummary: CareerSummary & { notes?: Notes };
+  header: HeaderProps & { notes?: Notes };
+  workExperience: WorkExperience[] & { notes?: Notes };
+  projects?: Project[] & { notes?: Notes };
   profile: {
     shouldDisplayProfileImage: boolean;
     lines: string[];
     links: ProfileLinkProps[];
+    notes?: Notes;
   };
-  technical: TechnicalCategory[];
-  languages?: Language[];
-  education?: Education[];
-  coverLetter?: string[];
-  metadata?: ResumeMetadata;
+  technical: TechnicalCategory[] & { notes?: Notes };
+  languages?: Language[] & { notes?: Notes };
+  education?: Education[] & { notes?: Notes };
+  coverLetter?: string[] & { notes?: Notes };
+  metadata?: ResumeMetadata & { notes?: Notes };
+  linkedIn?: LinkedInProfile & { notes?: Notes };
+  notes?: Notes;
+  llm?: string | Notes;
 };
+
+/**
+ * Extended type that encompasses all candidate data including resume, LinkedIn profile, and notes.
+ * This is the top-level type for a complete candidate profile.
+ */
+export type CandidateProfile = CVData;
+
+/**
+ * Alternative names for CandidateProfile for backward compatibility or preference:
+ * - CompleteProfile
+ * - CareerDocument
+ * - ProfessionalProfile
+ * - FullResumeData
+ * - ApplicationPackage
+ * - ResumeBundle
+ * - ExtendedCVData
+ * - CandidateData
+ */
+export type ResumeObjectType = CandidateProfile;
+export type ResumeType = CandidateProfile;
 
 export type InfoType = {
   firstName: string;
@@ -71,7 +97,7 @@ export type InfoType = {
 export type CareerSummaryItem = {
   title: string;
   text: string;
-  notes?: string[];
+  notes?: Notes;
 };
 
 export type CareerSummary = CareerSummaryItem[];
