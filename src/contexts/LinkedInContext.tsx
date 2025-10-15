@@ -48,36 +48,41 @@ export function LinkedInProvider({ children }: LinkedInProviderProps) {
 
   const isUpdatingYamlContent = useRef<boolean>(false);
 
-  const loadLinkedInFile = useCallback(async (filePath: string) => {
-    console.log("🔄 loadLinkedInFile called with:", filePath);
+  const loadLinkedInFile = useCallback(async (dirPath: string) => {
+    console.log("🔄 loadLinkedInFile called with:", dirPath);
     setLoading(true);
     setError(null);
 
     try {
       const response = await fetch(
-        `/api/linkedin/load?path=${encodeURIComponent(filePath)}`,
+        `/api/directory/load?path=${encodeURIComponent(dirPath)}`,
       );
       if (!response.ok) {
-        throw new Error(`Failed to load file: ${response.statusText}`);
+        throw new Error(`Failed to load directory: ${response.statusText}`);
       }
 
       const result = await response.json();
       if (!result.success) {
-        throw new Error(result.error || "Failed to load file");
+        throw new Error(result.error || "Failed to load directory");
       }
 
-      const yamlText = result.content;
-      const parsed = yaml.load(yamlText) as LinkedInData;
+      const parsed = result.data as LinkedInData;
+      const yamlText = yaml.dump(parsed, {
+        indent: 2,
+        lineWidth: -1,
+        noRefs: true,
+        sortKeys: false,
+      });
 
       setYamlContent(yamlText);
       setCurrentLinkedInData(parsed);
-      setCurrentLinkedInFile(filePath);
+      setCurrentLinkedInFile(dirPath);
       setHasUnsavedChanges(false);
 
-      console.log("✅ Successfully loaded LinkedIn file:", filePath);
+      console.log("✅ Successfully loaded LinkedIn directory:", dirPath);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to load LinkedIn file";
+        err instanceof Error ? err.message : "Failed to load LinkedIn data";
       console.error("❌ LoadLinkedInFile error:", err);
       setError(errorMessage);
     } finally {
