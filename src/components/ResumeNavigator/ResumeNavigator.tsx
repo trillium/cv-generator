@@ -16,7 +16,8 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
   const { files, loading, error } = useFileManager();
 
   const handleSelectDirectory = (dirPath: string) => {
-    router.push(`/single-column-multi/resume/${encodeURIComponent(dirPath)}`);
+    const pathSegments = dirPath.split("/").map(encodeURIComponent).join("/");
+    router.push(`/single-column-multi/resume/${pathSegments}`);
 
     if (onSelectResume) {
       onSelectResume(dirPath);
