@@ -53,7 +53,7 @@ function buildTree(files: DirectoryFileInfo[]): TreeNode[] {
     const parts = file.path.split("/");
     let currentPath = "";
 
-    parts.forEach((part, index) => {
+    parts.forEach((part: string, index: number) => {
       const isLast = index === parts.length - 1;
       const parentPath = currentPath;
       currentPath = currentPath ? `${currentPath}/${part}` : part;
@@ -271,7 +271,7 @@ function SectionSources({ sources }: { sources: Record<string, string> }) {
         Section Sources
       </h2>
       <div className="space-y-1 text-xs">
-        {Object.entries(sources).map(([section, source]) => (
+        {Object.entries(sources).map(([section, source]: [string, string]) => (
           <div key={section} className="flex justify-between">
             <span className="text-gray-600 dark:text-gray-400">{section}:</span>
             <span className="font-mono text-gray-900 dark:text-gray-100">
