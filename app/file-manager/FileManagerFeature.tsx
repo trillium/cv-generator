@@ -9,6 +9,14 @@ interface EditingFieldState {
   value: string;
 }
 
+interface TreeNode {
+  name: string;
+  path: string;
+  type: "file" | "directory";
+  children?: TreeNode[];
+  file?: DirectoryFileInfo;
+}
+
 function PageHeader({ currentDirectory }: { currentDirectory: string | null }) {
   return (
     <div className="mb-6">
@@ -30,53 +38,143 @@ function ErrorDisplay({ error }: { error: string }) {
   );
 }
 
-function FileListItem({
-  file,
-  isSelected,
-  onSelect,
+function buildTree(files: DirectoryFileInfo[]): TreeNode[] {
+  const tree: Record<string, TreeNode> = {};
+
+  files.forEach((file) => {
+    const parts = file.path.split("/");
+    let currentPath = "";
+
+    parts.forEach((part, index) => {
+      const isLast = index === parts.length - 1;
+      const parentPath = currentPath;
+      currentPath = currentPath ? `${currentPath}/${part}` : part;
+
+      if (!tree[currentPath]) {
+        tree[currentPath] = {
+          name: part,
+          path: currentPath,
+          type: isLast ? "file" : "directory",
+          children: [],
+          file: isLast ? file : undefined,
+        };
+      }
+
+      if (parentPath && tree[parentPath]) {
+        const parent = tree[parentPath];
+        if (!parent.children) parent.children = [];
+        if (!parent.children.find((c) => c.path === currentPath)) {
+          parent.children.push(tree[currentPath]);
+        }
+      }
+    });
+  });
+
+  const rootNodes = Object.values(tree).filter((node) => {
+    const depth = node.path.split("/").length;
+    return depth === 1;
+  });
+
+  return rootNodes;
+}
+
+function TreeNodeItem({
+  node,
+  depth,
+  selectedFile,
+  onSelectFile,
+  onSelectDirectory,
 }: {
-  file: DirectoryFileInfo;
-  isSelected: boolean;
-  onSelect: () => void;
+  node: TreeNode;
+  depth: number;
+  selectedFile: string | null;
+  onSelectFile: (path: string) => void;
+  onSelectDirectory: (path: string) => void;
 }) {
+  const [isExpanded, setIsExpanded] = useState(depth < 2);
+  const isSelected = selectedFile === node.path;
+  const hasChildren = node.children && node.children.length > 0;
+  const paddingLeft = depth * 16;
+
+  function handleClick() {
+    if (node.type === "directory") {
+      setIsExpanded(!isExpanded);
+      onSelectDirectory(node.path);
+    } else {
+      onSelectFile(node.path);
+    }
+  }
+
   return (
-    <div
-      className={`p-3 border rounded cursor-pointer transition-colors ${
-        isSelected
-          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-          : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-      }`}
-      onClick={onSelect}
-    >
-      <div className="flex justify-between items-start">
-        <div>
-          <div className="font-medium text-gray-900 dark:text-gray-100">
-            {file.path}
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            Sections: {file.sections.join(", ")}
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-500">
-            Format: {file.format}
-            {file.isFullData && " (Full Data)"}
-          </div>
-        </div>
+    <>
+      <div
+        className={`flex items-center py-1.5 px-2 cursor-pointer transition-colors ${
+          isSelected
+            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
+            : "hover:bg-gray-50 dark:hover:bg-gray-700"
+        }`}
+        style={{ paddingLeft: `${paddingLeft}px` }}
+        onClick={handleClick}
+      >
+        {node.type === "directory" && (
+          <span className="mr-1.5 text-gray-500 dark:text-gray-400 w-4">
+            {hasChildren ? (isExpanded ? "▼" : "▶") : "○"}
+          </span>
+        )}
+        {node.type === "file" && (
+          <span className="mr-1.5 text-gray-400 dark:text-gray-500 w-4">
+            📄
+          </span>
+        )}
+        <span
+          className={`text-sm ${
+            node.type === "directory"
+              ? "font-medium text-gray-900 dark:text-gray-100"
+              : "text-gray-700 dark:text-gray-300"
+          }`}
+        >
+          {node.name}
+        </span>
+        {node.file && (
+          <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
+            {node.file.sections.length > 0 &&
+              `(${node.file.sections.join(", ")})`}
+          </span>
+        )}
       </div>
-    </div>
+      {hasChildren && isExpanded && (
+        <div>
+          {node.children!.map((child) => (
+            <TreeNodeItem
+              key={child.path}
+              node={child}
+              depth={depth + 1}
+              selectedFile={selectedFile}
+              onSelectFile={onSelectFile}
+              onSelectDirectory={onSelectDirectory}
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
 
-function FileList({
+function DirectoryTree({
   files,
   selectedFile,
   onSelectFile,
+  onSelectDirectory,
   loading,
 }: {
   files: DirectoryFileInfo[];
   selectedFile: string | null;
   onSelectFile: (path: string) => void;
+  onSelectDirectory: (path: string) => void;
   loading: boolean;
 }) {
+  const tree = buildTree(files);
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
@@ -90,13 +188,15 @@ function FileList({
           No files found in this directory
         </p>
       ) : (
-        <div className="space-y-2">
-          {files.map((file) => (
-            <FileListItem
-              key={file.path}
-              file={file}
-              isSelected={selectedFile === file.path}
-              onSelect={() => onSelectFile(file.path)}
+        <div className="space-y-0.5">
+          {tree.map((node) => (
+            <TreeNodeItem
+              key={node.path}
+              node={node}
+              depth={0}
+              selectedFile={selectedFile}
+              onSelectFile={onSelectFile}
+              onSelectDirectory={onSelectDirectory}
             />
           ))}
         </div>
@@ -332,10 +432,11 @@ export default function FileManagerFeature() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <FileList
+            <DirectoryTree
               files={files}
               selectedFile={selectedFile}
               onSelectFile={setSelectedFile}
+              onSelectDirectory={(dirPath) => loadDirectory(dirPath)}
               loading={loading}
             />
           </div>
