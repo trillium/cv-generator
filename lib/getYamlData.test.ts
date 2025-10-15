@@ -213,5 +213,32 @@ describe("getYamlData", () => {
         process.env.PII_PATH = originalPiiPath;
       }
     });
+
+    it("should prioritize section-specific file over full data file in same directory", () => {
+      const baseDir = path.join(TEST_DIR, "base");
+      fs.mkdirSync(baseDir, { recursive: true });
+
+      // Both files contain 'info' section
+      fs.writeFileSync(
+        path.join(baseDir, "data.yml"),
+        "info:\n  firstName: FromDataFile\neducation: []",
+      );
+      fs.writeFileSync(
+        path.join(baseDir, "info.yml"),
+        "info:\n  firstName: FromInfoFile",
+      );
+
+      const originalPiiPath = process.env.PII_PATH;
+      process.env.PII_PATH = TEST_DIR;
+
+      try {
+        const infoSource = findSourceFile("base", "info");
+        // Should return info.yml, not data.yml
+        expect(infoSource).toContain("info.yml");
+        expect(infoSource).not.toContain("data.yml");
+      } finally {
+        process.env.PII_PATH = originalPiiPath;
+      }
+    });
   });
 });
