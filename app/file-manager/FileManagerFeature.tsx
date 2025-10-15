@@ -2,85 +2,53 @@
 
 import { useState, useEffect } from "react";
 import { useFileManager } from "../../src/contexts/FileManagerContext.hook";
-import FileBrowser from "../../src/components/FileManager/FileBrowser";
-import VersionHistory from "../../src/components/FileManager/VersionHistory";
-import QuickActions from "../../src/components/FileManager/QuickActions";
-import DuplicateModal from "../../src/components/FileManager/DuplicateModal";
-import RestoreModal from "../../src/components/FileManager/RestoreModal";
-import { FileMetadata, Version } from "../../src/types/fileManager";
+import { DirectoryFileInfo } from "../../src/contexts/FileManagerContext";
 
 export default function FileManagerFeature() {
   const {
-    currentFile,
-    content,
+    currentDirectory,
+    directoryMetadata,
+    sources,
+    parsedData,
     hasUnsavedChanges,
     loading,
     error,
-    loadFile,
-    saveFile,
+    files,
+    loadDirectory,
+    updateField,
+    saveChanges,
     discardChanges,
-    duplicateFile,
-    deleteFile,
-    restoreVersion,
-    refreshFiles,
-    updateContent,
   } = useFileManager();
 
-  const [showVersionHistory, setShowVersionHistory] = useState(false);
-  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
-  const [showRestoreModal, setShowRestoreModal] = useState(false);
-  const [selectedVersion, setSelectedVersion] = useState<Version | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [editingField, setEditingField] = useState<{
+    path: string;
+    value: string;
+  } | null>(null);
 
   useEffect(() => {
-    refreshFiles();
-  }, [refreshFiles]);
+    if (currentDirectory) {
+      loadDirectory(currentDirectory);
+    }
+  }, []);
 
-  async function handleSelectFile(file: FileMetadata) {
-    await loadFile(file.path);
+  async function handleSave(commit = false) {
+    await saveChanges(commit);
   }
 
-  async function handleDuplicateFile() {
-    setShowDuplicateModal(true);
+  async function handleDiscard() {
+    await discardChanges();
   }
 
-  async function handleConfirmDuplicate(
-    newName: string,
-    tags?: string[],
-    description?: string,
-  ) {
-    if (currentFile) {
-      try {
-        await duplicateFile(currentFile.path, newName, tags, description);
-      } catch (err) {
-        console.error("Failed to duplicate file:", err);
-      }
+  async function handleFieldSave() {
+    if (editingField) {
+      await updateField(editingField.path, editingField.value);
+      setEditingField(null);
     }
   }
 
-  async function handleDeleteFile(file: FileMetadata) {
-    if (
-      confirm(
-        `Are you sure you want to delete "${file.name}"? A backup will be created.`,
-      )
-    ) {
-      try {
-        await deleteFile(file.path);
-      } catch (err) {
-        console.error("Failed to delete file:", err);
-      }
-    }
-  }
-
-  async function handleRestoreVersion(versionPath: string) {
-    if (currentFile) {
-      try {
-        await restoreVersion(currentFile.path, versionPath);
-        setShowRestoreModal(false);
-        setSelectedVersion(null);
-      } catch (err) {
-        console.error("Failed to restore version:", err);
-      }
-    }
+  function handleFieldCancel() {
+    setEditingField(null);
   }
 
   return (
@@ -91,7 +59,8 @@ export default function FileManagerFeature() {
             File Manager
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage your resume and LinkedIn YAML files
+            Manage your resume directory:{" "}
+            {currentDirectory || "No directory loaded"}
           </p>
         </div>
 
@@ -104,143 +73,179 @@ export default function FileManagerFeature() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <FileBrowser
-                onSelectFile={handleSelectFile}
-                onDuplicateFile={handleDuplicateFile}
-                onDeleteFile={handleDeleteFile}
-                selectedFile={currentFile?.path || null}
-              />
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                Files in Directory
+              </h2>
+
+              {loading ? (
+                <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+              ) : files.length === 0 ? (
+                <p className="text-gray-600 dark:text-gray-400">
+                  No files found in this directory
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {files.map((file: DirectoryFileInfo) => (
+                    <div
+                      key={file.path}
+                      className={`p-3 border rounded cursor-pointer transition-colors ${
+                        selectedFile === file.path
+                          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                          : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      }`}
+                      onClick={() => setSelectedFile(file.path)}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-medium text-gray-900 dark:text-gray-100">
+                            {file.path}
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            Sections: {file.sections.join(", ")}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-500">
+                            Format: {file.format}
+                            {file.isFullData && " (Full Data)"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
           <div className="space-y-6">
-            {currentFile && (
+            {directoryMetadata && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                  Current File
+                  Directory Info
                 </h2>
                 <div className="space-y-2 text-sm">
                   <div>
                     <span className="text-gray-600 dark:text-gray-400">
-                      Name:
+                      Path:
                     </span>
                     <div className="font-medium text-gray-900 dark:text-gray-100">
-                      {currentFile.name}
+                      {directoryMetadata.directoryPath}
                     </div>
                   </div>
                   <div>
                     <span className="text-gray-600 dark:text-gray-400">
-                      Type:
+                      Files Loaded:
                     </span>
-                    <div className="font-medium text-gray-900 dark:text-gray-100 capitalize">
-                      {currentFile.type}
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
+                      {directoryMetadata.filesLoaded.length}
                     </div>
                   </div>
                   <div>
                     <span className="text-gray-600 dark:text-gray-400">
-                      Size:
+                      Loaded From:
                     </span>
-                    <div className="font-medium text-gray-900 dark:text-gray-100">
-                      {(currentFile.size / 1024).toFixed(1)} KB
+                    <div className="font-medium text-gray-900 dark:text-gray-100 text-xs">
+                      {directoryMetadata.loadedDirectories.join(" → ")}
                     </div>
                   </div>
-                  <div>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Modified:
-                    </span>
-                    <div className="font-medium text-gray-900 dark:text-gray-100">
-                      {new Date(currentFile.modified).toLocaleString()}
-                    </div>
-                  </div>
-                  {currentFile.tags.length > 0 && (
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Tags:
-                      </span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {currentFile.tags.map((tag: string) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
-
-                <button
-                  onClick={() => setShowVersionHistory(!showVersionHistory)}
-                  className="mt-4 w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  {showVersionHistory ? "Hide" : "Show"} Version History
-                </button>
               </div>
             )}
 
-            {currentFile && showVersionHistory && (
+            {sources && Object.keys(sources).length > 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                <VersionHistory
-                  filePath={currentFile.path}
-                  onRestore={() => {
-                    setShowRestoreModal(true);
-                  }}
-                />
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                  Section Sources
+                </h2>
+                <div className="space-y-1 text-xs">
+                  {Object.entries(sources).map(([section, source]) => (
+                    <div key={section} className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {section}:
+                      </span>
+                      <span className="font-mono text-gray-900 dark:text-gray-100">
+                        {String(source)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
         </div>
 
-        {currentFile && (
+        {parsedData && (
           <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-              File Content
+              Directory Data
             </h2>
-            <textarea
-              value={content}
-              onChange={(e) => updateContent(e.target.value)}
-              className="w-full h-96 font-mono text-sm p-4 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="YAML content..."
-            />
+            <pre className="bg-gray-50 dark:bg-gray-900 p-4 rounded text-xs overflow-auto max-h-96 text-gray-900 dark:text-gray-100">
+              {JSON.stringify(parsedData, null, 2)}
+            </pre>
           </div>
         )}
 
-        {currentFile && (
-          <QuickActions
-            hasUnsavedChanges={hasUnsavedChanges}
-            onSave={(commit) => saveFile(commit)}
-            onDiscard={discardChanges}
-            onDuplicate={() => setShowDuplicateModal(true)}
-            onViewHistory={() => setShowVersionHistory(!showVersionHistory)}
-            onEditTags={() => alert("Tag editor coming soon!")}
-            onEditDescription={() => alert("Description editor coming soon!")}
-            disabled={loading}
-          />
+        {currentDirectory && (
+          <div className="mt-6 flex gap-3 justify-end">
+            <button
+              onClick={handleDiscard}
+              disabled={!hasUnsavedChanges || loading}
+              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Discard Changes
+            </button>
+            <button
+              onClick={() => handleSave(false)}
+              disabled={!hasUnsavedChanges || loading}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => handleSave(true)}
+              disabled={!hasUnsavedChanges || loading}
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Save & Commit
+            </button>
+          </div>
         )}
 
-        <DuplicateModal
-          isOpen={showDuplicateModal}
-          fileName={currentFile?.name || ""}
-          onClose={() => setShowDuplicateModal(false)}
-          onConfirm={handleConfirmDuplicate}
-        />
-
-        <RestoreModal
-          isOpen={showRestoreModal}
-          fileName={currentFile?.name || ""}
-          version={selectedVersion}
-          onClose={() => {
-            setShowRestoreModal(false);
-            setSelectedVersion(null);
-          }}
-          onConfirm={() => {
-            if (selectedVersion) {
-              handleRestoreVersion(selectedVersion.backupPath);
-            }
-          }}
-        />
+        {editingField && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                Edit Field
+              </h3>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Path: {editingField.path}
+                </label>
+                <input
+                  type="text"
+                  value={editingField.value}
+                  onChange={(e) =>
+                    setEditingField({ ...editingField, value: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                />
+              </div>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={handleFieldCancel}
+                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleFieldSave}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Save Field
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

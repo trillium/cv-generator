@@ -5,64 +5,100 @@ import { FileManagerContext } from "./FileManagerContext.constants";
 import { FileMetadata, FileType, Version, Diff } from "../types/fileManager";
 import { CVData } from "../types";
 import { LinkedInData } from "../types/linkedin";
-import * as yaml from "js-yaml";
+
+function setNestedProperty<T extends Record<string, unknown>>(
+  obj: T,
+  path: string,
+  value: unknown,
+): T {
+  const keys = path.split(".");
+  const lastKey = keys.pop()!;
+  const target = keys.reduce(
+    (acc: Record<string, unknown>, key: string) => {
+      const match = key.match(/^(.+)\[(\d+)\]$/);
+      if (match) {
+        const [, arrayKey, index] = match;
+        (acc[arrayKey] as unknown[]) = (acc[arrayKey] as unknown[]) || [];
+        (acc[arrayKey] as unknown[])[parseInt(index)] =
+          (acc[arrayKey] as unknown[])[parseInt(index)] || {};
+        return (acc[arrayKey] as unknown[])[parseInt(index)] as Record<
+          string,
+          unknown
+        >;
+      }
+      acc[key] = acc[key] || {};
+      return acc[key] as Record<string, unknown>;
+    },
+    obj as Record<string, unknown>,
+  );
+
+  const lastMatch = lastKey.match(/^(.+)\[(\d+)\]$/);
+  if (lastMatch) {
+    const [, arrayKey, index] = lastMatch;
+    (target[arrayKey] as unknown[]) = (target[arrayKey] as unknown[]) || [];
+    (target[arrayKey] as unknown[])[parseInt(index)] = value;
+  } else {
+    target[lastKey] = value;
+  }
+
+  return obj;
+}
+
+export interface DirectoryMetadata {
+  directoryPath: string;
+  loadedDirectories: string[];
+  filesLoaded: string[];
+  hasUnsavedChanges: boolean;
+}
+
+export interface DirectoryFileInfo {
+  path: string;
+  fullPath: string;
+  sections: string[];
+  format: "yaml" | "json";
+  isFullData: boolean;
+  metadata: FileMetadata;
+}
 
 export interface FileManagerContextType {
-  // Current file state
+  currentDirectory: string | null;
+  directoryMetadata: DirectoryMetadata | null;
+  sources: Record<string, string>;
   currentFile: FileMetadata | null;
   content: string;
   parsedData: CVData | LinkedInData | null;
   hasUnsavedChanges: boolean;
-
-  // File list
-  files: FileMetadata[];
-  filteredFiles: FileMetadata[];
-
-  // Filters
+  files: DirectoryFileInfo[];
+  filteredFiles: DirectoryFileInfo[];
   fileType: "all" | FileType;
   searchQuery: string;
   selectedTags: string[];
-
-  // Loading states
   loading: boolean;
   error: string | null;
-
-  // Actions
-  loadFile: (path: string) => Promise<void>;
-  saveFile: (commit?: boolean, message?: string) => Promise<void>;
-  commitChanges: (message?: string) => Promise<void>;
+  loadDirectory: (dirPath: string) => Promise<void>;
+  updateField: (yamlPath: string, value: unknown) => Promise<void>;
+  saveChanges: (commit?: boolean) => Promise<void>;
   discardChanges: () => Promise<void>;
   updateContent: (newContent: string) => void;
-
-  // File operations
   createNewFile: (
-    path: string,
+    dirPath: string,
+    fileName: string,
     content: string,
-    commit?: boolean,
   ) => Promise<void>;
   duplicateFile: (
-    path: string,
-    name?: string,
-    tags?: string[],
-    description?: string,
+    dirPath: string,
+    fileName: string,
+    newName: string,
   ) => Promise<string>;
-  deleteFile: (path: string) => Promise<void>;
+  deleteFile: (dirPath: string, fileName: string) => Promise<void>;
   restoreVersion: (path: string, version: string) => Promise<void>;
-
-  // Version history
   getVersionHistory: (path: string) => Promise<Version[]>;
   getFileDiff: (path: string, from: string, to: string) => Promise<Diff>;
-
-  // Metadata
   updateTags: (path: string, tags: string[]) => Promise<void>;
   updateDescription: (path: string, desc: string) => Promise<void>;
-
-  // Filters
   setFileType: (type: "all" | FileType) => void;
   setSearchQuery: (query: string) => void;
   setSelectedTags: (tags: string[]) => void;
-
-  // Refresh
   refreshFiles: () => Promise<void>;
 }
 
@@ -71,35 +107,20 @@ interface FileManagerProviderProps {
 }
 
 export function FileManagerProvider({ children }: FileManagerProviderProps) {
-  const updateTags = useCallback(async (path: string, tags: string[]) => {
-    try {
-      // This would need a dedicated API endpoint, for now we can update via metadata
-      // Implementation depends on backend support
-      console.log("Update tags:", path, tags);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update tags");
-    }
-  }, []);
-
-  const updateDescription = useCallback(async (path: string, desc: string) => {
-    try {
-      // This would need a dedicated API endpoint
-      console.log("Update description:", path, desc);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to update description",
-      );
-    }
-  }, []);
-  const [currentFile, setCurrentFile] = useState<FileMetadata | null>(null);
+  const [currentDirectory, setCurrentDirectory] = useState<string | null>(
+    "base",
+  );
+  const [directoryMetadata, setDirectoryMetadata] =
+    useState<DirectoryMetadata | null>(null);
+  const [sources, setSources] = useState<Record<string, string>>({});
   const [content, setContent] = useState("");
   const [parsedData, setParsedData] = useState<CVData | LinkedInData | null>(
     null,
   );
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  const [files, setFiles] = useState<FileMetadata[]>([]);
-  const [filteredFiles, setFilteredFiles] = useState<FileMetadata[]>([]);
+  const [files, setFiles] = useState<DirectoryFileInfo[]>([]);
+  const [filteredFiles, setFilteredFiles] = useState<DirectoryFileInfo[]>([]);
 
   const [fileType, setFileType] = useState<"all" | FileType>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -109,21 +130,38 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
   const [error, setError] = useState<string | null>(null);
 
   const refreshFiles = useCallback(async () => {
+    if (!currentDirectory) return;
+
     try {
       setLoading(true);
       setError(null);
 
-      const params = new URLSearchParams();
-      if (fileType !== "all") params.set("type", fileType);
-      if (searchQuery) params.set("search", searchQuery);
-      if (selectedTags.length > 0) params.set("tags", selectedTags.join(","));
-
-      const response = await fetch(`/api/files/list?${params}`);
+      const response = await fetch(
+        `/api/directory/files?path=${encodeURIComponent(currentDirectory)}`,
+      );
       const data = await response.json();
 
       if (data.success) {
         setFiles(data.files);
-        setFilteredFiles(data.files);
+
+        let filtered = data.files;
+        if (fileType !== "all") {
+          filtered = filtered.filter(
+            (f: DirectoryFileInfo) => f.metadata.type === fileType,
+          );
+        }
+        if (searchQuery) {
+          filtered = filtered.filter((f: DirectoryFileInfo) =>
+            f.path.toLowerCase().includes(searchQuery.toLowerCase()),
+          );
+        }
+        if (selectedTags.length > 0) {
+          filtered = filtered.filter((f: DirectoryFileInfo) =>
+            selectedTags.some((tag) => f.metadata.tags.includes(tag)),
+          );
+        }
+
+        setFilteredFiles(filtered);
       } else {
         setError(data.error || "Failed to load files");
       }
@@ -132,120 +170,115 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     } finally {
       setLoading(false);
     }
-  }, [fileType, searchQuery, selectedTags]);
+  }, [currentDirectory, fileType, searchQuery, selectedTags]);
 
-  const loadFile = useCallback(async (path: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await fetch(`/api/files/${path}`);
-      const data = await response.json();
-
-      if (data.success) {
-        setCurrentFile(data.metadata);
-        setContent(data.content);
-        setHasUnsavedChanges(data.hasUnsavedChanges);
-
-        // Parse YAML content
-        try {
-          const parsed = yaml.load(data.content);
-          setParsedData(parsed as CVData | LinkedInData);
-        } catch (err) {
-          console.error("Failed to parse YAML:", err);
-          setParsedData(null);
-        }
-      } else {
-        setError(data.error || "Failed to load file");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load file");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const saveFile = useCallback(
-    async (commit = false, message?: string) => {
-      if (!currentFile) {
-        setError("No file loaded");
-        return;
-      }
-
+  const loadDirectory = useCallback(
+    async (dirPath: string) => {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/files/${currentFile.path}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            content,
-            commit,
-            message,
-          }),
-        });
-
+        const response = await fetch(
+          `/api/directory/load?path=${encodeURIComponent(dirPath)}`,
+        );
         const data = await response.json();
 
         if (data.success) {
-          setHasUnsavedChanges(!commit);
+          setCurrentDirectory(dirPath);
+          setParsedData(data.data as CVData | LinkedInData);
+          setSources(data.sources);
+          setDirectoryMetadata(data.metadata);
+          setHasUnsavedChanges(data.metadata.hasUnsavedChanges);
+          setContent("");
+
           await refreshFiles();
-
-          // Reload current file to get updated metadata
-          await loadFile(currentFile.path);
         } else {
-          setError(data.error || "Failed to save file");
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to save file");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [currentFile, content, refreshFiles, loadFile],
-  );
-
-  const commitChanges = useCallback(
-    async (message?: string) => {
-      if (!currentFile) {
-        setError("No file loaded");
-        return;
-      }
-
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch(`/api/files/${currentFile.path}/commit`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          setHasUnsavedChanges(false);
-          await refreshFiles();
-          await loadFile(currentFile.path);
-        } else {
-          setError(data.error || "Failed to commit changes");
+          setError(data.error || "Failed to load directory");
         }
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to commit changes",
+          err instanceof Error ? err.message : "Failed to load directory",
         );
       } finally {
         setLoading(false);
       }
     },
-    [currentFile, refreshFiles, loadFile],
+    [refreshFiles],
+  );
+
+  const updateField = useCallback(
+    async (yamlPath: string, value: unknown) => {
+      if (!currentDirectory) {
+        setError("No directory loaded");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const newData = { ...(parsedData || {}) };
+        setNestedProperty(newData, yamlPath, value);
+        setParsedData(newData as CVData | LinkedInData);
+        setHasUnsavedChanges(true);
+
+        const response = await fetch("/api/directory/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            directoryPath: currentDirectory,
+            yamlPath,
+            value,
+            commit: false,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+          setError(data.error || "Failed to update field");
+          await loadDirectory(currentDirectory);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to update field");
+        if (currentDirectory) {
+          await loadDirectory(currentDirectory);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentDirectory, parsedData, loadDirectory],
+  );
+
+  const saveChanges = useCallback(
+    async (commit = false) => {
+      if (!currentDirectory) {
+        setError("No directory loaded");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        if (commit && currentDirectory) {
+          await loadDirectory(currentDirectory);
+        }
+
+        setHasUnsavedChanges(!commit);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to save changes");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentDirectory, loadDirectory],
   );
 
   const discardChanges = useCallback(async () => {
-    if (!currentFile) {
-      setError("No file loaded");
+    if (!currentDirectory) {
+      setError("No directory loaded");
       return;
     }
 
@@ -253,19 +286,8 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/files/${currentFile.path}/discard`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setHasUnsavedChanges(false);
-        await refreshFiles();
-        await loadFile(currentFile.path);
-      } else {
-        setError(data.error || "Failed to discard changes");
-      }
+      await loadDirectory(currentDirectory);
+      setHasUnsavedChanges(false);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to discard changes",
@@ -273,45 +295,25 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     } finally {
       setLoading(false);
     }
-  }, [currentFile, refreshFiles, loadFile]);
+  }, [currentDirectory, loadDirectory]);
 
   const updateContent = useCallback((newContent: string) => {
     setContent(newContent);
     setHasUnsavedChanges(true);
-
-    // Try to parse and update parsedData
-    try {
-      const parsed = yaml.load(newContent);
-      setParsedData(parsed as CVData | LinkedInData);
-    } catch (err) {
-      // Invalid YAML, keep previous parsed data
-      console.error("Failed to parse YAML:", err);
-    }
   }, []);
 
   const createNewFile = useCallback(
-    async (path: string, content: string, commit = true): Promise<void> => {
+    async (
+      dirPath: string,
+      fileName: string,
+      content: string,
+    ): Promise<void> => {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/files/${path}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            content,
-            commit,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          await refreshFiles();
-          await loadFile(path);
-        } else {
-          throw new Error(data.error || "Failed to create file");
-        }
+        console.log("Create file in directory:", dirPath, fileName, content);
+        setError("File creation not yet implemented for directory API");
       } catch (err) {
         const errorMsg =
           err instanceof Error ? err.message : "Failed to create file";
@@ -321,46 +323,22 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
         setLoading(false);
       }
     },
-    [refreshFiles, loadFile],
+    [],
   );
-
-  // ...existing code...
 
   const duplicateFile = useCallback(
     async (
-      path: string,
-      name?: string,
-      tags?: string[],
-      description?: string,
+      dirPath: string,
+      fileName: string,
+      newName: string,
     ): Promise<string> => {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/files/${path}/duplicate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name }),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          // Update tags and description if provided
-          if (tags || description) {
-            if (tags) {
-              await updateTags(data.newPath, tags);
-            }
-            if (description) {
-              await updateDescription(data.newPath, description);
-            }
-          }
-
-          await refreshFiles();
-          return data.newPath;
-        } else {
-          throw new Error(data.error || "Failed to duplicate file");
-        }
+        console.log("Duplicate file:", dirPath, fileName, newName);
+        setError("File duplication not yet implemented for directory API");
+        return "";
       } catch (err) {
         const errorMsg =
           err instanceof Error ? err.message : "Failed to duplicate file";
@@ -370,89 +348,45 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
         setLoading(false);
       }
     },
-    [refreshFiles, updateTags, updateDescription],
+    [],
   );
 
-  const deleteFile = useCallback(
-    async (path: string) => {
-      try {
-        setLoading(true);
-        setError(null);
+  const deleteFile = useCallback(async (dirPath: string, fileName: string) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const response = await fetch(`/api/files/${path}`, {
-          method: "DELETE",
-        });
+      console.log("Delete file:", dirPath, fileName);
+      setError("File deletion not yet implemented for directory API");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete file");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-        const data = await response.json();
+  const restoreVersion = useCallback(async (path: string, version: string) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        if (data.success) {
-          // If we're deleting the current file, clear it
-          if (currentFile?.path === path) {
-            setCurrentFile(null);
-            setContent("");
-            setParsedData(null);
-            setHasUnsavedChanges(false);
-          }
-
-          await refreshFiles();
-        } else {
-          setError(data.error || "Failed to delete file");
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to delete file");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [currentFile, refreshFiles],
-  );
-
-  const restoreVersion = useCallback(
-    async (path: string, version: string) => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch(`/api/files/${path}/restore`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ version }),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          await refreshFiles();
-
-          // Reload current file if it's the one we restored
-          if (currentFile?.path === path) {
-            await loadFile(path);
-          }
-        } else {
-          setError(data.error || "Failed to restore version");
-        }
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to restore version",
-        );
-      } finally {
-        setLoading(false);
-      }
-    },
-    [currentFile, refreshFiles, loadFile],
-  );
+      console.log("Restore version:", path, version);
+      setError("Version restore not yet implemented for directory API");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to restore version",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const getVersionHistory = useCallback(
     async (path: string): Promise<Version[]> => {
       try {
-        const response = await fetch(`/api/files/${path}/versions`);
-        const data = await response.json();
-
-        if (data.success) {
-          return data.versions;
-        } else {
-          throw new Error(data.error || "Failed to get version history");
-        }
+        console.log("Get version history:", path);
+        setError("Version history not yet implemented for directory API");
+        return [];
       } catch (err) {
         const errorMsg =
           err instanceof Error ? err.message : "Failed to get version history";
@@ -466,19 +400,9 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
   const getFileDiff = useCallback(
     async (path: string, from: string, to: string): Promise<Diff> => {
       try {
-        const response = await fetch(
-          `/api/files/${path}/diff?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`,
-        );
-        const data = await response.json();
-
-        if (data.success) {
-          return {
-            diff: data.diff,
-            stats: data.stats,
-          };
-        } else {
-          throw new Error(data.error || "Failed to get diff");
-        }
+        console.log("Get file diff:", path, from, to);
+        setError("File diff not yet implemented for directory API");
+        return { diff: "", stats: { additions: 0, deletions: 0 } };
       } catch (err) {
         const errorMsg =
           err instanceof Error ? err.message : "Failed to get diff";
@@ -489,10 +413,31 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     [],
   );
 
-  // ...existing code...
+  const updateTags = useCallback(async (path: string, tags: string[]) => {
+    try {
+      console.log("Update tags:", path, tags);
+      setError("Tag updates not yet implemented for directory API");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update tags");
+    }
+  }, []);
+
+  const updateDescription = useCallback(async (path: string, desc: string) => {
+    try {
+      console.log("Update description:", path, desc);
+      setError("Description updates not yet implemented for directory API");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to update description",
+      );
+    }
+  }, []);
 
   const value: FileManagerContextType = {
-    currentFile,
+    currentDirectory,
+    directoryMetadata,
+    sources,
+    currentFile: null,
     content,
     parsedData,
     hasUnsavedChanges,
@@ -503,9 +448,9 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     selectedTags,
     loading,
     error,
-    loadFile,
-    saveFile,
-    commitChanges,
+    loadDirectory,
+    updateField,
+    saveChanges,
     discardChanges,
     updateContent,
     createNewFile,

@@ -1,6 +1,5 @@
-// Utility/context constants for FileManagerContext
 import { createContext } from "react";
-import type { FileManagerContextType } from "../types/fileManager";
+import type { FileManagerContextType } from "./FileManagerContext";
 
 const FileManagerContext = createContext<FileManagerContextType | undefined>(
   undefined,
