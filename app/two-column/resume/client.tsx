@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import TwoColumnResume from "../../../src/components/Resume/two-column/resume";
-import { useDirectoryManager } from "../../../src/contexts/DirectoryManagerContext";
+import { useDirectoryManager } from "../../../src/contexts/DirectoryManagerContext.hook";
 import type { CVData } from "../../../src/types";
 
 interface TwoColumnResumePageClientProps {

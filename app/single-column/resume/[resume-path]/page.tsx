@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import SingleColumnResume from "../../../../src/components/Resume/single-column/resume";
 import type { CVData } from "../../../../src/types";
 
-import { useDirectoryManager } from "../../../../src/contexts/DirectoryManagerContext";
+import { useDirectoryManager } from "../../../../src/contexts/DirectoryManagerContext.hook";
 
 export default function DynamicSingleColumnResumePage() {
   const params = useParams();

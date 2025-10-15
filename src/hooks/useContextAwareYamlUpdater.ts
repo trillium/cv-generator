@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDirectoryManager } from "../contexts/DirectoryManagerContext";
+import { useDirectoryManager } from "../contexts/DirectoryManagerContext.hook";
 
 export function useContextAwareYamlUpdater() {
   const { currentDirectory, saveDirectory } = useDirectoryManager();
