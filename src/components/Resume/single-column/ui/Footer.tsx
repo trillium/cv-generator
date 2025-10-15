@@ -3,6 +3,19 @@ import ProfileLink from "../../../Profile/ProfileLink/ProfileLink";
 import type { CVData } from "../../../../types";
 
 export default function Footer({ data }: { data: CVData }) {
+  // Defensive check: ensure profile and links exist
+  if (
+    !data.profile ||
+    !data.profile.links ||
+    !Array.isArray(data.profile.links)
+  ) {
+    console.warn(
+      "Footer component received invalid profile data:",
+      data.profile,
+    );
+    return null;
+  }
+
   const { links } = data.profile;
   const iconOrder = ["GitHub", "LinkedIn", "Bluesky"];
   const footerLinks = iconOrder
@@ -10,6 +23,7 @@ export default function Footer({ data }: { data: CVData }) {
     .filter((link): link is { icon: string; link: string; name: string } =>
       Boolean(link && link.icon && link.link && link.name),
     );
+
   return (
     <>
       <Separator className="" />

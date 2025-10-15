@@ -11,6 +11,12 @@ const Projects = ({
   data: Project[];
   showBubbles: boolean;
 }) => {
+  // Defensive check: if data is undefined or not an array, render nothing
+  if (!data || !Array.isArray(data)) {
+    console.warn("Projects component received invalid data:", data);
+    return null;
+  }
+
   return (
     <section className="flex flex-col items-start gap-2">
       <Title text="Projects" />

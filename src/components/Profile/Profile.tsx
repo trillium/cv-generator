@@ -158,10 +158,17 @@ const ProfileEducation = ({ education }: { education?: Education[] }) => {
 };
 
 const Profile = ({ data }: { data: Data }) => {
+  // Defensive check: ensure profile exists
+  if (!data.profile) {
+    console.warn("Profile component received data without profile section");
+    return null;
+  }
+
   // Use smart defaults for optional fields
   const technical = data.technical ?? [{ category: "", bubbles: [] }];
   const languages = data.languages ?? [];
   const education = data.education ?? [];
+
   return (
     <div className="flex flex-col gap-4 w-full">
       <ProfileHeader {...data.profile} />

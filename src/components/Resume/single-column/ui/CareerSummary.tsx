@@ -4,7 +4,7 @@ import type { CVData } from "../../../../types";
 import React from "react";
 
 export default function CareerSummary({ data }: { data: CVData }) {
-  const { careerSummary } = data;
+  const { careerSummary = [] } = data;
 
   return (
     <section>

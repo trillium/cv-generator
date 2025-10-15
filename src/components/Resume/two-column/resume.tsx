@@ -5,6 +5,27 @@ import ProjectsList from "../../Projects/ProjectsList";
 import type { CVData } from "../../../types";
 
 function SingleColumnResume({ data }: { data: CVData }) {
+  // Defensive check: ensure critical data exists
+  if (!data.header || !data.workExperience) {
+    console.warn("Two-column resume received incomplete data:", {
+      hasHeader: !!data.header,
+      hasWorkExperience: !!data.workExperience,
+    });
+    return (
+      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
+            Incomplete Resume Data
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Some required sections are missing from the resume data.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex flex-col items-center justify-center ">
       <div className="grid grid-cols-10 gap-6 w-full max-w-6xl mx-auto rounded-md bg-white dark:bg-gray-800">
