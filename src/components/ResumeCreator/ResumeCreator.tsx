@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FiClipboard } from "react-icons/fi";
-import { useFileManager } from "@/contexts/FileManagerContext.hook";
-import * as yaml from "js-yaml";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
 
 interface CreatedResume {
-  fileName: string;
+  directoryName: string;
   position: string;
   company?: string;
 }
@@ -15,171 +13,74 @@ interface ResumeCreatorProps {
   onResumeCreated: (resume: CreatedResume) => void;
 }
 
+interface DirectoryInfo {
+  name: string;
+  path: string;
+}
+
 const ResumeCreator: React.FC<ResumeCreatorProps> = ({
   onClose,
   onResumeCreated,
 }) => {
   const router = useRouter();
-  const { createNewFile, loading } = useFileManager();
+  const { loading: contextLoading, error: contextError } =
+    useDirectoryManager();
 
-  // Form state
   const [position, setPosition] = useState("");
   const [company, setCompany] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [directories, setDirectories] = useState<DirectoryInfo[]>([]);
+  const [loadingDirs, setLoadingDirs] = useState(true);
 
-  // Folder structure state (now just use files from context)
-  const { files, refreshFiles } = useFileManager();
+  useEffect(() => {
+    loadDirectories();
+  }, []);
 
-  // Copy operation state
-  const [copyingFile, setCopyingFile] = useState<string | null>(null);
-  const [copyError, setCopyError] = useState<string | null>(null);
+  const loadDirectories = async () => {
+    try {
+      setLoadingDirs(true);
+      const response = await fetch(
+        `/api/directory/hierarchy?path=${encodeURIComponent(process.env.NEXT_PUBLIC_PII_PATH || "pii")}`,
+      );
+      const result = await response.json();
 
-  // Build directory tree from file paths
-  const buildDirectoryTree = (files: string[]): Record<string, unknown> => {
-    const tree: Record<string, unknown> = {};
+      if (result.success) {
+        const dirs = extractDirectories(result.hierarchy);
+        setDirectories(dirs);
+      }
+    } catch (err) {
+      console.error("Failed to load directories:", err);
+    } finally {
+      setLoadingDirs(false);
+    }
+  };
 
-    files.forEach((file) => {
-      const parts = file.split("/");
-      let current: Record<string, unknown> = tree;
+  const extractDirectories = (hierarchy: unknown): DirectoryInfo[] => {
+    const dirs: DirectoryInfo[] = [];
 
-      parts.forEach((part, index) => {
-        if (!current[part]) {
-          current[part] = index === parts.length - 1 ? null : {};
-        }
-        if (typeof current[part] === "object" && current[part] !== null) {
-          current = current[part] as Record<string, unknown>;
+    const traverse = (node: Record<string, unknown>, path: string = "") => {
+      Object.entries(node).forEach(([key, value]) => {
+        if (typeof value === "object" && value !== null) {
+          const dirPath = path ? `${path}/${key}` : key;
+          dirs.push({
+            name: formatDirectoryName(key),
+            path: dirPath,
+          });
+          traverse(value as Record<string, unknown>, dirPath);
         }
       });
-    });
+    };
 
-    return tree;
+    traverse(hierarchy as Record<string, unknown>);
+    return dirs;
   };
 
-  // Render directory tree as ASCII art
-  const renderDirectoryTree = (
-    tree: Record<string, unknown>,
-    prefix = "",
-    isLast = true,
-  ): string[] => {
-    const lines: string[] = [];
-    const entries = Object.keys(tree).sort();
-
-    entries.forEach((entry, index) => {
-      const isLastEntry = index === entries.length - 1;
-      const connector = isLast ? "└── " : "├── ";
-      const nextPrefix = prefix + (isLast ? "    " : "│   ");
-
-      const subtree = tree[entry];
-      const isFile = subtree === null;
-      const displayName = isFile ? entry : entry + "/";
-
-      lines.push(prefix + connector + displayName);
-
-      if (subtree && typeof subtree === "object" && subtree !== null) {
-        lines.push(
-          ...renderDirectoryTree(
-            subtree as Record<string, unknown>,
-            nextPrefix,
-            isLastEntry,
-          ),
-        );
-      }
-    });
-
-    return lines;
-  };
-
-  // Helper function to render tree lines with copy buttons for .yml files
-  const renderTreeLines = (files: string[]) => {
-    const tree = buildDirectoryTree(files);
-    const treeLines = renderDirectoryTree(tree);
-    return treeLines.map((line: string, index: number) => {
-      // Check if this line represents a .yml file
-      const isYmlFile =
-        line.trim().endsWith(".yml") || line.trim().endsWith('.yml"');
-      const fileName = line
-        .trim()
-        .replace(/["└──├──│├─└─]/g, "")
-        .trim();
-
-      if (isYmlFile && fileName.endsWith(".yml")) {
-        return (
-          <div
-            key={index}
-            className="leading-relaxed mb-1 flex items-center justify-between group"
-          >
-            <span className="flex-1">{line}</span>
-            <button
-              onClick={() => handleCopyResume(fileName)}
-              disabled={copyingFile === fileName}
-              className="ml-2 px-3 py-1.5 text-sm bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded transition-colors disabled:cursor-not-allowed flex items-center gap-1.5"
-              title={`Copy ${fileName} to timestamped subfolder`}
-            >
-              {copyingFile === fileName ? (
-                "..."
-              ) : (
-                <>
-                  <FiClipboard size={14} />
-                  Copy
-                </>
-              )}
-            </button>
-          </div>
-        );
-      }
-
-      return (
-        <div key={index} className="leading-relaxed mb-1">
-          {line}
-        </div>
-      );
-    });
-  };
-
-  // Handle copying a resume file to a timestamped subfolder
-  const handleCopyResume = async (sourceFile: string) => {
-    setCopyingFile(sourceFile);
-    setCopyError(null);
-
-    try {
-      // Generate timestamp for subfolder
-      const timestamp = new Date()
-        .toISOString()
-        .replace(/[:.]/g, "-")
-        .slice(0, -5);
-      const fileName = sourceFile.replace(".yml", "");
-      const subfolderName = `${fileName}_${timestamp}`;
-      const destinationPath = `${subfolderName}/data.yml`;
-
-      console.log(`Copying ${sourceFile} to ${destinationPath}`);
-
-      // Copy the file
-      // TODO: Implement duplicate logic using new file manager context or API
-      // const copyResult = await duplicateResume(sourceFile, destinationPath);
-      // if (!copyResult.success) {
-      //   throw new Error(copyResult.error || "Failed to copy resume");
-      // }
-
-      // Refresh file list using context
-      if (refreshFiles) await refreshFiles();
-
-      // Navigate to the new resume
-      const newResumePath = `${subfolderName}/data.yml`;
-      router.push(
-        `/single-column/resume?resume=${encodeURIComponent(newResumePath)}`,
-      );
-
-      // Close the modal
-      onClose();
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to copy resume";
-      setCopyError(errorMessage);
-      console.error("Copy resume error:", err);
-    } finally {
-      setCopyingFile(null);
-    }
+  const formatDirectoryName = (dirName: string): string => {
+    return dirName
+      .replace(/[-_]/g, " ")
+      .replace(/\b\w/g, (l: string) => l.toUpperCase());
   };
 
   const handleSubmit = async () => {
@@ -191,53 +92,42 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
     }
 
     try {
-      const templateData = {
-        info: {
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          role: position.trim(),
-        },
-        header: {
-          name: "",
-          title: [],
-          resume: [],
-        },
-        workExperience: [],
-        profile: {
-          shouldDisplayProfileImage: false,
-          lines: [],
-          links: [],
-        },
-        technical: [],
-        languages: [],
-        education: [],
-        projects: [],
-        coverLetter: [],
-        careerSummary: [],
-      };
+      setCreating(true);
 
-      const fileName = `${position.trim().toLowerCase().replace(/\s+/g, "-")}.yml`;
-      const yamlContent = yaml.dump(templateData, {
-        indent: 2,
-        lineWidth: -1,
-        noRefs: true,
-        sortKeys: false,
+      const directoryName = position.trim().toLowerCase().replace(/\s+/g, "-");
+
+      const response = await fetch("/api/directory/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          parentPath: process.env.NEXT_PUBLIC_PII_PATH || "pii",
+          directoryName,
+        }),
       });
 
-      await createNewFile("base", fileName, yamlContent);
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to create directory");
+      }
 
       onResumeCreated({
         position: position.trim(),
         company: company.trim(),
-        fileName,
+        directoryName,
       });
 
+      router.push(
+        `/single-column/resume?dir=${encodeURIComponent(result.path)}`,
+      );
       onClose();
       resetForm();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create resume");
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -253,6 +143,17 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
     onClose();
   };
 
+  const handleCopyDirectory = async (sourcePath: string) => {
+    try {
+      router.push(
+        `/single-column/resume?dir=${encodeURIComponent(sourcePath)}`,
+      );
+      onClose();
+    } catch (err) {
+      console.error("Copy directory error:", err);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -260,41 +161,35 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
           Create New Resume
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-          Create a new resume file with a basic template
+          Create a new resume directory or copy an existing one
         </p>
       </div>
 
-      {/* Folder Structure Display */}
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-        <h3 className="text-md font-medium text-gray-900 dark:text-white mb-3">
-          📁 Current Folder Structure
-        </h3>
-
-        {copyError && (
-          <div className="text-sm text-red-600 dark:text-red-400">
-            ❌ Error copying file: {copyError}
-          </div>
-        )}
-
-        {files && files.length > 0 && (
-          <div className="space-y-3">
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-                📂 Directory Structure:
-              </h4>
-              <div className="max-h-64 overflow-y-auto bg-gray-900 dark:bg-gray-900 rounded p-3">
-                <div className="font-mono text-base text-green-400 space-y-1">
-                  <div className="mb-3 text-gray-300">pii/</div>
-                  {renderTreeLines(files.map((f) => f.path))}
-                </div>
+      {!loadingDirs && directories.length > 0 && (
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+          <h3 className="text-md font-medium text-gray-900 dark:text-white mb-3">
+            📁 Existing Directories
+          </h3>
+          <div className="max-h-48 overflow-y-auto space-y-2">
+            {directories.map((dir) => (
+              <div
+                key={dir.path}
+                className="flex items-center justify-between p-2 bg-white dark:bg-gray-700 rounded text-sm"
+              >
+                <span className="text-gray-900 dark:text-white">
+                  {dir.name}
+                </span>
+                <button
+                  onClick={() => handleCopyDirectory(dir.path)}
+                  className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30"
+                >
+                  Copy
+                </button>
               </div>
-            </div>
+            ))}
           </div>
-        )}
-        {(!files || files.length === 0) && (
-          <p className="text-sm text-gray-400 italic">No files found</p>
-        )}
-      </div>
+        </div>
+      )}
 
       <form
         className="space-y-6"
@@ -303,7 +198,6 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
           handleSubmit();
         }}
       >
-        {/* Position */}
         <div>
           <label
             htmlFor="position"
@@ -322,7 +216,6 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
           />
         </div>
 
-        {/* Company */}
         <div>
           <label
             htmlFor="company"
@@ -340,7 +233,6 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
           />
         </div>
 
-        {/* Description */}
         <div>
           <label
             htmlFor="description"
@@ -358,16 +250,14 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
           />
         </div>
 
-        {/* Error Message */}
-        {error && (
+        {(error || contextError) && (
           <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
             <div className="text-sm text-red-700 dark:text-red-300">
-              {error}
+              {error || contextError}
             </div>
           </div>
         )}
 
-        {/* Buttons */}
         <div className="flex justify-end space-x-3 pt-4">
           <button
             type="button"
@@ -378,10 +268,10 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
           </button>
           <button
             type="submit"
-            disabled={loading}
+            disabled={creating || contextLoading}
             className="rounded-md border border-transparent bg-blue-600 dark:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
           >
-            {loading ? "Creating..." : "Create Resume"}
+            {creating ? "Creating..." : "Create Resume"}
           </button>
         </div>
       </form>

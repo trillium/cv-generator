@@ -1,53 +1,92 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-import { useFileManager } from "@/contexts/FileManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
 import { useModal } from "@/contexts/ModalContext";
-import { encodeFilePathForUrl } from "@/utils/urlSafeEncoding";
 
 interface ResumeNavigatorProps {
-  onSelectResume?: (filePath: string) => void; // Made optional since we'll navigate instead
+  onSelectResume?: (dirPath: string) => void;
+}
+
+interface DirectoryInfo {
+  name: string;
+  path: string;
 }
 
 function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
   const { closeModal } = useModal();
   const router = useRouter();
-  const { files, refreshFiles, loading, error } = useFileManager();
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [duplicateSource, setDuplicateSource] = useState<string | null>(null);
-  const [duplicateTarget, setDuplicateTarget] = useState("");
-  // Removed old file loading logic; now use files from context
+  const { loading: contextLoading, error: contextError } =
+    useDirectoryManager();
+  const [directories, setDirectories] = useState<DirectoryInfo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSelectResume = (filePath: string) => {
-    // Encode the file path for URL-safe navigation
-    const encodedPath = encodeFilePathForUrl(filePath);
+  useEffect(() => {
+    loadDirectories();
+  }, []);
 
-    // Navigate to the dynamic resume route
-    router.push(`/single-column/resume/${encodedPath}`);
+  const loadDirectories = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    // Call the optional callback if provided (for backward compatibility)
+      const response = await fetch(
+        `/api/directory/hierarchy?path=${encodeURIComponent(process.env.NEXT_PUBLIC_PII_PATH || "pii")}`,
+      );
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to load directories");
+      }
+
+      const dirs = extractDirectories(result.hierarchy);
+      setDirectories(dirs);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to load directories",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const extractDirectories = (hierarchy: unknown): DirectoryInfo[] => {
+    const dirs: DirectoryInfo[] = [];
+
+    const traverse = (node: Record<string, unknown>, path: string = "") => {
+      Object.entries(node).forEach(([key, value]) => {
+        if (typeof value === "object" && value !== null) {
+          const dirPath = path ? `${path}/${key}` : key;
+          dirs.push({
+            name: formatDirectoryName(key),
+            path: dirPath,
+          });
+          traverse(value as Record<string, unknown>, dirPath);
+        }
+      });
+    };
+
+    traverse(hierarchy as Record<string, unknown>);
+    return dirs;
+  };
+
+  const formatDirectoryName = (dirName: string): string => {
+    return dirName
+      .replace(/[-_]/g, " ")
+      .replace(/\b\w/g, (l: string) => l.toUpperCase());
+  };
+
+  const handleSelectResume = (dirPath: string) => {
+    router.push(`/single-column/resume?dir=${encodeURIComponent(dirPath)}`);
+
     if (onSelectResume) {
-      onSelectResume(filePath);
+      onSelectResume(dirPath);
     }
 
-    // Close the modal
     closeModal();
-  };
-
-  const handleDeleteResume = async () => {
-    // TODO: Implement delete logic using new file manager context or API
-    await refreshFiles(); // Refresh the list
-    setDeleteConfirm(null);
-  };
-
-  const handleDuplicateResume = async () => {
-    if (!duplicateSource || !duplicateTarget) return;
-    // TODO: Implement duplicate logic using new file manager context or API
-    await refreshFiles(); // Refresh the list
-    setDuplicateSource(null);
-    setDuplicateTarget("");
   };
 
   return (
@@ -57,90 +96,62 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
           Resume Navigator
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-300">
-          Select a resume file to view or manage your resume files
+          Select a resume directory to view
         </p>
       </div>
 
-      {loading && (
+      {(loading || contextLoading) && (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-2 text-gray-600 dark:text-gray-300">
-            Loading files...
+            Loading directories...
           </p>
         </div>
       )}
 
-      {error && (
+      {(error || contextError) && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-md p-4 mb-4">
-          <p className="text-red-800 dark:text-red-300">{error}</p>
+          <p className="text-red-800 dark:text-red-300">
+            {error || contextError}
+          </p>
         </div>
       )}
 
-      {!loading && !error && files && files.length === 0 && (
+      {!loading && !error && directories.length === 0 && (
         <div className="text-center py-8">
           <p className="text-gray-600 dark:text-gray-300">
-            No resume files found
+            No resume directories found
           </p>
         </div>
       )}
 
-      {!loading && files && files.length > 0 && (
-        <div className="space-y-2">
-          {files
-            .map((f) => f.path)
-            .map((filePath) => {
-              // Create a clean display name (same as ResumeListPage)
-              const displayName = filePath.replace(".yml", "");
-
-              return (
-                <div
-                  key={filePath}
-                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-600"
-                >
-                  <div className="flex-1">
-                    <button
-                      onClick={() => handleSelectResume(filePath)}
-                      className="text-left hover:text-blue-600 dark:hover:text-blue-400 font-medium w-full"
-                    >
-                      <div className="font-semibold">{displayName}</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        File: {filePath}
-                      </div>
-                    </button>
-                  </div>
-
-                  <div className="flex space-x-2 ml-4">
-                    {/* Duplicate button */}
-                    <button
-                      onClick={() => setDuplicateSource(filePath)}
-                      className="px-2 py-1 text-sm bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30 hover:text-blue-800 dark:hover:text-blue-200 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
-                      title="Duplicate file"
-                    >
-                      Copy
-                    </button>
-
-                    {/* Delete button */}
-                    <button
-                      onClick={() => setDeleteConfirm(filePath)}
-                      className="px-2 py-1 text-sm bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800/30 hover:text-red-800 dark:hover:text-red-200 hover:scale-105 hover:shadow-md transition-all duration-200 ease-in-out"
-                      title="Delete file"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+      {!loading && !error && directories.length > 0 && (
+        <div className="space-y-2 max-h-96 overflow-y-auto">
+          {directories.map((dir) => (
+            <div
+              key={dir.path}
+              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <div className="flex-1">
+                <p className="font-medium text-gray-900 dark:text-white">
+                  {dir.name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {dir.path}
+                </p>
+              </div>
+              <button
+                onClick={() => handleSelectResume(dir.path)}
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
+              >
+                Open
+              </button>
+            </div>
+          ))}
         </div>
       )}
 
-      <div className="flex justify-between items-center pt-4 border-t mt-4">
-        <button
-          onClick={refreshFiles}
-          className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
-        >
-          Refresh
-        </button>
+      <div className="flex justify-end pt-4 border-t mt-4">
         <button
           onClick={closeModal}
           className="px-4 py-2 bg-gray-600 dark:bg-gray-700 text-white rounded hover:bg-gray-700 dark:hover:bg-gray-600"
@@ -148,87 +159,6 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
           Close
         </button>
       </div>
-
-      {/* Delete Confirmation - show inline when deleteConfirm is set */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4">
-            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              Delete Resume File
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              Are you sure you want to delete &quot;{deleteConfirm}&quot;? This
-              action cannot be undone, but a backup will be created.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setDeleteConfirm(null)}
-                className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteResume}
-                className="rounded-md border border-transparent bg-red-600 dark:bg-red-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Duplicate form - show inline when duplicateSource is set */}
-      {duplicateSource && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md mx-4">
-            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              Duplicate Resume
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              Create a copy of &quot;{duplicateSource}&quot;
-            </p>
-
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="duplicateTarget"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  New filename
-                </label>
-                <input
-                  id="duplicateTarget"
-                  type="text"
-                  value={duplicateTarget}
-                  onChange={(e) => setDuplicateTarget(e.target.value)}
-                  placeholder="Enter new filename (e.g., resume-copy.yml)"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => {
-                    setDuplicateSource(null);
-                    setDuplicateTarget("");
-                  }}
-                  className="rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDuplicateResume}
-                  disabled={!duplicateTarget.trim()}
-                  className="rounded-md border border-transparent bg-blue-600 dark:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Duplicate
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

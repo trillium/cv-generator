@@ -1,26 +1,11 @@
 import { Page } from "puppeteer";
 import { getPageErrors } from "./browser";
 
-const EXPECTED_ERRORS = [
-  "useFileManager must be used within a FileManagerProvider",
-  "useModal must be used within a ModalProvider",
-  "useDirectoryManager must be used within a DirectoryManagerProvider",
-];
-
-function isExpectedError(error: string): boolean {
-  return EXPECTED_ERRORS.some((expected) => error.includes(expected));
-}
-
-export function assertNoConsoleErrors(page: Page, allowExpected = true): void {
+export function assertNoConsoleErrors(page: Page): void {
   const errors = getPageErrors(page);
-  const unexpectedErrors = allowExpected
-    ? errors.filter((err) => !isExpectedError(err))
-    : errors;
 
-  if (unexpectedErrors.length > 0) {
-    throw new Error(
-      `Page had unexpected console errors:\n${unexpectedErrors.join("\n")}`,
-    );
+  if (errors.length > 0) {
+    throw new Error(`Page had console errors:\n${errors.join("\n")}`);
   }
 }
 
