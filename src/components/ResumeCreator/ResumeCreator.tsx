@@ -60,21 +60,20 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
   const extractDirectories = (hierarchy: unknown): DirectoryInfo[] => {
     const dirs: DirectoryInfo[] = [];
 
-    const traverse = (node: Record<string, unknown>, path: string = "") => {
-      Object.entries(node).forEach(([key, value]) => {
-        if (typeof value === "object" && value !== null) {
-          const dirPath = path ? `${path}/${key}` : key;
-          dirs.push({
-            name: formatDirectoryName(key),
-            path: dirPath,
-          });
-          traverse(value as Record<string, unknown>, dirPath);
-        }
-      });
-    };
+    if (typeof hierarchy === "object" && hierarchy !== null) {
+      Object.entries(hierarchy as Record<string, unknown>).forEach(
+        ([key, value]) => {
+          if (typeof value === "object" && value !== null) {
+            dirs.push({
+              name: formatDirectoryName(key),
+              path: key,
+            });
+          }
+        },
+      );
+    }
 
-    traverse(hierarchy as Record<string, unknown>);
-    return dirs;
+    return dirs.sort((a, b) => a.name.localeCompare(b.name));
   };
 
   const formatDirectoryName = (dirName: string): string => {
