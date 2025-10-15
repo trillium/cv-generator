@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { useEffect, useRef } from "react";
 import ProfileLink from "../../../Profile/ProfileLink/ProfileLink";
 import EditableField from "../../../EditableField/EditableField";
 import type { CVData } from "../../../../types";
@@ -25,10 +24,6 @@ function isInfo(obj: Record<string, unknown>): obj is {
 }
 
 export default function Header({ data }: { data: CVData }) {
-  const firstNameRef = useRef<HTMLSpanElement>(null);
-  const lastNameRef = useRef<HTMLSpanElement>(null);
-
-  // Always call hooks unconditionally
   const infoIsValid = isInfo(data.info as Record<string, unknown>);
   const firstName = infoIsValid ? String(data.info.firstName) : "";
   const lastName = infoIsValid ? String(data.info.lastName) : "";
@@ -36,20 +31,6 @@ export default function Header({ data }: { data: CVData }) {
   const email = infoIsValid ? String(data.info.email) : "";
   const phone = infoIsValid ? String(data.info.phone) : "";
   const website = infoIsValid ? String(data.info.website) : "";
-
-  useEffect(() => {
-    if (firstNameRef.current) {
-      const computedStyle = window.getComputedStyle(firstNameRef.current);
-      console.log("🚨 First name text color:", computedStyle.color);
-    }
-  }, [firstName]);
-
-  useEffect(() => {
-    if (lastNameRef.current) {
-      const computedStyle = window.getComputedStyle(lastNameRef.current);
-      console.log("🚨 Last name text color:", computedStyle.color);
-    }
-  }, [lastName]);
 
   if (!infoIsValid) return null;
 
@@ -69,10 +50,7 @@ export default function Header({ data }: { data: CVData }) {
               value={firstName}
               fieldType="text"
             >
-              <span
-                ref={firstNameRef}
-                className=" font-semibold text-primary-500"
-              >
+              <span className=" font-semibold text-primary-500">
                 {firstName}
               </span>
             </EditableField>{" "}
@@ -81,9 +59,7 @@ export default function Header({ data }: { data: CVData }) {
               value={lastName}
               fieldType="text"
             >
-              <span ref={lastNameRef} className="font-normal dark:text-white">
-                {lastName}
-              </span>
+              <span className="font-normal dark:text-white">{lastName}</span>
             </EditableField>
           </h1>
         </div>
