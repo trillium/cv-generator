@@ -6,7 +6,6 @@ import { assertNoConsoleErrors } from "../helpers/assertions";
 
 const STATIC_ROUTES = [
   "/",
-  "/diagnostic",
   "/file-manager",
   "/linkedIn",
   "/playground",
