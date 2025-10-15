@@ -5,33 +5,29 @@ import { useParams, useRouter } from "next/navigation";
 import SingleColumnResume from "../../../../src/components/Resume/single-column/resume";
 import type { CVData } from "../../../../src/types";
 
-import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useFileManager } from "../../../../src/contexts/FileManagerContext.hook";
+import { useDirectoryManager } from "../../../../src/contexts/DirectoryManagerContext";
 
 export default function DynamicSingleColumnResumePage() {
   const params = useParams();
   const router = useRouter();
   const {
     parsedData,
-    loadFile,
+    loadDirectory,
     loading: contextLoading,
     error: contextError,
-  } = useFileManager();
+  } = useDirectoryManager();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [resolvedFilePath, setResolvedFilePath] = useState<string | null>(null);
+  const [resolvedDirPath, setResolvedDirPath] = useState<string | null>(null);
 
-  // Extract resume path from params and decode it
-  const encodedResumePath = params?.["resume-path"] as string | undefined;
-  const resumePath = encodedResumePath
-    ? decodeFilePathFromUrl(encodedResumePath)
-    : null;
+  // Extract directory path from params (in directory mode, paths are directory paths not file paths)
+  const dirPath = params?.["resume-path"] as string | undefined;
 
   useEffect(() => {
     async function validateAndLoadResume() {
-      if (!resumePath) {
-        setError("No resume path provided");
+      if (!dirPath) {
+        setError("No directory path provided");
         setLoading(false);
         return;
       }
@@ -40,23 +36,23 @@ export default function DynamicSingleColumnResumePage() {
         setLoading(true);
         setError(null);
 
-        // Just try to load the file directly; context will handle errors
-        await loadFile(resumePath);
-        setResolvedFilePath(resumePath);
+        // Load directory instead of file
+        await loadDirectory(dirPath);
+        setResolvedDirPath(dirPath);
       } catch (err) {
         const errorMessage =
           err instanceof Error
             ? err.message
-            : `Failed to load resume: ${encodedResumePath} (decoded: ${resumePath})`;
+            : `Failed to load directory: ${dirPath}`;
         setError(errorMessage);
-        console.error("Error loading dynamic resume:", err);
+        console.error("Error loading directory:", err);
       } finally {
         setLoading(false);
       }
     }
 
     validateAndLoadResume();
-  }, [encodedResumePath, resumePath, loadFile]);
+  }, [dirPath, loadDirectory]);
 
   if (loading || contextLoading) {
     return (
@@ -64,7 +60,7 @@ export default function DynamicSingleColumnResumePage() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 dark:border-primary-400 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">
-            Loading resume: {resumePath || encodedResumePath}...
+            Loading directory: {dirPath}...
           </p>
         </div>
       </div>
@@ -113,8 +109,7 @@ export default function DynamicSingleColumnResumePage() {
   return (
     <div>
       <div className="sr-only">
-        Currently displaying resume:{" "}
-        {resolvedFilePath || resumePath || encodedResumePath}
+        Currently displaying directory: {resolvedDirPath || dirPath}
       </div>
       <SingleColumnResume data={parsedData as CVData} />
     </div>

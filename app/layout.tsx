@@ -1,6 +1,6 @@
 import "./globals.css";
 import Navigation from "../src/components/Navigation/Navigation";
-import { FileManagerProvider } from "../src/contexts/FileManagerContext";
+import { DirectoryManagerProvider } from "../src/contexts/DirectoryManagerContext";
 import { ModalProvider } from "../src/contexts/ModalContext";
 import Modal from "../src/components/ui/modal";
 import { ThemeProviders } from "./theme-providers";
@@ -15,7 +15,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning={true}>
       <body className="bg-white dark:bg-gray-800 min-w-2xl">
         <ThemeProviders>
-          <FileManagerProvider>
+          <DirectoryManagerProvider>
             <ModalProvider>
               <Navigation />
               <div className="m-6 print:m-0">
@@ -24,7 +24,7 @@ export default function RootLayout({
               <Modal />
               <Toaster />
             </ModalProvider>
-          </FileManagerProvider>
+          </DirectoryManagerProvider>
         </ThemeProviders>
       </body>
     </html>

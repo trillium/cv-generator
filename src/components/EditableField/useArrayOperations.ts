@@ -1,12 +1,12 @@
 "use client";
 
 import { useYamlPathUpdater } from "../../hooks/useYamlPathUpdater";
-import { useFileManager } from "../../contexts/FileManagerContext.hook";
+import { useDirectoryManager } from "../../contexts/DirectoryManagerContext";
 import { findArrayInfo, createNewItemFromTemplate } from "./editableFieldUtils";
 
 export function useArrayOperations(yamlPath: string) {
   const { updateYamlPath } = useYamlPathUpdater();
-  const { parsedData } = useFileManager();
+  const { parsedData } = useDirectoryManager();
 
   const handleAddAbove = async (e: React.MouseEvent) => {
     e.stopPropagation();

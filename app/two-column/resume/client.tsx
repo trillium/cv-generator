@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import TwoColumnResume from "../../../src/components/Resume/two-column/resume";
-import { useFileManager } from "../../../src/contexts/FileManagerContext.hook";
-import { decodeFilePathFromUrl } from "../../../src/utils/urlSafeEncoding";
+import { useDirectoryManager } from "../../../src/contexts/DirectoryManagerContext";
 import type { CVData } from "../../../src/types";
 
 interface TwoColumnResumePageClientProps {
@@ -13,34 +12,34 @@ interface TwoColumnResumePageClientProps {
 export default function TwoColumnResumePageClient({
   searchParams,
 }: TwoColumnResumePageClientProps) {
-  const { parsedData, loadFile, currentFile } = useFileManager();
+  const { parsedData, loadDirectory, currentDirectory } = useDirectoryManager();
   const [resumeData, setResumeData] = useState<CVData | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  const fileParam =
-    typeof searchParams.file === "string" ? searchParams.file : null;
-  const resumeParam =
-    typeof searchParams.resume === "string" ? searchParams.resume : null;
-
-  const rawPath = fileParam || resumeParam;
-  const resumePath = rawPath ? decodeFilePathFromUrl(rawPath) : null;
+  // Get directory path from search params, default to 'base'
+  const dirParam =
+    typeof searchParams.dir === "string" ? searchParams.dir : "base";
 
   useEffect(() => {
     const initializeResume = async () => {
       try {
-        if (resumePath && resumePath !== currentFile?.path) {
-          console.log("Loading resume from server searchParams:", resumePath);
-          await loadFile(resumePath);
+        if (dirParam && dirParam !== currentDirectory) {
+          console.log("Loading directory:", dirParam);
+          await loadDirectory(dirParam);
+        } else if (!currentDirectory) {
+          // Load default directory if none loaded
+          console.log("Loading default directory: base");
+          await loadDirectory("base");
         }
       } catch (error) {
-        console.error("Failed to initialize resume from searchParams:", error);
+        console.error("Failed to initialize resume from directory:", error);
       } finally {
         setIsInitializing(false);
       }
     };
 
     initializeResume();
-  }, [resumePath, currentFile?.path, loadFile]);
+  }, [dirParam, currentDirectory, loadDirectory]);
 
   useEffect(() => {
     if (parsedData) {
@@ -56,8 +55,8 @@ export default function TwoColumnResumePageClient({
           <p className="text-gray-600">
             {isInitializing ? "Initializing..." : "Loading resume data..."}
           </p>
-          {resumePath && (
-            <p className="text-sm text-gray-500 mt-2">Loading: {resumePath}</p>
+          {dirParam && (
+            <p className="text-sm text-gray-500 mt-2">Loading: {dirParam}</p>
           )}
         </div>
       </div>

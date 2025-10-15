@@ -1,29 +1,21 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { clsx } from "clsx";
-import { useFileManager } from "../../contexts/FileManagerContext.hook";
+import { useDirectoryManager } from "../../contexts/DirectoryManagerContext";
 import { useModal } from "../../contexts/ModalContext";
 import ResumeNavigator from "../ResumeNavigator/ResumeNavigator";
 import ResumeCreator from "../ResumeCreator/ResumeCreator";
 import type { CVData } from "../../types";
 
 const ResumeSelector: React.FC = () => {
-  const { parsedData, currentFile, files, refreshFiles, loadFile, loading } =
-    useFileManager();
+  const { parsedData, currentDirectory, loading } = useDirectoryManager();
 
   const { openModal, closeModal } = useModal();
 
-  useEffect(() => {
-    refreshFiles();
-  }, [refreshFiles]);
-
-  const handleResumeCreated = async (resume: {
-    fileName: string;
-    position: string;
-    company?: string;
-  }) => {
-    await loadFile(resume.fileName);
+  const handleResumeCreated = async () => {
+    // In directory mode, we don't load individual files
+    // For now, just close the modal
     closeModal();
   };
 
@@ -42,17 +34,14 @@ const ResumeSelector: React.FC = () => {
   };
 
   const formatResumeTitle = () => {
-    if (!parsedData || !currentFile) {
+    if (!parsedData || !currentDirectory) {
       return "No Resume Selected";
     }
 
-    const fileName =
-      currentFile.path
-        .split("/")
-        .pop()
-        ?.replace(/\.(yml|yaml)$/i, "") || "Resume";
+    const directoryName =
+      currentDirectory.split("/").filter(Boolean).pop() || "base";
 
-    const formattedName = fileName
+    const formattedName = directoryName
       .replace(/[-_]/g, " ")
       .replace(/\b\w/g, (l: string) => l.toUpperCase());
 
@@ -71,8 +60,8 @@ const ResumeSelector: React.FC = () => {
       parts.push(cvData.info.role);
     }
 
-    if (currentFile && parts.length === 0) {
-      parts.push(currentFile.path);
+    if (currentDirectory && parts.length === 0) {
+      parts.push(currentDirectory);
     }
 
     return parts.length > 0 ? parts.join(" • ") : null;
@@ -94,10 +83,6 @@ const ResumeSelector: React.FC = () => {
     } else {
       return "gray";
     }
-  };
-
-  const getFileCount = () => {
-    return files?.length || 0;
   };
 
   return (
@@ -173,14 +158,11 @@ const ResumeSelector: React.FC = () => {
               Role: {(parsedData as CVData).info.role}
             </span>
           )}
-          {currentFile && (
+          {currentDirectory && (
             <span className=" whitespace-nowrap block">
-              File: {currentFile.path}
+              Directory: {currentDirectory}
             </span>
           )}
-          <span className=" whitespace-nowrap block">
-            Available Files: {getFileCount()}
-          </span>
         </div>
       )}
     </>
