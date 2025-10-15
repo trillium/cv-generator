@@ -202,6 +202,20 @@ export default function EditModal({
         <div className="flex flex-col items-center">
           <button
             onMouseDown={(e) => e.preventDefault()}
+            // Placeholder for copy logic
+            onClick={() => {}}
+            className="text-xs bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded"
+            title="Copy as JSON"
+          >
+            📋
+          </button>
+          <span className="text-[10px] text-green-700 dark:text-green-300 mt-1">
+            Copy
+          </span>
+        </div>
+        <div className="flex flex-col items-center">
+          <button
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleModalSave}
             disabled={isSaving}
             className="text-xs bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
