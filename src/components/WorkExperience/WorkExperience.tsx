@@ -21,6 +21,12 @@ const WorkExperience = ({
   data: WorkExperiences[];
   showBubbles?: boolean;
 }) => {
+  // Defensive check: if data is undefined or not an array, render nothing or show error
+  if (!data || !Array.isArray(data)) {
+    console.warn("WorkExperience component received invalid data:", data);
+    return null;
+  }
+
   return (
     <section className="flex flex-col items-start gap-2">
       <Title text="Professional Experience" />

@@ -1,52 +1,48 @@
 import { useCallback } from "react";
-import { useFileManager } from "../contexts/FileManagerContext.hook";
+import { useDirectoryManager } from "../contexts/DirectoryManagerContext";
 
 export function useContextAwareYamlUpdater() {
-  const { currentFile, updateContent, saveFile } = useFileManager();
+  const { currentDirectory, saveDirectory } = useDirectoryManager();
 
   const updateYamlContent = useCallback(
     async (newContent: string) => {
       console.log("🔍 useContextAwareYamlUpdater called with:", {
-        currentFilePath: currentFile?.path,
-        hasCurrentFile: !!currentFile,
+        currentDirectoryPath: currentDirectory,
+        hasCurrentDirectory: !!currentDirectory,
         newContentLength: newContent.length,
         newContentPreview: newContent.substring(0, 100) + "...",
       });
 
-      if (currentFile) {
-        console.log("🎯 Updating file:", {
-          filePath: currentFile.path,
+      if (currentDirectory) {
+        console.log("🎯 Using directory mode:", {
+          directoryPath: currentDirectory,
         });
 
-        try {
-          updateContent(newContent);
-          await saveFile(true);
-          console.log("✅ File update completed");
+        // In directory mode, we don't update content directly
+        // Updates should go through updateDataPath
+        console.warn(
+          "updateYamlContent called in directory mode - updates should use updateDataPath instead",
+        );
 
-          return { success: true, filePath: currentFile.path };
-        } catch (error) {
-          console.error("❌ File update failed:", error);
-          throw error;
-        }
+        // Save any pending changes
+        await saveDirectory();
+
+        return { success: true, directoryPath: currentDirectory };
       } else {
-        throw new Error("No file loaded");
+        throw new Error("No directory loaded");
       }
     },
-    [currentFile, updateContent, saveFile],
+    [currentDirectory, saveDirectory],
   );
 
   return {
     updateYamlContent,
-    currentContext: currentFile
+    currentContext: currentDirectory
       ? {
-          filePath: currentFile.path,
-          fileName:
-            currentFile.path
-              .split("/")
-              .pop()
-              ?.replace(/\.(yml|yaml)$/i, "") || "resume",
+          directoryPath: currentDirectory,
+          mode: "directory" as const,
         }
       : null,
-    isFileBasedMode: !!currentFile,
+    isDirectoryMode: !!currentDirectory,
   };
 }
