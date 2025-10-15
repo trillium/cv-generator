@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import clsx from "clsx";
 import { useFileManager } from "@/contexts/FileManagerContext.hook";
 import { DirectoryFileInfo } from "@/contexts/FileManagerContext";
 import { useModal } from "@/contexts/ModalContext";
@@ -115,11 +116,12 @@ function TreeNodeItem({
   return (
     <>
       <div
-        className={`flex items-center py-1.5 px-2 cursor-pointer transition-colors ${
+        className={clsx(
+          "flex items-center py-1.5 px-2 cursor-pointer transition-colors",
           isSelected
             ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
-            : "hover:bg-gray-50 dark:hover:bg-gray-700"
-        }`}
+            : "hover:bg-gray-50 dark:hover:bg-gray-700",
+        )}
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleClick}
       >
@@ -142,16 +144,16 @@ function TreeNodeItem({
           </span>
         )}
         <span
-          className={`text-sm ${
+          className={clsx(
             node.type === "directory"
               ? "font-medium text-gray-900 dark:text-gray-100"
-              : "text-gray-700 dark:text-gray-300"
-          }`}
+              : "text-gray-700 dark:text-gray-300",
+          )}
         >
           {node.name}
         </span>
         {node.file && (
-          <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
+          <span className="ml-2 text-gray-500 dark:text-gray-400">
             {node.file.sections.length > 0 &&
               `(${node.file.sections.join(", ")})`}
           </span>
@@ -728,8 +730,8 @@ export default function FileManagerFeature() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 rounded-md">
+      <div className="max-w-full mx-auto p-6">
         <PageHeader currentDirectory={currentDirectory} />
 
         {error && <ErrorDisplay error={error} />}
