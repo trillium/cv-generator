@@ -1,4 +1,8 @@
-import { LinkedInData, LinkedInRecommendation } from "@/types/linkedin";
+import {
+  LinkedInData,
+  LinkedInProfile as LinkedInProfileType,
+  LinkedInRecommendation,
+} from "@/types/linkedin";
 import LinkedInEditableField from "./LinkedInEditableField";
 
 type LinkedInProfileProps = {
@@ -6,29 +10,31 @@ type LinkedInProfileProps = {
 };
 
 export default function LinkedInProfile({ data }: LinkedInProfileProps) {
+  const profile = data.linkedIn;
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800">
-        <ProfileHeader data={data} />
+        <ProfileHeader profile={profile} />
         <div className="px-6 py-4">
-          <AboutSection about={data.about} />
-          <ExperienceSection experiences={data.experience} />
-          <EducationSection education={data.education} />
-          {data.skills && data.skills.length > 0 && (
-            <SkillsSection skills={data.skills} />
+          <AboutSection about={profile.about} />
+          <ExperienceSection experiences={profile.experience} />
+          <EducationSection education={profile.education} />
+          {profile.skills && profile.skills.length > 0 && (
+            <SkillsSection skills={profile.skills} />
           )}
-          {data.recommendations &&
-            data.recommendations.received &&
-            data.recommendations.received.length > 0 && (
+          {profile.recommendations &&
+            profile.recommendations.received &&
+            profile.recommendations.received.length > 0 && (
               <RecommendationsSection
-                recommendations={data.recommendations.received}
+                recommendations={profile.recommendations.received}
               />
             )}
-          {data.certifications && data.certifications.length > 0 && (
-            <CertificationsSection certifications={data.certifications} />
+          {profile.certifications && profile.certifications.length > 0 && (
+            <CertificationsSection certifications={profile.certifications} />
           )}
-          {data.interests && data.interests.length > 0 && (
-            <InterestsSection interests={data.interests} />
+          {profile.interests && profile.interests.length > 0 && (
+            <InterestsSection interests={profile.interests} />
           )}
         </div>
       </div>
@@ -36,53 +42,53 @@ export default function LinkedInProfile({ data }: LinkedInProfileProps) {
   );
 }
 
-function ProfileHeader({ data }: { data: LinkedInData }) {
+function ProfileHeader({ profile }: { profile: LinkedInProfileType }) {
   return (
     <div className="relative">
       <div className="h-48 bg-gradient-to-r from-blue-600 to-blue-800" />
       <div className="px-6 pb-6">
         <div className="relative -mt-20 mb-4">
           <div className="w-40 h-40 rounded-full border-4 border-white dark:border-gray-800 bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-6xl font-bold text-white">
-            {data.firstName?.[0]}
-            {data.lastName?.[0]}
+            {profile.firstName?.[0]}
+            {profile.lastName?.[0]}
           </div>
         </div>
         <div className="flex gap-2">
           <LinkedInEditableField
-            yamlPath="firstName"
-            value={data.firstName}
+            yamlPath="linkedIn.firstName"
+            value={profile.firstName}
             fieldType="text"
           >
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {data.firstName}
+              {profile.firstName}
             </h1>
           </LinkedInEditableField>
           <LinkedInEditableField
-            yamlPath="lastName"
-            value={data.lastName}
+            yamlPath="linkedIn.lastName"
+            value={profile.lastName}
             fieldType="text"
           >
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {data.lastName}
+              {profile.lastName}
             </h1>
           </LinkedInEditableField>
         </div>
         <LinkedInEditableField
-          yamlPath="role"
-          value={data.role}
+          yamlPath="linkedIn.role"
+          value={profile.role}
           fieldType="text"
         >
           <p className="text-xl text-gray-700 dark:text-gray-300 mt-2">
-            {data.role}
+            {profile.role}
           </p>
         </LinkedInEditableField>
         <LinkedInEditableField
-          yamlPath="location"
-          value={data.location}
+          yamlPath="linkedIn.location"
+          value={profile.location}
           fieldType="text"
         >
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {data.location}
+            {profile.location}
           </p>
         </LinkedInEditableField>
       </div>
@@ -102,7 +108,7 @@ function AboutSection({ about }: { about: string }) {
         About
       </h2>
       <LinkedInEditableField
-        yamlPath="about"
+        yamlPath="linkedIn.about"
         value={about}
         fieldType="textarea"
       >
@@ -122,7 +128,7 @@ function AboutSection({ about }: { about: string }) {
 function ExperienceSection({
   experiences,
 }: {
-  experiences: LinkedInData["experience"];
+  experiences: LinkedInProfileType["experience"];
 }) {
   return (
     <div className="border-t border-gray-200 dark:border-gray-700 py-6">
@@ -135,7 +141,7 @@ function ExperienceSection({
             <div className="flex-shrink-0 w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded" />
             <div className="flex-1">
               <LinkedInEditableField
-                yamlPath={`experience.${index}.title`}
+                yamlPath={`linkedIn.experience.${index}.title`}
                 value={exp.title}
                 fieldType="text"
               >
@@ -144,7 +150,7 @@ function ExperienceSection({
                 </h3>
               </LinkedInEditableField>
               <LinkedInEditableField
-                yamlPath={`experience.${index}.company`}
+                yamlPath={`linkedIn.experience.${index}.company`}
                 value={exp.company}
                 fieldType="text"
               >
@@ -154,7 +160,7 @@ function ExperienceSection({
               </LinkedInEditableField>
               <div className="flex gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <LinkedInEditableField
-                  yamlPath={`experience.${index}.startDate`}
+                  yamlPath={`linkedIn.experience.${index}.startDate`}
                   value={exp.startDate}
                   fieldType="text"
                 >
@@ -162,7 +168,7 @@ function ExperienceSection({
                 </LinkedInEditableField>
                 <span>-</span>
                 <LinkedInEditableField
-                  yamlPath={`experience.${index}.endDate`}
+                  yamlPath={`linkedIn.experience.${index}.endDate`}
                   value={exp.endDate}
                   fieldType="text"
                 >
@@ -170,7 +176,7 @@ function ExperienceSection({
                 </LinkedInEditableField>
               </div>
               <LinkedInEditableField
-                yamlPath={`experience.${index}.location`}
+                yamlPath={`linkedIn.experience.${index}.location`}
                 value={exp.location}
                 fieldType="text"
               >
@@ -180,7 +186,7 @@ function ExperienceSection({
               </LinkedInEditableField>
               {exp.description && (
                 <LinkedInEditableField
-                  yamlPath={`experience.${index}.description`}
+                  yamlPath={`linkedIn.experience.${index}.description`}
                   value={exp.description}
                   fieldType="textarea"
                 >
@@ -200,7 +206,7 @@ function ExperienceSection({
 function EducationSection({
   education,
 }: {
-  education: LinkedInData["education"];
+  education: LinkedInProfileType["education"];
 }) {
   return (
     <div className="border-t border-gray-200 dark:border-gray-700 py-6">
@@ -213,7 +219,7 @@ function EducationSection({
             <div className="flex-shrink-0 w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded" />
             <div className="flex-1">
               <LinkedInEditableField
-                yamlPath={`education.${index}.institution`}
+                yamlPath={`linkedIn.education.${index}.institution`}
                 value={edu.institution}
                 fieldType="text"
               >
@@ -223,7 +229,7 @@ function EducationSection({
               </LinkedInEditableField>
               <div className="text-md text-gray-700 dark:text-gray-300">
                 <LinkedInEditableField
-                  yamlPath={`education.${index}.degree`}
+                  yamlPath={`linkedIn.education.${index}.degree`}
                   value={edu.degree}
                   fieldType="text"
                 >
@@ -233,7 +239,7 @@ function EducationSection({
                   <>
                     <span>, </span>
                     <LinkedInEditableField
-                      yamlPath={`education.${index}.fieldOfStudy`}
+                      yamlPath={`linkedIn.education.${index}.fieldOfStudy`}
                       value={edu.fieldOfStudy}
                       fieldType="text"
                     >
@@ -244,7 +250,7 @@ function EducationSection({
               </div>
               <div className="flex gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <LinkedInEditableField
-                  yamlPath={`education.${index}.startDate`}
+                  yamlPath={`linkedIn.education.${index}.startDate`}
                   value={edu.startDate}
                   fieldType="text"
                 >
@@ -252,7 +258,7 @@ function EducationSection({
                 </LinkedInEditableField>
                 <span>-</span>
                 <LinkedInEditableField
-                  yamlPath={`education.${index}.endDate`}
+                  yamlPath={`linkedIn.education.${index}.endDate`}
                   value={edu.endDate}
                   fieldType="text"
                 >
@@ -261,7 +267,7 @@ function EducationSection({
               </div>
               {edu.description && (
                 <LinkedInEditableField
-                  yamlPath={`education.${index}.description`}
+                  yamlPath={`linkedIn.education.${index}.description`}
                   value={edu.description}
                   fieldType="textarea"
                 >
@@ -346,7 +352,7 @@ function RecommendationsSection({
 function CertificationsSection({
   certifications,
 }: {
-  certifications: LinkedInData["certifications"];
+  certifications: LinkedInProfileType["certifications"];
 }) {
   return (
     <div className="border-t border-gray-200 dark:border-gray-700 py-6">
