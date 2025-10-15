@@ -15,12 +15,25 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
   const router = useRouter();
   const { files, loading, error } = useFileManager();
 
+  const stripBasePath = (fullPath: string): string => {
+    const piiPath = process.env.NEXT_PUBLIC_PII_PATH || "pii";
+    const piiIndex = fullPath.lastIndexOf(`/${piiPath}/`);
+    if (piiIndex !== -1) {
+      return fullPath.substring(piiIndex + piiPath.length + 2);
+    }
+    return fullPath;
+  };
+
   const handleSelectDirectory = (dirPath: string) => {
-    const pathSegments = dirPath.split("/").map(encodeURIComponent).join("/");
+    const relativePath = stripBasePath(dirPath);
+    const pathSegments = relativePath
+      .split("/")
+      .map(encodeURIComponent)
+      .join("/");
     router.push(`/single-column-multi/resume/${pathSegments}`);
 
     if (onSelectResume) {
-      onSelectResume(dirPath);
+      onSelectResume(relativePath);
     }
 
     closeModal();
