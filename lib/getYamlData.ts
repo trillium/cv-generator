@@ -13,17 +13,6 @@ import * as path from "path";
 import * as fs from "fs";
 import type { CVData } from "../src/types";
 
-export async function getYamlData(): Promise<string> {
-  try {
-    const fileManager = new UnifiedFileManager();
-    const fileContent = await fileManager.read("data.yml");
-    return fileContent.content;
-  } catch (error) {
-    console.error("Error reading YAML file:", error);
-    return `# Error: Could not read data.yml file - ${error instanceof Error ? error.message : "Unknown error"}`;
-  }
-}
-
 interface DirectoryLoadResult {
   files: FileEntry[];
   merged: Record<string, unknown>;
@@ -137,12 +126,36 @@ export function loadFromDirectory(dirPath: string): CVData {
  * @throws Error if section not found in any file
  */
 export function findSourceFile(dirPath: string, section: string): string {
-  const ancestors = getAncestorDirectories(dirPath).reverse();
+  // Check from most specific to least specific (no reverse!)
+  const ancestors = getAncestorDirectories(dirPath);
 
-  for (const dir of ancestors) {
+  // Iterate from most specific directory (end of array) to least specific (start)
+  for (let i = ancestors.length - 1; i >= 0; i--) {
+    const dir = ancestors[i];
     const files = findDataFilesInDirectory(dir);
 
+    // Prioritize section-specific files over full data files
+    const sectionSpecificFiles: string[] = [];
+    const fullDataFiles: string[] = [];
+
     for (const file of files) {
+      if (isFullDataFilename(path.basename(file))) {
+        fullDataFiles.push(file);
+      } else {
+        sectionSpecificFiles.push(file);
+      }
+    }
+
+    // Check section-specific files first
+    for (const file of sectionSpecificFiles) {
+      const data = loadDataFile(file);
+      if (section in data) {
+        return file;
+      }
+    }
+
+    // Then check full data files
+    for (const file of fullDataFiles) {
       const data = loadDataFile(file);
       if (section in data) {
         return file;
