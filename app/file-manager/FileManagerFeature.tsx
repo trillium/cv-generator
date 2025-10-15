@@ -3,6 +3,12 @@
 import { useState, useEffect } from "react";
 import { useFileManager } from "../../src/contexts/FileManagerContext.hook";
 import { DirectoryFileInfo } from "../../src/contexts/FileManagerContext";
+import {
+  MdFolder,
+  MdFolderOpen,
+  MdInsertDriveFile,
+  MdCircle,
+} from "react-icons/md";
 
 interface EditingFieldState {
   path: string;
@@ -117,13 +123,21 @@ function TreeNodeItem({
         onClick={handleClick}
       >
         {node.type === "directory" && (
-          <span className="mr-1.5 text-gray-500 dark:text-gray-400 w-4">
-            {hasChildren ? (isExpanded ? "▼" : "▶") : "○"}
+          <span className="mr-1.5 text-gray-500 dark:text-gray-400">
+            {hasChildren ? (
+              isExpanded ? (
+                <MdFolderOpen className="inline w-4 h-4" />
+              ) : (
+                <MdFolder className="inline w-4 h-4" />
+              )
+            ) : (
+              <MdCircle className="inline w-3 h-3" />
+            )}
           </span>
         )}
         {node.type === "file" && (
-          <span className="mr-1.5 text-gray-400 dark:text-gray-500 w-4">
-            📄
+          <span className="mr-1.5 text-gray-400 dark:text-gray-500">
+            <MdInsertDriveFile className="inline w-4 h-4" />
           </span>
         )}
         <span
