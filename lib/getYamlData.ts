@@ -10,6 +10,7 @@ import {
   type FileEntry,
 } from "./multiFileMapper";
 import * as path from "path";
+import * as fs from "fs";
 import type { CVData } from "../src/types";
 
 export async function getYamlData(): Promise<string> {
@@ -82,7 +83,7 @@ export function loadSingleDirectory(dirPath: string): DirectoryLoadResult {
  * Loads CV data from a directory hierarchy
  * @param dirPath - Relative path from PII_PATH (e.g., 'base/google/python')
  * @returns Merged CV data from all ancestor directories
- * @throws Error if validation fails
+ * @throws Error if validation fails or no data found
  * @example
  * loadFromDirectory('base/google')
  * // Loads from: base/, base/google/
@@ -90,16 +91,39 @@ export function loadSingleDirectory(dirPath: string): DirectoryLoadResult {
 export function loadFromDirectory(dirPath: string): CVData {
   const ancestorDirs = getAncestorDirectories(dirPath);
 
+  // Check if at least the target directory exists
+  const targetDir = ancestorDirs[ancestorDirs.length - 1];
+  if (!fs.existsSync(targetDir)) {
+    throw new Error(
+      `Directory not found: ${dirPath}\n` +
+        `Expected path: ${targetDir}\n` +
+        `Make sure the directory exists in the PII folder.`,
+    );
+  }
+
   const mergedData: Record<string, unknown> = {};
   const sectionSources = new Map<string, string>();
+  let foundAnyData = false;
 
   for (const dir of ancestorDirs) {
     const dirData = loadSingleDirectory(dir);
+
+    if (Object.keys(dirData.merged).length > 0) {
+      foundAnyData = true;
+    }
 
     for (const [section, value] of Object.entries(dirData.merged)) {
       mergedData[section] = value;
       sectionSources.set(section, dirData.sources[section]);
     }
+  }
+
+  if (!foundAnyData) {
+    throw new Error(
+      `No data files found in directory: ${dirPath}\n` +
+        `Checked directories: ${ancestorDirs.join(", ")}\n` +
+        `Make sure there are YAML or JSON data files in the directory.`,
+    );
   }
 
   return mergedData as CVData;
@@ -175,9 +199,9 @@ export async function updateDataPath(
   const ext = path.extname(sourceFile);
 
   if (ext === ".json") {
-    await fileManager.write(sourceFile, JSON.stringify(data, null, 2));
+    await fileManager.save(sourceFile, JSON.stringify(data, null, 2));
   } else {
     const yamlModule = await import("js-yaml");
-    await fileManager.write(sourceFile, yamlModule.dump(data));
+    await fileManager.save(sourceFile, yamlModule.dump(data));
   }
 }
