@@ -79,7 +79,7 @@ export type LinkedInActivity = {
   engagement?: string;
 };
 
-export type LinkedInData = {
+export type LinkedInProfile = {
   firstName: string;
   lastName: string;
   role: string;
@@ -105,4 +105,8 @@ export type LinkedInData = {
     given: LinkedInRecommendation[];
   };
   activity?: LinkedInActivity[];
+};
+
+export type LinkedInData = {
+  linkedIn: LinkedInProfile;
 };
