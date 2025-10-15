@@ -76,6 +76,7 @@ export interface FileManagerContextType {
   loading: boolean;
   error: string | null;
   loadDirectory: (dirPath: string) => Promise<void>;
+  loadFile: (filePath: string) => Promise<void>;
   updateField: (yamlPath: string, value: unknown) => Promise<void>;
   saveChanges: (commit?: boolean) => Promise<void>;
   discardChanges: () => Promise<void>;
@@ -204,6 +205,14 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
       }
     },
     [refreshFiles],
+  );
+
+  const loadFile = useCallback(
+    async (filePath: string) => {
+      const dirPath = filePath.split("/").slice(0, -1).join("/") || "base";
+      await loadDirectory(dirPath);
+    },
+    [loadDirectory],
   );
 
   const updateField = useCallback(
@@ -449,6 +458,7 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     loading,
     error,
     loadDirectory,
+    loadFile,
     updateField,
     saveChanges,
     discardChanges,

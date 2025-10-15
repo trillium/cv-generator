@@ -161,9 +161,19 @@ export class MultiFileManager extends UnifiedFileManager {
       success: true,
       updatedFile: sourceFile,
       section,
-      backup: result.backup,
-      diff: result.diff,
-      changelogEntry: result.changelogEntry,
+      backup: result.backupCreated
+        ? {
+            path: result.backupCreated,
+            timestamp: new Date().toISOString(),
+          }
+        : undefined,
+      changelogEntry: {
+        timestamp: result.changelogEntry.timestamp,
+        action: result.changelogEntry.action,
+        file: result.changelogEntry.file,
+        yamlPath,
+        message: result.changelogEntry.message,
+      },
     };
   }
 
@@ -376,7 +386,8 @@ export class MultiFileManager extends UnifiedFileManager {
       name: path.basename(filePath),
       path: filePath,
       size: stat.size,
-      modified: stat.mtime.toISOString(),
+      modified: stat.mtime,
+      created: stat.birthtime,
       type: "resume",
       versions: 0,
       hasUnsavedChanges: false,
