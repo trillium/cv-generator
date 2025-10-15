@@ -101,6 +101,13 @@ export interface FileManagerContextType {
   setSearchQuery: (query: string) => void;
   setSelectedTags: (tags: string[]) => void;
   refreshFiles: () => Promise<void>;
+  createDirectory: (parentPath: string, directoryName: string) => Promise<void>;
+  splitSectionToFile: (
+    sourceFilePath: string,
+    sectionKey: string,
+    targetFileName: string,
+  ) => Promise<void>;
+  deleteFileToDeleted: (filePath: string) => Promise<void>;
 }
 
 interface FileManagerProviderProps {
@@ -172,6 +179,109 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
       setLoading(false);
     }
   }, [currentDirectory, fileType, searchQuery, selectedTags]);
+
+  const createDirectory = useCallback(
+    async (parentPath: string, directoryName: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch("/api/directory/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ parentPath, directoryName }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          await refreshFiles();
+        } else {
+          setError(data.error || "Failed to create directory");
+          throw new Error(data.error || "Failed to create directory");
+        }
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to create directory";
+        setError(errorMsg);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [refreshFiles],
+  );
+
+  const splitSectionToFile = useCallback(
+    async (
+      sourceFilePath: string,
+      sectionKey: string,
+      targetFileName: string,
+    ) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch("/api/directory/split", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sourceFilePath, sectionKey, targetFileName }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          if (currentDirectory) {
+            await loadDirectory(currentDirectory);
+          }
+          await refreshFiles();
+        } else {
+          setError(data.error || "Failed to split section");
+          throw new Error(data.error || "Failed to split section");
+        }
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to split section";
+        setError(errorMsg);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentDirectory, refreshFiles],
+  );
+
+  const deleteFileToDeleted = useCallback(
+    async (filePath: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch("/api/directory/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ filePath }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          await refreshFiles();
+        } else {
+          setError(data.error || "Failed to delete file");
+          throw new Error(data.error || "Failed to delete file");
+        }
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to delete file";
+        setError(errorMsg);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [refreshFiles],
+  );
 
   const loadDirectory = useCallback(
     async (dirPath: string) => {
@@ -475,6 +585,9 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
     setSearchQuery,
     setSelectedTags,
     refreshFiles,
+    createDirectory,
+    splitSectionToFile,
+    deleteFileToDeleted,
   };
 
   return (

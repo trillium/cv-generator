@@ -439,6 +439,166 @@ function EditFieldModal({
   );
 }
 
+function CreateDirectoryModal({
+  currentDirectory,
+  onClose,
+  onCreate,
+}: {
+  currentDirectory: string;
+  onClose: () => void;
+  onCreate: (directoryName: string) => void;
+}) {
+  const [directoryName, setDirectoryName] = useState("");
+
+  function handleCreate() {
+    if (directoryName.trim()) {
+      onCreate(directoryName.trim());
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Create New Directory
+        </h3>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Parent: {currentDirectory}
+          </label>
+          <input
+            type="text"
+            value={directoryName}
+            onChange={(e) => setDirectoryName(e.target.value)}
+            placeholder="Directory name"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+          />
+        </div>
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleCreate}
+            disabled={!directoryName.trim()}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SplitSectionModal({
+  selectedFile,
+  onClose,
+  onSplit,
+}: {
+  selectedFile: string;
+  onClose: () => void;
+  onSplit: (sectionKey: string, targetFileName: string) => void;
+}) {
+  const [sectionKey, setSectionKey] = useState("");
+  const [targetFileName, setTargetFileName] = useState("");
+
+  function handleSplit() {
+    if (sectionKey.trim() && targetFileName.trim()) {
+      onSplit(sectionKey.trim(), targetFileName.trim());
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Split Section to New File
+        </h3>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Source File: {selectedFile}
+          </label>
+          <input
+            type="text"
+            value={sectionKey}
+            onChange={(e) => setSectionKey(e.target.value)}
+            placeholder="Section key (e.g., workExperience)"
+            className="w-full px-3 py-2 mb-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+          />
+          <input
+            type="text"
+            value={targetFileName}
+            onChange={(e) => setTargetFileName(e.target.value)}
+            placeholder="Target file name (e.g., work.yml)"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            onKeyDown={(e) => e.key === "Enter" && handleSplit()}
+          />
+        </div>
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSplit}
+            disabled={!sectionKey.trim() || !targetFileName.trim()}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Split
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeleteFileModal({
+  selectedFile,
+  onClose,
+  onDelete,
+}: {
+  selectedFile: string;
+  onClose: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Delete File
+        </h3>
+        <p className="text-gray-700 dark:text-gray-300 mb-4">
+          Are you sure you want to delete <strong>{selectedFile}</strong>?
+        </p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          The file will be moved to the deleted/ folder.
+        </p>
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onDelete}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FileManagerFeature() {
   const {
     currentDirectory,
@@ -453,12 +613,18 @@ export default function FileManagerFeature() {
     updateField,
     saveChanges,
     discardChanges,
+    createDirectory,
+    splitSectionToFile,
+    deleteFileToDeleted,
   } = useFileManager();
 
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [editingField, setEditingField] = useState<EditingFieldState | null>(
     null,
   );
+  const [showCreateDirModal, setShowCreateDirModal] = useState(false);
+  const [showSplitSectionModal, setShowSplitSectionModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     if (currentDirectory) {
@@ -495,12 +661,70 @@ export default function FileManagerFeature() {
     }
   }
 
+  async function handleCreateDirectory(directoryName: string) {
+    if (!currentDirectory) return;
+    try {
+      await createDirectory(currentDirectory, directoryName);
+      setShowCreateDirModal(false);
+    } catch (err) {
+      console.error("Failed to create directory:", err);
+    }
+  }
+
+  async function handleSplitSection(
+    sectionKey: string,
+    targetFileName: string,
+  ) {
+    if (!selectedFile) return;
+    try {
+      await splitSectionToFile(selectedFile, sectionKey, targetFileName);
+      setShowSplitSectionModal(false);
+    } catch (err) {
+      console.error("Failed to split section:", err);
+    }
+  }
+
+  async function handleDeleteFile() {
+    if (!selectedFile) return;
+    try {
+      await deleteFileToDeleted(selectedFile);
+      setShowDeleteModal(false);
+      setSelectedFile(null);
+    } catch (err) {
+      console.error("Failed to delete file:", err);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto p-6">
         <PageHeader currentDirectory={currentDirectory} />
 
         {error && <ErrorDisplay error={error} />}
+
+        <div className="mb-4 flex gap-3">
+          <button
+            onClick={() => setShowCreateDirModal(true)}
+            disabled={!currentDirectory || loading}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Create Directory
+          </button>
+          <button
+            onClick={() => setShowSplitSectionModal(true)}
+            disabled={!selectedFile || loading}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Split Section
+          </button>
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            disabled={!selectedFile || loading}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Delete File
+          </button>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
@@ -548,6 +772,30 @@ export default function FileManagerFeature() {
             onSave={handleFieldSave}
             onCancel={handleFieldCancel}
             onChange={handleFieldChange}
+          />
+        )}
+
+        {showCreateDirModal && currentDirectory && (
+          <CreateDirectoryModal
+            currentDirectory={currentDirectory}
+            onClose={() => setShowCreateDirModal(false)}
+            onCreate={handleCreateDirectory}
+          />
+        )}
+
+        {showSplitSectionModal && selectedFile && (
+          <SplitSectionModal
+            selectedFile={selectedFile}
+            onClose={() => setShowSplitSectionModal(false)}
+            onSplit={handleSplitSection}
+          />
+        )}
+
+        {showDeleteModal && selectedFile && (
+          <DeleteFileModal
+            selectedFile={selectedFile}
+            onClose={() => setShowDeleteModal(false)}
+            onDelete={handleDeleteFile}
           />
         )}
       </div>
