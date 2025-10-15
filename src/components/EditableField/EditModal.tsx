@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import DebugInfo from "./DebugInfo";
 import { CVData } from "../../types";
+import { extractCopyData } from "../../../lib/utility/index";
 
 interface EditModalProps {
   editValue: string;
@@ -38,6 +39,7 @@ export default function EditModal({
   const [modalEditValue, setModalEditValue] = useState(editValue);
   const [linkText, setLinkText] = useState(linkData?.text || "");
   const [linkUrl, setLinkUrl] = useState(linkData?.url || "");
+  const [copied, setCopied] = useState(false);
   const modalInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
   // Determine if this is a links array that should show link editing
@@ -107,6 +109,22 @@ export default function EditModal({
       await onSave(modalEditValue);
     } else {
       onCancel();
+    }
+  };
+
+  // --- Copy button handler ---
+  const handleCopy = async () => {
+    try {
+      const data = extractCopyData(yamlPath, parsedData as CVData);
+      if (data === undefined) {
+        setCopied(false);
+        return;
+      }
+      await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
     }
   };
 
@@ -202,15 +220,16 @@ export default function EditModal({
         <div className="flex flex-col items-center">
           <button
             onMouseDown={(e) => e.preventDefault()}
-            // Placeholder for copy logic
-            onClick={() => {}}
+            onClick={handleCopy}
             className="text-xs bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-4 py-2 rounded"
             title="Copy as JSON"
+            aria-label="Copy as JSON"
+            type="button"
           >
-            📋
+            {copied ? "✅" : "📋"}
           </button>
           <span className="text-[10px] text-green-700 dark:text-green-300 mt-1">
-            Copy
+            {copied ? "Copied!" : "Copy"}
           </span>
         </div>
         <div className="flex flex-col items-center">
@@ -220,6 +239,7 @@ export default function EditModal({
             disabled={isSaving}
             className="text-xs bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
             title="Save (Enter)"
+            type="button"
           >
             {isSaving ? "⏳" : "✓"}
           </button>
@@ -233,6 +253,7 @@ export default function EditModal({
             onClick={onCancel}
             className="text-xs bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-800 text-white px-4 py-2 rounded"
             title="Cancel (Esc)"
+            type="button"
           >
             ✕
           </button>
