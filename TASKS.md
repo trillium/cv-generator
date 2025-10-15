@@ -1,14 +1,14 @@
-1. FileManagerFeature search: {hasChildren ? (isExpanded ? "▼" : "▶") : "○"}
+1. ✅ DONE - FileManagerFeature search: {hasChildren ? (isExpanded ? "▼" : "▶") : "○"}
 
 Change these to some sort of react-icons icon please
 
-2. Extend all file types of the CVData (eg work experience, etc) to accept an optional notes array of type string
+2. ✅ DONE - Extend all file types of the CVData (eg work experience, etc) to accept an optional notes array of type string
 
-3. Stage and commit all the files in semantic parts that are still uncommitted
+3. ✅ DONE - Stage and commit all the files in semantic parts that are still uncommitted
 
-4. Go through and replace all instances of file based imports eg path of "../../someFile" to @ style imports
+4. ✅ DONE - Go through and replace all instances of file based imports eg path of "../../someFile" to @ style imports
 
-5. The user needs a way to create a new directory or to split out a key of the resume file. Develop a system to do that and integrate it.
+5. TODO - The user needs a way to create a new directory or to split out a key of the resume file. Develop a system to do that and integrate it.
 
 System should allow a section to be moved out of the larger data file (eg data.yml, copy existing info off of data.info into info.yml)
 
