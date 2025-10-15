@@ -1,8 +1,8 @@
 import "./globals.css";
-import Navigation from "../src/components/Navigation/Navigation";
-import { DirectoryManagerProvider } from "../src/contexts/DirectoryManagerContext";
-import { ModalProvider } from "../src/contexts/ModalContext";
-import Modal from "../src/components/ui/modal";
+import Navigation from "@/components/Navigation/Navigation";
+import { DirectoryManagerProvider } from "@/contexts/DirectoryManagerContext";
+import { ModalProvider } from "@/contexts/ModalContext";
+import Modal from "@/components/ui/modal";
 import { ThemeProviders } from "./theme-providers";
 import { Toaster } from "sonner";
 

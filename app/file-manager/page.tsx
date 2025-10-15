@@ -1,4 +1,4 @@
-import { FileManagerProvider } from "../../src/contexts/FileManagerContext";
+import { FileManagerProvider } from "@/contexts/FileManagerContext";
 import FileManagerFeature from "./FileManagerFeature";
 
 export default function FileManagerPage() {

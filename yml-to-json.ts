@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 import { UnifiedFileManager } from "./lib/unifiedFileManager";
 import * as yaml from "js-yaml";
-import { validateCVData } from "./lib/validateCVData";
+import { CVData } from "./src/types";
 import { writeFileSync } from "node:fs";
 import { config } from "dotenv";
 import path from "path";
@@ -24,9 +24,8 @@ async function main() {
   try {
     const fileManager = new UnifiedFileManager(piiPath);
     const { content } = await fileManager.read("data.yml");
-    const parsed = yaml.load(content);
-    const validated = validateCVData(parsed);
-    writeFileSync(outputPath, JSON.stringify(validated, null, 2));
+    const parsed = yaml.load(content) as CVData;
+    writeFileSync(outputPath, JSON.stringify(parsed, null, 2));
     console.log(`✅ Converted ${inputPath} to ${outputPath}`);
   } catch (err) {
     console.error("❌ Failed to convert:", err);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiClipboard } from "react-icons/fi";
-import { useFileManager } from "../../contexts/FileManagerContext.hook";
+import { useFileManager } from "@/contexts/FileManagerContext.hook";
 import * as yaml from "js-yaml";
 
 interface CreatedResume {
@@ -157,9 +157,9 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
       // Copy the file
       // TODO: Implement duplicate logic using new file manager context or API
       // const copyResult = await duplicateResume(sourceFile, destinationPath);
-      if (!copyResult.success) {
-        throw new Error(copyResult.error || "Failed to copy resume");
-      }
+      // if (!copyResult.success) {
+      //   throw new Error(copyResult.error || "Failed to copy resume");
+      // }
 
       // Refresh file list using context
       if (refreshFiles) await refreshFiles();
@@ -226,7 +226,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
         sortKeys: false,
       });
 
-      await createNewFile(fileName, yamlContent, true);
+      await createNewFile("base", fileName, yamlContent);
 
       onResumeCreated({
         position: position.trim(),

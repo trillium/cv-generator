@@ -1,7 +1,7 @@
 "use client";
 
-import { useYamlPathUpdater } from "../../hooks/useYamlPathUpdater";
-import { useDirectoryManager } from "../../contexts/DirectoryManagerContext.hook";
+import { useYamlPathUpdater } from "@/hooks/useYamlPathUpdater";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
 import { findArrayInfo, createNewItemFromTemplate } from "./editableFieldUtils";
 
 export function useArrayOperations(yamlPath: string) {

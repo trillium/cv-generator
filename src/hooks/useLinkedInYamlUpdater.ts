@@ -1,5 +1,5 @@
 import * as yaml from "js-yaml";
-import { useLinkedInData } from "../contexts/LinkedInContext";
+import { useLinkedInData } from "@/contexts/LinkedInContext";
 
 export function getNestedValue(obj: unknown, path: string): unknown {
   const keys = path.split(".");

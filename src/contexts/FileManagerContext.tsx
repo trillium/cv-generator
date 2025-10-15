@@ -2,9 +2,9 @@
 
 import { useState, useCallback, ReactNode } from "react";
 import { FileManagerContext } from "./FileManagerContext.constants";
-import { FileMetadata, FileType, Version, Diff } from "../types/fileManager";
-import { CVData } from "../types";
-import { LinkedInData } from "../types/linkedin";
+import { FileMetadata, FileType, Version, Diff } from "@/types/fileManager";
+import { CVData } from "@/types";
+import { LinkedInData } from "@/types/linkedin";
 
 function setNestedProperty<T extends Record<string, unknown>>(
   obj: T,
@@ -411,7 +411,7 @@ export function FileManagerProvider({ children }: FileManagerProviderProps) {
       try {
         console.log("Get file diff:", path, from, to);
         setError("File diff not yet implemented for directory API");
-        return { diff: "", stats: { additions: 0, deletions: 0 } };
+        return { diff: "", stats: { additions: 0, deletions: 0, changes: 0 } };
       } catch (err) {
         const errorMsg =
           err instanceof Error ? err.message : "Failed to get diff";

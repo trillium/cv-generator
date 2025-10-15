@@ -2,7 +2,7 @@ import Header from "../../Header/Header";
 import WorkExperience from "../../WorkExperience/WorkExperience";
 import Profile from "../../Profile/Profile";
 import ProjectsList from "../../Projects/ProjectsList";
-import type { CVData } from "../../../types";
+import type { CVData } from "@/types";
 
 function SingleColumnResume({ data }: { data: CVData }) {
   // Defensive check: ensure critical data exists

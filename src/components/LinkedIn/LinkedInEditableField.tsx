@@ -5,9 +5,9 @@ import clsx from "clsx";
 import {
   useLinkedInYamlUpdater,
   getNestedValue,
-} from "../../hooks/useLinkedInYamlUpdater";
-import { useLinkedInData } from "../../contexts/LinkedInContext";
-import { useModal } from "../../contexts/ModalContext";
+} from "@/hooks/useLinkedInYamlUpdater";
+import { useLinkedInData } from "@/contexts/LinkedInContext";
+import { useModal } from "@/contexts/ModalContext";
 import EditModal from "../EditableField/EditModal";
 import EmptyFieldPlaceholder from "../EditableField/EmptyFieldPlaceholder";
 import { isFieldEmpty } from "../EditableField/editableFieldUtils";

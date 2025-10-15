@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TwoColumnCoverLetter from "../../../src/components/Resume/two-column/cover-letter";
-import { useFileManager } from "../../../src/contexts/FileManagerContext.hook";
-import { decodeFilePathFromUrl } from "../../../src/utils/urlSafeEncoding";
-import type { CVData } from "../../../src/types";
+import TwoColumnCoverLetter from "@/components/Resume/two-column/cover-letter";
+import { useFileManager } from "@/contexts/FileManagerContext.hook";
+import { decodeFilePathFromUrl } from "@/utils/urlSafeEncoding";
+import type { CVData } from "@/types";
 
 interface TwoColumnCoverLetterPageClientProps {
   searchParams: { [key: string]: string | string[] | undefined };

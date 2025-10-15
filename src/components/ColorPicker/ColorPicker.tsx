@@ -4,7 +4,7 @@ import { useState } from "react";
 import { clsx } from "clsx";
 import { LuPaintbrushVertical } from "react-icons/lu";
 import colors from "tailwindcss/colors";
-import { useModal } from "../../contexts/ModalContext";
+import { useModal } from "@/contexts/ModalContext";
 import { ColorPickerProps, TailwindColor } from "./types";
 import { COLOR_FAMILIES, COLOR_SHADES } from "./constants";
 import { getColorFromTailwind } from "./utils";

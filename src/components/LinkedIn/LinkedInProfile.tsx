@@ -1,4 +1,4 @@
-import { LinkedInData, LinkedInRecommendation } from "../../types/linkedin";
+import { LinkedInData, LinkedInRecommendation } from "@/types/linkedin";
 import LinkedInEditableField from "./LinkedInEditableField";
 
 type LinkedInProfileProps = {

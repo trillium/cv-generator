@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SingleColumnResume from "../../../src/components/Resume/single-column/resume";
-import { useDirectoryManager } from "../../../src/contexts/DirectoryManagerContext.hook";
-import type { CVData } from "../../../src/types";
+import SingleColumnResume from "@/components/Resume/single-column/resume";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
+import type { CVData } from "@/types";
 
 interface SingleColumnResumePageClientProps {
   searchParams: { [key: string]: string | string[] | undefined };

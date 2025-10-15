@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useFileManager } from "../../src/contexts/FileManagerContext.hook";
-import { DirectoryFileInfo } from "../../src/contexts/FileManagerContext";
+import { useFileManager } from "@/contexts/FileManagerContext.hook";
+import { DirectoryFileInfo } from "@/contexts/FileManagerContext";
 import {
   MdFolder,
   MdFolderOpen,

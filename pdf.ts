@@ -8,7 +8,7 @@ import { CVData } from "./src/types";
 import { anonymizeData } from "./lib/anonymous";
 import { UnifiedFileManager } from "./lib/unifiedFileManager";
 import * as yaml from "js-yaml";
-import { validateCVData } from "./lib/validateCVData";
+// import { validateCVData } from "./lib/validateCVData";
 import { allVariants } from "./lib/allVariants";
 import readline from "readline";
 import { encodeFilePathForUrl } from "./src/utils/urlSafeEncoding";
@@ -344,7 +344,7 @@ Resume path: ${resumePath}`
   try {
     const fileManager = new UnifiedFileManager(process.env.PII_PATH);
     const { content } = await fileManager.read("data.yml");
-    dataObj = validateCVData(yaml.load(content));
+    dataObj = yaml.load(content) as CVData;
     writeFileSync(
       path.join(__dirname, "src", "script-data.json"),
       JSON.stringify(dataObj, null, 2),

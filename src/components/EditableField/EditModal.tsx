@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import DebugInfo from "./DebugInfo";
-import { CVData } from "../../types";
+import { CVData } from "@/types";
 import { extractCopyData } from "../../../lib/utility/index";
 
 interface EditModalProps {

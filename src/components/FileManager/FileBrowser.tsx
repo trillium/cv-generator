@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FileMetadata, FileType } from "../../types/fileManager";
+import { FileMetadata, FileType } from "@/types/fileManager";
 import {
   MagnifyingGlassIcon,
   Squares2X2Icon,

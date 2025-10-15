@@ -8,7 +8,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { Fragment } from "react";
-import { useModal } from "../../contexts/ModalContext";
+import { useModal } from "@/contexts/ModalContext";
 
 export default function Modal() {
   const { isOpen, content, size, closeModal, onClose } = useModal();

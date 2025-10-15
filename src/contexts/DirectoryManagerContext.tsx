@@ -2,7 +2,7 @@
 
 import { useState, useCallback, ReactNode } from "react";
 import { DirectoryManagerContext } from "./DirectoryManagerContext.context";
-import type { CVData } from "../types";
+import type { CVData } from "@/types";
 import type { DirectoryMetadata } from "../../lib/multiFileManager";
 
 export interface DirectoryManagerContextType {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useModal } from "../../contexts/ModalContext";
+import { useModal } from "@/contexts/ModalContext";
 import {
   DEFAULT_PAGE_SIZES,
   PrintPageSizeProps,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useDirectoryManager } from "../../src/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
 
 export default function PlaygroundPage() {
   const [inputPath, setInputPath] = useState("");

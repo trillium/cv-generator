@@ -450,6 +450,7 @@ export class MultiFileManager extends UnifiedFileManager {
       versions: 0,
       hasUnsavedChanges: false,
       tags: [],
+      lastEditedBy: "system",
     };
   }
 }

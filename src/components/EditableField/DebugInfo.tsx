@@ -1,7 +1,7 @@
 "use client";
 
-import { getNestedValue } from "../../hooks/useYamlPathUpdater";
-import { CVData } from "../../types";
+import { getNestedValue } from "@/hooks/useYamlPathUpdater";
+import { CVData } from "@/types";
 
 interface DebugInfoProps {
   yamlPath: string;

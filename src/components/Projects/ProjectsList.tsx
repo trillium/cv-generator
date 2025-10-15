@@ -1,5 +1,5 @@
 import Projects from "./Projects";
-import type { Project } from "../../types";
+import type { Project } from "@/types";
 
 export default function ProjectsList({
   projects = [],

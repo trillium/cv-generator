@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import SingleColumnResume from "../../../../src/components/Resume/single-column/resume";
-import type { CVData } from "../../../../src/types";
+import SingleColumnResume from "@/components/Resume/single-column/resume";
+import type { CVData } from "@/types";
 
-import { useDirectoryManager } from "../../../../src/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
 
 export default function DynamicSingleColumnResumePage() {
   const params = useParams();

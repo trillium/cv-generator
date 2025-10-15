@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { useFileManager } from "../../contexts/FileManagerContext.hook";
-import { useModal } from "../../contexts/ModalContext";
-import { encodeFilePathForUrl } from "../../utils/urlSafeEncoding";
+import { useFileManager } from "@/contexts/FileManagerContext.hook";
+import { useModal } from "@/contexts/ModalContext";
+import { encodeFilePathForUrl } from "@/utils/urlSafeEncoding";
 
 interface ResumeNavigatorProps {
   onSelectResume?: (filePath: string) => void; // Made optional since we'll navigate instead

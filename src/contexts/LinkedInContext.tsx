@@ -8,7 +8,7 @@ import React, {
   ReactNode,
   useRef,
 } from "react";
-import { LinkedInData } from "../types/linkedin";
+import { LinkedInData } from "@/types/linkedin";
 import * as yaml from "js-yaml";
 
 interface LinkedInContextType {

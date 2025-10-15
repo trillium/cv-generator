@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import LinkedInProfile from "../../src/components/LinkedIn/LinkedInProfile";
-import {
-  LinkedInProvider,
-  useLinkedInData,
-} from "../../src/contexts/LinkedInContext";
+import LinkedInProfile from "@/components/LinkedIn/LinkedInProfile";
+import { LinkedInProvider, useLinkedInData } from "@/contexts/LinkedInContext";
 
 function LinkedInPageContent() {
   const { currentLinkedInData, loadLinkedInFile, loading, error } =

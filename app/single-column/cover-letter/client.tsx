@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SingleColumnCoverLetter from "../../../src/components/Resume/single-column/cover-letter";
-import { useFileManager } from "../../../src/contexts/FileManagerContext.hook";
-import { decodeFilePathFromUrl } from "../../../src/utils/urlSafeEncoding";
-import type { CVData } from "../../../src/types";
+import SingleColumnCoverLetter from "@/components/Resume/single-column/cover-letter";
+import { useFileManager } from "@/contexts/FileManagerContext.hook";
+import { decodeFilePathFromUrl } from "@/utils/urlSafeEncoding";
+import type { CVData } from "@/types";
 
 interface SingleColumnCoverLetterPageClientProps {
   searchParams: { [key: string]: string | string[] | undefined };

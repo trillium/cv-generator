@@ -1,4 +1,4 @@
-import { getNestedValue } from "../../hooks/useYamlPathUpdater";
+import { getNestedValue } from "@/hooks/useYamlPathUpdater";
 
 /**
  * Determines if a field is part of an array that supports add above/below functionality

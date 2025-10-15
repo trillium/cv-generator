@@ -2,11 +2,11 @@
 
 import React from "react";
 import { clsx } from "clsx";
-import { useDirectoryManager } from "../../contexts/DirectoryManagerContext.hook";
-import { useModal } from "../../contexts/ModalContext";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
+import { useModal } from "@/contexts/ModalContext";
 import ResumeNavigator from "../ResumeNavigator/ResumeNavigator";
 import ResumeCreator from "../ResumeCreator/ResumeCreator";
-import type { CVData } from "../../types";
+import type { CVData } from "@/types";
 
 const ResumeSelector: React.FC = () => {
   const { parsedData, currentDirectory, loading } = useDirectoryManager();

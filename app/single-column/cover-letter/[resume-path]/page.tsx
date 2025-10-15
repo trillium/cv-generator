@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import SingleColumnCoverLetter from "../../../../src/components/Resume/single-column/cover-letter";
-import type { CVData } from "../../../../src/types";
+import SingleColumnCoverLetter from "@/components/Resume/single-column/cover-letter";
+import type { CVData } from "@/types";
 
-import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useFileManager } from "../../../../src/contexts/FileManagerContext.hook";
+import { decodeFilePathFromUrl } from "@/utils/urlSafeEncoding";
+import { useFileManager } from "@/contexts/FileManagerContext.hook";
 
 export default function DynamicSingleColumnCoverLetterPage() {
   const params = useParams();

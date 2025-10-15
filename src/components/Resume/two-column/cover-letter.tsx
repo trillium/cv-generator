@@ -1,7 +1,7 @@
 "use client";
 
 import Header from "../../Header/Header";
-import type { CVData } from "../../../types";
+import type { CVData } from "@/types";
 import Title from "../../Title/Title";
 import { ProfileHeader } from "../../Profile/Profile";
 import EditableField from "../../EditableField/EditableField";
