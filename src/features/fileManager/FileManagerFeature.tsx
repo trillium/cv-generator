@@ -44,10 +44,12 @@ export default function FileManagerFeature() {
   );
 
   useEffect(() => {
-    if (currentDirectory) {
-      loadDirectory(currentDirectory);
+    // Default to 'resumes' directory if no directory is set
+    const defaultDirectory = "resumes";
+    if (!currentDirectory) {
+      loadDirectory(defaultDirectory);
     }
-  }, []);
+  }, [currentDirectory, loadDirectory]);
 
   async function handleSave() {
     await saveDirectory();
@@ -172,8 +174,13 @@ export default function FileManagerFeature() {
           </button>
           <button
             onClick={showDeleteFileModal}
-            disabled={!selectedFile || loading}
+            disabled={!selectedFile || loading || selectedFile === "resumes"}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            title={
+              selectedFile === "resumes"
+                ? "Cannot delete the root resumes folder"
+                : ""
+            }
           >
             Delete File
           </button>
