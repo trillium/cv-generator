@@ -8,6 +8,7 @@ import {
 } from "react-icons/md";
 import { TreeNode } from "./types";
 import SectionBadge from "./SectionBadge";
+import Link from "next/link";
 
 interface TreeNodeItemProps {
   node: TreeNode;
@@ -82,22 +83,22 @@ const TreeNodeItem: React.FC<TreeNodeItemProps> = ({
         {/* Directory action buttons */}
         {node.type === "directory" && (
           <span className="ml-3 flex gap-2">
-            <a
+            <Link
               href={`/single-column-multi/resume/${node.path}`}
               className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
               onClick={(e) => e.stopPropagation()}
               title="Open Resume"
             >
               Open Resume
-            </a>
-            <a
+            </Link>
+            <Link
               href={`/single-column-multi/cover-letter/${node.path}`}
               className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 rounded hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
               onClick={(e) => e.stopPropagation()}
               title="Open Cover Letter"
             >
               Open Cover Letter
-            </a>
+            </Link>
           </span>
         )}
       </div>
