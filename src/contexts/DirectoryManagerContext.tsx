@@ -3,7 +3,10 @@
 import { useState, useCallback, ReactNode } from "react";
 import { DirectoryManagerContext } from "./DirectoryManagerContext.context";
 import type { CVData } from "@/types";
-import type { DirectoryMetadata } from "../../lib/multiFileManager";
+import type {
+  DirectoryMetadata,
+  DirectoryFileInfo,
+} from "../../lib/multiFileManager";
 
 export interface DirectoryManagerContextType {
   // Current directory state
@@ -11,6 +14,7 @@ export interface DirectoryManagerContextType {
   data: CVData | null;
   sources: Record<string, string>;
   metadata: DirectoryMetadata | null;
+  files: DirectoryFileInfo[];
 
   // Loading states
   loading: boolean;
@@ -31,6 +35,16 @@ export interface DirectoryManagerContextType {
   // Hierarchy operations
   getHierarchy: (path: string) => Promise<void>;
   listDirectoryFiles: (path: string) => Promise<void>;
+  refreshFiles: () => Promise<void>;
+
+  // Directory operations
+  createDirectory: (parentPath: string, directoryName: string) => Promise<void>;
+  splitSectionToFile: (
+    sourceFilePath: string,
+    sectionKey: string,
+    targetFileName: string,
+  ) => Promise<void>;
+  deleteFileToDeleted: (filePath: string) => Promise<void>;
 
   // File operations
   currentFile: { path: string } | null;
@@ -52,12 +66,14 @@ export function DirectoryManagerProvider({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [files, setFiles] = useState<DirectoryFileInfo[]>([]);
 
   const loadDirectory = useCallback(async (path: string) => {
     setLoading(true);
     setError(null);
 
     try {
+      // Fetch directory data
       const response = await fetch(
         `/api/directory/load?path=${encodeURIComponent(path)}`,
       );
@@ -65,6 +81,17 @@ export function DirectoryManagerProvider({
 
       if (!result.success) {
         throw new Error(result.error || "Failed to load directory");
+      }
+
+      // Fetch files for the directory
+      const filesResponse = await fetch(
+        `/api/directory/files?path=${encodeURIComponent(path)}`,
+      );
+      const filesResult = await filesResponse.json();
+      if (filesResult.success) {
+        setFiles(filesResult.files);
+      } else {
+        setFiles([]);
       }
 
       setCurrentDirectory(path);
@@ -196,6 +223,133 @@ export function DirectoryManagerProvider({
     }
   }, []);
 
+  const refreshFiles = useCallback(async () => {
+    if (!currentDirectory) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(
+        `/api/directory/files?path=${encodeURIComponent(currentDirectory)}&recursive=true`,
+      );
+      const result = await response.json();
+
+      if (result.success) {
+        setFiles(result.files);
+      } else {
+        setError(result.error || "Failed to refresh files");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to refresh files");
+    } finally {
+      setLoading(false);
+    }
+  }, [currentDirectory]);
+
+  const createDirectory = useCallback(
+    async (parentPath: string, directoryName: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch("/api/directory/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ parentPath, directoryName }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          await refreshFiles();
+        } else {
+          setError(result.error || "Failed to create directory");
+          throw new Error(result.error || "Failed to create directory");
+        }
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to create directory";
+        setError(errorMsg);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [refreshFiles],
+  );
+
+  const splitSectionToFile = useCallback(
+    async (
+      sourceFilePath: string,
+      sectionKey: string,
+      targetFileName: string,
+    ) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch("/api/directory/split", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sourceFilePath, sectionKey, targetFileName }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          if (currentDirectory) {
+            await loadDirectory(currentDirectory);
+          }
+          await refreshFiles();
+        } else {
+          setError(result.error || "Failed to split section");
+          throw new Error(result.error || "Failed to split section");
+        }
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to split section";
+        setError(errorMsg);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentDirectory, loadDirectory, refreshFiles],
+  );
+
+  const deleteFileToDeleted = useCallback(
+    async (filePath: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch("/api/directory/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ filePath }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          await refreshFiles();
+        } else {
+          setError(result.error || "Failed to delete file");
+          throw new Error(result.error || "Failed to delete file");
+        }
+      } catch (err) {
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to delete file";
+        setError(errorMsg);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [refreshFiles],
+  );
+
   // Compatibility methods for EditableField
   const updateContent = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -224,6 +378,7 @@ export function DirectoryManagerProvider({
     data,
     sources,
     metadata,
+    files,
     loading,
     error,
     hasUnsavedChanges,
@@ -237,6 +392,10 @@ export function DirectoryManagerProvider({
     getSourceFile,
     getHierarchy,
     listDirectoryFiles,
+    refreshFiles,
+    createDirectory,
+    splitSectionToFile,
+    deleteFileToDeleted,
     updateContent,
     saveFile,
   };
