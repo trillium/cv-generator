@@ -4,16 +4,16 @@ import "@testing-library/jest-dom";
 import ProjectLinks from "./ProjectLinks";
 import { ProfileLinkProps } from "../Profile/ProfileLink/ProfileLink";
 
-// Mock the context hooks to avoid FileManagerProvider requirement
-vi.mock("../../contexts/FileManagerContext", () => ({
-  useFileManager: () => ({
+// Mock the context hooks to avoid DirectoryManagerProvider requirement
+vi.mock("../../contexts/DirectoryManagerContext.hook", () => ({
+  useDirectoryManager: () => ({
     parsedData: {},
     error: null,
     content: "",
     currentFile: null,
     files: [],
     loading: false,
-    loadFile: vi.fn(),
+    loadDirectory: vi.fn(),
   }),
 }));
 

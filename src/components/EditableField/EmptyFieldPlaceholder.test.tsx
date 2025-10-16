@@ -3,16 +3,16 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import EmptyFieldPlaceholder from "./EmptyFieldPlaceholder";
 
-// Mock the context hooks to avoid FileManagerProvider requirement
-vi.mock("../../contexts/FileManagerContext", () => ({
-  useFileManager: () => ({
+// Mock the context hooks to avoid DirectoryManagerProvider requirement
+vi.mock("../../contexts/DirectoryManagerContext.hook", () => ({
+  useDirectoryManager: () => ({
     parsedData: {},
     error: null,
     content: "",
     currentFile: null,
     files: [],
     loading: false,
-    loadFile: vi.fn(),
+    loadDirectory: vi.fn(),
   }),
 }));
 
