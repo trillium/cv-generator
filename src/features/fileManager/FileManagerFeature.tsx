@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useFileManager } from "@/contexts/FileManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
 import { useModal } from "@/contexts/ModalContext";
 import PageHeader from "./parts/PageHeader";
 import ErrorDisplay from "./parts/ErrorDisplay";
@@ -20,7 +20,7 @@ import { EditingFieldState } from "./parts/types";
 export default function FileManagerFeature() {
   const {
     currentDirectory,
-    directoryMetadata,
+    metadata,
     sources,
     parsedData,
     hasUnsavedChanges,
@@ -28,13 +28,13 @@ export default function FileManagerFeature() {
     error,
     files,
     loadDirectory,
-    updateField,
-    saveChanges,
+    updateDataPath,
+    saveDirectory,
     discardChanges,
     createDirectory,
     splitSectionToFile,
     deleteFileToDeleted,
-  } = useFileManager();
+  } = useDirectoryManager();
 
   const { openModal, closeModal } = useModal();
 
@@ -50,11 +50,11 @@ export default function FileManagerFeature() {
   }, []);
 
   async function handleSave() {
-    await saveChanges(false);
+    await saveDirectory();
   }
 
   async function handleSaveAndCommit() {
-    await saveChanges(true);
+    await saveDirectory();
   }
 
   async function handleDiscard() {
@@ -63,7 +63,7 @@ export default function FileManagerFeature() {
 
   async function handleFieldSave() {
     if (editingField) {
-      await updateField(editingField.path, editingField.value);
+      await updateDataPath(editingField.path, editingField.value);
       setEditingField(null);
     }
   }
@@ -194,11 +194,11 @@ export default function FileManagerFeature() {
               <SelectedFileInfo selectedFile={selectedFile} files={files} />
             )}
 
-            {directoryMetadata && (
+            {metadata && (
               <DirectoryInfo
-                directoryPath={directoryMetadata.directoryPath}
-                filesLoaded={directoryMetadata.filesLoaded.length}
-                loadedDirectories={directoryMetadata.loadedDirectories}
+                directoryPath={metadata.directoryPath}
+                filesLoaded={metadata.filesLoaded.length}
+                loadedDirectories={metadata.loadedDirectories}
               />
             )}
 
