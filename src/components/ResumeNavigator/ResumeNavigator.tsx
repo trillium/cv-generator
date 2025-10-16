@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/contexts/ModalContext";
-import { useFileManager } from "@/contexts/FileManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
 import DirectoryTree from "@/features/fileManager/parts/DirectoryTree";
 
 interface ResumeNavigatorProps {
@@ -13,7 +13,7 @@ interface ResumeNavigatorProps {
 function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
   const { closeModal } = useModal();
   const router = useRouter();
-  const { files, loading, error } = useFileManager();
+  const { loading, error } = useDirectoryManager();
 
   const stripBasePath = (fullPath: string): string => {
     const piiPath = process.env.NEXT_PUBLIC_PII_PATH || "pii";
@@ -62,10 +62,8 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
       )}
 
       <DirectoryTree
-        files={files}
         selectedFile={null}
         onSelectFile={handleSelectFile}
-        onSelectDirectory={handleSelectDirectory}
         loading={loading}
       />
 
