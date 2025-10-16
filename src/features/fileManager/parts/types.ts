@@ -1,4 +1,4 @@
-import { DirectoryFileInfo } from "@/contexts/FileManagerContext";
+import { DirectoryFileInfo } from "../../../../lib/multiFileManager";
 
 export interface EditingFieldState {
   path: string;
