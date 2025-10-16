@@ -83,9 +83,10 @@ export function DirectoryManagerProvider({
         throw new Error(result.error || "Failed to load directory");
       }
 
-      // Fetch files for the directory
+      // Always fetch ALL files from 'resumes' directory recursively
+      // This ensures users can see and navigate to all files regardless of selected directory
       const filesResponse = await fetch(
-        `/api/directory/files?path=${encodeURIComponent(path)}`,
+        `/api/directory/files?path=${encodeURIComponent("resumes")}&recursive=true`,
       );
       const filesResult = await filesResponse.json();
       if (filesResult.success) {
@@ -224,14 +225,14 @@ export function DirectoryManagerProvider({
   }, []);
 
   const refreshFiles = useCallback(async () => {
-    if (!currentDirectory) return;
-
     try {
       setLoading(true);
       setError(null);
 
+      // Always fetch ALL files from 'resumes' directory recursively
+      // This ensures users can see and navigate to all files regardless of selected directory
       const response = await fetch(
-        `/api/directory/files?path=${encodeURIComponent(currentDirectory)}&recursive=true`,
+        `/api/directory/files?path=${encodeURIComponent("resumes")}&recursive=true`,
       );
       const result = await response.json();
 
@@ -245,7 +246,7 @@ export function DirectoryManagerProvider({
     } finally {
       setLoading(false);
     }
-  }, [currentDirectory]);
+  }, []);
 
   const createDirectory = useCallback(
     async (parentPath: string, directoryName: string) => {
