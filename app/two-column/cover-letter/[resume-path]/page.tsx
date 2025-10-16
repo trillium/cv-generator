@@ -5,17 +5,17 @@ import { useParams, useRouter } from "next/navigation";
 import TwoColumnCoverLetter from "../../../../src/components/Resume/two-column/cover-letter";
 import { listAllResumeFiles } from "../../../../lib/utility";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useFileManager } from "../../../../src/contexts/FileManagerContext";
+import { useDirectoryManager } from "../../../../src/contexts/DirectoryManagerContext.hook";
 
 export default function DynamicTwoColumnCoverLetterPage() {
   const params = useParams();
   const router = useRouter();
   const {
     parsedData,
-    loadFile,
+    loadDirectory,
     loading: contextLoading,
     error: contextError,
-  } = useFileManager();
+  } = useDirectoryManager();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,12 +88,12 @@ export default function DynamicTwoColumnCoverLetterPage() {
           );
         }
 
-        // Use ResumeContext to load the file - this will handle all the data management
+        // Use DirectoryManager to load the directory - this will handle all the data management
         console.log(
-          "🔄 Loading cover letter file through ResumeContext:",
+          "🔄 Loading cover letter directory through DirectoryManager:",
           fileToLoad,
         );
-        await loadFile(fileToLoad);
+        await loadDirectory(fileToLoad);
         setResolvedFilePath(fileToLoad);
       } catch (err) {
         const errorMessage =
@@ -108,7 +108,7 @@ export default function DynamicTwoColumnCoverLetterPage() {
     }
 
     validateAndLoadResume();
-  }, [encodedResumePath, resumePath, loadFile]); // Listen to both encoded and decoded paths
+  }, [encodedResumePath, resumePath, loadDirectory]); // Listen to both encoded and decoded paths
 
   // Loading state - combine local loading and context loading
   if (loading || contextLoading) {

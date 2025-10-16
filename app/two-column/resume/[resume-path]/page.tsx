@@ -6,17 +6,17 @@ import TwoColumnResume from "../../../../src/components/Resume/two-column/resume
 import type { CVData } from "../../../../src/types";
 import { listAllResumeFiles } from "../../../../lib/utility";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useFileManager } from "../../../../src/contexts/FileManagerContext";
+import { useDirectoryManager } from "../../../../src/contexts/DirectoryManagerContext.hook";
 
 export default function DynamicTwoColumnResumePage() {
   const params = useParams();
   const router = useRouter();
   const {
     parsedData,
-    loadFile,
+    loadDirectory,
     loading: contextLoading,
     error: contextError,
-  } = useFileManager();
+  } = useDirectoryManager();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,8 +75,8 @@ export default function DynamicTwoColumnResumePage() {
           );
         }
 
-        console.log("🔄 Loading resume file:", fileToLoad);
-        await loadFile(fileToLoad);
+        console.log("🔄 Loading resume directory:", fileToLoad);
+        await loadDirectory(fileToLoad);
         setResolvedFilePath(fileToLoad);
       } catch (err) {
         const errorMessage =
@@ -91,7 +91,7 @@ export default function DynamicTwoColumnResumePage() {
     }
 
     validateAndLoadResume();
-  }, [encodedResumePath, resumePath, loadFile]);
+  }, [encodedResumePath, resumePath, loadDirectory]);
 
   if (loading || contextLoading) {
     return (
