@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
 
 interface CreatedResume {
   directoryName: string;

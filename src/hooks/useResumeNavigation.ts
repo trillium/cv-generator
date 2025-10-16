@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
 import { encodeFilePathForUrl } from "@/utils/urlSafeEncoding";
 
 export function useResumeNavigation() {

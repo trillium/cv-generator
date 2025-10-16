@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/contexts/ModalContext";
-import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
 import DirectoryTree from "@/features/fileManager/parts/DirectoryTree";
 
 interface ResumeNavigatorProps {

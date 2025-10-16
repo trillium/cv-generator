@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import TwoColumnResume from "../../../../src/components/Resume/two-column/resume";
 import type { CVData } from "../../../../src/types";
 import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useDirectoryManager } from "../../../../src/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "../../../../src/contexts/DirectoryManager/DirectoryManagerContext.hook";
 
 export default function DynamicTwoColumnResumePage() {
   const params = useParams();

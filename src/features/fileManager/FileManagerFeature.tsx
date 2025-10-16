@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
 import { useModal } from "@/contexts/ModalContext";
 import PageHeader from "./parts/PageHeader";
 import ErrorDisplay from "./parts/ErrorDisplay";

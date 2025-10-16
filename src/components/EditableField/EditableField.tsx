@@ -3,7 +3,7 @@
 import React, { useState, useEffect, ReactNode } from "react";
 import clsx from "clsx";
 import { useYamlPathUpdater, getNestedValue } from "@/hooks/useYamlPathUpdater";
-import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
 import { useModal } from "@/contexts/ModalContext";
 import ActionButtons from "./ActionButtons";
 import EmptyFieldPlaceholder from "./EmptyFieldPlaceholder";

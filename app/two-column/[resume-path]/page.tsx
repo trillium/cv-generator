@@ -2,11 +2,12 @@
 
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import TwoColumnCoverLetter from "../../../../src/components/Resume/two-column/cover-letter";
-import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useDirectoryManager } from "../../../../src/contexts/DirectoryManager/DirectoryManagerContext.hook";
+import TwoColumnResume from "../../../src/components/Resume/two-column/resume";
+import type { CVData } from "../../../src/types";
+import { decodeFilePathFromUrl } from "../../../src/utils/urlSafeEncoding";
+import { useDirectoryManager } from "../../../src/contexts/DirectoryManager/DirectoryManagerContext.hook";
 
-export default function DynamicTwoColumnCoverLetterPage() {
+export default function DynamicTwoColumnResumePage() {
   const params = useParams();
   const router = useRouter();
   const { parsedData, ensureResumeLoaded, loading, error, currentDirectory } =
@@ -18,30 +19,29 @@ export default function DynamicTwoColumnCoverLetterPage() {
     : null;
 
   useEffect(() => {
-    async function loadCoverLetter() {
+    async function loadResume() {
       if (!resumePath) {
         return;
       }
 
       try {
-        console.log("🔄 Ensuring cover letter loaded:", resumePath);
+        console.log("🔄 Ensuring resume loaded:", resumePath);
         await ensureResumeLoaded(resumePath);
       } catch (err) {
-        console.error("Error loading dynamic cover letter:", err);
+        console.error("Error loading dynamic resume:", err);
       }
     }
 
-    loadCoverLetter();
+    loadResume();
   }, [resumePath, ensureResumeLoaded]);
 
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">
-            Loading two-column cover letter: {resumePath || encodedResumePath}
-            ...
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 dark:border-primary-400 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading two-column resume: {resumePath || encodedResumePath}...
           </p>
         </div>
       </div>
@@ -50,18 +50,18 @@ export default function DynamicTwoColumnCoverLetterPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
+      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">❌</div>
           <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
-            Cover Letter Not Found
+            Resume Not Found
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">{error}</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
           <button
-            onClick={() => router.push("/two-column/cover-letter")}
-            className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 transition-colors"
+            onClick={() => router.push("/two-column/resume")}
+            className="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
           >
-            Go to Default Cover Letter
+            Go to Default Resume
           </button>
         </div>
       </div>
@@ -74,10 +74,10 @@ export default function DynamicTwoColumnCoverLetterPage() {
         <div className="text-center">
           <div className="text-6xl mb-4">⚠️</div>
           <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
-            No Cover Letter Data
+            No Resume Data
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            The cover letter file was found but contains no data.
+          <p className="text-gray-600 dark:text-gray-400">
+            The resume file was found but contains no data.
           </p>
         </div>
       </div>
@@ -87,10 +87,10 @@ export default function DynamicTwoColumnCoverLetterPage() {
   return (
     <div>
       <div className="sr-only">
-        Currently displaying cover letter:{" "}
+        Currently displaying resume:{" "}
         {currentDirectory || resumePath || encodedResumePath}
       </div>
-      <TwoColumnCoverLetter data={parsedData} />
+      <TwoColumnResume data={parsedData as CVData} />
     </div>
   );
 }

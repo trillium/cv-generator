@@ -5,7 +5,7 @@ import ProjectLinks from "./ProjectLinks";
 import { ProfileLinkProps } from "../Profile/ProfileLink/ProfileLink";
 
 // Mock the context hooks to avoid DirectoryManagerProvider requirement
-vi.mock("../../contexts/DirectoryManagerContext.hook", () => ({
+vi.mock("../../contexts/DirectoryManager/DirectoryManagerContext.hook", () => ({
   useDirectoryManager: () => ({
     parsedData: {},
     error: null,

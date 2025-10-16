@@ -1,4 +1,4 @@
-import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
 
 export function useYamlPathUpdater() {
   const { updateDataPath, currentDirectory } = useDirectoryManager();
