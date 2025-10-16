@@ -4,7 +4,7 @@ import { FaSquareXTwitter, FaBluesky, FaPhone } from "react-icons/fa6";
 import { BsGlobe } from "react-icons/bs";
 import { MdEmail } from "react-icons/md";
 import { clsx } from "clsx";
-import EditableField from "../../EditableField";
+import EditableField from "@/components/EditableField";
 import { useYamlPathUpdater } from "@/hooks/useYamlPathUpdater";
 
 export type ProfileLinkProps = {

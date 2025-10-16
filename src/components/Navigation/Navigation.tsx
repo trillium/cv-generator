@@ -2,7 +2,7 @@
 
 import { clsx } from "clsx";
 import LayoutSelector from "./LayoutSelector";
-import { ColorPickerSwitch } from "../ColorPicker";
+import { ColorPickerSwitch } from "@/components/ColorPicker";
 
 import PrintPageSize, { DEFAULT_PAGE_SIZES } from "@/components/PrintPageSize";
 import ResumeSelector from "@/components/ResumeSelector/ResumeSelector";

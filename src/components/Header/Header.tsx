@@ -1,4 +1,4 @@
-import EditableField from "../EditableField";
+import EditableField from "@/components/EditableField";
 
 export type HeaderProps = {
   name: string;
