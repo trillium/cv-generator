@@ -2,18 +2,18 @@
 
 import { useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useFileManager } from "@/contexts/FileManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
 import { encodeFilePathForUrl } from "@/utils/urlSafeEncoding";
 
 export function useResumeNavigation() {
   const router = useRouter();
   const pathname = usePathname();
-  const { loadFile } = useFileManager();
+  const { loadDirectory } = useDirectoryManager();
 
   const navigateToResume = useCallback(
     async (resumePath: string) => {
       try {
-        await loadFile(resumePath);
+        await loadDirectory(resumePath);
 
         const encodedPath = encodeFilePathForUrl(resumePath);
         const searchParams = new URLSearchParams(window.location.search);
@@ -31,7 +31,7 @@ export function useResumeNavigation() {
         throw error;
       }
     },
-    [loadFile, router, pathname],
+    [loadDirectory, router, pathname],
   );
 
   const clearResume = useCallback(() => {
