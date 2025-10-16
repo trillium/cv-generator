@@ -1,7 +1,7 @@
-import Header from "../../Header/Header";
-import WorkExperience from "../../WorkExperience/WorkExperience";
-import Profile from "../../Profile/Profile";
-import ProjectsList from "../../Projects/ProjectsList";
+import Header from "@/components/Header/Header";
+import WorkExperience from "@/components/WorkExperience/WorkExperience";
+import Profile from "@/components/Profile/Profile";
+import ProjectsList from "@/components/Projects/ProjectsList";
 import type { CVData } from "@/types";
 
 function SingleColumnResume({ data }: { data: CVData }) {

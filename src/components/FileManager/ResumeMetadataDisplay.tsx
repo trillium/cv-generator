@@ -1,6 +1,6 @@
 "use client";
 
-import { ResumeMetadata } from "../../types";
+import { ResumeMetadata } from "@/types";
 import { FiCalendar, FiBriefcase, FiFileText, FiEdit2 } from "react-icons/fi";
 
 interface ResumeMetadataDisplayProps {

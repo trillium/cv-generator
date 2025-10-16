@@ -1,5 +1,5 @@
-import { CVData as CVDataSchema } from "../src/types/cvdata.zod";
-import type { CVData, Project } from "../src/types";
+import { CVData as CVDataSchema } from "@/types/cvdata.zod";
+import type { CVData, Project } from "@/types";
 
 /**
  * A fully-populated default CVData object with all required and optional properties.

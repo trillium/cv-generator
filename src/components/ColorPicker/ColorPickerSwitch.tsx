@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { LuPaintbrushVertical } from "react-icons/lu";
 import colors from "tailwindcss/colors";
-import { useModal } from "../../contexts/ModalContext";
+import { useModal } from "@/contexts/ModalContext";
 import { toast } from "sonner";
 import ColorPicker from "./ColorPicker";
 import { TailwindColor } from "./types";

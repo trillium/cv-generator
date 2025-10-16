@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DirectoryFileInfo } from "../../../../lib/multiFileManager";
+import { DirectoryFileInfo } from "@/lib/multiFileManager";
 import TreeNodeItem from "./TreeNodeItem";
 import { buildTree } from "./utils";
 import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";

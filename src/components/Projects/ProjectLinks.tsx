@@ -1,5 +1,5 @@
-import { ProfileLinkProps } from "../Profile/ProfileLink/ProfileLink";
-import ProfileLink from "../Profile/ProfileLink/ProfileLink";
+import { ProfileLinkProps } from "@/components/Profile/ProfileLink/ProfileLink";
+import ProfileLink from "@/components/Profile/ProfileLink/ProfileLink";
 
 interface ProjectLinksProps {
   links?: ProfileLinkProps[];

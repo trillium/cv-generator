@@ -5,7 +5,7 @@ import { BsGlobe } from "react-icons/bs";
 import { MdEmail } from "react-icons/md";
 import { clsx } from "clsx";
 import EditableField from "../../EditableField";
-import { useYamlPathUpdater } from "../../../hooks/useYamlPathUpdater";
+import { useYamlPathUpdater } from "@/hooks/useYamlPathUpdater";
 
 export type ProfileLinkProps = {
   /** Only GitHub Twitter LinkedIn Website */

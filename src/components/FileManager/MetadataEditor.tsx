@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ResumeMetadata } from "../../types";
+import { ResumeMetadata } from "@/types";
 
 interface MetadataEditorProps {
   metadata?: ResumeMetadata;

@@ -1,6 +1,6 @@
-import Title from "../../../Title/Title";
-import EditableField from "../../../EditableField";
-import type { CVData } from "../../../../types";
+import Title from "@/components/Title/Title";
+import EditableField from "@/components/EditableField";
+import type { CVData } from "@/types";
 import React from "react";
 
 export default function CareerSummary({ data }: { data: CVData }) {

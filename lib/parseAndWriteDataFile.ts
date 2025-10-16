@@ -1,8 +1,8 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import yaml from "js-yaml";
-import { CVData as CVDataSchema } from "../src/types/cvdata.zod";
-import type { CVData } from "../src/types";
+import { CVData as CVDataSchema } from "@/types/cvdata.zod";
+import type { CVData } from "@/types";
 
 /**
  * Parses a YAML or JSON file and writes its contents as JSON to the output path.

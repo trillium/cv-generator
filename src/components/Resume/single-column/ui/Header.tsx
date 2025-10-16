@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import ProfileLink from "../../../Profile/ProfileLink/ProfileLink";
-import EditableField from "../../../EditableField/EditableField";
-import type { CVData } from "../../../../types";
+import ProfileLink from "@/components/Profile/ProfileLink/ProfileLink";
+import EditableField from "@/components/EditableField/EditableField";
+import type { CVData } from "@/types";
 
 function isInfo(obj: Record<string, unknown>): obj is {
   firstName: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { FileMetadata } from "../../types/fileManager";
+import { FileMetadata } from "@/types/fileManager";
 import {
   FiFile,
   FiMoreVertical,
@@ -13,8 +13,8 @@ import {
 } from "react-icons/fi";
 import ResumeMetadataDisplay from "./ResumeMetadataDisplay";
 import MetadataEditor from "./MetadataEditor";
-import { useModal } from "../../contexts/ModalContext";
-import { ResumeMetadata } from "../../types";
+import { useModal } from "@/contexts/ModalContext";
+import { ResumeMetadata } from "@/types";
 
 interface FileCardProps {
   file: FileMetadata;

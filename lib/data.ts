@@ -1,6 +1,6 @@
-import type { CVData } from "../src/types";
-import fallbackData from "../src/data.json";
-import scriptData from "../src/script-data.json";
+import type { CVData } from "@/types";
+import fallbackData from "@/src/data.json";
+import scriptData from "@/src/script-data.json";
 
 export function mergeData(
   fallback: Partial<CVData>,

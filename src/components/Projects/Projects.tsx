@@ -1,8 +1,8 @@
-import Title from "../Title/Title";
-import LineList from "../WorkExperience/LineList";
+import Title from "@/components/Title/Title";
 import ProjectLinks from "./ProjectLinks";
-import EditableField from "../EditableField";
-import type { Project } from "../../types";
+import LineList from "@/components/WorkExperience/LineList";
+import EditableField from "@/components/EditableField";
+import type { Project } from "@/types";
 
 const Projects = ({
   data,

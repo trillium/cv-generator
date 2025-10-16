@@ -1,5 +1,5 @@
-import { CVData as CVDataSchema } from "../src/types/cvdata.zod";
-import type { CVData } from "../src/types";
+import { CVData as CVDataSchema } from "@/types/cvdata.zod";
+import type { CVData } from "@/types";
 
 /**
  * Validates a parsed data object against the CVData schema.

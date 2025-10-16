@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { spawn, exec } from "node:child_process";
 import { config } from "dotenv";
 import path from "node:path";
-import { CVData } from "./src/types";
+import { CVData } from "@/types";
 import { anonymizeData } from "./lib/anonymous";
 import { UnifiedFileManager } from "./lib/unifiedFileManager";
 import * as yaml from "js-yaml";

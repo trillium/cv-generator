@@ -24,7 +24,11 @@
       "@/app/*": ["./app/*"],
       "@/scripts/*": ["./scripts/*"],
       "@/src/*": ["./src/*"],
-      "@/contexts/*": ["./src/contexts/*"]
+      "@/contexts/*": ["./src/contexts/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/utils/*": ["./src/utils/*"]
     },
     "target": "ES2017",
     "types": ["vitest/globals"]

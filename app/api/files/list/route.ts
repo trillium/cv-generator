@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { UnifiedFileManager } from "../../../../lib/unifiedFileManager";
+import { UnifiedFileManager } from "@/lib/unifiedFileManager";
 import { FileFilters, FileType } from "@/types/fileManager";
 
 export async function GET(request: NextRequest) {

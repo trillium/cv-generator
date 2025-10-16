@@ -1,4 +1,4 @@
-import Bubble from "../Bubble/Bubble";
+import Bubble from "@/components/Bubble/Bubble";
 import clsx from "clsx";
 
 function BubbleList({

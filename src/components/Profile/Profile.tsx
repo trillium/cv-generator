@@ -1,9 +1,9 @@
-import Title from "../Title/Title";
+import Title from "@/components/Title/Title";
 import ProfileImage from "./ProfileImage/ProfileImage";
 import ProfileLanguages from "./ProfileLanguages/ProfileLanguages";
 import ProfileLink from "./ProfileLink/ProfileLink";
-import EditableField from "../EditableField/EditableField";
-import type { TechnicalCategory, Education, CVData } from "../../types";
+import EditableField from "@/components/EditableField/EditableField";
+import type { TechnicalCategory, Education, CVData } from "@/types";
 
 type Data = Pick<CVData, "profile" | "technical" | "languages" | "education">;
 

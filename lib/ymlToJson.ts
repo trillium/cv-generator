@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import yaml from "js-yaml";
 import { config } from "dotenv";
-import { CVData } from "../src/types/cvdata.zod";
+import { CVData } from "@/types/cvdata.zod";
 
 // Load environment variables from .env file
 config();

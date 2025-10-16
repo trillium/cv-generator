@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Version, Diff } from "../../types/fileManager";
+import { Version, Diff } from "@/types/fileManager";
 import {
   ClockIcon,
   ArrowPathIcon,

@@ -6,8 +6,8 @@ import {
   isFullDataFilename,
   SUPPORTED_EXTENSIONS,
 } from "./multiFileMapper";
-import type { CVData } from "../src/types";
-import type { FileMetadata } from "../src/types/fileManager";
+import type { CVData } from "@/types";
+import type { FileMetadata } from "@/types/fileManager";
 import * as path from "path";
 import * as fs from "fs/promises";
 import fsSync from "fs";

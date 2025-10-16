@@ -1,4 +1,4 @@
-import { DirectoryFileInfo } from "../../../../lib/multiFileManager";
+import { DirectoryFileInfo } from "@/lib/multiFileManager";
 import { TreeNode } from "./types";
 
 export function buildTree(files: DirectoryFileInfo[]): TreeNode[] {

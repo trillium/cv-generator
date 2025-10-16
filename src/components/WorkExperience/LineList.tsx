@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import EditableField from "../EditableField";
+import EditableField from "@/components/EditableField";
 
 type Line = { text: string; bulletPoint?: boolean };
 

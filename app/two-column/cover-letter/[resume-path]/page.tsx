@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import TwoColumnCoverLetter from "../../../../src/components/Resume/two-column/cover-letter";
-import { decodeFilePathFromUrl } from "../../../../src/utils/urlSafeEncoding";
-import { useDirectoryManager } from "../../../../src/contexts/DirectoryManager/DirectoryManagerContext.hook";
+import TwoColumnCoverLetter from "@/src/components/Resume/two-column/cover-letter";
+import { decodeFilePathFromUrl } from "@/src/utils/urlSafeEncoding";
+import { useDirectoryManager } from "@/src/contexts/DirectoryManager/DirectoryManagerContext.hook";
 
 export default function DynamicTwoColumnCoverLetterPage() {
   const params = useParams();

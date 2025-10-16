@@ -1,12 +1,12 @@
 "use client";
 
 import { clsx } from "clsx";
-import PrintPageSize, { DEFAULT_PAGE_SIZES } from "../PrintPageSize";
-import ResumeSelector from "../ResumeSelector/ResumeSelector";
-import ThemeSwitch from "../ThemeSwitch";
 import LayoutSelector from "./LayoutSelector";
 import { ColorPickerSwitch } from "../ColorPicker";
 
+import PrintPageSize, { DEFAULT_PAGE_SIZES } from "@/components/PrintPageSize";
+import ResumeSelector from "@/components/ResumeSelector/ResumeSelector";
+import ThemeSwitch from "@/components/ThemeSwitch";
 import HomeButton from "./HomeButton";
 import FileBrowserButton from "./FileBrowserButton";
 

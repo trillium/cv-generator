@@ -1,6 +1,6 @@
-import Separator from "../../../Separator/Separator";
-import ProfileLink from "../../../Profile/ProfileLink/ProfileLink";
-import type { CVData } from "../../../../types";
+import Separator from "@/components/Separator/Separator";
+import ProfileLink from "@/src/components/Profile/ProfileLink/ProfileLink";
+import type { CVData } from "@/types";
 
 export default function Footer({ data }: { data: CVData }) {
   // Defensive check: ensure profile and links exist

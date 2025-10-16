@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import yaml from "js-yaml";
 
-import type { CVData } from "../src/types";
+import type { CVData } from "@/types";
 
 // Use import.meta.url to get __dirname in ESM
 const __dirname = path.dirname(new URL(import.meta.url).pathname);

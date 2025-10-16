@@ -16,7 +16,7 @@ import {
   FileFilters,
   FileType,
   FileMetadataJson,
-} from "../src/types/fileManager";
+} from "@/types/fileManager";
 
 export class UnifiedFileManager {
   private piiPath: string;

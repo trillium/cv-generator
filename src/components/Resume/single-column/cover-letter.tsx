@@ -2,9 +2,9 @@
 
 import type { CVData } from "@/types";
 import Header from "./ui/Header";
-import Title from "../../Title/Title";
+import Title from "@/components/Title/Title";
 import Footer from "./ui/Footer";
-import EditableField from "../../EditableField/EditableField";
+import EditableField from "@/components/EditableField";
 
 function SingleColumnCoverLetter({ data }: { data: CVData }) {
   return (

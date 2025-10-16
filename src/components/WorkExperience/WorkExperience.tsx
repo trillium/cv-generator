@@ -1,6 +1,6 @@
-import Title from "../Title/Title";
+import Title from "@/components/Title/Title";
 import LineList from "./LineList";
-import EditableField from "../EditableField";
+import EditableField from "@/components/EditableField";
 
 type Lines = { text: string; bulletPoint?: boolean }[];
 

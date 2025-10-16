@@ -4,8 +4,8 @@ import React from "react";
 import { clsx } from "clsx";
 import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
 import { useModal } from "@/contexts/ModalContext";
-import ResumeNavigator from "../ResumeNavigator/ResumeNavigator";
-import ResumeCreator from "../ResumeCreator/ResumeCreator";
+import ResumeNavigator from "@/components/ResumeNavigator/ResumeNavigator";
+import ResumeCreator from "@/components/ResumeCreator/ResumeCreator";
 import type { CVData } from "@/types";
 
 const ResumeSelector: React.FC = () => {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { MultiFileManager } from "../../../../lib/multiFileManager";
+import { MultiFileManager } from "@/lib/multiFileManager";
 
 export async function GET(request: NextRequest) {
   try {

@@ -7,7 +7,7 @@ import type {
   DirectoryMetadata,
   DirectoryFileInfo,
   DirectoryLoadResult,
-} from "../../../lib/multiFileManager";
+} from "@/lib/multiFileManager";
 
 export interface DirectoryManagerContextType {
   // Resume cache

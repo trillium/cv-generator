@@ -1,7 +1,7 @@
 "use client";
 
-import { useModal } from "../../contexts/ModalContext";
-import ResumeNavigator from "../ResumeNavigator/ResumeNavigator";
+import { useModal } from "@/contexts/ModalContext";
+import ResumeNavigator from "@/components/ResumeNavigator/ResumeNavigator";
 
 interface ResumeNavigationModalProps {
   buttonText?: string;

@@ -1,10 +1,10 @@
 "use client";
 
-import Header from "../../Header/Header";
 import type { CVData } from "@/types";
-import Title from "../../Title/Title";
-import { ProfileHeader } from "../../Profile/Profile";
-import EditableField from "../../EditableField/EditableField";
+import Header from "@/components/Header/Header";
+import Title from "@/components/Title/Title";
+import { ProfileHeader } from "@/components/Profile/Profile";
+import EditableField from "@/components/EditableField/EditableField";
 
 function TwoColumnCoverLetter({ data }: { data: CVData }) {
   return (

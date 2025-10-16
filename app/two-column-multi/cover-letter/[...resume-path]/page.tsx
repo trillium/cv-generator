@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import TwoColumnCoverLetter from "@/components/Resume/two-column/cover-letter";
 import type { CVData } from "@/types";
 
-import { useDirectoryManager } from "@/contexts/DirectoryManagerContext.hook";
+import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
 
 export default function DynamicTwoColumnMultiCoverLetterPage() {
   const params = useParams();

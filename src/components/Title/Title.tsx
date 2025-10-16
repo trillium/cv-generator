@@ -1,4 +1,4 @@
-import Separator from "../Separator/Separator";
+import Separator from "@/components/Separator/Separator";
 
 const Title = ({ text }: { text: string }) => {
   return (

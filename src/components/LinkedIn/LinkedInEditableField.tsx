@@ -8,9 +8,9 @@ import {
 } from "@/hooks/useLinkedInYamlUpdater";
 import { useLinkedInData } from "@/contexts/LinkedInContext";
 import { useModal } from "@/contexts/ModalContext";
-import EditModal from "../EditableField/EditModal";
-import EmptyFieldPlaceholder from "../EditableField/EmptyFieldPlaceholder";
-import { isFieldEmpty } from "../EditableField/editableFieldUtils";
+import EditModal from "@/components/EditableField/EditModal";
+import EmptyFieldPlaceholder from "@/components/EditableField/EmptyFieldPlaceholder";
+import { isFieldEmpty } from "@/components/EditableField/editableFieldUtils";
 
 interface LinkedInEditableFieldProps<T> {
   yamlPath: string;

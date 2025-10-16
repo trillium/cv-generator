@@ -1,6 +1,6 @@
 import * as React from "react";
 import SectionBadge from "./SectionBadge";
-import { DirectoryFileInfo } from "../../../../lib/multiFileManager";
+import { DirectoryFileInfo } from "@/lib/multiFileManager";
 
 interface SelectedFileInfoProps {
   selectedFile: string | null;

@@ -1,4 +1,4 @@
-import Title from "../../Title/Title";
+import Title from "@/components/Title/Title";
 
 export type Language = {
   language: string;
