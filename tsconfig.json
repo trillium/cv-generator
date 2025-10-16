@@ -18,7 +18,13 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/types": ["./src/types/index.ts"],
+      "@/types/*": ["./src/types/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/app/*": ["./app/*"],
+      "@/scripts/*": ["./scripts/*"],
+      "@/src/*": ["./src/*"],
+      "@/contexts/*": ["./src/contexts/*"]
     },
     "target": "ES2017",
     "types": ["vitest/globals"]
