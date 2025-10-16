@@ -27,7 +27,8 @@ export default function FileManagerFeature() {
     loading,
     error,
     files,
-    loadDirectory,
+    loadAllResumes,
+    setCurrentResume,
     updateDataPath,
     saveDirectory,
     discardChanges,
@@ -44,12 +45,12 @@ export default function FileManagerFeature() {
   );
 
   useEffect(() => {
-    // Default to 'resumes' directory if no directory is set
-    const defaultDirectory = "resumes";
-    if (!currentDirectory) {
-      loadDirectory(defaultDirectory);
-    }
-  }, [currentDirectory, loadDirectory]);
+    loadAllResumes().then(() => {
+      if (!currentDirectory) {
+        setCurrentResume("resumes");
+      }
+    });
+  }, [loadAllResumes, setCurrentResume, currentDirectory]);
 
   async function handleSave() {
     await saveDirectory();
