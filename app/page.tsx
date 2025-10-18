@@ -7,8 +7,7 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to base resume
-    router.push("/single-column/resume");
+    router.push("/file-manager");
   }, [router]);
 
   return (
