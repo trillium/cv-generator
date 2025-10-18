@@ -7,7 +7,7 @@ export type WorkExperience = {
   location: string;
   icon: string;
   years: string;
-  bubbles: string[];
+  bubbles?: string[];
   lines: Lines;
   notes?: Notes;
 };
