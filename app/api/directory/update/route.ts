@@ -35,16 +35,55 @@ export async function POST(request: NextRequest) {
 
     console.log(`📄 Running: pnpm ${pdfArgs.join(" ")}`);
 
-    const child = spawn("pnpm", pdfArgs, {
-      cwd: process.cwd(),
-      detached: true,
-      stdio: "ignore",
+    const pdfResult = await new Promise<{
+      success: boolean;
+      pageCount?: number;
+      error?: string;
+    }>((resolve) => {
+      const child = spawn("pnpm", pdfArgs, {
+        cwd: process.cwd(),
+        stdio: ["pipe", "pipe", "pipe"],
+      });
+
+      let stdout = "";
+      let stderr = "";
+
+      child.stdout?.on("data", (data) => {
+        stdout += data.toString();
+      });
+
+      child.stderr?.on("data", (data) => {
+        stderr += data.toString();
+      });
+
+      child.on("close", (code) => {
+        if (code === 0) {
+          const pageCountMatch = stdout.match(/(\d+) page/);
+          const pageCount = pageCountMatch
+            ? parseInt(pageCountMatch[1], 10)
+            : undefined;
+
+          console.log(`✅ PDF generation completed successfully`);
+          resolve({ success: true, pageCount });
+        } else {
+          console.error(`❌ PDF generation failed with code ${code}`);
+          console.error(stderr);
+          resolve({
+            success: false,
+            error: `PDF generation failed with code ${code}`,
+          });
+        }
+      });
+
+      child.on("error", (error) => {
+        console.error(`❌ PDF generation error:`, error);
+        resolve({ success: false, error: error.message });
+      });
     });
-    child.unref();
 
     return NextResponse.json({
       ...result,
-      pdfTriggered: true,
+      pdf: pdfResult,
     });
   } catch (error) {
     console.error("[API /directory/update POST] Error updating data:", error);
