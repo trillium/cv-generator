@@ -2,7 +2,11 @@
 import path from "path";
 import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const isDev = process.env.NODE_ENV !== "production";
+
 const nextConfig = {
+  distDir: isDev ? ".next-dev" : ".next",
   webpack: (config) => {
     config.module.rules.push({
       test: /\.ya?ml$/,

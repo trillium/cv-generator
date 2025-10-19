@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "next dev -p 10300",
     "build": "sh scripts/build-with-count.sh",
+    "build:prod": "NODE_ENV=production next build",
     "postbuild": "tsx scripts/generate-build-hash.ts",
     "start": "sh scripts/start-with-port.sh",
+    "start:prod": "NODE_ENV=production next start",
     "cached-build-serve": "tsx scripts/cached-build-serve.ts",
     "test": "vitest run",
     "test:watch": "vitest",
