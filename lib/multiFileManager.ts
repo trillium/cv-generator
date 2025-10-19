@@ -136,9 +136,23 @@ export class MultiFileManager extends UnifiedFileManager {
     const ancestorDirs = getAncestorDirectories(dirPath).reverse(); // most specific first
     let targetFile: string | null = null;
     // 2. Find the most specific file containing the section
+    // Prioritize section-specific files over full data files
     for (const dir of ancestorDirs) {
       const dataFiles = findDataFilesInDirectory(dir);
-      for (const filePath of dataFiles) {
+
+      // Sort files: section-specific files first, then full data files
+      const sortedFiles = dataFiles.sort((a, b) => {
+        const aBasename = path.basename(a, path.extname(a));
+        const bBasename = path.basename(b, path.extname(b));
+        const aIsFullData = isFullDataFilename(aBasename);
+        const bIsFullData = isFullDataFilename(bBasename);
+
+        if (aIsFullData && !bIsFullData) return 1;
+        if (!aIsFullData && bIsFullData) return -1;
+        return 0;
+      });
+
+      for (const filePath of sortedFiles) {
         const fileData = loadDataFile(filePath);
         if (Object.prototype.hasOwnProperty.call(fileData, section)) {
           targetFile = filePath;
