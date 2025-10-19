@@ -4,6 +4,7 @@ import { exec } from "node:child_process";
 import path from "node:path";
 import type { CVData } from "@/types";
 import { ensureDirectoryExists, getOutputFilename } from "./file-utils";
+import { countPdfPages, extractLastPageText } from "./page-counter";
 
 export async function generatePdf(url: string, pdfOptions: object, page: Page) {
   await page.goto(url, { waitUntil: "networkidle0" });
@@ -23,7 +24,12 @@ export async function generateAndSavePdf({
   type: "Resume" | "CoverLetter";
   outDir: string;
   browser: Browser;
-}) {
+}): Promise<{
+  path: string;
+  pageCount: number;
+  lastPageText: string;
+  lineBreaks: number;
+}> {
   const page = await browser.newPage();
   const pdf = await generatePdf(
     url,
@@ -35,6 +41,18 @@ export async function generateAndSavePdf({
     },
     page,
   );
+
+  const pdfBuffer = Buffer.from(pdf);
+  const pageCount = await countPdfPages(pdfBuffer);
+
+  let lastPageText = "";
+  let lineBreaks = 0;
+
+  if (pageCount > 1) {
+    const lastPageData = await extractLastPageText(pdfBuffer);
+    lastPageText = lastPageData.text;
+    lineBreaks = lastPageData.lineBreaks;
+  }
 
   ensureDirectoryExists(outDir);
   const outPath = path.join(outDir, getOutputFilename({ data: dataObj, type }));
@@ -48,5 +66,5 @@ export async function generateAndSavePdf({
     exec(`xdg-open '${outPath}'`);
   }
 
-  return outPath;
+  return { path: outPath, pageCount, lastPageText, lineBreaks };
 }
