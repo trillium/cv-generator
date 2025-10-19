@@ -1,8 +1,8 @@
 import readline from "readline";
 import { allVariants } from "../../lib/allVariants";
-import { getDefaultResume } from "../../lib/getDefaultResume";
 
 export interface CliArgs {
+  mode: "dev" | "prod";
   resumePath: string;
   isAnon: boolean;
   skipPdf: boolean;
@@ -38,6 +38,9 @@ export async function parseCliArgs(): Promise<CliArgs> {
   const isAnon = userArgv.includes("--anon");
   const skipPdf = userArgv.includes("--no-pdf");
 
+  const isDev = userArgv.includes("--dev");
+  const mode: "dev" | "prod" = isDev ? "dev" : "prod";
+
   const resumeTypeArg = userArgv.find((arg) => arg.startsWith("--resumeType="));
   const resumePathArg = userArgv.find((arg) => arg.startsWith("--resumePath="));
 
@@ -59,9 +62,12 @@ export async function parseCliArgs(): Promise<CliArgs> {
   if (resumePathArg) {
     resumePath = resumePathArg.split("=")[1];
   } else {
-    const defaultResume = getDefaultResume();
-    resumePath = defaultResume.path.replace(/\/data\.yml$/, "");
-    console.log(`📁 Using default resume: ${defaultResume.path}`);
+    console.error("❌ Error: --resumePath is required");
+    console.error(
+      "   Example: pnpm pdf --resumePath=resumes --resumeType=single-column",
+    );
+    console.error("   Note: Path is relative to PII_PATH env var");
+    process.exit(1);
   }
 
   const printArg = userArgv.find((arg) => arg.startsWith("--print="));
@@ -78,6 +84,7 @@ export async function parseCliArgs(): Promise<CliArgs> {
   }
 
   return {
+    mode,
     resumePath,
     isAnon,
     skipPdf,
