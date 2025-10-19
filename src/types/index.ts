@@ -111,6 +111,15 @@ export type CareerSummaryItem = {
 
 export type CareerSummary = CareerSummaryItem[];
 
+/**
+ * Metadata for resume tracking and management.
+ *
+ * NOTE: Future work needed around directory-based metadata storage.
+ * Currently metadata lives inline with CVData, but we may want to:
+ * - Store metadata in separate .meta.json files alongside data.yml
+ * - Support directory-level metadata (e.g., pii/resumes/.meta.json)
+ * - Enable metadata queries without loading full resume data
+ */
 export type ResumeMetadata = {
   targetCompany?: string;
   targetPosition?: string;
@@ -126,4 +135,7 @@ export type ResumeMetadata = {
   notes?: string;
   tailoredFor?: string[];
   lastModified?: string;
+  pages?: number;
+  lastPageText?: string;
+  lastPageLineBreaks?: number;
 };
