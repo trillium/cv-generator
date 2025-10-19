@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MultiFileManager } from "@/lib/multiFileManager";
 import { spawn } from "child_process";
+import { getPdfsToRegenerate } from "@/lib/pdfSectionMapper";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,7 +22,19 @@ export async function POST(request: NextRequest) {
     const result = await manager.updatePath(directoryPath, yamlPath, value);
 
     console.log(`📄 File updated: ${result.updatedFile}`);
+
+    const pdfsToRegenerate = getPdfsToRegenerate(yamlPath);
+
+    if (pdfsToRegenerate.length === 0) {
+      console.log(`⏭️  Section doesn't affect PDFs, skipping regeneration`);
+      return NextResponse.json({
+        ...result,
+        pdf: { skipped: true, reason: "Section does not affect PDFs" },
+      });
+    }
+
     console.log(`🔄 Triggering PDF regeneration for: ${directoryPath}`);
+    console.log(`📄 Regenerating: ${pdfsToRegenerate.join(", ")}`);
 
     const isDev = process.env.NODE_ENV !== "production";
     const mode = isDev ? "dev" : "prod";
@@ -31,6 +44,7 @@ export async function POST(request: NextRequest) {
       `--${mode}`,
       `--resumePath=${directoryPath}`,
       `--resumeType=single-column`,
+      `--print=${pdfsToRegenerate.join(",")}`,
     ];
 
     console.log(`📄 Running: pnpm ${pdfArgs.join(" ")}`);
