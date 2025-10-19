@@ -10,7 +10,7 @@ type WorkExperiences = {
   location: string;
   icon: string;
   years: string;
-  bubbles: string[];
+  bubbles?: string[];
   lines: Lines;
 };
 
