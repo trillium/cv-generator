@@ -15,10 +15,25 @@ import { SECTION_KEY_TO_FILENAME } from "./multiFileMapper";
 import { getPiiDirectory } from "./getPiiPath";
 import * as yaml from "js-yaml";
 
+export interface PdfMetadata {
+  pages: number;
+  lastPageText?: string;
+  lineBreaks?: number;
+  generatedAt: string;
+}
+
+export interface PdfMetadataFile {
+  pdf?: {
+    resume?: PdfMetadata;
+    coverLetter?: PdfMetadata;
+  };
+}
+
 export interface DirectoryLoadResult {
   data: CVData;
   sources: Record<string, string>;
   metadata: DirectoryMetadata;
+  pdfMetadata?: PdfMetadataFile;
 }
 
 export interface DirectoryMetadata {
@@ -106,6 +121,19 @@ export class MultiFileManager extends UnifiedFileManager {
       }
     }
 
+    // 3. Load PDF metadata if it exists
+    let pdfMetadata: PdfMetadataFile | undefined;
+    try {
+      const piiPath = getPiiDirectory();
+      const metadataPath = path.join(piiPath, dirPath, "metadata.json");
+      if (fsSync.existsSync(metadataPath)) {
+        const metadataContent = await fs.readFile(metadataPath, "utf-8");
+        pdfMetadata = JSON.parse(metadataContent);
+      }
+    } catch (err) {
+      console.warn(`Could not load PDF metadata: ${err}`);
+    }
+
     return {
       data: mergedData as CVData,
       sources,
@@ -115,6 +143,7 @@ export class MultiFileManager extends UnifiedFileManager {
         filesLoaded,
         hasUnsavedChanges: false,
       },
+      pdfMetadata,
     };
   }
 
