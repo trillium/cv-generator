@@ -1,5 +1,5 @@
 "use client";
-import DynamicMultiColumnPage from "@/app/DynamicMultiColumnPage";
+import DynamicMultiColumnPage from "@/src/app/DynamicMultiColumnPage";
 export default function DynamicSingleColumnMultiResumePage() {
   return (
     <DynamicMultiColumnPage

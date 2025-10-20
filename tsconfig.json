@@ -21,7 +21,7 @@
       "@/types": ["./src/types/index.ts"],
       "@/types/*": ["./src/types/*"],
       "@/lib/*": ["./lib/*"],
-      "@/app/*": ["./app/*"],
+      "@/app/*": ["./src/app/*"],
       "@/scripts/*": ["./scripts/*"],
       "@/src/*": ["./src/*"],
       "@/contexts/*": ["./src/contexts/*"],
