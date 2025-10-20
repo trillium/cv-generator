@@ -16,14 +16,14 @@ function TwoColumnResume({ data }: { data: CVData }) {
       </div>
 
       {/* Main content - grows to fill space */}
-      <div className="flex-1 w-full max-w-5xl mx-auto rounded-md bg-white dark:bg-gray-800">
+      <div className="flex-1 w-full max-w-5xl mx-auto">
         <CareerSummary data={data} />
         <WorkExperience data={data.workExperience} showBubbles={showBubbles} />
         <ProjectsList projects={data.projects} showBubbles={showBubbles} />
       </div>
 
       {/* Footer - sticks to bottom */}
-      <div className="w-full">
+      <div className="w-full max-w-5xl mx-auto">
         <Footer data={data} />
       </div>
     </div>

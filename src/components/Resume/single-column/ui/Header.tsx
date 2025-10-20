@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import ProfileLink from "@/components/Profile/ProfileLink/ProfileLink";
 import EditableField from "@/components/EditableField/EditableField";
 import type { CVData } from "@/types";
@@ -34,87 +33,69 @@ export default function Header({ data }: { data: CVData }) {
 
   if (!infoIsValid) return null;
 
-  const singleLineNameAndRole = true;
   return (
     <header>
-      <div
-        className={clsx({
-          "flex flex-row justify-center items-baseline gap-x-3 text-4xl":
-            singleLineNameAndRole,
-        })}
-      >
-        <div className="flex justify-center">
-          <h1 className="text-4xl">
-            <EditableField
-              yamlPath="info.firstName"
-              value={firstName}
-              fieldType="text"
-            >
-              <span className=" font-semibold text-primary-500">
-                {firstName}
-              </span>
-            </EditableField>{" "}
-            <EditableField
-              yamlPath="info.lastName"
-              value={lastName}
-              fieldType="text"
-            >
-              <span className="font-normal dark:text-white">{lastName}</span>
-            </EditableField>
-          </h1>
-        </div>
-        <div
-          className={clsx("flex justify-center", {
-            "font-light border-l-2 border-black dark:border-white px-3 text-gray-700 dark:text-gray-300":
-              singleLineNameAndRole,
-            "text-2xl": !singleLineNameAndRole,
-          })}
-        >
+      <div className="text-center">
+        <h1 className="text-4xl inline-block">
+          <EditableField
+            yamlPath="info.firstName"
+            value={firstName}
+            fieldType="text"
+          >
+            <span className="font-semibold text-primary-500">{firstName}</span>
+          </EditableField>{" "}
+          <EditableField
+            yamlPath="info.lastName"
+            value={lastName}
+            fieldType="text"
+          >
+            <span className="font-normal dark:text-white">{lastName}</span>
+          </EditableField>
+        </h1>
+        <span className="inline-block font-light border-l-2 border-black dark:border-white px-3 text-gray-700 dark:text-gray-300 text-4xl align-baseline ml-3">
           <EditableField
             yamlPath="info.role"
             value={role || ""}
             fieldType="text"
           >
-            <h2 className="dark:text-gray-300">{role}</h2>
+            <span className="dark:text-gray-300">{role}</span>
           </EditableField>
-        </div>
+        </span>
       </div>
-      <div className="flex justify-center">
-        <ul>
-          <li className="flex justify-center pt-2 gap-x-4">
-            <EditableField yamlPath="info.email" value={email} fieldType="text">
-              <ProfileLink
-                icon="Email"
-                link={email}
-                name={email}
-                linkYamlPath="info.email"
-                nameYamlPath="info.email"
-              />
-            </EditableField>
-            <EditableField yamlPath="info.phone" value={phone} fieldType="text">
-              <ProfileLink
-                icon="Phone"
-                link={phone}
-                name={phone}
-                linkYamlPath="info.phone"
-                nameYamlPath="info.phone"
-              />
-            </EditableField>
-            <EditableField
-              yamlPath="info.website"
-              value={website}
-              fieldType="text"
-            >
-              <ProfileLink
-                icon="Website"
-                link={website}
-                name={website}
-                linkYamlPath="info.website"
-                nameYamlPath="info.website"
-              />
-            </EditableField>
-          </li>
-        </ul>
+      <div className="text-center pt-2">
+        <EditableField yamlPath="info.email" value={email} fieldType="text">
+          <span className="inline-block mr-4">
+            <ProfileLink
+              icon="Email"
+              link={email}
+              name={email}
+              linkYamlPath="info.email"
+              nameYamlPath="info.email"
+            />
+          </span>
+        </EditableField>
+        <EditableField yamlPath="info.phone" value={phone} fieldType="text">
+          <span className="inline-block mr-4">
+            <ProfileLink
+              icon="Phone"
+              link={phone}
+              name={phone}
+              linkYamlPath="info.phone"
+              nameYamlPath="info.phone"
+            />
+          </span>
+        </EditableField>
+        <EditableField yamlPath="info.website" value={website} fieldType="text">
+          <span className="inline-block">
+            <ProfileLink
+              icon="Website"
+              link={website}
+              name={website}
+              linkYamlPath="info.website"
+              nameYamlPath="info.website"
+            />
+          </span>
+        </EditableField>
       </div>
     </header>
   );
