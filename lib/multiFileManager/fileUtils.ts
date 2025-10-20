@@ -40,7 +40,7 @@ export function serializeData(
 }
 
 export function extractTopLevelKey(dataPath: string): string {
-  const parts = dataPath.split(/[.[]]/g);
+  const parts = dataPath.split(/[.[\]]+/g);
   return parts[0];
 }
 
@@ -49,7 +49,7 @@ export function setNestedValue(
   pathStr: string,
   value: unknown,
 ): void {
-  const keys = pathStr.split(/[.[]]/g).filter(Boolean);
+  const keys = pathStr.split(/[.[\]]+/g).filter(Boolean);
   let current = obj;
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
