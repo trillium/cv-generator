@@ -7,6 +7,7 @@ import { parseCliArgs } from "./cli-args";
 import { loadAndProcessData } from "./data-loader";
 import { buildUrls } from "./url-builder";
 import { generateAndSavePdf } from "./pdf-generator";
+import { saveMetadata } from "./metadata-writer";
 
 config();
 
@@ -47,7 +48,8 @@ async function main(
     });
 
     console.log("🐾 Opening Puppeteer and generating PDF");
-    const outDir = path.join(projectRoot, "out");
+    const piiPath = process.env.PII_PATH || path.join(projectRoot, "pii");
+    const outDir = path.join(piiPath, resumePath);
 
     const { resumeUrl, coverLetterUrl } = buildUrls(
       serverUrl,
@@ -76,6 +78,14 @@ async function main(
         browser,
       });
       results.push({ type: "resume", pageCount, lastPageText, lineBreaks });
+
+      saveMetadata(outDir, "resume", {
+        pages: pageCount,
+        lastPageText: pageCount > 1 ? lastPageText : undefined,
+        lineBreaks: pageCount > 1 ? lineBreaks : undefined,
+        generatedAt: new Date().toISOString(),
+      });
+
       if (pageCount > 1) {
         console.log(
           `📄 Resume generated: ${pageCount} page(s), ${lineBreaks} line breaks on last page`,
@@ -93,6 +103,14 @@ async function main(
         browser,
       });
       results.push({ type: "cover", pageCount, lastPageText, lineBreaks });
+
+      saveMetadata(outDir, "coverLetter", {
+        pages: pageCount,
+        lastPageText: pageCount > 1 ? lastPageText : undefined,
+        lineBreaks: pageCount > 1 ? lineBreaks : undefined,
+        generatedAt: new Date().toISOString(),
+      });
+
       if (pageCount > 1) {
         console.log(
           `📄 Cover letter generated: ${pageCount} page(s), ${lineBreaks} line breaks on last page`,

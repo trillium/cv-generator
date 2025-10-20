@@ -38,6 +38,8 @@ export async function generateAndSavePdf({
       margin: { top: ".25in", bottom: ".25in", left: ".25in", right: ".25in" },
       printBackground: true,
       scale: 0.8,
+      tagged: true,
+      displayHeaderFooter: false,
     },
     page,
   );
