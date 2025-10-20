@@ -42,59 +42,72 @@ export async function POST(request: NextRequest) {
     const isDev = process.env.NODE_ENV !== "production";
     const mode = isDev ? "dev" : "prod";
 
-    const pdfArgs = [
+    const baseArgs = [
       "pdf",
       `--${mode}`,
       `--resumePath=${directoryPath}`,
       `--resumeType=single-column`,
-      `--print=${pdfsToRegenerate.join(",")}`,
     ];
 
-    console.log(`📄 Running: pnpm ${pdfArgs.join(" ")}`);
-    console.log(`🆔 PDF Job ID: ${pdfJobId}`);
+    const processes = pdfsToRegenerate.map((pdfType) => {
+      const pdfArgs = [...baseArgs, `--print=${pdfType}`];
+      console.log(`📄 Starting: pnpm ${pdfArgs.join(" ")}`);
 
-    const child = spawn("pnpm", pdfArgs, {
-      cwd: process.cwd(),
-      stdio: ["pipe", "pipe", "pipe"],
+      const child = spawn("pnpm", pdfArgs, {
+        cwd: process.cwd(),
+        stdio: ["pipe", "pipe", "pipe"],
+      });
+
+      let stderr = "";
+
+      child.stderr?.on("data", (data) => {
+        stderr += data.toString();
+      });
+
+      return new Promise<{ pdfType: string; success: boolean; error?: string }>(
+        (resolve) => {
+          child.on("close", (code) => {
+            if (code === 0) {
+              console.log(`✅ ${pdfType} PDF generation completed`);
+              resolve({ pdfType, success: true });
+            } else {
+              console.error(
+                `❌ ${pdfType} PDF generation failed with code ${code}`,
+              );
+              console.error(stderr);
+              resolve({
+                pdfType,
+                success: false,
+                error: `Failed with code ${code}`,
+              });
+            }
+          });
+
+          child.on("error", (error) => {
+            console.error(`❌ ${pdfType} PDF generation error:`, error);
+            resolve({ pdfType, success: false, error: error.message });
+          });
+        },
+      );
     });
 
-    let stdout = "";
-    let stderr = "";
-
-    child.stdout?.on("data", (data) => {
-      stdout += data.toString();
-    });
-
-    child.stderr?.on("data", (data) => {
-      stderr += data.toString();
-    });
-
-    child.on("close", (code) => {
-      if (code === 0) {
-        const pageCountMatch = stdout.match(/(\d+) page/);
-        const pageCount = pageCountMatch
-          ? parseInt(pageCountMatch[1], 10)
-          : undefined;
-
+    Promise.all(processes).then((results) => {
+      const allSucceeded = results.every((r) => r.success);
+      if (allSucceeded) {
         console.log(
-          `✅ PDF generation completed successfully for job ${pdfJobId}`,
+          `✅ All PDF generation completed successfully for job ${pdfJobId}`,
         );
-        pdfJobTracker.completeJob(pdfJobId, { pageCount });
+        pdfJobTracker.completeJob(pdfJobId, {});
       } else {
+        const failures = results.filter((r) => !r.success);
         console.error(
-          `❌ PDF generation failed with code ${code} for job ${pdfJobId}`,
+          `❌ PDF generation failed for: ${failures.map((f) => f.pdfType).join(", ")}`,
         );
-        console.error(stderr);
         pdfJobTracker.failJob(
           pdfJobId,
-          `PDF generation failed with code ${code}`,
+          `Failed: ${failures.map((f) => `${f.pdfType} (${f.error})`).join(", ")}`,
         );
       }
-    });
-
-    child.on("error", (error) => {
-      console.error(`❌ PDF generation error for job ${pdfJobId}:`, error);
-      pdfJobTracker.failJob(pdfJobId, error.message);
     });
 
     return NextResponse.json({
