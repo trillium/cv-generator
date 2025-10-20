@@ -51,13 +51,17 @@ describe("ProjectLinks", () => {
     it("renders placeholder when links is empty array", () => {
       render(<ProjectLinks links={[]} projectIndex={0} />);
 
-      expect(screen.getAllByText("Click to add a link")).toHaveLength(2);
+      expect(
+        screen.getAllByText("Click to add projects.0.links.0.name"),
+      ).toHaveLength(2);
     });
 
     it("renders placeholder when links is undefined", () => {
       render(<ProjectLinks links={undefined} projectIndex={0} />);
 
-      expect(screen.getAllByText("Click to add a link")).toHaveLength(2);
+      expect(
+        screen.getAllByText("Click to add projects.0.links.0.name"),
+      ).toHaveLength(2);
     });
 
     it("Renders placeholder text when passed an empty array", () => {
@@ -71,7 +75,9 @@ describe("ProjectLinks", () => {
         />,
       );
 
-      const placeholders = screen.getAllByText("Click to add a link");
+      const placeholders = screen.getAllByText(
+        "Click to add projects.0.links.0.name",
+      );
       expect(placeholders).toHaveLength(2);
     });
   });
@@ -86,7 +92,9 @@ describe("ProjectLinks", () => {
       render(<ProjectLinks links={mockLinks} projectIndex={0} />);
 
       // Should render the links, not the placeholder
-      expect(screen.queryByText("Click to add a link")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Click to add projects.0.links.0.name"),
+      ).not.toBeInTheDocument();
 
       // Check that ProfileLink components are rendered (mock them if needed)
       // For now, just check that ul is rendered

@@ -125,7 +125,9 @@ describe("EmptyFieldPlaceholder", () => {
         </EmptyFieldPlaceholder>,
       );
 
-      expect(screen.getByText("Click to add a link")).toBeInTheDocument();
+      expect(
+        screen.getByText("Click to add profile.links.0"),
+      ).toBeInTheDocument();
     });
   });
 
@@ -172,7 +174,9 @@ describe("EmptyFieldPlaceholder", () => {
         </EmptyFieldPlaceholder>,
       );
 
-      expect(screen.getByText("Click to add a link")).toBeInTheDocument();
+      expect(
+        screen.getByText("Click to add profile.links.0"),
+      ).toBeInTheDocument();
     });
 
     it("shows array placeholder for array fieldType", () => {
@@ -342,7 +346,9 @@ describe("EmptyFieldPlaceholder", () => {
         </EmptyFieldPlaceholder>,
       );
 
-      expect(screen.getByText("Click to add a link")).toBeInTheDocument();
+      expect(
+        screen.getByText("Click to add profile.links.0"),
+      ).toBeInTheDocument();
     });
 
     it("handles ProfileLink structure with blank content", () => {
@@ -363,7 +369,7 @@ describe("EmptyFieldPlaceholder", () => {
         </EmptyFieldPlaceholder>,
       );
 
-      const placeholders = screen.getAllByText("Click to add a link");
+      const placeholders = screen.getAllByText("Click to add profile.links.0");
       expect(placeholders).toHaveLength(2);
     });
   });
