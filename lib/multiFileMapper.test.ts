@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 import {
@@ -12,6 +12,10 @@ import {
 } from "./multiFileMapper";
 
 const TEST_DIR = path.join(process.cwd(), "test-multi-file");
+
+vi.mock("./getPiiPath", () => ({
+  getPiiDirectory: () => TEST_DIR,
+}));
 
 describe("multiFileMapper", () => {
   beforeEach(() => {

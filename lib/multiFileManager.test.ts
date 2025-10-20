@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
-import { MultiFileManager } from "./multiFileManager";
+import { MultiFileManager } from "./multiFileManager/multiFileManager";
 import * as yaml from "js-yaml";
 
 const TEST_PII_DIR = path.join(process.cwd(), "test-pii");
