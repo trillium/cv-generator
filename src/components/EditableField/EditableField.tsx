@@ -184,7 +184,7 @@ export default function EditableField<T extends string | string[]>({
   // Base styles with CSS-only visual feedback
   const cursorClasses = "cursor-pointer";
   const baseLayoutClasses =
-    "relative inline-block group relative transition-all duration-200";
+    "relative inline-block group relative transition-all duration-200 print:static print:inline";
 
   const wrapperStyles = clsx(
     baseLayoutClasses,
@@ -199,7 +199,7 @@ export default function EditableField<T extends string | string[]>({
 
   // Highlight overlay div that sits on top of all content
   const HighlightOverlay = () => (
-    <div className="absolute inset-0 group-hover:bg-blue-500/20 dark:group-hover:bg-blue-900/50 group-hover:shadow group-hover:shadow-blue-200/50 dark:group-hover:shadow-blue-700/50 group-hover:rounded active:bg-blue-100 dark:active:bg-blue-800/50 active:scale-[0.98] z-10 pointer-events-none top-0 right-0 left-0 bottom-0 rounded-lg bg-transparent print:group-hover:bg-transparent print:group-hover:shadow-transparent" />
+    <div className="absolute inset-0 group-hover:bg-blue-500/20 dark:group-hover:bg-blue-900/50 group-hover:shadow group-hover:shadow-blue-200/50 dark:group-hover:shadow-blue-700/50 group-hover:rounded active:bg-blue-100 dark:active:bg-blue-800/50 active:scale-[0.98] z-10 pointer-events-none top-0 right-0 left-0 bottom-0 rounded-lg bg-transparent print:hidden" />
   );
 
   // Render view mode
@@ -218,28 +218,31 @@ export default function EditableField<T extends string | string[]>({
             : "Cannot edit: YAML has errors"
         }
       >
-        <HighlightOverlay />
-        <EmptyFieldPlaceholder
-          fieldType={fieldType}
-          isEmpty={isEmpty}
-          yamlPath={yamlPath}
-          linkData={linkData}
-        >
-          {children}
-        </EmptyFieldPlaceholder>
+        <div className="hidden print:contents">{children}</div>
+        <div className="print:hidden">
+          <HighlightOverlay />
+          <EmptyFieldPlaceholder
+            fieldType={fieldType}
+            isEmpty={isEmpty}
+            yamlPath={yamlPath}
+            linkData={linkData}
+          >
+            {children}
+          </EmptyFieldPlaceholder>
 
-        {/* Action buttons container */}
-        {!isEditing && !error && (
-          <ActionButtons
-            canShowAddButtons={canShowAddButtons}
-            onDelete={handleDelete}
-            onAddAbove={handleAddAbove}
-            onAddBelow={handleAddBelow}
-            onMoveUp={handleMoveUp}
-            onMoveDown={handleMoveDown}
-            onEdit={handleClick}
-          />
-        )}
+          {/* Action buttons container */}
+          {!isEditing && !error && (
+            <ActionButtons
+              canShowAddButtons={canShowAddButtons}
+              onDelete={handleDelete}
+              onAddAbove={handleAddAbove}
+              onAddBelow={handleAddBelow}
+              onMoveUp={handleMoveUp}
+              onMoveDown={handleMoveDown}
+              onEdit={handleClick}
+            />
+          )}
+        </div>
       </div>
     </>
   );
