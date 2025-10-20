@@ -5,6 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import TwoColumnCoverLetter from "@/src/components/Resume/two-column/cover-letter";
 import { decodeFilePathFromUrl } from "@/src/utils/urlSafeEncoding";
 import { useDirectoryManager } from "@/src/contexts/DirectoryManager/DirectoryManagerContext.hook";
+import {
+  LoadingState,
+  ErrorState,
+  EmptyState,
+} from "@/src/components/SharedUIStates";
 
 export default function DynamicTwoColumnCoverLetterPage() {
   const params = useParams();
@@ -36,51 +41,29 @@ export default function DynamicTwoColumnCoverLetterPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">
-            Loading two-column cover letter: {resumePath || encodedResumePath}
-            ...
-          </p>
-        </div>
-      </div>
+      <LoadingState
+        message={`Loading two-column cover letter: ${resumePath || encodedResumePath}...`}
+      />
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div className="text-6xl mb-4">❌</div>
-          <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
-            Cover Letter Not Found
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">{error}</p>
-          <button
-            onClick={() => router.push("/two-column/cover-letter")}
-            className="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 transition-colors"
-          >
-            Go to Default Cover Letter
-          </button>
-        </div>
-      </div>
+      <ErrorState
+        title="Cover Letter Not Found"
+        message={error}
+        buttonText="Go to Default Cover Letter"
+        onButtonClickAction={() => router.push("/two-column/cover-letter")}
+      />
     );
   }
 
   if (!parsedData) {
     return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
-            No Cover Letter Data
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            The cover letter file was found but contains no data.
-          </p>
-        </div>
-      </div>
+      <EmptyState
+        title="No Cover Letter Data"
+        message="The cover letter file was found but contains no data."
+      />
     );
   }
 

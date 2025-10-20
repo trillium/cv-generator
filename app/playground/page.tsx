@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
+import { LoadingState, ErrorState } from "@/src/components/SharedUIStates";
 
 export default function PlaygroundPage() {
   const [inputPath, setInputPath] = useState("");
@@ -44,12 +45,8 @@ export default function PlaygroundPage() {
           Load Data
         </button>
       </form>
-      {loading && (
-        <p className="text-gray-500 dark:text-gray-400">Loading...</p>
-      )}
-      {error && (
-        <p className="text-red-600 dark:text-red-400">Error: {error}</p>
-      )}
+      {loading && <LoadingState />}
+      {error && <ErrorState message={error} />}
       {submittedPath && (
         <div className="mb-4">
           <p>

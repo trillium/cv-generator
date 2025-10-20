@@ -4,6 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import TwoColumnCoverLetter from "@/components/Resume/two-column/cover-letter";
 import type { CVData } from "@/types";
+import {
+  LoadingState,
+  ErrorState,
+  EmptyState,
+} from "@/src/components/SharedUIStates";
 
 import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
 
@@ -56,60 +61,28 @@ export default function DynamicTwoColumnMultiCoverLetterPage() {
   }, [dirPath, loadDirectory]);
 
   if (loading || contextLoading) {
-    return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 dark:border-primary-400 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">
-            Loading directory: {dirPath}...
-          </p>
-        </div>
-      </div>
-    );
+    return <LoadingState message={`Loading directory: ${dirPath}...`} />;
   }
 
   const displayError = error || contextError;
   if (displayError) {
     return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div className="text-6xl mb-4">❌</div>
-          <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
-            Directory Not Found
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-4 whitespace-pre-wrap">
-            {displayError}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            Path attempted:{" "}
-            <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-              {dirPath}
-            </code>
-          </p>
-          <button
-            onClick={() => router.push("/two-column/cover-letter")}
-            className="bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
-          >
-            Go to Default Cover Letter
-          </button>
-        </div>
-      </div>
+      <ErrorState
+        title="Directory Not Found"
+        message={displayError}
+        path={dirPath}
+        buttonText="Go to Default Cover Letter"
+        onButtonClickAction={() => router.push("/two-column/cover-letter")}
+      />
     );
   }
 
   if (!parsedData) {
     return (
-      <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
-            No Cover Letter Data
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            The directory was found but contains no data files.
-          </p>
-        </div>
-      </div>
+      <EmptyState
+        title="No Cover Letter Data"
+        message="The directory was found but contains no data files."
+      />
     );
   }
 
