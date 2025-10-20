@@ -25,5 +25,6 @@ export interface PrintPageSizeProps {
   };
   dpi?: number;
   onPageSizeChange?: (pageSize: PageSize) => void;
+  pdfType?: string;
 }
 // ...existing code...
