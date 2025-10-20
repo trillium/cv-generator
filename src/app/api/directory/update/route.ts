@@ -3,6 +3,8 @@ import { MultiFileManager } from "@/lib/multiFileManager";
 import { spawn } from "child_process";
 import { getPdfsToRegenerate } from "@/lib/pdfSectionMapper";
 import { pdfJobTracker } from "@/lib/pdfJobTracker";
+import { getPiiDirectory } from "@/lib/getPiiPath";
+import path from "path";
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,6 +26,12 @@ export async function POST(request: NextRequest) {
 
     console.log(`📄 File updated: ${result.updatedFile}`);
 
+    const piiPath = getPiiDirectory();
+    const updatedFileDir = path.dirname(result.updatedFile);
+    const pdfOutputDir = path.relative(piiPath, updatedFileDir);
+
+    console.log(`📁 PDF output directory: ${pdfOutputDir}`);
+
     const pdfsToRegenerate = getPdfsToRegenerate(yamlPath);
 
     if (pdfsToRegenerate.length === 0) {
@@ -34,26 +42,26 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    console.log(`🔄 Triggering PDF regeneration for: ${directoryPath}`);
+    console.log(`🔄 Triggering PDF regeneration for: ${pdfOutputDir}`);
     console.log(`📄 Regenerating: ${pdfsToRegenerate.join(", ")}`);
 
-    const pdfJobId = pdfJobTracker.createJob(directoryPath, pdfsToRegenerate);
+    const pdfJobId = pdfJobTracker.createJob(pdfOutputDir, pdfsToRegenerate);
 
     const isDev = process.env.NODE_ENV !== "production";
     const mode = isDev ? "dev" : "prod";
 
     const baseArgs = [
-      "pdf",
+      "scripts/pdf/pdf.ts",
       `--${mode}`,
-      `--resumePath=${directoryPath}`,
+      `--resumePath=${pdfOutputDir}`,
       `--resumeType=single-column`,
     ];
 
     const processes = pdfsToRegenerate.map((pdfType) => {
       const pdfArgs = [...baseArgs, `--print=${pdfType}`];
-      console.log(`📄 Starting: pnpm ${pdfArgs.join(" ")}`);
+      console.log(`📄 Starting: tsx ${pdfArgs.join(" ")}`);
 
-      const child = spawn("pnpm", pdfArgs, {
+      const child = spawn("tsx", pdfArgs, {
         cwd: process.cwd(),
         stdio: ["pipe", "pipe", "pipe"],
       });
