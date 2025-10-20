@@ -9,6 +9,19 @@ import type {
   DirectoryLoadResult,
 } from "@/lib/multiFileManager";
 
+export interface PdfMetadata {
+  pageCount?: number;
+  offScreenText?: string[];
+  error?: string;
+}
+
+export interface PdfJobState {
+  jobId: string;
+  pdfTypes: string[];
+  status: "processing" | "complete" | "failed";
+  metadata?: Record<string, PdfMetadata>;
+}
+
 export interface DirectoryManagerContextType {
   // Resume cache
   allResumes: Record<string, DirectoryLoadResult>;
@@ -25,6 +38,10 @@ export interface DirectoryManagerContextType {
   loading: boolean;
   error: string | null;
   hasUnsavedChanges: boolean;
+
+  // PDF generation state (can have multiple jobs running)
+  pdfJobs: PdfJobState[];
+  storedPdfMetadata: import("@/lib/multiFileManager").PdfMetadataFile | null;
 
   // Parsed data (for compatibility with EditableField)
   parsedData: CVData | null;
@@ -77,6 +94,7 @@ export function DirectoryManagerProvider({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [pdfJobs, setPdfJobs] = useState<PdfJobState[]>([]);
 
   const currentResume = useMemo(() => {
     return currentResumeKey ? allResumes[currentResumeKey] : null;
@@ -86,6 +104,7 @@ export function DirectoryManagerProvider({
   const data = currentResume?.data || null;
   const sources = currentResume?.sources || {};
   const metadata = currentResume?.metadata || null;
+  const storedPdfMetadata = currentResume?.pdfMetadata || null;
 
   const loadDirectory = useCallback(async (path: string) => {
     setLoading(true);
@@ -152,6 +171,7 @@ export function DirectoryManagerProvider({
           data: result.data,
           sources: result.sources,
           metadata: result.metadata,
+          pdfMetadata: result.pdfMetadata,
         },
       }));
       setCurrentResumeKey(resolvedPath);
@@ -203,6 +223,7 @@ export function DirectoryManagerProvider({
                 data: result.data,
                 sources: result.sources,
                 metadata: result.metadata,
+                pdfMetadata: result.pdfMetadata,
               },
             };
           }
@@ -248,6 +269,85 @@ export function DirectoryManagerProvider({
     [allResumes, loadDirectory],
   );
 
+  const pollPdfStatus = useCallback(async (jobId: string) => {
+    const maxAttempts = 60;
+    const pollInterval = 1000;
+    let attempts = 0;
+
+    const poll = async (): Promise<void> => {
+      if (attempts >= maxAttempts) {
+        console.warn(`PDF generation polling timeout for job ${jobId}`);
+        setPdfJobs((prev) =>
+          prev.map((job) =>
+            job.jobId === jobId ? { ...job, status: "failed" as const } : job,
+          ),
+        );
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/pdf/status?jobId=${jobId}`);
+        const result = await response.json();
+
+        if (!result.success) {
+          if (result.error !== "Job not found") {
+            console.error("Failed to fetch PDF status:", result.error);
+          }
+          setPdfJobs((prev) =>
+            prev.map((job) =>
+              job.jobId === jobId ? { ...job, status: "failed" as const } : job,
+            ),
+          );
+          return;
+        }
+
+        const { job } = result;
+
+        if (job.status === "complete") {
+          console.log(
+            `PDF generation completed for job ${jobId}:`,
+            job.metadata,
+          );
+          setPdfJobs((prev) =>
+            prev.map((j) =>
+              j.jobId === jobId
+                ? { ...j, status: "complete" as const, metadata: job.metadata }
+                : j,
+            ),
+          );
+          return;
+        }
+
+        if (job.status === "failed") {
+          console.error(
+            `PDF generation failed for job ${jobId}:`,
+            job.metadata?.error,
+          );
+          setPdfJobs((prev) =>
+            prev.map((j) =>
+              j.jobId === jobId
+                ? { ...j, status: "failed" as const, metadata: job.metadata }
+                : j,
+            ),
+          );
+          return;
+        }
+
+        attempts++;
+        setTimeout(poll, pollInterval);
+      } catch (err) {
+        console.error(`Error polling PDF status for job ${jobId}:`, err);
+        setPdfJobs((prev) =>
+          prev.map((job) =>
+            job.jobId === jobId ? { ...job, status: "failed" as const } : job,
+          ),
+        );
+      }
+    };
+
+    await poll();
+  }, []);
+
   const updateDataPath = useCallback(
     async (yamlPath: string, value: unknown) => {
       if (!currentDirectory) {
@@ -257,7 +357,61 @@ export function DirectoryManagerProvider({
       setLoading(true);
       setError(null);
 
+      const setNestedValue = (
+        obj: CVData,
+        path: string,
+        newValue: unknown,
+      ): CVData => {
+        const keys = path.split(/[.[\]]/).filter(Boolean);
+        const result = { ...obj };
+        let current: unknown = result;
+
+        for (let i = 0; i < keys.length - 1; i++) {
+          const key = keys[i];
+          if (typeof current === "object" && current !== null) {
+            const currentObj = current as Record<string, unknown>;
+            const value = currentObj[key];
+
+            if (Array.isArray(value)) {
+              currentObj[key] = [...value];
+            } else if (typeof value === "object" && value !== null) {
+              currentObj[key] = { ...value };
+            } else {
+              currentObj[key] = value;
+            }
+
+            current = currentObj[key];
+          }
+        }
+
+        if (typeof current === "object" && current !== null) {
+          if (Array.isArray(current)) {
+            const index = parseInt(keys[keys.length - 1], 10);
+            (current as unknown[])[index] = newValue;
+          } else {
+            (current as Record<string, unknown>)[keys[keys.length - 1]] =
+              newValue;
+          }
+        }
+
+        return result;
+      };
+
       try {
+        const optimisticData = data
+          ? setNestedValue(data, yamlPath, value)
+          : data;
+
+        if (optimisticData && currentResumeKey) {
+          setAllResumes((prev) => ({
+            ...prev,
+            [currentResumeKey]: {
+              ...prev[currentResumeKey],
+              data: optimisticData,
+            },
+          }));
+        }
+
         const response = await fetch("/api/directory/update", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -274,20 +428,36 @@ export function DirectoryManagerProvider({
           throw new Error(result.error || "Failed to update data");
         }
 
-        // Reload directory to get fresh merged data
-        await loadDirectory(currentDirectory);
+        if (result.pdf?.jobId) {
+          const pdfTypes = result.pdf.pdfsToRegenerate || ["resume"];
+          setPdfJobs((prev) => [
+            ...prev,
+            {
+              jobId: result.pdf.jobId,
+              pdfTypes,
+              status: "processing",
+            },
+          ]);
+          pollPdfStatus(result.pdf.jobId);
+        }
+
         setHasUnsavedChanges(false);
       } catch (err) {
         const errorMsg =
           err instanceof Error ? err.message : "Failed to update data";
         setError(errorMsg);
         console.error("Error updating data path:", err);
+
+        if (currentDirectory) {
+          await loadDirectory(currentDirectory);
+        }
+
         throw err;
       } finally {
         setLoading(false);
       }
     },
-    [currentDirectory, loadDirectory],
+    [currentDirectory, currentResumeKey, data, loadDirectory, pollPdfStatus],
   );
 
   const saveDirectory = useCallback(async () => {
@@ -523,6 +693,8 @@ export function DirectoryManagerProvider({
     loading,
     error,
     hasUnsavedChanges,
+    pdfJobs,
+    storedPdfMetadata,
     parsedData: data,
     content: data ? JSON.stringify(data, null, 2) : "",
     currentFile: currentDirectory ? { path: currentDirectory } : null,
