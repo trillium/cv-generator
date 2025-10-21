@@ -63,6 +63,7 @@ export default function DynamicMultiColumnPage({
     loadDirectory,
     loading: contextLoading,
     error: contextError,
+    setDocumentType,
   } = useDirectoryManager();
 
   const [loading, setLoading] = useState(true);
@@ -71,6 +72,10 @@ export default function DynamicMultiColumnPage({
   // Extract directory path from params - catch-all route returns an array
   const resumePathSegments = params?.["resume-path"] as string[] | undefined;
   const dirPath = resumePathSegments ? resumePathSegments.join("/") : undefined;
+
+  useEffect(() => {
+    setDocumentType(variant);
+  }, [variant, setDocumentType]);
 
   useEffect(() => {
     async function validateAndLoad() {
