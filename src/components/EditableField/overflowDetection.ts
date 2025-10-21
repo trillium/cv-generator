@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 export interface OverflowDetectionResult {
   shouldHighlight: boolean;
   matchPercentage: number;
+  isFirstOverflow: boolean;
 }
 
 function extractTextFromReactNode(node: ReactNode): string {
@@ -37,7 +38,11 @@ export function detectPageOverflow(
   lastPageLines: string[] | undefined,
 ): OverflowDetectionResult {
   if (!lastPageLines || lastPageLines.length === 0) {
-    return { shouldHighlight: false, matchPercentage: 0 };
+    return {
+      shouldHighlight: false,
+      matchPercentage: 0,
+      isFirstOverflow: false,
+    };
   }
 
   const fieldText =
@@ -46,25 +51,39 @@ export function detectPageOverflow(
       : extractTextFromReactNode(fieldContent);
 
   if (!fieldText.trim()) {
-    return { shouldHighlight: false, matchPercentage: 0 };
+    return {
+      shouldHighlight: false,
+      matchPercentage: 0,
+      isFirstOverflow: false,
+    };
   }
 
   const normalizedField = normalizeText(fieldText);
 
-  for (const line of lastPageLines) {
+  for (let i = 0; i < lastPageLines.length; i++) {
+    const line = lastPageLines[i];
     const normalizedLine = normalizeText(line);
+    const isFirstLine = i === 0;
 
     if (normalizedLine.includes(normalizedField)) {
-      return { shouldHighlight: true, matchPercentage: 1 };
+      return {
+        shouldHighlight: true,
+        matchPercentage: 1,
+        isFirstOverflow: isFirstLine,
+      };
     }
 
     if (
       normalizedField.includes(normalizedLine) &&
       normalizedLine.length > 20
     ) {
-      return { shouldHighlight: true, matchPercentage: 0.9 };
+      return {
+        shouldHighlight: true,
+        matchPercentage: 0.9,
+        isFirstOverflow: isFirstLine,
+      };
     }
   }
 
-  return { shouldHighlight: false, matchPercentage: 0 };
+  return { shouldHighlight: false, matchPercentage: 0, isFirstOverflow: false };
 }

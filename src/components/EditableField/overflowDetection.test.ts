@@ -8,18 +8,21 @@ describe("overflowDetection - line-based matching", () => {
       const result = detectPageOverflow("Some content", undefined);
       expect(result.shouldHighlight).toBe(false);
       expect(result.matchPercentage).toBe(0);
+      expect(result.isFirstOverflow).toBe(false);
     });
 
     it("returns false when lastPageLines is empty array", () => {
       const result = detectPageOverflow("Some content", []);
       expect(result.shouldHighlight).toBe(false);
       expect(result.matchPercentage).toBe(0);
+      expect(result.isFirstOverflow).toBe(false);
     });
 
     it("returns false when field content is empty", () => {
       const result = detectPageOverflow("", ["Last page line"]);
       expect(result.shouldHighlight).toBe(false);
       expect(result.matchPercentage).toBe(0);
+      expect(result.isFirstOverflow).toBe(false);
     });
 
     it("highlights when field text exactly matches a line", () => {
@@ -375,6 +378,47 @@ describe("overflowDetection - line-based matching", () => {
     it("returns 0% match when no match found", () => {
       const result = detectPageOverflow("NoMatch", ["Different text"]);
       expect(result.matchPercentage).toBe(0);
+      expect(result.shouldHighlight).toBe(false);
+    });
+  });
+
+  describe("isFirstOverflow detection", () => {
+    it("marks first line match as first overflow", () => {
+      const lastPageLines = ["Projects", "Flossy", "Education"];
+      const result = detectPageOverflow("Projects", lastPageLines);
+      expect(result.isFirstOverflow).toBe(true);
+      expect(result.shouldHighlight).toBe(true);
+    });
+
+    it("does not mark second line match as first overflow", () => {
+      const lastPageLines = ["Projects", "Flossy", "Education"];
+      const result = detectPageOverflow("Flossy", lastPageLines);
+      expect(result.isFirstOverflow).toBe(false);
+      expect(result.shouldHighlight).toBe(true);
+    });
+
+    it("does not mark third line match as first overflow", () => {
+      const lastPageLines = ["Projects", "Flossy", "Education"];
+      const result = detectPageOverflow("Education", lastPageLines);
+      expect(result.isFirstOverflow).toBe(false);
+      expect(result.shouldHighlight).toBe(true);
+    });
+
+    it("marks first line partial match as first overflow", () => {
+      const lastPageLines = [
+        "Resolved critical access issues",
+        "Projects",
+        "Flossy",
+      ];
+      const result = detectPageOverflow("critical", lastPageLines);
+      expect(result.isFirstOverflow).toBe(true);
+      expect(result.shouldHighlight).toBe(true);
+    });
+
+    it("returns false for isFirstOverflow when no match", () => {
+      const lastPageLines = ["Projects", "Flossy"];
+      const result = detectPageOverflow("NotFound", lastPageLines);
+      expect(result.isFirstOverflow).toBe(false);
       expect(result.shouldHighlight).toBe(false);
     });
   });
