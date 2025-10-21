@@ -1,7 +1,5 @@
 import { PDFDocument } from "pdf-lib";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
-import { writeFileSync } from "fs";
-import { join } from "path";
 
 export async function countPdfPages(pdfBuffer: Buffer): Promise<number> {
   const pdfDoc = await PDFDocument.load(pdfBuffer);
@@ -23,11 +21,6 @@ export async function extractLastPageText(pdfBuffer: Buffer): Promise<{
 
   const lastPage = await pdfDoc.getPage(pageCount);
   const textContent = await lastPage.getTextContent();
-
-  writeFileSync(
-    join(process.cwd(), "textContent-debug.json"),
-    JSON.stringify(textContent, null, 2),
-  );
 
   interface TextItem {
     str: string;
