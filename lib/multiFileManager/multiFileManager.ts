@@ -53,10 +53,16 @@ export class MultiFileManager {
 
   async splitSectionToFile(
     sourceFilePath: string,
-    sectionKey: string,
+    sectionKeys: string[],
     targetFileName: string,
+    mergedData?: Record<string, unknown>,
   ): Promise<{ success: boolean; targetPath?: string; error?: string }> {
-    return splitSectionToFile(sourceFilePath, sectionKey, targetFileName);
+    return splitSectionToFile(
+      sourceFilePath,
+      sectionKeys,
+      targetFileName,
+      mergedData,
+    );
   }
 
   async deleteFile(

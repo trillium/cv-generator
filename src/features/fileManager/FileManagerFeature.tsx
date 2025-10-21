@@ -92,12 +92,13 @@ export default function FileManagerFeature() {
   }
 
   async function handleSplitSection(
-    sectionKey: string,
+    sectionKeys: string[],
     targetFileName: string,
   ) {
-    if (!selectedFile) return;
+    if (!selectedFile && !currentDirectory) return;
     try {
-      await splitSectionToFile(selectedFile, sectionKey, targetFileName);
+      const sourcePath = selectedFile || currentDirectory || "";
+      await splitSectionToFile(sourcePath, sectionKeys, targetFileName);
       closeModal();
     } catch (err) {
       console.error("Failed to split section:", err);
@@ -129,9 +130,13 @@ export default function FileManagerFeature() {
 
   function showSplitSectionModal() {
     if (!selectedFile) return;
+    const fileInfo = files.find((f) => f.path === selectedFile);
     openModal(
       <SplitSectionContent
         selectedFile={selectedFile}
+        fileInfo={fileInfo}
+        currentDirectory={currentDirectory}
+        parsedData={parsedData}
         onClose={closeModal}
         onSplit={handleSplitSection}
       />,

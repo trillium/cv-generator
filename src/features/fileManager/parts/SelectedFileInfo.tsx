@@ -45,7 +45,7 @@ const SelectedFileInfo: React.FC<SelectedFileInfoProps> = ({
               Sections ({fileInfo.sections.length}):
             </span>
             <div className="flex flex-wrap gap-1 mt-1">
-              {fileInfo.sections.map((section) => (
+              {fileInfo.sections.map((section: string) => (
                 <SectionBadge key={section} section={section} />
               ))}
             </div>

@@ -35,45 +35,97 @@ export async function createDirectory(
 
 export async function splitSectionToFile(
   sourceFilePath: string,
-  sectionKey: string,
+  sectionKeys: string[],
   targetFileName: string,
+  mergedData?: Record<string, unknown>,
 ): Promise<{ success: boolean; targetPath?: string; error?: string }> {
   try {
     const piiPath = getPiiDirectory();
     const fullSourcePath = path.join(piiPath, sourceFilePath);
-    const sourceDir = path.dirname(fullSourcePath);
-    const targetPath = path.join(sourceDir, targetFileName);
-    const sourceContent = await fs.readFile(fullSourcePath, "utf-8");
-    const sourceData = yaml.load(sourceContent) as Record<string, unknown>;
-    if (!(sectionKey in sourceData)) {
-      return {
-        success: false,
-        error: `Section "${sectionKey}" not found in source file`,
-      };
+    const isDirectory = fsSync.existsSync(fullSourcePath)
+      ? fsSync.statSync(fullSourcePath).isDirectory()
+      : false;
+
+    let sourceData: Record<string, unknown>;
+    let targetDir: string;
+    let shouldUpdateSource = false;
+
+    if (mergedData && (isDirectory || !fsSync.existsSync(fullSourcePath))) {
+      sourceData = mergedData;
+      targetDir = isDirectory ? fullSourcePath : path.dirname(fullSourcePath);
+      shouldUpdateSource = false;
+    } else {
+      const sourceContent = await fs.readFile(fullSourcePath, "utf-8");
+      sourceData = yaml.load(sourceContent) as Record<string, unknown>;
+      targetDir = path.dirname(fullSourcePath);
+      shouldUpdateSource = true;
     }
-    const sectionData = sourceData[sectionKey];
-    delete sourceData[sectionKey];
-    await fs.writeFile(
-      fullSourcePath,
-      yaml.dump(sourceData, {
-        indent: 2,
-        lineWidth: -1,
-        noRefs: true,
-        sortKeys: false,
-      }),
-    );
-    await fs.writeFile(
-      targetPath,
-      yaml.dump(
-        { [sectionKey]: sectionData },
-        {
+
+    for (const sectionKey of sectionKeys) {
+      if (!(sectionKey in sourceData)) {
+        return {
+          success: false,
+          error: `Section "${sectionKey}" not found in ${mergedData ? "merged data" : "source file"}`,
+        };
+      }
+    }
+
+    const targetData: Record<string, unknown> = {};
+    for (const sectionKey of sectionKeys) {
+      targetData[sectionKey] = sourceData[sectionKey];
+      if (shouldUpdateSource) {
+        delete sourceData[sectionKey];
+      }
+    }
+
+    const targetPath = path.join(targetDir, targetFileName);
+
+    const allSectionsSelected =
+      shouldUpdateSource &&
+      Object.keys(sourceData).length === 0 &&
+      Object.keys(targetData).length > 0;
+
+    if (allSectionsSelected) {
+      await fs.writeFile(
+        targetPath,
+        yaml.dump(targetData, {
           indent: 2,
           lineWidth: -1,
           noRefs: true,
           sortKeys: false,
-        },
-      ),
-    );
+        }),
+      );
+    } else if (shouldUpdateSource) {
+      await fs.writeFile(
+        fullSourcePath,
+        yaml.dump(sourceData, {
+          indent: 2,
+          lineWidth: -1,
+          noRefs: true,
+          sortKeys: false,
+        }),
+      );
+      await fs.writeFile(
+        targetPath,
+        yaml.dump(targetData, {
+          indent: 2,
+          lineWidth: -1,
+          noRefs: true,
+          sortKeys: false,
+        }),
+      );
+    } else {
+      await fs.writeFile(
+        targetPath,
+        yaml.dump(targetData, {
+          indent: 2,
+          lineWidth: -1,
+          noRefs: true,
+          sortKeys: false,
+        }),
+      );
+    }
+
     const relativeTargetPath = path.relative(piiPath, targetPath);
     return {
       success: true,
