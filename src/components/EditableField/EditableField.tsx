@@ -10,6 +10,14 @@ import EmptyFieldPlaceholder from "./EmptyFieldPlaceholder";
 import EditModal from "./EditModal";
 import { useArrayOperations } from "./useArrayOperations";
 import { shouldShowAddButtons, isFieldEmpty } from "./editableFieldUtils";
+import { detectPageOverflow } from "./overflowDetection";
+
+const OVERFLOW_HIGHLIGHT_CLASSES =
+  "absolute inset-0 group-hover:bg-orange-500/30 " +
+  "dark:group-hover:bg-orange-700/40 " +
+  "group-hover:shadow-orange-200/50 " +
+  "dark:group-hover:shadow-orange-700/50 " +
+  "rounded-lg z-20 pointer-events-none print:hidden";
 
 interface EditableFieldProps<T> {
   yamlPath: string;
@@ -47,7 +55,8 @@ export default function EditableField<T extends string | string[]>({
   const [isSaving, setIsSaving] = useState(false);
 
   const { updateYamlPath } = useYamlPathUpdater();
-  const { parsedData, error } = useDirectoryManager();
+  const { parsedData, error, storedPdfMetadata, documentType } =
+    useDirectoryManager();
   const { openModal, closeModal } = useModal();
   const {
     handleAddAbove,
@@ -59,6 +68,17 @@ export default function EditableField<T extends string | string[]>({
 
   const canShowAddButtons = shouldShowAddButtons(yamlPath, parsedData);
   const isEmpty = isFieldEmpty(value);
+
+  const pdfMeta =
+    documentType === "resume"
+      ? storedPdfMetadata?.pdf?.resume
+      : storedPdfMetadata?.pdf?.coverLetter;
+
+  const lastPageText = pdfMeta?.lastPageText;
+  const pages = pdfMeta?.pages;
+
+  const { shouldHighlight } = detectPageOverflow(children, lastPageText);
+  const hasOverflow = (pages ?? 0) > 1 && shouldHighlight;
 
   // Update edit value when the YAML data changes externally
   useEffect(() => {
@@ -202,6 +222,14 @@ export default function EditableField<T extends string | string[]>({
     <div className="absolute inset-0 group-hover:bg-blue-500/20 dark:group-hover:bg-blue-900/50 group-hover:shadow group-hover:shadow-blue-200/50 dark:group-hover:shadow-blue-700/50 group-hover:rounded active:bg-blue-100 dark:active:bg-blue-800/50 active:scale-[0.98] z-10 pointer-events-none top-0 right-0 left-0 bottom-0 rounded-lg bg-transparent print:hidden" />
   );
 
+  const OverflowOverlay = () =>
+    hasOverflow ? (
+      <div
+        className={OVERFLOW_HIGHLIGHT_CLASSES}
+        title={`Warning: This content appears on page ${pages}`}
+      />
+    ) : null;
+
   // Render view mode
   return (
     <>
@@ -221,6 +249,7 @@ export default function EditableField<T extends string | string[]>({
         <div className="hidden print:contents">{children}</div>
         <div className="print:hidden">
           <HighlightOverlay />
+          <OverflowOverlay />
           <EmptyFieldPlaceholder
             fieldType={fieldType}
             isEmpty={isEmpty}
