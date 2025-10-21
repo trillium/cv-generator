@@ -26,7 +26,6 @@ const TwoColumnCoverLetter = dynamic(
 );
 
 import type { ComponentType } from "react";
-import type { CVData } from "@/types";
 
 type Variant = "resume" | "cover-letter";
 type Layout = "single-column" | "two-column";
