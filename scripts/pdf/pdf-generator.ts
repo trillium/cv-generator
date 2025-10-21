@@ -29,6 +29,7 @@ export async function generateAndSavePdf({
   pageCount: number;
   lastPageText: string;
   lineBreaks: number;
+  lastPageLines: string[];
 }> {
   const page = await browser.newPage();
   const pdf = await generatePdf(
@@ -49,11 +50,13 @@ export async function generateAndSavePdf({
 
   let lastPageText = "";
   let lineBreaks = 0;
+  let lastPageLines: string[] = [];
 
   if (pageCount > 1) {
     const lastPageData = await extractLastPageText(pdfBuffer);
     lastPageText = lastPageData.text;
     lineBreaks = lastPageData.lineBreaks;
+    lastPageLines = lastPageData.lines;
   }
 
   ensureDirectoryExists(outDir);
@@ -68,5 +71,5 @@ export async function generateAndSavePdf({
     exec(`xdg-open '${outPath}'`);
   }
 
-  return { path: outPath, pageCount, lastPageText, lineBreaks };
+  return { path: outPath, pageCount, lastPageText, lineBreaks, lastPageLines };
 }

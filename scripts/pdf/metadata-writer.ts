@@ -4,6 +4,7 @@ import path from "node:path";
 export interface PdfMetadata {
   pages: number;
   lastPageText?: string;
+  lastPageLines?: string[];
   lineBreaks?: number;
   generatedAt: string;
 }

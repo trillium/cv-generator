@@ -4,6 +4,7 @@ import type { FileMetadata } from "@/types/fileManager";
 export interface PdfMetadata {
   pages: number;
   lastPageText?: string;
+  lastPageLines?: string[];
   lineBreaks?: number;
   generatedAt: string;
 }

@@ -70,18 +70,20 @@ async function main(
     }> = [];
 
     if (printOptions.includes("resume")) {
-      const { pageCount, lastPageText, lineBreaks } = await generateAndSavePdf({
-        url: resumeUrl,
-        dataObj,
-        type: "Resume",
-        outDir,
-        browser,
-      });
+      const { pageCount, lastPageText, lineBreaks, lastPageLines } =
+        await generateAndSavePdf({
+          url: resumeUrl,
+          dataObj,
+          type: "Resume",
+          outDir,
+          browser,
+        });
       results.push({ type: "resume", pageCount, lastPageText, lineBreaks });
 
       saveMetadata(outDir, "resume", {
         pages: pageCount,
         lastPageText: pageCount > 1 ? lastPageText : undefined,
+        lastPageLines: pageCount > 1 ? lastPageLines : undefined,
         lineBreaks: pageCount > 1 ? lineBreaks : undefined,
         generatedAt: new Date().toISOString(),
       });
@@ -95,18 +97,20 @@ async function main(
       }
     }
     if (printOptions.includes("cover")) {
-      const { pageCount, lastPageText, lineBreaks } = await generateAndSavePdf({
-        url: coverLetterUrl,
-        dataObj,
-        type: "CoverLetter",
-        outDir,
-        browser,
-      });
+      const { pageCount, lastPageText, lineBreaks, lastPageLines } =
+        await generateAndSavePdf({
+          url: coverLetterUrl,
+          dataObj,
+          type: "CoverLetter",
+          outDir,
+          browser,
+        });
       results.push({ type: "cover", pageCount, lastPageText, lineBreaks });
 
       saveMetadata(outDir, "coverLetter", {
         pages: pageCount,
         lastPageText: pageCount > 1 ? lastPageText : undefined,
+        lastPageLines: pageCount > 1 ? lastPageLines : undefined,
         lineBreaks: pageCount > 1 ? lineBreaks : undefined,
         generatedAt: new Date().toISOString(),
       });

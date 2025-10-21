@@ -74,10 +74,10 @@ export default function EditableField<T extends string | string[]>({
       ? storedPdfMetadata?.pdf?.resume
       : storedPdfMetadata?.pdf?.coverLetter;
 
-  const lastPageText = pdfMeta?.lastPageText;
+  const lastPageLines = pdfMeta?.lastPageLines;
   const pages = pdfMeta?.pages;
 
-  const { shouldHighlight } = detectPageOverflow(children, lastPageText);
+  const { shouldHighlight } = detectPageOverflow(children, lastPageLines);
   const hasOverflow = (pages ?? 0) > 1 && shouldHighlight;
 
   // Update edit value when the YAML data changes externally

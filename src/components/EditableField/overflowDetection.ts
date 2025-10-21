@@ -34,10 +34,9 @@ function normalizeText(text: string): string {
 
 export function detectPageOverflow(
   fieldContent: string | ReactNode,
-  lastPageText: string | undefined,
-  threshold: number = 0.1,
+  lastPageLines: string[] | undefined,
 ): OverflowDetectionResult {
-  if (!lastPageText) {
+  if (!lastPageLines || lastPageLines.length === 0) {
     return { shouldHighlight: false, matchPercentage: 0 };
   }
 
@@ -51,22 +50,21 @@ export function detectPageOverflow(
   }
 
   const normalizedField = normalizeText(fieldText);
-  const normalizedLastPage = normalizeText(lastPageText);
 
-  const fieldWords = normalizedField.split(" ").filter((w) => w.length > 0);
-  const lastPageWords = new Set(
-    normalizedLastPage.split(" ").filter((w) => w.length > 0),
-  );
+  for (const line of lastPageLines) {
+    const normalizedLine = normalizeText(line);
 
-  if (fieldWords.length === 0) {
-    return { shouldHighlight: false, matchPercentage: 0 };
+    if (normalizedLine.includes(normalizedField)) {
+      return { shouldHighlight: true, matchPercentage: 1 };
+    }
+
+    if (
+      normalizedField.includes(normalizedLine) &&
+      normalizedLine.length > 20
+    ) {
+      return { shouldHighlight: true, matchPercentage: 0.9 };
+    }
   }
 
-  const matchingWords = fieldWords.filter((word) => lastPageWords.has(word));
-  const matchPercentage = matchingWords.length / fieldWords.length;
-
-  return {
-    shouldHighlight: matchPercentage >= threshold,
-    matchPercentage,
-  };
+  return { shouldHighlight: false, matchPercentage: 0 };
 }
