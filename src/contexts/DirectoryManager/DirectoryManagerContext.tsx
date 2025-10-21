@@ -43,6 +43,10 @@ export interface DirectoryManagerContextType {
   pdfJobs: PdfJobState[];
   storedPdfMetadata: import("@/lib/multiFileManager").PdfMetadataFile | null;
 
+  // Document type (resume or cover-letter)
+  documentType: "resume" | "cover-letter" | null;
+  setDocumentType: (type: "resume" | "cover-letter" | null) => void;
+
   // Parsed data (for compatibility with EditableField)
   parsedData: CVData | null;
   content: string;
@@ -68,7 +72,7 @@ export interface DirectoryManagerContextType {
   createDirectory: (parentPath: string, directoryName: string) => Promise<void>;
   splitSectionToFile: (
     sourceFilePath: string,
-    sectionKey: string,
+    sectionKeys: string[],
     targetFileName: string,
   ) => Promise<void>;
   deleteFileToDeleted: (filePath: string) => Promise<void>;
@@ -95,6 +99,9 @@ export function DirectoryManagerProvider({
   const [error, setError] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [pdfJobs, setPdfJobs] = useState<PdfJobState[]>([]);
+  const [documentType, setDocumentType] = useState<
+    "resume" | "cover-letter" | null
+  >(null);
 
   const currentResume = useMemo(() => {
     return currentResumeKey ? allResumes[currentResumeKey] : null;
@@ -591,17 +598,24 @@ export function DirectoryManagerProvider({
   const splitSectionToFile = useCallback(
     async (
       sourceFilePath: string,
-      sectionKey: string,
+      sectionKeys: string[],
       targetFileName: string,
     ) => {
       try {
         setLoading(true);
         setError(null);
 
+        const mergedData = currentResume?.data;
+
         const response = await fetch("/api/directory/split", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sourceFilePath, sectionKey, targetFileName }),
+          body: JSON.stringify({
+            sourceFilePath,
+            sectionKeys,
+            targetFileName,
+            mergedData,
+          }),
         });
 
         const result = await response.json();
@@ -624,7 +638,7 @@ export function DirectoryManagerProvider({
         setLoading(false);
       }
     },
-    [currentDirectory, loadDirectory, refreshFiles],
+    [currentDirectory, currentResume, loadDirectory, refreshFiles],
   );
 
   const deleteFileToDeleted = useCallback(
@@ -695,6 +709,8 @@ export function DirectoryManagerProvider({
     hasUnsavedChanges,
     pdfJobs,
     storedPdfMetadata,
+    documentType,
+    setDocumentType,
     parsedData: data,
     content: data ? JSON.stringify(data, null, 2) : "",
     currentFile: currentDirectory ? { path: currentDirectory } : null,
