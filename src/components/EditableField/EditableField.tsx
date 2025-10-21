@@ -236,7 +236,10 @@ export default function EditableField<T extends string | string[]>({
 
   const HighlightOverlay = () => (
     <div
-      className={hasOverflow ? OVERFLOW_HIGHLIGHT_CLASSES : HIGHLIGHT_CLASSES}
+      className={clsx({
+        [OVERFLOW_HIGHLIGHT_CLASSES]: hasOverflow,
+        [HIGHLIGHT_CLASSES]: !hasOverflow,
+      })}
       title={
         hasOverflow
           ? `Warning: This content appears on page ${pages}`
@@ -248,7 +251,7 @@ export default function EditableField<T extends string | string[]>({
   const PageBreakLine = () =>
     isFirstOverflow ? (
       <div
-        className={PAGE_BREAK_LINE_CLASSES}
+        className={clsx(PAGE_BREAK_LINE_CLASSES)}
         title="Page break - content below appears on page 2"
       />
     ) : null;
