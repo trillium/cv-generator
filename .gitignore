@@ -48,3 +48,4 @@ out
 .env
 tsconfig.tsbuildinfo
 .claude/
+textContent-debug.json
