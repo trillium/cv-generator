@@ -276,30 +276,15 @@ export function DirectoryManagerProvider({
     [allResumes, loadDirectory],
   );
 
-  const pollPdfStatus = useCallback(async (jobId: string) => {
-    const maxAttempts = 60;
-    const pollInterval = 1000;
-    let attempts = 0;
+  const pollPdfStatus = useCallback(
+    async (jobId: string) => {
+      const maxAttempts = 60;
+      const pollInterval = 1000;
+      let attempts = 0;
 
-    const poll = async (): Promise<void> => {
-      if (attempts >= maxAttempts) {
-        console.warn(`PDF generation polling timeout for job ${jobId}`);
-        setPdfJobs((prev) =>
-          prev.map((job) =>
-            job.jobId === jobId ? { ...job, status: "failed" as const } : job,
-          ),
-        );
-        return;
-      }
-
-      try {
-        const response = await fetch(`/api/pdf/status?jobId=${jobId}`);
-        const result = await response.json();
-
-        if (!result.success) {
-          if (result.error !== "Job not found") {
-            console.error("Failed to fetch PDF status:", result.error);
-          }
+      const poll = async (): Promise<void> => {
+        if (attempts >= maxAttempts) {
+          console.warn(`PDF generation polling timeout for job ${jobId}`);
           setPdfJobs((prev) =>
             prev.map((job) =>
               job.jobId === jobId ? { ...job, status: "failed" as const } : job,
@@ -308,52 +293,84 @@ export function DirectoryManagerProvider({
           return;
         }
 
-        const { job } = result;
+        try {
+          const response = await fetch(`/api/pdf/status?jobId=${jobId}`);
+          const result = await response.json();
 
-        if (job.status === "complete") {
-          console.log(
-            `PDF generation completed for job ${jobId}:`,
-            job.metadata,
-          );
+          if (!result.success) {
+            if (result.error !== "Job not found") {
+              console.error("Failed to fetch PDF status:", result.error);
+            }
+            setPdfJobs((prev) =>
+              prev.map((job) =>
+                job.jobId === jobId
+                  ? { ...job, status: "failed" as const }
+                  : job,
+              ),
+            );
+            return;
+          }
+
+          const { job } = result;
+
+          if (job.status === "complete") {
+            console.log(
+              `PDF generation completed for job ${jobId}:`,
+              job.metadata,
+            );
+            setPdfJobs((prev) =>
+              prev.map((j) =>
+                j.jobId === jobId
+                  ? {
+                      ...j,
+                      status: "complete" as const,
+                      metadata: job.metadata,
+                    }
+                  : j,
+              ),
+            );
+
+            if (currentDirectory) {
+              console.log(
+                `🔄 Reloading directory to fetch updated PDF metadata`,
+              );
+              await loadDirectory(currentDirectory);
+            }
+
+            return;
+          }
+
+          if (job.status === "failed") {
+            console.error(
+              `PDF generation failed for job ${jobId}:`,
+              job.metadata?.error,
+            );
+            setPdfJobs((prev) =>
+              prev.map((j) =>
+                j.jobId === jobId
+                  ? { ...j, status: "failed" as const, metadata: job.metadata }
+                  : j,
+              ),
+            );
+            return;
+          }
+
+          attempts++;
+          setTimeout(poll, pollInterval);
+        } catch (err) {
+          console.error(`Error polling PDF status for job ${jobId}:`, err);
           setPdfJobs((prev) =>
-            prev.map((j) =>
-              j.jobId === jobId
-                ? { ...j, status: "complete" as const, metadata: job.metadata }
-                : j,
+            prev.map((job) =>
+              job.jobId === jobId ? { ...job, status: "failed" as const } : job,
             ),
           );
-          return;
         }
+      };
 
-        if (job.status === "failed") {
-          console.error(
-            `PDF generation failed for job ${jobId}:`,
-            job.metadata?.error,
-          );
-          setPdfJobs((prev) =>
-            prev.map((j) =>
-              j.jobId === jobId
-                ? { ...j, status: "failed" as const, metadata: job.metadata }
-                : j,
-            ),
-          );
-          return;
-        }
-
-        attempts++;
-        setTimeout(poll, pollInterval);
-      } catch (err) {
-        console.error(`Error polling PDF status for job ${jobId}:`, err);
-        setPdfJobs((prev) =>
-          prev.map((job) =>
-            job.jobId === jobId ? { ...job, status: "failed" as const } : job,
-          ),
-        );
-      }
-    };
-
-    await poll();
-  }, []);
+      await poll();
+    },
+    [currentDirectory, loadDirectory],
+  );
 
   const updateDataPath = useCallback(
     async (yamlPath: string, value: unknown) => {

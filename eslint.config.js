@@ -16,6 +16,7 @@ export default tseslint.config(
     ignores: [
       "dist/**",
       ".next/**",
+      ".next-dev/**",
       "out/**",
       "build/**",
       "node_modules/**",
@@ -73,6 +74,15 @@ export default tseslint.config(
     files: ["**/*.cjs", "**/*.js"],
     languageOptions: {
       sourceType: "commonjs",
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  {
+    files: ["**/*.mjs"],
+    languageOptions: {
+      sourceType: "module",
       globals: {
         ...globals.node,
       },
