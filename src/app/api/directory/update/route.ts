@@ -3,8 +3,6 @@ import { MultiFileManager } from "@/lib/multiFileManager";
 import { spawn } from "child_process";
 import { getPdfsToRegenerate } from "@/lib/pdfSectionMapper";
 import { pdfJobTracker } from "@/lib/pdfJobTracker";
-import { getPiiDirectory } from "@/lib/getPiiPath";
-import path from "path";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,9 +24,7 @@ export async function POST(request: NextRequest) {
 
     console.log(`📄 File updated: ${result.updatedFile}`);
 
-    const piiPath = getPiiDirectory();
-    const updatedFileDir = path.dirname(result.updatedFile);
-    const pdfOutputDir = path.relative(piiPath, updatedFileDir);
+    const pdfOutputDir = directoryPath;
 
     console.log(`📁 PDF output directory: ${pdfOutputDir}`);
 
