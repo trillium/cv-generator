@@ -86,7 +86,7 @@ const ResumeSelector: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="relative flex">
       <div className="flex">
         <button
           onClick={openResumeNavigator}
@@ -151,21 +151,12 @@ const ResumeSelector: React.FC = () => {
         </div>
       </div>
 
-      {parsedData && (
-        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          {(parsedData as CVData).info?.role && (
-            <span className=" whitespace-nowrap block">
-              Role: {(parsedData as CVData).info.role}
-            </span>
-          )}
-          {currentDirectory && (
-            <span className=" whitespace-nowrap block">
-              Directory: {currentDirectory}
-            </span>
-          )}
+      {currentDirectory && (
+        <div className="absolute top-full left-2 mt-1 text-xs text-gray-500 dark:text-gray-400 font-mono whitespace-nowrap">
+          {currentDirectory}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

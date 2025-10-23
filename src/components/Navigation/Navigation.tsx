@@ -9,6 +9,7 @@ import ResumeSelector from "@/components/ResumeSelector/ResumeSelector";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import HomeButton from "./HomeButton";
 import FileBrowserButton from "./FileBrowserButton";
+import { Thumbnail } from "@/components/PdfPreview";
 
 import TypeToggle from "./TypeToggle";
 
@@ -27,6 +28,8 @@ export default function Navigation() {
           <LayoutSelector />
 
           <TypeToggle />
+
+          <Thumbnail />
 
           <ColorPickerSwitch />
 
