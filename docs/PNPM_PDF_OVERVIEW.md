@@ -14,6 +14,7 @@ The `pnpm pdf` command generates PDF versions of your resume and cover letter by
 
 ```bash
 pnpm pdf                    # Interactive: prompts for resume type
+# Deprecated pdf:anon, to be rebuilt later, remove
 pnpm pdf:anon              # Generate anonymized PDF (single-column)
 pnpm pdf:resume            # Generate only resume (single-column)
 pnpm pdf:cover             # Generate only cover letter (single-column)

@@ -12,7 +12,7 @@ This document describes how to implement a server-rendered (SSR) printable resum
 
 - Create a new server component at:
   ```
-  /app/pdf/page.tsx
+   /src/app/pdf/page.tsx
   ```
 - Do **not** include `"use client"` at the top.
 
@@ -92,4 +92,4 @@ export default async function PrintResumePage({ params }) {
 ## References
 
 - [Next.js Server Components Documentation](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
-- [API Route: /api/files/[path]](./app/api/files/[path]/route.ts)
+- [API Route: /api/files/[path]](./src/app/api/files/[path]/route.ts)

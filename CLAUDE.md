@@ -164,6 +164,26 @@ status: completed
 - Sync mode waits and updates status immediately
 - Files are named rcode_YYYYMMDD_HHMMSS_query.md
 
+## Using the `ask` Tool
+
+Command-line tool for asking questions to an AI assistant.
+
+### Usage
+
+`ask [-m "message"] [file-path]`
+
+### Options
+
+- `-m MESSAGE`: Pass questions directly as a message
+- `file-path`: Path to existing questions file
+
+### Examples
+
+```sh
+ask -m "How do I fix this error?"
+ask questions.txt
+```
+
 ### Commit workflow
 
 - You stage and commit your work in blocks that go together

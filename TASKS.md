@@ -1,19 +1,17 @@
-1. ✅ DONE - FileManagerFeature search: {hasChildren ? (isExpanded ? "▼" : "▶") : "○"}
+# Resume Generator Application Tasks
 
-Change these to some sort of react-icons icon please
-
-2. ✅ DONE - Extend all file types of the CVData (eg work experience, etc) to accept an optional notes array of type string
-
-3. ✅ DONE - Stage and commit all the files in semantic parts that are still uncommitted
-
-4. ✅ DONE - Go through and replace all instances of file based imports eg path of "../../someFile" to @ style imports
-
-5. ✅ DONE - The user needs a way to create a new directory or to split out a key of the resume file. Develop a system to do that and integrate it.
-
-System should allow a section to be moved out of the larger data file (eg data.yml, copy existing info off of data.info into info.yml)
-
-System should allow generation of a new directory (sub dir or sibling dir)
-
-System should allow deletion of any file
-
-Deleted files are moved to a `deleted` folder where they are stored. They should be stored in their subflder eg `base/google/data.` should be deleted into `deleted/base/google/data.yml`
+- [ ] Create a way for the user to have visual feedback that the PDF has been generated.
+- [ ] Streamline the way that users duplicate or change different parts of the resume object.
+- [ ] Integrate a spell check feature.
+- [ ] Create a way for the editable field to know when text exceeds the page limit boundary.
+- [ ] Disable the part of the code that automates the PDF once it's generated.
+- [ ] Remove FileManager components that don't provide useful feedback to the user.
+- [ ] Remove sections in the navigation bar that use outdated components lacking useful information.
+- [ ] Integrate the color swatch picker option into the metadata so the application loads the correct print colors.
+- [ ] Solve the problem where content flashes briefly after the user makes an edit.
+- [ ] Make it easier for the user to generate a new directory object.
+- [ ] Create a new type specifically for job listings to keep job information in the repo.
+- [ ] Implement undo/version history so users can easily undo edits.
+- [ ] Store undo/version history information in the metadata object of the most specific context-based object that receives edits.
+- [ ] Implement a feature where the PDF is loaded into an iframe and displayed to the user as a small badge.
+- [ ] Display multiple pages in the badge if the resume object has multiple pages.
