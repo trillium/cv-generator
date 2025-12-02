@@ -14,7 +14,6 @@ The `bun run pdf` command generates PDF versions of your resume and cover letter
 
 ```bash
 bun run pdf                    # Interactive: prompts for resume type
-# Deprecated pdf:anon, to be rebuilt later, remove
 bun run pdf:anon              # Generate anonymized PDF (single-column)
 bun run pdf:resume            # Generate only resume (single-column)
 bun run pdf:cover             # Generate only cover letter (single-column)
