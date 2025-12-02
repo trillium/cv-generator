@@ -55,7 +55,7 @@ export async function startNextServer(rootDir: string, preferredPort?: number) {
     try {
       console.log(`🚀 Attempting to start Next.js server on port ${port}...`);
 
-      const nextProcess = spawn("pnpm", ["dev", "-p", port.toString()], {
+      const nextProcess = spawn("bun", ["run", "dev", "-p", port.toString()], {
         cwd: rootDir,
         stdio: ["pipe", "pipe", "pipe"],
       });

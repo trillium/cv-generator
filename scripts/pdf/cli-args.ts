@@ -64,7 +64,7 @@ export async function parseCliArgs(): Promise<CliArgs> {
   } else {
     console.error("❌ Error: --resumePath is required");
     console.error(
-      "   Example: pnpm pdf --resumePath=resumes --resumeType=single-column",
+      "   Example: bun run pdf --resumePath=resumes --resumeType=single-column",
     );
     console.error("   Note: Path is relative to PII_PATH env var");
     process.exit(1);

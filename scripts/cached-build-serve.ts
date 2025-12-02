@@ -43,11 +43,11 @@ function needsRebuild(): boolean {
 function main(): void {
   if (needsRebuild()) {
     console.log("📦 Building Next.js app...");
-    execSync("pnpm build", { stdio: "inherit", cwd: ROOT });
+    execSync("bun run build", { stdio: "inherit", cwd: ROOT });
   }
 
   console.log("🚀 Starting Next.js server...");
-  execSync("pnpm start", { stdio: "inherit", cwd: ROOT });
+  execSync("bun run start", { stdio: "inherit", cwd: ROOT });
 }
 
 main();

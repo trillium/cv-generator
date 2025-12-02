@@ -13,7 +13,7 @@ const NEXT_DIR = path.join(ROOT, ".next");
 const HASH_FILE = path.join(NEXT_DIR, ".build-hash");
 
 const DIRS = ["app", "src", "lib"];
-const FILE_PATTERNS = [".env", ".config.", "pnpm-lock.yaml"];
+const FILE_PATTERNS = [".env", ".config.", "bun.lock"];
 
 function walkDir(dir: string, files: string[] = []): string[] {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -42,7 +42,7 @@ export function getCurrentHash(rootPath: string = ROOT): string {
     if (fs.statSync(fullPath).isFile()) {
       if (
         FILE_PATTERNS.some((pattern) => file.includes(pattern)) ||
-        file === "pnpm-lock.yaml"
+        file === "bun.lock"
       ) {
         files.push(fullPath);
       }
