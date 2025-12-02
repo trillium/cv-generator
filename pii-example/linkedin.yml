@@ -1,0 +1,13 @@
+# LinkedIn-specific data
+# May have different formatting or additional details compared to resume data
+
+profile:
+  headline: Your Professional Headline
+  summary: |
+    Your professional summary for LinkedIn.
+    Can be more detailed than resume.
+
+# Can mirror or extend data.yml structure
+experience: []
+education: []
+certifications: []
