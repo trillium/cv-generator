@@ -96,8 +96,4 @@ body {
     outline: none !important;
     background-color: transparent !important;
   }
-
-  .print\\:hidden {
-    display: none !important;
-  }
 }
