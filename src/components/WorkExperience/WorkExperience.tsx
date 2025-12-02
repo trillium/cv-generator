@@ -1,27 +1,15 @@
 import Title from "@/components/Title/Title";
 import LineList from "./LineList";
 import EditableField from "@/components/EditableField";
-
-type Lines = { text: string; bulletPoint?: boolean }[];
-
-type WorkExperiences = {
-  position: string;
-  company: string;
-  location: string;
-  icon: string;
-  years: string;
-  bubbles?: string[];
-  lines: Lines;
-};
+import type { WorkExperience as WorkExperienceType } from "@/types";
 
 const WorkExperience = ({
   data,
   showBubbles = true,
 }: {
-  data: WorkExperiences[];
+  data: WorkExperienceType[];
   showBubbles?: boolean;
 }) => {
-  // Defensive check: if data is undefined or not an array, render nothing or show error
   if (!data || !Array.isArray(data)) {
     console.warn("WorkExperience component received invalid data:", data);
     return null;
@@ -50,7 +38,7 @@ function WorkExperienceItem({
   index,
   showBubbles = true,
 }: {
-  item: WorkExperiences;
+  item: WorkExperienceType;
   index: number;
   isLast: boolean;
   showBubbles?: boolean;
@@ -64,13 +52,6 @@ function WorkExperienceItem({
           fieldType="text"
         >
           <div className="font-bold">{item.position}</div>
-        </EditableField>
-        <EditableField
-          yamlPath={`workExperience.${index}.years`}
-          value={item.years}
-          fieldType="text"
-        >
-          <div className="text-base font-medium">{item.years}</div>
         </EditableField>
       </div>
       <EditableField
@@ -96,7 +77,32 @@ function WorkExperienceItem({
           ))}
         </div>
       )}
-      <LineList lines={item.lines} yamlBasePath={`workExperience.${index}`} />
+      {item.details.map((detail, detailIndex) => (
+        <div key={detailIndex} className="flex flex-col mt-2">
+          <div className="flex flex-row justify-between">
+            <EditableField
+              yamlPath={`workExperience.${index}.details.${detailIndex}.subhead`}
+              value={detail.subhead}
+              fieldType="text"
+            >
+              <div className="font-medium">{detail.subhead}</div>
+            </EditableField>
+            {detail.years && (
+              <EditableField
+                yamlPath={`workExperience.${index}.details.${detailIndex}.years`}
+                value={detail.years}
+                fieldType="text"
+              >
+                <div className="text-base font-medium">{detail.years}</div>
+              </EditableField>
+            )}
+          </div>
+          <LineList
+            lines={detail.lines}
+            yamlBasePath={`workExperience.${index}.details.${detailIndex}`}
+          />
+        </div>
+      ))}
     </div>
   );
 }
