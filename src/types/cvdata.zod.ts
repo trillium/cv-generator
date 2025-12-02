@@ -4,14 +4,18 @@ import { z } from "zod";
 export const Lines = z.array(
   z.object({ text: z.string(), bulletPoint: z.boolean().optional() }),
 );
+export const WorkExperienceDetail = z.object({
+  subhead: z.string(),
+  years: z.string().optional(),
+  lines: Lines,
+});
 export const WorkExperience = z.object({
   position: z.string(),
   company: z.string(),
   location: z.string(),
   icon: z.string(),
-  years: z.string(),
   bubbles: z.array(z.string()).optional(),
-  lines: Lines,
+  details: z.array(WorkExperienceDetail).min(1),
 });
 export const urlString = z.string().refine((val) => !/^https?:\/\//.test(val), {
   message: "URL must not include http:// or https://",
