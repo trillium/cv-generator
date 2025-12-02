@@ -8,6 +8,28 @@ import type {
   DirectoryFileInfo,
   DirectoryLoadResult,
 } from "@/lib/multiFileManager";
+import type { PdfJob } from "@/lib/pdfJobTracker";
+
+async function safeFetchJson<T = unknown>(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<T> {
+  const response = await fetch(input, init);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const contentType = response.headers.get("content-type");
+  if (!contentType?.includes("application/json")) {
+    const text = await response.text();
+    throw new Error(
+      `Expected JSON response but got ${contentType}. Response: ${text.substring(0, 100)}`,
+    );
+  }
+
+  return response.json();
+}
 
 export interface PdfMetadata {
   pageCount?: number;
@@ -294,8 +316,11 @@ export function DirectoryManagerProvider({
         }
 
         try {
-          const response = await fetch(`/api/pdf/status?jobId=${jobId}`);
-          const result = await response.json();
+          const result = await safeFetchJson<{
+            success: boolean;
+            error?: string;
+            job?: PdfJob;
+          }>(`/api/pdf/status?jobId=${jobId}`);
 
           if (!result.success) {
             if (result.error !== "Job not found") {
@@ -313,20 +338,16 @@ export function DirectoryManagerProvider({
 
           const { job } = result;
 
+          if (!job) {
+            console.warn(`No job data returned for ${jobId}`);
+            return;
+          }
+
           if (job.status === "complete") {
-            console.log(
-              `PDF generation completed for job ${jobId}:`,
-              job.metadata,
-            );
+            console.log(`PDF generation completed for job ${jobId}`);
             setPdfJobs((prev) =>
               prev.map((j) =>
-                j.jobId === jobId
-                  ? {
-                      ...j,
-                      status: "complete" as const,
-                      metadata: job.metadata,
-                    }
-                  : j,
+                j.jobId === jobId ? { ...j, status: "complete" as const } : j,
               ),
             );
 
@@ -341,15 +362,10 @@ export function DirectoryManagerProvider({
           }
 
           if (job.status === "failed") {
-            console.error(
-              `PDF generation failed for job ${jobId}:`,
-              job.metadata?.error,
-            );
+            console.error(`PDF generation failed for job ${jobId}`);
             setPdfJobs((prev) =>
               prev.map((j) =>
-                j.jobId === jobId
-                  ? { ...j, status: "failed" as const, metadata: job.metadata }
-                  : j,
+                j.jobId === jobId ? { ...j, status: "failed" as const } : j,
               ),
             );
             return;
