@@ -98,7 +98,7 @@ export function extractCopyData(yamlPath: string, parsedData: CVData): unknown {
     if (!isNaN(idx) && arr && arr[idx]) {
       // If path is workExperience.0
       if (pathParts.length === 2) return withLLM(arr[idx]);
-      // If path is workExperience.0.position, workExperience.0.company, etc.
+      // If path is workExperience.0.position, workExperience.0.company, etc. OR projects.0.name
       if (
         [
           "position",
@@ -108,9 +108,42 @@ export function extractCopyData(yamlPath: string, parsedData: CVData): unknown {
           "years",
           "bubbles",
           "lines",
-        ].includes(pathParts[2])
+          "details",
+          "name",
+          "duration",
+          "links",
+          "degree",
+          "school",
+          "category",
+          "title",
+          "text",
+        ].includes(pathParts[2]) &&
+        pathParts.length === 3
       ) {
         return withLLM(arr[idx]);
+      }
+      // If path is workExperience.0.details.N or workExperience.0.details.N.subhead or workExperience.0.details.N.years or workExperience.0.details.N.lines.N
+      if (pathParts[2] === "details" && pathParts.length >= 4) {
+        const detailIdx = Number(pathParts[3]);
+        if (!isNaN(detailIdx)) {
+          const item = arr[idx] as {
+            details?: unknown[];
+            position?: string;
+            company?: string;
+            location?: string;
+            icon?: string;
+          };
+          const details = item.details;
+          if (Array.isArray(details) && details[detailIdx]) {
+            return withLLM({
+              position: item.position,
+              company: item.company,
+              location: item.location,
+              icon: item.icon,
+              detail: details[detailIdx],
+            });
+          }
+        }
       }
       // If path is workExperience.0.lines.N or workExperience.0.bubbles.N or workExperience.0.lines.N.text
       if (
