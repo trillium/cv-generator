@@ -43,7 +43,7 @@ async function main(
 
     await fetch(serverUrl).catch(() => {
       throw new Error(
-        `Server not running at ${serverUrl}. Start it first with pnpm ${mode === "dev" ? "dev" : "start"}`,
+        `Server not running at ${serverUrl}. Start it first with bun ${mode === "dev" ? "dev" : "start"}`,
       );
     });
 

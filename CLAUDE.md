@@ -58,21 +58,21 @@ When you run into a problem you didn't expect, write yourself some exploratory c
 
 ## Build, Lint, and Test Commands
 
-- **Install dependencies:** `pnpm install` (preferred; or `npm install`/`yarn install`)
-- **Start dev server:** `pnpm dev`
-- **Build:** `pnpm build`
-- **Lint (auto-fix):** `pnpm lint`
-- **Format:** `pnpm format` (Prettier)
-- **Test (all):** `pnpm test`
-- **Test (watch):** `pnpm test:watch`
-- **Test (coverage):** `pnpm test:coverage`
-- **Test (single file):** `pnpm test path/to/file.test.ts` (or use `vitest` CLI directly)
-- **Spellcheck:** `pnpm spellcheck` (or `pnpm spellcheck:fix`)
+- **Install dependencies:** `bun install` (preferred; or `npm install`/`yarn install`)
+- **Start dev server:** `bun dev`
+- **Build:** `bun build`
+- **Lint (auto-fix):** `bun lint`
+- **Format:** `bun format` (Prettier)
+- **Test (all):** `bun test`
+- **Test (watch):** `bun test:watch`
+- **Test (coverage):** `bun test:coverage`
+- **Test (single file):** `bun test path/to/file.test.ts` (or use `vitest` CLI directly)
+- **Spellcheck:** `bun spellcheck` (or `bun spellcheck:fix`)
 - **Pre-commit:** Uses lint-staged for ESLint, Prettier, and spellcheck on staged files
 
 ## Code Style Guidelines
 
-- **Package manager:** Use `pnpm` (see `package.json` for version)
+- **Package manager:** Use `bun` (see `package.json` for version)
 - **Imports:** Use ES6 import syntax. Group external, then internal modules
 - **Formatting:** Prettier config: no semicolons, single quotes, 2 spaces, 100 char line, trailing commas (es5), bracket spacing, Tailwind plugin
 - **Linting:** ESLint with TypeScript, Next.js, a11y, and Prettier. All lint errors must be fixed before merging
@@ -176,6 +176,11 @@ Command-line tool for asking questions to an AI assistant.
 
 - `-m MESSAGE`: Pass questions directly as a message
 - `file-path`: Path to existing questions file
+
+### Important
+
+- **ALWAYS** use a 10 minute timeout (600000ms) when running `ask` commands via Bash tool
+- The tool opens VSCode and waits for user input, so default timeout will fail
 
 ### Examples
 
