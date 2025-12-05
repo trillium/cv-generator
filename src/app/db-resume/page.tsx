@@ -1,9 +1,8 @@
 import { getFullResume } from "@/lib/utils/resume-builder";
-import { Header } from "@/components/Header/Header";
-import { Profile } from "@/components/Profile/Profile";
-import { CareerSummary } from "@/components/Resume/single-column/ui/CareerSummary";
-import { WorkExperience } from "@/components/WorkExperience/WorkExperience";
-import { Projects } from "@/components/Projects/Projects";
+import Header from "@/components/Header/Header";
+import Profile from "@/components/Profile/Profile";
+import WorkExperience from "@/components/WorkExperience/WorkExperience";
+import Projects from "@/components/Projects/Projects";
 
 export default function DbResumePage() {
   const cvData = getFullResume(1);
@@ -38,7 +37,21 @@ export default function DbResumePage() {
         )}
 
         {cvData.careerSummary && cvData.careerSummary.length > 0 && (
-          <CareerSummary careerSummary={cvData.careerSummary} />
+          <div className="mt-4">
+            <h2 className="text-xl font-bold">Career Summary</h2>
+            <div className="mt-2 grid grid-cols-10 gap-2">
+              {cvData.careerSummary.map((item, i) => (
+                <>
+                  <div key={`title-${i}`} className="col-span-2">
+                    <span className="font-semibold">{item.title}</span>
+                  </div>
+                  <div key={`text-${i}`} className="col-span-8">
+                    <span>{item.text}</span>
+                  </div>
+                </>
+              ))}
+            </div>
+          </div>
         )}
 
         {cvData.workExperience && cvData.workExperience.length > 0 && (
