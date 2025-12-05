@@ -1,4 +1,5 @@
-import { getFullResume } from "@/lib/utils/resume-builder";
+"use client";
+
 import type { CVData } from "@/types";
 import dynamic from "next/dynamic";
 
@@ -21,7 +22,7 @@ type Variant = "resume" | "cover-letter";
 type Layout = "single-column" | "two-column";
 
 interface DynamicDbPageProps {
-  resumeId: number;
+  cvData: CVData;
   variant: Variant;
   layout: Layout;
 }
@@ -41,23 +42,10 @@ const componentMap: Record<
 };
 
 export default function DynamicDbPage({
-  resumeId,
+  cvData,
   variant,
   layout,
 }: DynamicDbPageProps) {
-  const cvData = getFullResume(resumeId);
-
-  if (!cvData) {
-    return (
-      <div className="container mx-auto p-8">
-        <h1 className="text-2xl font-bold text-red-600">Resume not found</h1>
-        <p className="mt-4">
-          Resume ID {resumeId} does not exist in the database.
-        </p>
-      </div>
-    );
-  }
-
   const Component = componentMap[variant][layout];
 
   return <Component data={cvData} />;

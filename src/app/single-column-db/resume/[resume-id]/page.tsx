@@ -1,3 +1,4 @@
+import { getFullResume } from "@/lib/utils/resume-builder";
 import DynamicDbPage from "@/src/app/DynamicDbPage";
 
 interface PageProps {
@@ -8,11 +9,20 @@ export default async function SingleColumnDbResumePage({ params }: PageProps) {
   const { "resume-id": resumeIdStr } = await params;
   const resumeId = parseInt(resumeIdStr, 10);
 
+  const cvData = getFullResume(resumeId);
+
+  if (!cvData) {
+    return (
+      <div className="container mx-auto p-8">
+        <h1 className="text-2xl font-bold text-red-600">Resume not found</h1>
+        <p className="mt-4">
+          Resume ID {resumeId} does not exist in the database.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <DynamicDbPage
-      resumeId={resumeId}
-      variant="resume"
-      layout="single-column"
-    />
+    <DynamicDbPage cvData={cvData} variant="resume" layout="single-column" />
   );
 }
