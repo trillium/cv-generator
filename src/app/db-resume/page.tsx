@@ -1,11 +1,9 @@
 import { getFullResume } from "@/lib/utils/resume-builder";
 import { Header } from "@/components/Header/Header";
 import { Profile } from "@/components/Profile/Profile";
-import { CareerSummary } from "@/components/CareerSummary/CareerSummary";
+import { CareerSummary } from "@/components/Resume/single-column/ui/CareerSummary";
 import { WorkExperience } from "@/components/WorkExperience/WorkExperience";
 import { Projects } from "@/components/Projects/Projects";
-import { Technical } from "@/components/Technical/Technical";
-import { Education } from "@/components/Education/Education";
 
 export default function DbResumePage() {
   const cvData = getFullResume(1);
@@ -52,11 +50,30 @@ export default function DbResumePage() {
         )}
 
         {cvData.technical && cvData.technical.length > 0 && (
-          <Technical technical={cvData.technical} />
+          <div className="mt-4">
+            <h2 className="text-xl font-bold">Technical Skills</h2>
+            {cvData.technical.map((cat, i) => (
+              <div key={i} className="mt-2">
+                <h3 className="font-semibold">{cat.category}</h3>
+                <p>{cat.bubbles.join(", ")}</p>
+              </div>
+            ))}
+          </div>
         )}
 
         {cvData.education && cvData.education.length > 0 && (
-          <Education education={cvData.education} />
+          <div className="mt-4">
+            <h2 className="text-xl font-bold">Education</h2>
+            {cvData.education.map((edu, i) => (
+              <div key={i} className="mt-2">
+                <p className="font-semibold">{edu.degree}</p>
+                <p>
+                  {edu.school} - {edu.location}
+                </p>
+                <p className="text-sm text-gray-600">{edu.years}</p>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
