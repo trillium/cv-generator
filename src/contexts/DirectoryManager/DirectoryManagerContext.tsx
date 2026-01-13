@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, ReactNode, useMemo } from "react";
+import { useState, useCallback, ReactNode, useMemo, useEffect } from "react";
 import { DirectoryManagerContext } from "./DirectoryManagerContext.context";
 import type { CVData } from "@/types";
 import type {
@@ -728,6 +728,80 @@ export function DirectoryManagerProvider({
     },
     [saveDirectory],
   );
+
+  const handleReloadEvent = useCallback(
+    async (event: MessageEvent) => {
+      try {
+        const payload = JSON.parse(event.data);
+        if (payload.type === "connected") {
+          console.log("[Reload] SSE connected");
+          return;
+        }
+
+        console.log("[Reload] File change detected:", payload);
+        const changedPath = payload.path;
+
+        if (!currentResumeKey) {
+          console.log("[Reload] No current resume loaded, skipping reload");
+          return;
+        }
+
+        const normalizedResumeKey = currentResumeKey.replace(/^resumes\//, "");
+        const shouldReload =
+          changedPath.startsWith(normalizedResumeKey) ||
+          changedPath.startsWith(currentResumeKey);
+
+        console.log(
+          `[Reload] Path matching: changedPath="${changedPath}", currentResumeKey="${currentResumeKey}", normalizedKey="${normalizedResumeKey}", shouldReload=${shouldReload}`,
+        );
+
+        if (shouldReload) {
+          console.log(`[Reload] Reloading current resume: ${currentResumeKey}`);
+
+          try {
+            const response = await fetch(
+              `/api/directory/load?path=${encodeURIComponent(currentResumeKey)}`,
+            );
+            const result = await response.json();
+
+            if (result.success) {
+              setAllResumes((prev) => ({
+                ...prev,
+                [currentResumeKey]: {
+                  data: result.data,
+                  sources: result.sources,
+                  metadata: result.metadata,
+                  pdfMetadata: result.pdfMetadata,
+                },
+              }));
+              console.log(
+                `[Reload] ✓ Updated resume data for ${currentResumeKey}`,
+              );
+            }
+          } catch (err) {
+            console.error(`[Reload] Failed to reload:`, err);
+          }
+        }
+      } catch (err) {
+        console.error("[Reload] Error handling SSE event:", err);
+      }
+    },
+    [currentResumeKey, loadDirectory],
+  );
+
+  useEffect(() => {
+    const eventSource = new EventSource("/api/directory/reload");
+
+    eventSource.onmessage = handleReloadEvent;
+
+    eventSource.onerror = (err) => {
+      console.error("[Reload] SSE connection error:", err);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [handleReloadEvent]);
 
   const value: DirectoryManagerContextType = {
     allResumes,
