@@ -55,9 +55,9 @@ export async function POST(request: NextRequest) {
 
     const processes = pdfsToRegenerate.map((pdfType) => {
       const pdfArgs = [...baseArgs, `--print=${pdfType}`];
-      console.log(`📄 Starting: tsx ${pdfArgs.join(" ")}`);
+      console.log(`📄 Starting: bun ${pdfArgs.join(" ")}`);
 
-      const child = spawn("tsx", pdfArgs, {
+      const child = spawn("bun", pdfArgs, {
         cwd: process.cwd(),
         stdio: ["pipe", "pipe", "pipe"],
       });
