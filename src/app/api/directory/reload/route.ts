@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { rebuildPdfs } from "@/lib/pdfRebuilder";
+import { rebuildPdfs, wasRecentlyRebuilt } from "@/lib/pdfRebuilder";
 import type { PdfType } from "@/lib/pdfSectionMapper";
 
 interface ReloadPayload {
@@ -9,6 +9,7 @@ interface ReloadPayload {
 }
 
 const subscribers = new Set<ReadableStreamDefaultController>();
+const REBUILD_DEBOUNCE_MS = 5000;
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,13 +33,19 @@ export async function POST(request: NextRequest) {
     console.log(`[Reload] Extracted directory path: ${directoryPath}`);
 
     if (payload.type !== "unlink" && directoryPath && !isMetadataFile) {
-      console.log(`[Reload] Triggering PDF rebuild for: ${directoryPath}`);
+      if (wasRecentlyRebuilt(directoryPath, REBUILD_DEBOUNCE_MS)) {
+        console.log(
+          `[Reload] Skipping PDF rebuild for ${directoryPath} (recently rebuilt by UI)`,
+        );
+      } else {
+        console.log(`[Reload] Triggering PDF rebuild for: ${directoryPath}`);
 
-      const pdfsToRegenerate: PdfType[] = ["resume", "cover"];
+        const pdfsToRegenerate: PdfType[] = ["resume", "cover"];
 
-      rebuildPdfs(directoryPath, pdfsToRegenerate).catch((err) => {
-        console.error(`[Reload] PDF rebuild failed:`, err);
-      });
+        rebuildPdfs(directoryPath, pdfsToRegenerate).catch((err) => {
+          console.error(`[Reload] PDF rebuild failed:`, err);
+        });
+      }
     }
 
     const message = `data: ${JSON.stringify(payload)}\n\n`;

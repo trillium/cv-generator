@@ -9,10 +9,27 @@ export interface PdfRebuildResult {
   pdfsToRegenerate: PdfType[];
 }
 
+const recentRebuilds = new Map<string, number>();
+
+export function markRebuildInProgress(directoryPath: string): void {
+  recentRebuilds.set(directoryPath, Date.now());
+}
+
+export function wasRecentlyRebuilt(
+  directoryPath: string,
+  withinMs: number,
+): boolean {
+  const lastRebuild = recentRebuilds.get(directoryPath);
+  if (!lastRebuild) return false;
+  return Date.now() - lastRebuild < withinMs;
+}
+
 export async function rebuildPdfs(
   directoryPath: string,
   pdfsToRegenerate: PdfType[],
 ): Promise<PdfRebuildResult> {
+  markRebuildInProgress(directoryPath);
+
   console.log(`🔄 Triggering PDF regeneration for: ${directoryPath}`);
   console.log(`📄 Regenerating: ${pdfsToRegenerate.join(", ")}`);
 
