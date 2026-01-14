@@ -8,29 +8,7 @@ import type {
   DirectoryFileInfo,
   DirectoryLoadResult,
 } from "@/lib/multiFileManager";
-import type { PdfJob } from "@/lib/pdfJobTracker";
 import { ARRAY_INDEX_PATTERN } from "@/lib/multiFileManager/constants";
-
-async function safeFetchJson<T = unknown>(
-  input: RequestInfo | URL,
-  init?: RequestInit,
-): Promise<T> {
-  const response = await fetch(input, init);
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const contentType = response.headers.get("content-type");
-  if (!contentType?.includes("application/json")) {
-    const text = await response.text();
-    throw new Error(
-      `Expected JSON response but got ${contentType}. Response: ${text.substring(0, 100)}`,
-    );
-  }
-
-  return response.json();
-}
 
 export interface PdfMetadata {
   pageCount?: number;
@@ -317,16 +295,20 @@ export function DirectoryManagerProvider({
         }
 
         try {
-          const result = await safeFetchJson<{
-            success: boolean;
-            error?: string;
-            job?: PdfJob;
-          }>(`/api/pdf/status?jobId=${jobId}`);
+          const response = await fetch(`/api/pdf/status?jobId=${jobId}`);
+
+          if (response.status === 404) {
+            console.warn(
+              `PDF job ${jobId} not found (may have been cleaned up or server restarted)`,
+            );
+            setPdfJobs((prev) => prev.filter((job) => job.jobId !== jobId));
+            return;
+          }
+
+          const result = await response.json();
 
           if (!result.success) {
-            if (result.error !== "Job not found") {
-              console.error("Failed to fetch PDF status:", result.error);
-            }
+            console.error("Failed to fetch PDF status:", result.error);
             setPdfJobs((prev) =>
               prev.map((job) =>
                 job.jobId === jobId
