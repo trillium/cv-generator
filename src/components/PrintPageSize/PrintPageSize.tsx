@@ -8,14 +8,6 @@ export default function PrintPageSize({
 }: PrintPageSizeProps) {
   const { pdfJobs, storedPdfMetadata } = useDirectoryManager();
 
-  console.log("PrintPageSize DEBUG:", {
-    pdfType,
-    storedPdfMetadata,
-    hasPdfKey: storedPdfMetadata?.pdf !== undefined,
-    resumeData: storedPdfMetadata?.pdf?.resume,
-    coverLetterData: storedPdfMetadata?.pdf?.coverLetter,
-  });
-
   const currentPdfJob = pdfJobs.find(
     (job) =>
       job.pdfTypes.includes(pdfType) &&
