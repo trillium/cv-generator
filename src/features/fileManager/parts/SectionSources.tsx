@@ -1,7 +1,7 @@
 import * as React from "react";
 
 interface SectionSourcesProps {
-  sources: Record<string, string>;
+  sources: Record<string, string | string[]>;
 }
 
 const SectionSources: React.FC<SectionSourcesProps> = ({ sources }) => {

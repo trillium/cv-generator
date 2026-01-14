@@ -9,6 +9,7 @@ import type {
   DirectoryLoadResult,
 } from "@/lib/multiFileManager";
 import type { PdfJob } from "@/lib/pdfJobTracker";
+import { ARRAY_INDEX_PATTERN } from "@/lib/multiFileManager/constants";
 
 async function safeFetchJson<T = unknown>(
   input: RequestInfo | URL,
@@ -52,7 +53,7 @@ export interface DirectoryManagerContextType {
   // Current directory state (computed from cache)
   currentDirectory: string | null;
   data: CVData | null;
-  sources: Record<string, string>;
+  sources: Record<string, string | string[]>;
   metadata: DirectoryMetadata | null;
   files: DirectoryFileInfo[];
 
@@ -83,7 +84,7 @@ export interface DirectoryManagerContextType {
   updateDataPath: (yamlPath: string, value: unknown) => Promise<void>;
   saveDirectory: () => Promise<void>;
   discardChanges: () => Promise<void>;
-  getSourceFile: (section: string) => string | null;
+  getSourceFile: (section: string) => string | string[] | null;
 
   // Hierarchy operations
   getHierarchy: (path: string) => Promise<void>;
@@ -437,6 +438,38 @@ export function DirectoryManagerProvider({
         return result;
       };
 
+      const extractTopLevelKey = (path: string): string => {
+        const match = path.match(/^([^.[]+)/);
+        return match ? match[1] : path;
+      };
+
+      const deriveDirectoryFromSources = (
+        section: string,
+        currentSources: Record<string, string | string[]>,
+        path: string,
+      ): string => {
+        const sourceFile = currentSources[section];
+        if (!sourceFile) {
+          return currentDirectory;
+        }
+
+        let sourcePath: string;
+        if (Array.isArray(sourceFile)) {
+          const arrayIndexMatch = path.match(ARRAY_INDEX_PATTERN);
+          const arrayIndex = arrayIndexMatch
+            ? parseInt(arrayIndexMatch[1], 10)
+            : 0;
+          sourcePath = sourceFile[arrayIndex] || sourceFile[0];
+        } else {
+          sourcePath = sourceFile;
+        }
+
+        const withoutPii = sourcePath.replace(/^pii\//, "");
+        const dirPath = withoutPii.substring(0, withoutPii.lastIndexOf("/"));
+
+        return dirPath || currentDirectory;
+      };
+
       try {
         const optimisticData = data
           ? setNestedValue(data, yamlPath, value)
@@ -452,11 +485,31 @@ export function DirectoryManagerProvider({
           }));
         }
 
+        const section = extractTopLevelKey(yamlPath);
+
+        console.log(
+          `🔍 DEBUG deriveDirectory inputs:`,
+          `\n  section=${section}`,
+          `\n  yamlPath=${yamlPath}`,
+          `\n  sources=${JSON.stringify(sources, null, 2)}`,
+          `\n  sources[section]=${JSON.stringify(sources[section])}`,
+        );
+
+        const targetDirectory = deriveDirectoryFromSources(
+          section,
+          sources,
+          yamlPath,
+        );
+
+        console.log(
+          `🎯 Update target: section=${section}, directory=${targetDirectory}, yamlPath=${yamlPath}`,
+        );
+
         const response = await fetch("/api/directory/update", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            directoryPath: currentDirectory,
+            directoryPath: targetDirectory,
             yamlPath,
             value,
           }),
@@ -497,7 +550,14 @@ export function DirectoryManagerProvider({
         setLoading(false);
       }
     },
-    [currentDirectory, currentResumeKey, data, loadDirectory, pollPdfStatus],
+    [
+      currentDirectory,
+      currentResumeKey,
+      data,
+      sources,
+      loadDirectory,
+      pollPdfStatus,
+    ],
   );
 
   const saveDirectory = useCallback(async () => {
@@ -515,7 +575,7 @@ export function DirectoryManagerProvider({
   }, [currentDirectory, loadDirectory]);
 
   const getSourceFile = useCallback(
-    (section: string): string | null => {
+    (section: string): string | string[] | null => {
       return sources[section] || null;
     },
     [sources],
