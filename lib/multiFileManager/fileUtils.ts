@@ -3,6 +3,9 @@ import * as yaml from "js-yaml";
 import * as fs from "fs/promises";
 import { getPiiDirectory } from "../getPiiPath";
 import type { FileMetadata } from "@/types/fileManager";
+import { ARRAY_INDEX_PATTERN } from "./constants";
+
+export { ARRAY_INDEX_PATTERN };
 
 export function isSectionSpecificFile(basename: string): boolean {
   const sectionFiles = [
