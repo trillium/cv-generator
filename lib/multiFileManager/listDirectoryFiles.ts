@@ -3,6 +3,7 @@ import {
   loadDataFile,
   isFullDataFilename,
   SUPPORTED_EXTENSIONS,
+  parseNumberedArrayFile,
 } from "../multiFileMapper";
 import * as path from "path";
 import * as fs from "fs/promises";
@@ -28,6 +29,29 @@ export async function listDirectoryFiles(
       if (!stat.isFile()) continue;
       const ext = path.extname(file);
       if (!SUPPORTED_EXTENSIONS.includes(ext)) continue;
+
+      const parsed = parseNumberedArrayFile(file);
+      if (parsed) {
+        const data = loadDataFile(fullFilePath);
+        const sections = Object.keys(data);
+        const fileMetadata = await getMinimalFileStats(filePath);
+        dataFiles.push({
+          path: filePath,
+          fullPath: fullFilePath,
+          sections,
+          format: ext === ".json" ? "json" : "yaml",
+          isFullData: false,
+          isNumberedArray: true,
+          numberedArrayInfo: {
+            basename: parsed.basename,
+            sectionKey: parsed.sectionKey,
+            number: parsed.number,
+          },
+          metadata: fileMetadata,
+        });
+        continue;
+      }
+
       const basename = path.basename(file, ext);
       const isFullData = isFullDataFilename(basename);
       const isSectionSpecific = isSectionSpecificFile(basename);
@@ -97,6 +121,29 @@ export async function listDirectoryFilesRecursive(
       try {
         const ext = path.extname(entry.name);
         if (!SUPPORTED_EXTENSIONS.includes(ext)) continue;
+
+        const parsed = parseNumberedArrayFile(entry.name);
+        if (parsed) {
+          const data = loadDataFile(absolutePath);
+          const sections = Object.keys(data);
+          const fileMetadata = await getMinimalFileStats(relativePath);
+          allFiles.push({
+            path: relativePath,
+            fullPath: absolutePath,
+            sections,
+            format: ext === ".json" ? "json" : "yaml",
+            isFullData: false,
+            isNumberedArray: true,
+            numberedArrayInfo: {
+              basename: parsed.basename,
+              sectionKey: parsed.sectionKey,
+              number: parsed.number,
+            },
+            metadata: fileMetadata,
+          });
+          continue;
+        }
+
         const basename = path.basename(entry.name, ext);
         const isFullData = isFullDataFilename(basename);
         const isSectionSpecific = isSectionSpecificFile(basename);

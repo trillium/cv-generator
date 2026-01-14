@@ -2,6 +2,9 @@ import {
   getAncestorDirectories,
   findDataFilesInDirectory,
   loadDataFile,
+  parseNumberedArrayFile,
+  mergeNumberedArrayFiles,
+  validateNumberedArrayFiles,
 } from "../multiFileMapper";
 import { getPiiDirectory } from "../getPiiPath";
 import * as path from "path";
@@ -18,11 +21,27 @@ export async function loadDirectory(
 ): Promise<DirectoryLoadResult> {
   const ancestorDirs = getAncestorDirectories(dirPath);
   const filesLoaded: string[] = [];
-  const sources: Record<string, string> = {};
+  const sources: Record<string, string | string[]> = {};
   const mergedData: Record<string, unknown> = {};
+
   for (const dir of ancestorDirs) {
     const dataFiles = findDataFilesInDirectory(dir);
+
+    validateNumberedArrayFiles(dataFiles, dir);
+
+    const numberedFiles: string[] = [];
+    const regularFiles: string[] = [];
+
     for (const filePath of dataFiles) {
+      const filename = path.basename(filePath);
+      if (parseNumberedArrayFile(filename)) {
+        numberedFiles.push(filePath);
+      } else {
+        regularFiles.push(filePath);
+      }
+    }
+
+    for (const filePath of regularFiles) {
       filesLoaded.push(filePath);
       const fileData = loadDataFile(filePath);
       for (const [section, value] of Object.entries(fileData)) {
@@ -30,7 +49,20 @@ export async function loadDirectory(
         sources[section] = filePath;
       }
     }
+
+    if (numberedFiles.length > 0) {
+      const mergedArrays = mergeNumberedArrayFiles(numberedFiles);
+      for (const [
+        sectionKey,
+        { data, sources: fileSources },
+      ] of mergedArrays.entries()) {
+        filesLoaded.push(...fileSources);
+        mergedData[sectionKey] = data;
+        sources[sectionKey] = fileSources;
+      }
+    }
   }
+
   let pdfMetadata: PdfMetadataFile | undefined;
   try {
     const piiPath = getPiiDirectory();

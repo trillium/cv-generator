@@ -18,7 +18,7 @@ export interface PdfMetadataFile {
 
 export interface DirectoryLoadResult {
   data: CVData;
-  sources: Record<string, string>;
+  sources: Record<string, string | string[]>;
   metadata: DirectoryMetadata;
   pdfMetadata?: PdfMetadataFile;
 }
@@ -57,6 +57,12 @@ export interface DirectoryFileInfo {
   sections: string[];
   format: "yaml" | "json";
   isFullData: boolean;
+  isNumberedArray?: boolean;
+  numberedArrayInfo?: {
+    basename: string;
+    sectionKey: string;
+    number: string;
+  };
   metadata: FileMetadata;
 }
 
@@ -73,7 +79,7 @@ export interface DirectoryTreeNode {
 }
 
 export interface SectionSourceInfo {
-  sourceFile: string;
+  sourceFile: string | string[];
   overriddenBy: string | null;
   inheritedFrom: string | null;
 }
