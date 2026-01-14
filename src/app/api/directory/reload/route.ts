@@ -33,12 +33,22 @@ export async function POST(request: NextRequest) {
     console.log(`[Reload] Extracted directory path: ${directoryPath}`);
 
     if (payload.type !== "unlink" && directoryPath && !isMetadataFile) {
-      if (wasRecentlyRebuilt(directoryPath, REBUILD_DEBOUNCE_MS)) {
+      const recentlyRebuilt = wasRecentlyRebuilt(
+        directoryPath,
+        REBUILD_DEBOUNCE_MS,
+      );
+      console.log(
+        `[Reload] Rebuild check for ${directoryPath}: recentlyRebuilt=${recentlyRebuilt}`,
+      );
+
+      if (recentlyRebuilt) {
         console.log(
-          `[Reload] Skipping PDF rebuild for ${directoryPath} (recently rebuilt by UI)`,
+          `[Reload] ⏭️  Skipping PDF rebuild for ${directoryPath} (rebuilt within ${REBUILD_DEBOUNCE_MS}ms)`,
         );
       } else {
-        console.log(`[Reload] Triggering PDF rebuild for: ${directoryPath}`);
+        console.log(
+          `[Reload] ✅ Triggering PDF rebuild for: ${directoryPath} from watcher`,
+        );
 
         const pdfsToRegenerate: PdfType[] = ["resume", "cover"];
 

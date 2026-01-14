@@ -28,12 +28,16 @@ export async function rebuildPdfs(
   directoryPath: string,
   pdfsToRegenerate: PdfType[],
 ): Promise<PdfRebuildResult> {
+  const timestamp = new Date().toISOString().substring(11, 23);
   markRebuildInProgress(directoryPath);
 
-  console.log(`🔄 Triggering PDF regeneration for: ${directoryPath}`);
-  console.log(`📄 Regenerating: ${pdfsToRegenerate.join(", ")}`);
+  console.log(
+    `[${timestamp}] 🔄 Triggering PDF regeneration for: ${directoryPath}`,
+  );
+  console.log(`[${timestamp}] 📄 Regenerating: ${pdfsToRegenerate.join(", ")}`);
 
   const pdfJobId = pdfJobTracker.createJob(directoryPath, pdfsToRegenerate);
+  console.log(`[${timestamp}] 📋 Created job: ${pdfJobId}`);
 
   const isDev = process.env.NODE_ENV !== "production";
   const mode = isDev ? "dev" : "prod";
