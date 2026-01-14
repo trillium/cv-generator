@@ -30,6 +30,13 @@ export interface FileEntry {
   format: "yaml" | "json";
 }
 
+export interface NumberedArrayFileInfo {
+  basename: string;
+  sectionKey: string;
+  number: string;
+  ext: string;
+}
+
 /**
  * Loads a data file (YAML or JSON) and returns its parsed content
  * @param filePath - Absolute path to the file
@@ -99,6 +106,8 @@ export function findDataFilesInDirectory(dirPath: string): string[] {
 
   const files = fs.readdirSync(dirPath);
   const dataFiles: string[] = [];
+  const numberedFiles: Array<{ path: string; parsed: NumberedArrayFileInfo }> =
+    [];
 
   for (const file of files) {
     const filePath = path.join(dirPath, file);
@@ -108,6 +117,12 @@ export function findDataFilesInDirectory(dirPath: string): string[] {
 
     const ext = path.extname(file);
     if (!SUPPORTED_EXTENSIONS.includes(ext)) continue;
+
+    const parsed = parseNumberedArrayFile(file);
+    if (parsed) {
+      numberedFiles.push({ path: filePath, parsed });
+      continue;
+    }
 
     const basename = path.basename(file, ext);
 
@@ -119,6 +134,17 @@ export function findDataFilesInDirectory(dirPath: string): string[] {
     if (isFullData || isSectionSpecific) {
       dataFiles.push(filePath);
     }
+  }
+
+  numberedFiles.sort((a, b) => {
+    if (a.parsed.sectionKey !== b.parsed.sectionKey) {
+      return a.parsed.sectionKey.localeCompare(b.parsed.sectionKey);
+    }
+    return parseInt(a.parsed.number, 10) - parseInt(b.parsed.number, 10);
+  });
+
+  for (const { path: filePath } of numberedFiles) {
+    dataFiles.push(filePath);
   }
 
   return dataFiles;
@@ -218,6 +244,205 @@ export function validateNoConflicts(files: FileEntry[], dirPath: string): void {
   if (conflicts.length > 0) {
     throw new Error(
       `Data conflicts detected in ${dirPath}:\n\n${conflicts.join("\n\n")}`,
+    );
+  }
+}
+
+/**
+ * Checks if a filename is a numbered array file
+ * @param filename - The filename to check (e.g., 'experience.workExperience01.yml')
+ * @returns True if it matches the numbered array file pattern
+ */
+export function isNumberedArrayFile(filename: string): boolean {
+  const parsed = parseNumberedArrayFile(filename);
+  return parsed !== null;
+}
+
+/**
+ * Parses a numbered array filename into its components
+ * @param filename - The filename to parse (e.g., 'experience.workExperience01.yml')
+ * @returns Parsed components or null if not a numbered array file
+ * @example
+ * parseNumberedArrayFile('experience.workExperience01.yml')
+ * // Returns: { basename: 'experience', sectionKey: 'workExperience', number: '01', ext: '.yml' }
+ */
+export function parseNumberedArrayFile(
+  filename: string,
+): NumberedArrayFileInfo | null {
+  const ext = path.extname(filename);
+  if (!SUPPORTED_EXTENSIONS.includes(ext)) {
+    return null;
+  }
+
+  const nameWithoutExt = path.basename(filename, ext);
+  const parts = nameWithoutExt.split(".");
+  if (parts.length !== 2) {
+    return null;
+  }
+
+  const [basename, sectionAndNumber] = parts;
+
+  for (const sectionKey of Object.keys(SECTION_KEY_TO_FILENAME)) {
+    if (sectionAndNumber.startsWith(sectionKey)) {
+      const numberPart = sectionAndNumber.substring(sectionKey.length);
+      if (/^\d+$/.test(numberPart)) {
+        return {
+          basename,
+          sectionKey,
+          number: numberPart,
+          ext,
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Groups numbered array files by section and merges their arrays
+ * @param filePaths - Array of file paths
+ * @returns Map of section key to merged array data and source files
+ */
+export function mergeNumberedArrayFiles(
+  filePaths: string[],
+): Map<string, { data: unknown[]; sources: string[] }> {
+  const grouped = new Map<
+    string,
+    Array<{ path: string; number: number; data: unknown[] }>
+  >();
+
+  for (const filePath of filePaths) {
+    const filename = path.basename(filePath);
+    const parsed = parseNumberedArrayFile(filename);
+    if (!parsed) continue;
+
+    const fileData = loadDataFile(filePath);
+    const sectionData = fileData[parsed.sectionKey];
+
+    if (!Array.isArray(sectionData)) {
+      throw new Error(
+        `Numbered array file '${filePath}' must contain an array for section '${parsed.sectionKey}'`,
+      );
+    }
+
+    if (!grouped.has(parsed.sectionKey)) {
+      grouped.set(parsed.sectionKey, []);
+    }
+
+    grouped.get(parsed.sectionKey)!.push({
+      path: filePath,
+      number: parseInt(parsed.number, 10),
+      data: sectionData,
+    });
+  }
+
+  const result = new Map<string, { data: unknown[]; sources: string[] }>();
+
+  for (const [sectionKey, files] of grouped.entries()) {
+    files.sort((a, b) => a.number - b.number);
+
+    const mergedData: unknown[] = [];
+    const sources: string[] = [];
+
+    for (const file of files) {
+      mergedData.push(...file.data);
+      sources.push(file.path);
+    }
+
+    result.set(sectionKey, { data: mergedData, sources });
+  }
+
+  return result;
+}
+
+/**
+ * Validates numbered array files in a directory
+ * @param filePaths - Array of all file paths in directory
+ * @param dirPath - Directory path for error messages
+ * @throws Error if validation fails
+ */
+export function validateNumberedArrayFiles(
+  filePaths: string[],
+  dirPath: string,
+): void {
+  const numberedFiles: Array<{ path: string; parsed: NumberedArrayFileInfo }> =
+    [];
+  const regularSectionFiles = new Map<string, string>();
+
+  for (const filePath of filePaths) {
+    const filename = path.basename(filePath);
+    const parsed = parseNumberedArrayFile(filename);
+
+    if (parsed) {
+      numberedFiles.push({ path: filePath, parsed });
+
+      const fileData = loadDataFile(filePath);
+      const sections = Object.keys(fileData);
+
+      if (sections.length !== 1 || sections[0] !== parsed.sectionKey) {
+        throw new Error(
+          `Numbered array file '${filename}' must only contain '${parsed.sectionKey}' section.\n` +
+            `Found sections: [${sections.join(", ")}]`,
+        );
+      }
+
+      if (!Array.isArray(fileData[parsed.sectionKey])) {
+        throw new Error(
+          `Numbered array file '${filename}' must contain an array for section '${parsed.sectionKey}'`,
+        );
+      }
+    } else {
+      const ext = path.extname(filename);
+      if (!SUPPORTED_EXTENSIONS.includes(ext)) continue;
+
+      const basename = path.basename(filename, ext);
+      const isSectionSpecific = Object.values(SECTION_KEY_TO_FILENAME)
+        .flat()
+        .includes(basename);
+
+      if (isSectionSpecific) {
+        for (const [sectionKey, filenames] of Object.entries(
+          SECTION_KEY_TO_FILENAME,
+        )) {
+          if (filenames.includes(basename)) {
+            regularSectionFiles.set(sectionKey, filePath);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  const groupedBySection = new Map<
+    string,
+    Array<{ path: string; number: number }>
+  >();
+  for (const { path: filePath, parsed } of numberedFiles) {
+    if (!groupedBySection.has(parsed.sectionKey)) {
+      groupedBySection.set(parsed.sectionKey, []);
+    }
+    groupedBySection.get(parsed.sectionKey)!.push({
+      path: filePath,
+      number: parseInt(parsed.number, 10),
+    });
+  }
+
+  const errors: string[] = [];
+
+  for (const [sectionKey, files] of groupedBySection.entries()) {
+    if (regularSectionFiles.has(sectionKey)) {
+      errors.push(
+        `Section '${sectionKey}' has both numbered files and a regular section file:\n` +
+          `  Regular: ${regularSectionFiles.get(sectionKey)}\n` +
+          `  Numbered: ${files.map((f) => f.path).join(", ")}`,
+      );
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(
+      `Numbered array file validation failed in ${dirPath}:\n\n${errors.join("\n\n")}`,
     );
   }
 }

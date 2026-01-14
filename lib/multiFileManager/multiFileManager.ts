@@ -15,6 +15,7 @@ import {
   createDirectory,
   splitSectionToFile,
   deleteFile,
+  splitArrayToNumberedFiles,
 } from "./directoryOps";
 
 export class MultiFileManager {
@@ -69,5 +70,24 @@ export class MultiFileManager {
     filePath: string,
   ): Promise<{ success: boolean; deletedPath?: string; error?: string }> {
     return deleteFile(filePath);
+  }
+
+  async splitArrayToNumberedFiles(
+    sourceFile: string,
+    sectionKey: string,
+    itemsPerFile?: number,
+    numberIncrement?: number,
+  ): Promise<{
+    success: boolean;
+    createdFiles?: string[];
+    backupPath?: string;
+    error?: string;
+  }> {
+    return splitArrayToNumberedFiles(
+      sourceFile,
+      sectionKey,
+      itemsPerFile,
+      numberIncrement,
+    );
   }
 }
