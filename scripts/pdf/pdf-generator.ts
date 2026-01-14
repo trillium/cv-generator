@@ -7,7 +7,7 @@ import { ensureDirectoryExists, getOutputFilename } from "./file-utils";
 import { countPdfPages, extractLastPageText } from "./page-counter";
 
 export async function generatePdf(url: string, pdfOptions: object, page: Page) {
-  await page.goto(url, { waitUntil: "networkidle0" });
+  await page.goto(url, { waitUntil: "networkidle2" });
   const pdf = await page.pdf(pdfOptions);
   return pdf;
 }
