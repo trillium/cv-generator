@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rebuildPdfs } from "@/lib/pdfRebuilder";
+import type { PdfType } from "@/lib/pdfSectionMapper";
 
 interface ReloadPayload {
   path: string;
@@ -13,6 +15,22 @@ export async function POST(request: NextRequest) {
     const payload: ReloadPayload = await request.json();
 
     console.log(`[Reload] Received notification:`, payload);
+
+    const directoryPath = payload.path.includes("/")
+      ? `resumes/${payload.path.substring(0, payload.path.lastIndexOf("/"))}`
+      : "resumes";
+
+    console.log(`[Reload] Extracted directory path: ${directoryPath}`);
+
+    if (payload.type !== "unlink" && directoryPath) {
+      console.log(`[Reload] Triggering PDF rebuild for: ${directoryPath}`);
+
+      const pdfsToRegenerate: PdfType[] = ["resume", "cover"];
+
+      rebuildPdfs(directoryPath, pdfsToRegenerate).catch((err) => {
+        console.error(`[Reload] PDF rebuild failed:`, err);
+      });
+    }
 
     const message = `data: ${JSON.stringify(payload)}\n\n`;
 
