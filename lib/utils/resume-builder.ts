@@ -43,11 +43,12 @@ export function getFullResume(resumeId: number): CVData | null {
 
   const cvData: CVData = {
     info: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      role: "",
+      firstName: header?.first_name || "",
+      lastName: header?.last_name || "",
+      email: header?.email || "",
+      phone: header?.phone || "",
+      role: header?.role || "",
+      website: header?.website || "",
     },
     header: {
       name: header?.name || "",

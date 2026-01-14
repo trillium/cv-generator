@@ -31,6 +31,12 @@ export type DbHeader = {
   id: number;
   resume_id: number;
   name: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string | null;
+  role: string | null;
+  website: string | null;
   created_at: string;
   updated_at: string;
 };
