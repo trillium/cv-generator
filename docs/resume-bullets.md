@@ -15,6 +15,13 @@
   - **Method** → How you did it (via refactoring, deploying clusters, automation, etc.).
 - This shows measurable **impact** and makes you stand out.
 
+### 💡 Alternative: Number-First Structure
+
+- Starting with the **number** can grab attention even faster:
+  - Example: "**20% increase** in API performance by implementing Redis caching"
+  - Example: "**$50K savings** achieved through automated deployment pipeline"
+- This front-loads the impact and makes scanning easier for hiring managers.
+
 ---
 
 ## ⚠️ Common Bullet Styles (and Issues)
