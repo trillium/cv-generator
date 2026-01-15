@@ -3,6 +3,12 @@
  * This allows intelligent PDF regeneration based on what changed
  */
 
+import {
+  SECTION_KEY_TO_FILENAME,
+  parseNumberedArrayFile,
+} from "./multiFileMapper";
+import path from "path";
+
 export type PdfType = "resume" | "cover";
 
 /**
@@ -48,4 +54,63 @@ export function getPdfsToRegenerate(yamlPath: string): PdfType[] {
   }
 
   return pdfs;
+}
+
+/**
+ * Determine which PDFs need regeneration based on the changed file
+ * @param filePath - File path (e.g., 'experience.yaml' or 'google/cover-letter.yml')
+ * @returns Array of PDF types to regenerate
+ */
+export function getPdfsToRegenerateFromFile(filePath: string): PdfType[] {
+  const filename = path.basename(filePath);
+
+  const numberedFile = parseNumberedArrayFile(filename);
+  if (numberedFile) {
+    const pdfs = SECTION_TO_PDF_MAP[numberedFile.sectionKey];
+
+    if (!pdfs) {
+      console.warn(
+        `Unknown section for numbered file: ${filename}, regenerating both PDFs`,
+      );
+      return ["resume", "cover"];
+    }
+
+    if (pdfs.length === 0) {
+      console.log(
+        `Numbered file ${filename} (section: ${numberedFile.sectionKey}) doesn't affect PDFs, skipping regeneration`,
+      );
+      return [];
+    }
+
+    return pdfs;
+  }
+
+  const basename = path.basename(filename, path.extname(filename));
+
+  for (const [sectionKey, filenames] of Object.entries(
+    SECTION_KEY_TO_FILENAME,
+  )) {
+    if (filenames.includes(basename)) {
+      const pdfs = SECTION_TO_PDF_MAP[sectionKey];
+
+      if (!pdfs) {
+        console.warn(
+          `Unknown section for file: ${basename}, regenerating both PDFs`,
+        );
+        return ["resume", "cover"];
+      }
+
+      if (pdfs.length === 0) {
+        console.log(
+          `File ${basename} (section: ${sectionKey}) doesn't affect PDFs, skipping regeneration`,
+        );
+        return [];
+      }
+
+      return pdfs;
+    }
+  }
+
+  console.warn(`Unknown file: ${basename}, regenerating both PDFs`);
+  return ["resume", "cover"];
 }

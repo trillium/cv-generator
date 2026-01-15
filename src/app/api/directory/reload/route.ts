@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rebuildPdfs, wasRecentlyRebuilt } from "@/lib/pdfRebuilder";
-import type { PdfType } from "@/lib/pdfSectionMapper";
+import { getPdfsToRegenerateFromFile } from "@/lib/pdfSectionMapper";
 
 interface ReloadPayload {
   path: string;
@@ -46,15 +46,24 @@ export async function POST(request: NextRequest) {
           `[Reload] ⏭️  Skipping PDF rebuild for ${directoryPath} (rebuilt within ${REBUILD_DEBOUNCE_MS}ms)`,
         );
       } else {
-        console.log(
-          `[Reload] ✅ Triggering PDF rebuild for: ${directoryPath} from watcher`,
-        );
+        const pdfsToRegenerate = getPdfsToRegenerateFromFile(payload.path);
 
-        const pdfsToRegenerate: PdfType[] = ["resume", "cover"];
+        if (pdfsToRegenerate.length === 0) {
+          console.log(
+            `[Reload] ⏭️  File ${payload.path} doesn't affect PDFs, skipping regeneration`,
+          );
+        } else {
+          console.log(
+            `[Reload] ✅ Triggering PDF rebuild for: ${directoryPath} from watcher`,
+          );
+          console.log(
+            `[Reload] 📄 Regenerating: ${pdfsToRegenerate.join(", ")} (based on file: ${payload.path})`,
+          );
 
-        rebuildPdfs(directoryPath, pdfsToRegenerate).catch((err) => {
-          console.error(`[Reload] PDF rebuild failed:`, err);
-        });
+          rebuildPdfs(directoryPath, pdfsToRegenerate).catch((err) => {
+            console.error(`[Reload] PDF rebuild failed:`, err);
+          });
+        }
       }
     }
 
