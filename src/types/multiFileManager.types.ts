@@ -16,11 +16,21 @@ export interface PdfMetadataFile {
   };
 }
 
+export interface ValidationError {
+  field: string;
+  message: string;
+  sourceFile: string | string[];
+  expected?: string;
+  actual?: string;
+  severity: "error" | "warning";
+}
+
 export interface DirectoryLoadResult {
   data: CVData;
   sources: Record<string, string | string[]>;
   metadata: DirectoryMetadata;
   pdfMetadata?: PdfMetadataFile;
+  validationErrors?: ValidationError[];
 }
 
 export interface DirectoryMetadata {

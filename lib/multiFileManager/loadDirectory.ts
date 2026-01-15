@@ -7,6 +7,7 @@ import {
   validateNumberedArrayFiles,
 } from "../multiFileMapper";
 import { getPiiDirectory } from "../getPiiPath";
+import { validateCVData } from "./validateData";
 import * as path from "path";
 import * as fs from "fs/promises";
 import fsSync from "fs";
@@ -74,8 +75,12 @@ export async function loadDirectory(
   } catch (err) {
     console.warn(`Could not load PDF metadata: ${err}`);
   }
+
+  const cvData = mergedData as CVData;
+  const validationErrors = validateCVData(cvData, sources);
+
   return {
-    data: mergedData as CVData,
+    data: cvData,
     sources,
     metadata: {
       directoryPath: dirPath,
@@ -84,5 +89,7 @@ export async function loadDirectory(
       hasUnsavedChanges: false,
     },
     pdfMetadata,
+    validationErrors:
+      validationErrors.length > 0 ? validationErrors : undefined,
   };
 }

@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
       sources: result.sources,
       metadata: result.metadata,
       pdfMetadata: result.pdfMetadata,
+      validationErrors: result.validationErrors,
     });
   } catch (error) {
     console.error("[API /directory/load GET] Error loading directory:", error);
