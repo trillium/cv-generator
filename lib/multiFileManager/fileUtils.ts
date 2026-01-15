@@ -62,6 +62,17 @@ export function setNestedValue(
       const isNextKeyNumeric = /^\d+$/.test(nextKey);
       current[key] = isNextKeyNumeric ? [] : {};
     }
+
+    const isCurrentKeyNumeric = /^\d+$/.test(key);
+    if (isCurrentKeyNumeric && Array.isArray(current)) {
+      const index = parseInt(key, 10);
+      if (index >= current.length) {
+        while (current.length <= index) {
+          current.push({});
+        }
+      }
+    }
+
     current = current[key] as Record<string, unknown>;
   }
   current[keys[keys.length - 1]] = value;
