@@ -260,11 +260,19 @@ export function isNumberedArrayFile(filename: string): boolean {
 
 /**
  * Parses a numbered array filename into its components
- * @param filename - The filename to parse (e.g., 'experience.workExperience01.yml')
+ * Supports three formats:
+ * 1. Legacy: basename.sectionKey{digits}.ext (e.g., 'work.workExperience01.yml')
+ * 2. New: sectionKey.word.{digits}.ext (e.g., 'projects.talon.01.yml')
+ * 3. New: sectionKey.{digits}.word.ext (e.g., 'projects.01.talon.yml')
+ * @param filename - The filename to parse
  * @returns Parsed components or null if not a numbered array file
  * @example
- * parseNumberedArrayFile('experience.workExperience01.yml')
- * // Returns: { basename: 'experience', sectionKey: 'workExperience', number: '01', ext: '.yml' }
+ * parseNumberedArrayFile('work.workExperience01.yml')
+ * // Returns: { basename: 'work', sectionKey: 'workExperience', number: '01', ext: '.yml' }
+ * parseNumberedArrayFile('projects.talon.01.yml')
+ * // Returns: { basename: 'talon', sectionKey: 'projects', number: '01', ext: '.yml' }
+ * parseNumberedArrayFile('projects.01.talon.yml')
+ * // Returns: { basename: 'talon', sectionKey: 'projects', number: '01', ext: '.yml' }
  */
 export function parseNumberedArrayFile(
   filename: string,
@@ -276,22 +284,46 @@ export function parseNumberedArrayFile(
 
   const nameWithoutExt = path.basename(filename, ext);
   const parts = nameWithoutExt.split(".");
-  if (parts.length !== 2) {
-    return null;
-  }
 
-  const [basename, sectionAndNumber] = parts;
+  if (parts.length === 3) {
+    const [firstPart, middlePart, lastPart] = parts;
+    const validSectionKeys = Object.keys(SECTION_KEY_TO_FILENAME);
 
-  for (const sectionKey of Object.keys(SECTION_KEY_TO_FILENAME)) {
-    if (sectionAndNumber.startsWith(sectionKey)) {
-      const numberPart = sectionAndNumber.substring(sectionKey.length);
-      if (/^\d+$/.test(numberPart)) {
+    if (validSectionKeys.includes(firstPart)) {
+      if (/^\d+$/.test(lastPart)) {
         return {
-          basename,
-          sectionKey,
-          number: numberPart,
+          basename: middlePart,
+          sectionKey: firstPart,
+          number: lastPart,
           ext,
         };
+      }
+
+      if (/^\d+$/.test(middlePart)) {
+        return {
+          basename: lastPart,
+          sectionKey: firstPart,
+          number: middlePart,
+          ext,
+        };
+      }
+    }
+  }
+
+  if (parts.length === 2) {
+    const [basename, sectionAndNumber] = parts;
+
+    for (const sectionKey of Object.keys(SECTION_KEY_TO_FILENAME)) {
+      if (sectionAndNumber.startsWith(sectionKey)) {
+        const numberPart = sectionAndNumber.substring(sectionKey.length);
+        if (/^\d+$/.test(numberPart)) {
+          return {
+            basename,
+            sectionKey,
+            number: numberPart,
+            ext,
+          };
+        }
       }
     }
   }

@@ -12,33 +12,137 @@ import * as os from "os";
 
 describe("Numbered Array Files", () => {
   describe("parseNumberedArrayFile", () => {
-    it("parses valid numbered array filenames", () => {
-      const result = parseNumberedArrayFile("experience.workExperience01.yml");
-      expect(result).toEqual({
-        basename: "experience",
-        sectionKey: "workExperience",
-        number: "01",
-        ext: ".yml",
+    describe("legacy 2-part format", () => {
+      it("parses valid numbered array filenames", () => {
+        const result = parseNumberedArrayFile(
+          "experience.workExperience01.yml",
+        );
+        expect(result).toEqual({
+          basename: "experience",
+          sectionKey: "workExperience",
+          number: "01",
+          ext: ".yml",
+        });
+      });
+
+      it("parses numbered files with different sections", () => {
+        const result = parseNumberedArrayFile("work.workExperience02.json");
+        expect(result).toEqual({
+          basename: "work",
+          sectionKey: "workExperience",
+          number: "02",
+          ext: ".json",
+        });
+      });
+
+      it("parses education section numbered files", () => {
+        const result = parseNumberedArrayFile("edu.education01.yaml");
+        expect(result).toEqual({
+          basename: "edu",
+          sectionKey: "education",
+          number: "01",
+          ext: ".yaml",
+        });
       });
     });
 
-    it("parses numbered files with different sections", () => {
-      const result = parseNumberedArrayFile("work.workExperience02.json");
-      expect(result).toEqual({
-        basename: "work",
-        sectionKey: "workExperience",
-        number: "02",
-        ext: ".json",
+    describe("new 3-part format", () => {
+      it("parses projects.talon.01.yml", () => {
+        const result = parseNumberedArrayFile("projects.talon.01.yml");
+        expect(result).toEqual({
+          basename: "talon",
+          sectionKey: "projects",
+          number: "01",
+          ext: ".yml",
+        });
+      });
+
+      it("parses workExperience.google.10.yaml", () => {
+        const result = parseNumberedArrayFile("workExperience.google.10.yaml");
+        expect(result).toEqual({
+          basename: "google",
+          sectionKey: "workExperience",
+          number: "10",
+          ext: ".yaml",
+        });
+      });
+
+      it("parses education.mit.99.json", () => {
+        const result = parseNumberedArrayFile("education.mit.99.json");
+        expect(result).toEqual({
+          basename: "mit",
+          sectionKey: "education",
+          number: "99",
+          ext: ".json",
+        });
+      });
+
+      it("parses coverLetter.acme.05.yml", () => {
+        const result = parseNumberedArrayFile("coverLetter.acme.05.yml");
+        expect(result).toEqual({
+          basename: "acme",
+          sectionKey: "coverLetter",
+          number: "05",
+          ext: ".yml",
+        });
+      });
+
+      it("returns null if first part is not a valid section key", () => {
+        expect(parseNumberedArrayFile("invalid.word.01.yml")).toBeNull();
+      });
+
+      it("returns null if last part is not digits", () => {
+        expect(parseNumberedArrayFile("projects.talon.abc.yml")).toBeNull();
       });
     });
 
-    it("parses education section numbered files", () => {
-      const result = parseNumberedArrayFile("edu.education01.yaml");
-      expect(result).toEqual({
-        basename: "edu",
-        sectionKey: "education",
-        number: "01",
-        ext: ".yaml",
+    describe("new 3-part format (digits in middle)", () => {
+      it("parses projects.01.talon.yml", () => {
+        const result = parseNumberedArrayFile("projects.01.talon.yml");
+        expect(result).toEqual({
+          basename: "talon",
+          sectionKey: "projects",
+          number: "01",
+          ext: ".yml",
+        });
+      });
+
+      it("parses workExperience.10.google.yaml", () => {
+        const result = parseNumberedArrayFile("workExperience.10.google.yaml");
+        expect(result).toEqual({
+          basename: "google",
+          sectionKey: "workExperience",
+          number: "10",
+          ext: ".yaml",
+        });
+      });
+
+      it("parses education.99.mit.json", () => {
+        const result = parseNumberedArrayFile("education.99.mit.json");
+        expect(result).toEqual({
+          basename: "mit",
+          sectionKey: "education",
+          number: "99",
+          ext: ".json",
+        });
+      });
+
+      it("parses coverLetter.05.acme.yml", () => {
+        const result = parseNumberedArrayFile("coverLetter.05.acme.yml");
+        expect(result).toEqual({
+          basename: "acme",
+          sectionKey: "coverLetter",
+          number: "05",
+          ext: ".yml",
+        });
+      });
+
+      it("returns null if first part is not a valid section key", () => {
+        expect(parseNumberedArrayFile("invalid.01.word.yml")).toBeNull();
+      });
+
+      it("returns null if middle part is not digits", () => {
+        expect(parseNumberedArrayFile("projects.abc.talon.yml")).toBeNull();
       });
     });
 
