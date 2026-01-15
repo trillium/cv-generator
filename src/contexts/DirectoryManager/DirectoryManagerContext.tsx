@@ -34,6 +34,7 @@ export interface DirectoryManagerContextType {
   sources: Record<string, string | string[]>;
   metadata: DirectoryMetadata | null;
   files: DirectoryFileInfo[];
+  validationErrors: import("@/types/multiFileManager.types").ValidationError[];
 
   // Loading states
   loading: boolean;
@@ -113,6 +114,7 @@ export function DirectoryManagerProvider({
   const sources = currentResume?.sources || {};
   const metadata = currentResume?.metadata || null;
   const storedPdfMetadata = currentResume?.pdfMetadata || null;
+  const validationErrors = currentResume?.validationErrors || [];
 
   const loadDirectory = useCallback(async (path: string) => {
     setLoading(true);
@@ -180,6 +182,7 @@ export function DirectoryManagerProvider({
           sources: result.sources,
           metadata: result.metadata,
           pdfMetadata: result.pdfMetadata,
+          validationErrors: result.validationErrors,
         },
       }));
       setCurrentResumeKey(resolvedPath);
@@ -232,6 +235,7 @@ export function DirectoryManagerProvider({
                 sources: result.sources,
                 metadata: result.metadata,
                 pdfMetadata: result.pdfMetadata,
+                validationErrors: result.validationErrors,
               },
             };
           }
@@ -814,6 +818,7 @@ export function DirectoryManagerProvider({
                   sources: result.sources,
                   metadata: result.metadata,
                   pdfMetadata: result.pdfMetadata,
+                  validationErrors: result.validationErrors,
                 },
               }));
               console.log(
@@ -853,6 +858,7 @@ export function DirectoryManagerProvider({
     sources,
     metadata,
     files,
+    validationErrors,
     loading,
     error,
     hasUnsavedChanges,

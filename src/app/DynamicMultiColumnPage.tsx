@@ -9,6 +9,7 @@ import {
   EmptyState,
 } from "@/src/components/SharedUIStates";
 import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
+import ValidationErrors from "@/src/components/ValidationErrors/ValidationErrors";
 
 import dynamic from "next/dynamic";
 
@@ -63,6 +64,7 @@ export default function DynamicMultiColumnPage({
     loading: contextLoading,
     error: contextError,
     setDocumentType,
+    validationErrors,
   } = useDirectoryManager();
 
   const [loading, setLoading] = useState(true);
@@ -127,6 +129,20 @@ export default function DynamicMultiColumnPage({
         title={`No ${variant === "resume" ? "Resume" : "Cover Letter"} Data`}
         message="The directory was found but contains no data files."
       />
+    );
+  }
+
+  if (validationErrors && validationErrors.length > 0) {
+    return (
+      <div>
+        <div className="sr-only">
+          Currently displaying directory: {resolvedDirPath || dirPath}
+        </div>
+        <ValidationErrors
+          errors={validationErrors}
+          directoryPath={resolvedDirPath || dirPath || "unknown"}
+        />
+      </div>
     );
   }
 
