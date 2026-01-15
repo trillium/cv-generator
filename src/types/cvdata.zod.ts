@@ -5,13 +5,13 @@ export const Lines = z.array(
   z.object({ text: z.string(), bulletPoint: z.boolean().optional() }),
 );
 export const WorkExperienceDetail = z.object({
-  subhead: z.string(),
+  subhead: z.string().optional(),
   years: z.string().optional(),
   lines: Lines,
 });
 export const WorkExperience = z.object({
-  position: z.string(),
-  company: z.string(),
+  position: z.string().optional(),
+  company: z.string().optional(),
   location: z.string(),
   icon: z.string(),
   bubbles: z.array(z.string()).optional(),

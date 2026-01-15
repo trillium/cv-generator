@@ -45,22 +45,26 @@ function WorkExperienceItem({
 }) {
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row justify-between">
+      {item.position && (
+        <div className="flex flex-row justify-between">
+          <EditableField
+            yamlPath={`workExperience.${index}.position`}
+            value={item.position}
+            fieldType="text"
+          >
+            <div className="font-bold">{item.position}</div>
+          </EditableField>
+        </div>
+      )}
+      {item.company && (
         <EditableField
-          yamlPath={`workExperience.${index}.position`}
-          value={item.position}
+          yamlPath={`workExperience.${index}.company`}
+          value={item.company}
           fieldType="text"
         >
-          <div className="font-bold">{item.position}</div>
+          <div className="text-base font-medium">{item.company}</div>
         </EditableField>
-      </div>
-      <EditableField
-        yamlPath={`workExperience.${index}.company`}
-        value={item.company}
-        fieldType="text"
-      >
-        <div className="text-base font-medium">{item.company}</div>
-      </EditableField>
+      )}
       {showBubbles && item.bubbles && item.bubbles.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-2">
           {item.bubbles.map((bubble, bubbleIndex) => (
@@ -80,13 +84,15 @@ function WorkExperienceItem({
       {item.details.map((detail, detailIndex) => (
         <div key={detailIndex} className="flex flex-col mt-2">
           <div className="flex flex-row justify-between">
-            <EditableField
-              yamlPath={`workExperience.${index}.details.${detailIndex}.subhead`}
-              value={detail.subhead}
-              fieldType="text"
-            >
-              <div className="font-medium">{detail.subhead}</div>
-            </EditableField>
+            {detail.subhead && (
+              <EditableField
+                yamlPath={`workExperience.${index}.details.${detailIndex}.subhead`}
+                value={detail.subhead}
+                fieldType="text"
+              >
+                <div className="font-medium">{detail.subhead}</div>
+              </EditableField>
+            )}
             {detail.years && (
               <EditableField
                 yamlPath={`workExperience.${index}.details.${detailIndex}.years`}

@@ -62,7 +62,7 @@ function validateWorkExperienceItem(
   }
 
   const workItem = item as Record<string, unknown>;
-  const requiredFields = ["position", "company", "location", "icon", "details"];
+  const requiredFields = ["location", "icon", "details"];
 
   requiredFields.forEach((field) => {
     if (!(field in workItem)) {
@@ -129,17 +129,6 @@ function validateWorkExperienceDetail(
   }
 
   const detailObj = detail as Record<string, unknown>;
-
-  if (!("subhead" in detailObj)) {
-    errors.push({
-      field: `workExperience[${itemIndex}].details[${detailIndex}].subhead`,
-      message: "Missing required field: subhead",
-      sourceFile,
-      expected: "string",
-      actual: "undefined",
-      severity: "error",
-    });
-  }
 
   if (!("lines" in detailObj)) {
     errors.push({

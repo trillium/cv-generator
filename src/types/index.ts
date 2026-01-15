@@ -2,14 +2,14 @@ export type Lines = { text: string; bulletPoint?: boolean }[];
 export type Notes = string[];
 
 export type WorkExperienceDetail = {
-  subhead: string;
+  subhead?: string;
   years?: string;
   lines: Lines;
 };
 
 export type WorkExperience = {
-  position: string;
-  company: string;
+  position?: string;
+  company?: string;
   location: string;
   icon: string;
   bubbles?: string[];
