@@ -5,6 +5,7 @@ import path from "node:path";
 import type { CVData } from "@/types";
 import { ensureDirectoryExists, getOutputFilename } from "./file-utils";
 import { countPdfPages, extractLastPageText } from "./page-counter";
+import { readMetadata } from "./metadata-writer";
 
 export async function generatePdf(url: string, pdfOptions: object, page: Page) {
   await page.goto(url, { waitUntil: "networkidle2" });
@@ -63,12 +64,19 @@ export async function generateAndSavePdf({
   const outPath = path.join(outDir, getOutputFilename({ data: dataObj, type }));
   writeFileSync(outPath, pdf);
 
-  if (process.platform === "darwin") {
-    exec(`open '${outPath}'`);
-  } else if (process.platform === "win32") {
-    exec(`start "" "${outPath}"`);
+  const metadata = readMetadata(outDir);
+  const shouldOpen = !metadata?.noBrowserOpen;
+
+  if (shouldOpen) {
+    if (process.platform === "darwin") {
+      exec(`open '${outPath}'`);
+    } else if (process.platform === "win32") {
+      exec(`start "" "${outPath}"`);
+    } else {
+      exec(`xdg-open '${outPath}'`);
+    }
   } else {
-    exec(`xdg-open '${outPath}'`);
+    console.log(`📄 PDF saved (browser open skipped by noBrowserOpen flag)`);
   }
 
   return { path: outPath, pageCount, lastPageText, lineBreaks, lastPageLines };

@@ -10,6 +10,7 @@ export interface PdfMetadata {
 }
 
 export interface PdfMetadataFile {
+  noBrowserOpen?: boolean;
   pdf?: {
     resume?: PdfMetadata;
     coverLetter?: PdfMetadata;

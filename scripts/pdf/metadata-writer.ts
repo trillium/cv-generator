@@ -10,6 +10,7 @@ export interface PdfMetadata {
 }
 
 export interface MetadataFile {
+  noBrowserOpen?: boolean;
   pdf?: {
     resume?: PdfMetadata;
     coverLetter?: PdfMetadata;
@@ -45,4 +46,20 @@ export function saveMetadata(
     "utf-8",
   );
   console.log(`📝 Metadata saved to ${metadataPath}`);
+}
+
+export function readMetadata(resumeDir: string): MetadataFile | null {
+  const metadataPath = path.join(resumeDir, "metadata.json");
+
+  if (!existsSync(metadataPath)) {
+    return null;
+  }
+
+  try {
+    const content = readFileSync(metadataPath, "utf-8");
+    return JSON.parse(content);
+  } catch (err) {
+    console.warn(`⚠️  Could not read metadata: ${err}`);
+    return null;
+  }
 }
