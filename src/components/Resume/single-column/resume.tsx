@@ -9,18 +9,14 @@ function TwoColumnResume({ data }: { data: CVData }) {
   const showBubbles = false;
 
   return (
-    <div className="w-full bg-white dark:bg-gray-800 flex flex-col">
+    <div className="w-full h-full min-h-screen bg-white dark:bg-gray-800 flex flex-col justify-between">
       {/* Header - stays at top */}
-      <div className="w-full">
-        <Header data={data} />
-      </div>
+      <Header data={data} />
 
       {/* Main content - grows to fill space */}
-      <div className="print:flex-1 w-full max-w-5xl mx-auto flex flex-col print:justify-between">
-        <CareerSummary data={data} />
-        <WorkExperience data={data.workExperience} showBubbles={showBubbles} />
-        <ProjectsList projects={data.projects} showBubbles={showBubbles} />
-      </div>
+      <CareerSummary data={data} />
+      <WorkExperience data={data.workExperience} showBubbles={showBubbles} />
+      <ProjectsList projects={data.projects} showBubbles={showBubbles} />
 
       {/* Footer - sticks to bottom */}
       <div className="w-full max-w-5xl mx-auto">
