@@ -56,8 +56,11 @@ export function setNestedValue(
   let current = obj;
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
+    const nextKey = keys[i + 1];
+
     if (!(key in current)) {
-      current[key] = {};
+      const isNextKeyNumeric = /^\d+$/.test(nextKey);
+      current[key] = isNextKeyNumeric ? [] : {};
     }
     current = current[key] as Record<string, unknown>;
   }

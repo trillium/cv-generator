@@ -119,7 +119,9 @@ export async function updatePath(
     if (!fsSync.existsSync(dirAbs)) {
       await fs.mkdir(dirAbs, { recursive: true });
     }
-    await fs.writeFile(targetFile, yaml.dump({ [section]: value }), "utf-8");
+    const fileData: Record<string, unknown> = {};
+    setNestedValue(fileData, yamlPath, value);
+    await fs.writeFile(targetFile, yaml.dump(fileData), "utf-8");
     return {
       success: true,
       updatedFile: targetFile,
