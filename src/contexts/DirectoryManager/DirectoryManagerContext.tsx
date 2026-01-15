@@ -104,6 +104,9 @@ export function DirectoryManagerProvider({
   const [documentType, setDocumentType] = useState<
     "resume" | "cover-letter" | null
   >(null);
+  const [recentUpdateTimestamp, setRecentUpdateTimestamp] = useState<
+    number | null
+  >(null);
 
   const currentResume = useMemo(() => {
     return currentResumeKey ? allResumes[currentResumeKey] : null;
@@ -469,6 +472,7 @@ export function DirectoryManagerProvider({
               data: optimisticData,
             },
           }));
+          setRecentUpdateTimestamp(Date.now());
         }
 
         const section = extractTopLevelKey(yamlPath);
@@ -792,6 +796,18 @@ export function DirectoryManagerProvider({
           return;
         }
 
+        const now = Date.now();
+        const timeSinceLastUpdate = recentUpdateTimestamp
+          ? now - recentUpdateTimestamp
+          : Infinity;
+
+        if (timeSinceLastUpdate < 2000) {
+          console.log(
+            `[Reload] ⏭️  Skipping reload - recent update from this client (${timeSinceLastUpdate}ms ago)`,
+          );
+          return;
+        }
+
         const normalizedResumeKey = currentResumeKey.replace(/^resumes\//, "");
         const shouldReload =
           changedPath.startsWith(normalizedResumeKey) ||
@@ -833,7 +849,7 @@ export function DirectoryManagerProvider({
         console.error("[Reload] Error handling SSE event:", err);
       }
     },
-    [currentResumeKey, loadDirectory],
+    [currentResumeKey, loadDirectory, recentUpdateTimestamp],
   );
 
   useEffect(() => {
