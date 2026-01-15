@@ -13,7 +13,17 @@ interface ReloadPayload {
   timestamp: number;
 }
 
+let pendingAbortController: AbortController | null = null;
+
 async function notifyReload(payload: ReloadPayload) {
+  if (pendingAbortController) {
+    console.log(`[API] 🚫 Cancelling previous job for newer change`);
+    pendingAbortController.abort();
+  }
+
+  const controller = new AbortController();
+  pendingAbortController = controller;
+
   const url = `${API_URL}/api/directory/reload`;
   console.log(`\n[API] Sending POST to ${url}`);
   console.log(`[API] Payload:`, JSON.stringify(payload, null, 2));
@@ -23,6 +33,7 @@ async function notifyReload(payload: ReloadPayload) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      signal: controller.signal,
     });
 
     console.log(
@@ -38,7 +49,15 @@ async function notifyReload(payload: ReloadPayload) {
     const result = await response.json();
     console.log(`[API] ✓ Success:`, result);
   } catch (error) {
-    console.error(`[API] ❌ Request failed:`, error);
+    if (error instanceof Error && error.name === "AbortError") {
+      console.log(`[API] ⏭️  Job cancelled`);
+    } else {
+      console.error(`[API] ❌ Request failed:`, error);
+    }
+  } finally {
+    if (pendingAbortController === controller) {
+      pendingAbortController = null;
+    }
   }
 }
 
