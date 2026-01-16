@@ -70,21 +70,30 @@ async function main(
     }> = [];
 
     if (printOptions.includes("resume")) {
-      const { pageCount, lastPageText, lineBreaks, lastPageLines } =
-        await generateAndSavePdf({
-          url: resumeUrl,
-          dataObj,
-          type: "Resume",
-          outDir,
-          browser,
-        });
+      const {
+        pageCount,
+        lastPageText,
+        lineBreaks,
+        lastPageLines,
+        trailingWords,
+      } = await generateAndSavePdf({
+        url: resumeUrl,
+        dataObj,
+        type: "Resume",
+        outDir,
+        browser,
+      });
       results.push({ type: "resume", pageCount, lastPageText, lineBreaks });
+
+      const orphanCount = trailingWords.filter((w) => w.isOrphan).length;
 
       saveMetadata(outDir, "resume", {
         pages: pageCount,
         lastPageText: pageCount > 1 ? lastPageText : undefined,
         lastPageLines: pageCount > 1 ? lastPageLines : undefined,
         lineBreaks: pageCount > 1 ? lineBreaks : undefined,
+        trailingWords: pageCount > 1 ? trailingWords : undefined,
+        orphanCount: pageCount > 1 ? orphanCount : undefined,
         generatedAt: new Date().toISOString(),
       });
 
@@ -97,21 +106,30 @@ async function main(
       }
     }
     if (printOptions.includes("cover")) {
-      const { pageCount, lastPageText, lineBreaks, lastPageLines } =
-        await generateAndSavePdf({
-          url: coverLetterUrl,
-          dataObj,
-          type: "CoverLetter",
-          outDir,
-          browser,
-        });
+      const {
+        pageCount,
+        lastPageText,
+        lineBreaks,
+        lastPageLines,
+        trailingWords,
+      } = await generateAndSavePdf({
+        url: coverLetterUrl,
+        dataObj,
+        type: "CoverLetter",
+        outDir,
+        browser,
+      });
       results.push({ type: "cover", pageCount, lastPageText, lineBreaks });
+
+      const orphanCount = trailingWords.filter((w) => w.isOrphan).length;
 
       saveMetadata(outDir, "coverLetter", {
         pages: pageCount,
         lastPageText: pageCount > 1 ? lastPageText : undefined,
         lastPageLines: pageCount > 1 ? lastPageLines : undefined,
         lineBreaks: pageCount > 1 ? lineBreaks : undefined,
+        trailingWords: pageCount > 1 ? trailingWords : undefined,
+        orphanCount: pageCount > 1 ? orphanCount : undefined,
         generatedAt: new Date().toISOString(),
       });
 

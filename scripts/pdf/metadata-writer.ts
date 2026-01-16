@@ -1,11 +1,14 @@
 import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import path from "node:path";
+import type { TrailingWordInfo } from "./page-counter";
 
 export interface PdfMetadata {
   pages: number;
   lastPageText?: string;
   lastPageLines?: string[];
   lineBreaks?: number;
+  trailingWords?: TrailingWordInfo[];
+  orphanCount?: number;
   generatedAt: string;
 }
 

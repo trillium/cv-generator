@@ -1,11 +1,14 @@
 import type { CVData } from "@/types";
 import type { FileMetadata } from "@/types/fileManager";
+import type { TrailingWordInfo } from "@/scripts/pdf/page-counter";
 
 export interface PdfMetadata {
   pages: number;
   lastPageText?: string;
   lastPageLines?: string[];
   lineBreaks?: number;
+  trailingWords?: TrailingWordInfo[];
+  orphanCount?: number;
   generatedAt: string;
 }
 

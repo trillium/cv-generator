@@ -4,7 +4,11 @@ import { exec } from "node:child_process";
 import path from "node:path";
 import type { CVData } from "@/types";
 import { ensureDirectoryExists, getOutputFilename } from "./file-utils";
-import { countPdfPages, extractLastPageText } from "./page-counter";
+import {
+  countPdfPages,
+  extractLastPageText,
+  type TrailingWordInfo,
+} from "./page-counter";
 import { readMetadata } from "./metadata-writer";
 
 export async function generatePdf(url: string, pdfOptions: object, page: Page) {
@@ -31,6 +35,7 @@ export async function generateAndSavePdf({
   lastPageText: string;
   lineBreaks: number;
   lastPageLines: string[];
+  trailingWords: TrailingWordInfo[];
 }> {
   const page = await browser.newPage();
   const pdf = await generatePdf(
@@ -52,12 +57,14 @@ export async function generateAndSavePdf({
   let lastPageText = "";
   let lineBreaks = 0;
   let lastPageLines: string[] = [];
+  let trailingWords: TrailingWordInfo[] = [];
 
   if (pageCount > 1) {
     const lastPageData = await extractLastPageText(pdfBuffer);
     lastPageText = lastPageData.text;
     lineBreaks = lastPageData.lineBreaks;
     lastPageLines = lastPageData.lines;
+    trailingWords = lastPageData.trailingWords;
   }
 
   ensureDirectoryExists(outDir);
@@ -79,5 +86,12 @@ export async function generateAndSavePdf({
     console.log(`📄 PDF saved (browser open skipped by noBrowserOpen flag)`);
   }
 
-  return { path: outPath, pageCount, lastPageText, lineBreaks, lastPageLines };
+  return {
+    path: outPath,
+    pageCount,
+    lastPageText,
+    lineBreaks,
+    lastPageLines,
+    trailingWords,
+  };
 }
