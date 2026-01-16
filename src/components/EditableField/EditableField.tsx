@@ -109,11 +109,20 @@ export default function EditableField<T extends string | string[]>({
   }, [parsedData, yamlPath]);
 
   // Function to check if children contain a link tag
+  function hasChildrenProp(props: unknown): props is { children: ReactNode } {
+    return typeof props === "object" && props !== null && "children" in props;
+  }
+
   const hasLinkTag = (node: ReactNode): boolean => {
     return React.Children.toArray(node).some((child) => {
       if (React.isValidElement(child)) {
-        if (child.type === "a") return true;
-        if (child.props.children) return hasLinkTag(child.props.children);
+        const el = child as React.ReactElement<
+          unknown,
+          string | React.JSXElementConstructor<unknown>
+        >;
+        if (el.type === "a") return true;
+        if (hasChildrenProp(el.props) && el.props.children)
+          return hasLinkTag(el.props.children);
       }
       return false;
     });
