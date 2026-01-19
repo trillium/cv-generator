@@ -360,4 +360,77 @@ describe("updatePath YAML array syntax", () => {
     const lines = project.lines as Array<{ text: string }>;
     expect(lines[0].text).toBe("CHANGED THIRD PROJECT FIRST BULLET");
   });
+
+  it("should not create phantom null array items when updating nested paths in numbered files", async () => {
+    const testDir = path.join(TEST_PII_DIR, "resumes", "test-company");
+    fs.mkdirSync(testDir, { recursive: true });
+
+    const project01 = path.join(testDir, "projects.01.first.yml");
+    fs.writeFileSync(
+      project01,
+      yaml.dump({
+        projects: [
+          {
+            name: "First Project",
+            lines: [
+              { text: "First bullet" },
+              { text: "Second bullet" },
+              { text: "Third bullet" },
+            ],
+          },
+        ],
+      }),
+    );
+
+    const project04 = path.join(testDir, "projects.04.second.yml");
+    fs.writeFileSync(
+      project04,
+      yaml.dump({
+        projects: [
+          {
+            name: "Massage Tracker",
+            links: [
+              {
+                name: "GitHub",
+                link: "https://github.com/trilliumsmith/massage_tracker",
+              },
+            ],
+            lines: [
+              { text: "First line of tracker project" },
+              { text: "Second line of tracker project" },
+              { text: "Third line of tracker project" },
+            ],
+          },
+        ],
+      }),
+    );
+
+    await updatePath(
+      "resumes/test-company",
+      "projects[1].lines[2].text",
+      "UPDATED THIRD LINE",
+    );
+
+    const updatedContent = fs.readFileSync(project04, "utf-8");
+    const parsed = yaml.load(updatedContent) as Record<string, unknown>;
+
+    expect(Array.isArray(parsed.projects)).toBe(true);
+    const projects = parsed.projects as Array<Record<string, unknown>>;
+    expect(projects.length).toBe(1);
+
+    const project = projects[0];
+    expect(project.name).toBe("Massage Tracker");
+
+    const lines = project.lines as Array<{ text: string }>;
+    expect(lines.length).toBe(3);
+    expect(lines[0].text).toBe("First line of tracker project");
+    expect(lines[1].text).toBe("Second line of tracker project");
+    expect(lines[2].text).toBe("UPDATED THIRD LINE");
+
+    expect(lines.every((line) => line !== null)).toBe(true);
+    expect(lines.every((line) => line.text !== null)).toBe(true);
+
+    expect(updatedContent).not.toContain("null");
+    expect(updatedContent).not.toContain("- lines:");
+  });
 });
