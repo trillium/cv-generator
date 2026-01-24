@@ -12,6 +12,7 @@ import FileBrowserButton from "./FileBrowserButton";
 import { Thumbnail } from "@/components/PdfPreview";
 
 import TypeToggle from "./TypeToggle";
+import ReprintButton from "./ReprintButton";
 
 export default function Navigation() {
   return (
@@ -30,6 +31,8 @@ export default function Navigation() {
           <TypeToggle />
 
           <Thumbnail />
+
+          <ReprintButton />
 
           <ColorPickerSwitch />
 
