@@ -69,6 +69,7 @@ export type CVData = {
   technical: TechnicalCategory[] & { notes?: Notes };
   languages?: Language[] & { notes?: Notes };
   education?: Education[] & { notes?: Notes };
+  showEducation?: boolean;
   coverLetter?: string[] & { notes?: Notes };
   metadata?: ResumeMetadata & { notes?: Notes };
   linkedIn?: LinkedInProfile & { notes?: Notes };

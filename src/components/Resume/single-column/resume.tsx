@@ -1,6 +1,7 @@
 import type { CVData } from "@/types";
 import Header from "./ui/Header";
 import ProjectsList from "@/components/Projects/ProjectsList";
+import EducationList from "@/components/Education/EducationList";
 import CareerSummary from "./ui/CareerSummary";
 import Footer from "./ui/Footer";
 import WorkExperience from "@/components/WorkExperience/WorkExperience";
@@ -18,6 +19,10 @@ function TwoColumnResume({ data }: { data: CVData }) {
         <CareerSummary data={data} />
         <WorkExperience data={data.workExperience} showBubbles={showBubbles} />
         <ProjectsList projects={data.projects} showBubbles={showBubbles} />
+        <EducationList
+          education={data.education}
+          showEducation={data.showEducation}
+        />
 
         {/* Footer - sticks to bottom */}
         <div className="w-full mx-auto">
