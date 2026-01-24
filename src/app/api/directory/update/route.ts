@@ -8,6 +8,17 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { directoryPath, yamlPath, value } = body;
 
+    console.log(`🔵 [API /directory/update] Request received:`, {
+      directoryPath,
+      yamlPath,
+      valueType: typeof value,
+      valuePreview: Array.isArray(value)
+        ? `Array[${value.length}]`
+        : typeof value === "string"
+          ? value.substring(0, 100)
+          : JSON.stringify(value).substring(0, 100),
+    });
+
     if (!directoryPath || !yamlPath || value === undefined) {
       return NextResponse.json(
         {
