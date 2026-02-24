@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
-import * as yaml from "js-yaml";
+import { yaml } from "@/lib/yamlService";
 import { NextRequest } from "next/server";
 
 const TEST_PII_DIR = path.join(process.cwd(), "test-pii-api");
