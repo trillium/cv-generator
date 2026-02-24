@@ -1,28 +1,21 @@
-import Separator from "@/components/Separator/Separator";
-import ProfileLink from "@/src/components/Profile/ProfileLink/ProfileLink";
-import type { CVData } from "@/types";
+import Separator from '@/components/Separator/Separator'
+import ProfileLink from '@/src/components/Profile/ProfileLink/ProfileLink'
+import type { CVData } from '@/types'
 
 export default function Footer({ data }: { data: CVData }) {
   // Defensive check: ensure profile and links exist
-  if (
-    !data.profile ||
-    !data.profile.links ||
-    !Array.isArray(data.profile.links)
-  ) {
-    console.warn(
-      "Footer component received invalid profile data:",
-      data.profile,
-    );
-    return null;
+  if (!data.profile || !data.profile.links || !Array.isArray(data.profile.links)) {
+    console.warn('Footer component received invalid profile data:', data.profile)
+    return null
   }
 
-  const { links } = data.profile;
-  const iconOrder = ["GitHub", "LinkedIn", "Bluesky"];
+  const { links } = data.profile
+  const iconOrder = ['GitHub', 'LinkedIn', 'Bluesky']
   const footerLinks = iconOrder
     .map((icon) => links.find((link) => link.icon === icon))
     .filter((link): link is { icon: string; link: string; name: string } =>
-      Boolean(link && link.icon && link.link && link.name),
-    );
+      Boolean(link?.icon && link.link && link.name),
+    )
 
   return (
     <>
@@ -30,9 +23,7 @@ export default function Footer({ data }: { data: CVData }) {
       <footer className="flex justify-center pt-2 gap-x-4">
         {footerLinks.map((link, index) => {
           // Find the original index in the links array for proper YAML path
-          const originalIndex = links.findIndex(
-            (l) => l.icon === link.icon && l.link === link.link,
-          );
+          const originalIndex = links.findIndex((l) => l.icon === link.icon && l.link === link.link)
           return (
             <ProfileLink
               key={index}
@@ -40,9 +31,9 @@ export default function Footer({ data }: { data: CVData }) {
               nameYamlPath={`profile.links.${originalIndex}.name`}
               linkYamlPath={`profile.links.${originalIndex}.link`}
             />
-          );
+          )
         })}
       </footer>
     </>
-  );
+  )
 }

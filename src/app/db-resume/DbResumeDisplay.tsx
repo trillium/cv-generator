@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
-import type { CVData } from "@/types";
-import Header from "@/components/Header/Header";
-import Profile from "@/components/Profile/Profile";
-import WorkExperience from "@/components/WorkExperience/WorkExperience";
-import Projects from "@/components/Projects/Projects";
+import Header from '@/components/Header/Header'
+import Profile from '@/components/Profile/Profile'
+import Projects from '@/components/Projects/Projects'
+import WorkExperience from '@/components/WorkExperience/WorkExperience'
+import type { CVData } from '@/types'
 
 export function DbResumeDisplay({ cvData }: { cvData: CVData }) {
   return (
     <div className="container mx-auto p-8">
       <div className="mb-4 rounded bg-blue-50 p-4">
         <p className="text-sm text-blue-800">
-          📊 This resume is loaded from the SQLite database at{" "}
+          📊 This resume is loaded from the SQLite database at{' '}
           <code className="rounded bg-blue-100 px-1">pii/db.sqlite</code>
         </p>
       </div>
@@ -62,7 +62,7 @@ export function DbResumeDisplay({ cvData }: { cvData: CVData }) {
             {cvData.technical.map((cat, i) => (
               <div key={i} className="mt-2">
                 <h3 className="font-semibold">{cat.category}</h3>
-                <p>{cat.bubbles.join(", ")}</p>
+                <p>{cat.bubbles.join(', ')}</p>
               </div>
             ))}
           </div>
@@ -84,5 +84,5 @@ export function DbResumeDisplay({ cvData }: { cvData: CVData }) {
         )}
       </div>
     </div>
-  );
+  )
 }

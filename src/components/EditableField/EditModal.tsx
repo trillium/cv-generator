@@ -1,28 +1,29 @@
-"use client";
+'use client'
 
-import React, { useState, useRef, useEffect } from "react";
-import DebugInfo from "./DebugInfo";
-import { CVData } from "@/types";
-import { extractCopyData } from "@/lib/utility/index";
+import type React from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { extractCopyData } from '@/lib/utility/index'
+import type { CVData } from '@/types'
+import DebugInfo from './DebugInfo'
 
 interface EditModalProps {
-  editValue: string;
-  fieldType: "text" | "textarea" | "array" | "link";
-  yamlPath: string;
-  canShowAddButtons: boolean;
-  parsedData: unknown;
-  isSaving: boolean;
-  value: string | string[];
-  onSave: (newValue: string | string[] | unknown[]) => Promise<void>;
-  onCancel: () => void;
+  editValue: string
+  fieldType: 'text' | 'textarea' | 'array' | 'link'
+  yamlPath: string
+  canShowAddButtons: boolean
+  parsedData: unknown
+  isSaving: boolean
+  value: string | string[]
+  onSave: (newValue: string | string[] | unknown[]) => Promise<void>
+  onCancel: () => void
   linkData?: {
-    text: string;
-    url: string;
-    icon?: React.ReactNode;
-    textYamlPath: string;
-    urlYamlPath: string;
-    onSaveLink?: (text: string, url: string) => Promise<void>;
-  };
+    text: string
+    url: string
+    icon?: React.ReactNode
+    textYamlPath: string
+    urlYamlPath: string
+    onSaveLink?: (text: string, url: string) => Promise<void>
+  }
 }
 
 export default function EditModal({
@@ -36,115 +37,105 @@ export default function EditModal({
   onCancel,
   linkData,
 }: EditModalProps) {
-  const [modalEditValue, setModalEditValue] = useState(editValue);
-  const [linkText, setLinkText] = useState(linkData?.text || "");
-  const [linkUrl, setLinkUrl] = useState(linkData?.url || "");
-  const [copied, setCopied] = useState(false);
-  const modalInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const [modalEditValue, setModalEditValue] = useState(editValue)
+  const [linkText, setLinkText] = useState(linkData?.text || '')
+  const [linkUrl, setLinkUrl] = useState(linkData?.url || '')
+  const [copied, setCopied] = useState(false)
+  const modalInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
 
   // Determine if this is a links array that should show link editing
-  const isLinksArray = fieldType === "array" && yamlPath.includes("links");
+  const isLinksArray = fieldType === 'array' && yamlPath.includes('links')
 
   useEffect(() => {
     if (modalInputRef.current) {
-      modalInputRef.current.focus();
-      if (fieldType !== "textarea") {
-        (modalInputRef.current as HTMLInputElement).select();
+      modalInputRef.current.focus()
+      if (fieldType !== 'textarea') {
+        ;(modalInputRef.current as HTMLInputElement).select()
       } else {
-        const textarea = modalInputRef.current as HTMLTextAreaElement;
-        textarea.setSelectionRange(0, textarea.value.length);
+        const textarea = modalInputRef.current as HTMLTextAreaElement
+        textarea.setSelectionRange(0, textarea.value.length)
       }
     }
-  }, [fieldType]);
+  }, [fieldType])
 
   const handleModalKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      if (fieldType === "textarea") {
+    if (e.key === 'Enter') {
+      if (fieldType === 'textarea') {
         if (e.ctrlKey || e.metaKey) {
-          e.preventDefault();
-          handleModalSave();
+          e.preventDefault()
+          handleModalSave()
         }
       } else {
-        e.preventDefault();
-        handleModalSave();
+        e.preventDefault()
+        handleModalSave()
       }
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      onCancel();
+    } else if (e.key === 'Escape') {
+      e.preventDefault()
+      onCancel()
     }
-  };
+  }
 
   const handleModalSave = async () => {
-    if (
-      (fieldType === "link" || isLinksArray) &&
-      (linkData?.onSaveLink || isLinksArray)
-    ) {
+    if ((fieldType === 'link' || isLinksArray) && (linkData?.onSaveLink || isLinksArray)) {
       // Handle link save with both text and URL
       if (isLinksArray) {
         // For links arrays, add the first link to the empty array
         const newLink = {
-          name: linkText.trim() || "Link",
-          link: linkUrl.trim() || "",
-          icon: "None",
-        };
+          name: linkText.trim() || 'Link',
+          link: linkUrl.trim() || '',
+          icon: 'None',
+        }
         // Save the new array with the first link
-        await onSave([newLink]);
+        await onSave([newLink])
       } else if (linkData?.onSaveLink) {
-        await linkData.onSaveLink(linkText, linkUrl);
+        await linkData.onSaveLink(linkText, linkUrl)
       }
-      return;
+      return
     }
 
     if (!modalEditValue.trim() && value && String(value).trim()) {
       // Don't save empty values if the current value is not empty
-      onCancel();
-      return;
+      onCancel()
+      return
     }
 
-    const currentValue = Array.isArray(value)
-      ? value.join("\n")
-      : String(value || "");
+    const currentValue = Array.isArray(value) ? value.join('\n') : String(value || '')
 
     if (modalEditValue !== currentValue) {
-      await onSave(modalEditValue);
+      await onSave(modalEditValue)
     } else {
-      onCancel();
+      onCancel()
     }
-  };
+  }
 
   // --- Copy button handler ---
   const handleCopy = async () => {
     try {
-      console.log("[EditModal] handleCopy - yamlPath:", yamlPath);
-      console.log("[EditModal] handleCopy - parsedData:", parsedData);
-      console.log(
-        "[EditModal] handleCopy - parsedData.llm:",
-        (parsedData as CVData)?.llm,
-      );
-      const data = extractCopyData(yamlPath, parsedData as CVData);
-      console.log("[EditModal] handleCopy - extracted data:", data);
+      console.log('[EditModal] handleCopy - yamlPath:', yamlPath)
+      console.log('[EditModal] handleCopy - parsedData:', parsedData)
+      console.log('[EditModal] handleCopy - parsedData.llm:', (parsedData as CVData)?.llm)
+      const data = extractCopyData(yamlPath, parsedData as CVData)
+      console.log('[EditModal] handleCopy - extracted data:', data)
       if (data === undefined) {
-        setCopied(false);
-        return;
+        setCopied(false)
+        return
       }
-      await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(JSON.stringify(data, null, 2))
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
     } catch (error) {
-      console.error("[EditModal] handleCopy - error:", error);
-      setCopied(false);
+      console.error('[EditModal] handleCopy - error:', error)
+      setCopied(false)
     }
-  };
+  }
 
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-          Edit Field
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Edit Field</h3>
       </div>
 
-      {fieldType === "link" || isLinksArray ? (
+      {fieldType === 'link' || isLinksArray ? (
         <div className="space-y-3">
           {linkData?.icon && (
             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -168,7 +159,6 @@ export default function EditModal({
               onChange={(e) => setLinkText(e.target.value)}
               className="w-full border border-blue-400 dark:border-blue-500 rounded p-2"
               disabled={isSaving}
-              autoFocus
               placeholder="Link display name"
             />
           </div>
@@ -186,15 +176,14 @@ export default function EditModal({
             />
           </div>
         </div>
-      ) : fieldType === "textarea" ? (
+      ) : fieldType === 'textarea' ? (
         <textarea
           ref={modalInputRef as React.RefObject<HTMLTextAreaElement>}
           value={modalEditValue}
           onChange={(e) => setModalEditValue(e.target.value)}
           onKeyDown={handleModalKeyDown}
           className="w-full min-h-[8rem] focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none bg-white dark:bg-gray-800 text-black dark:text-white shadow-md box-border border border-blue-400 rounded p-2"
-          rows={Math.max(4, modalEditValue.split("\n").length)}
-          autoFocus
+          rows={Math.max(4, modalEditValue.split('\n').length)}
         />
       ) : (
         <input
@@ -205,22 +194,21 @@ export default function EditModal({
           onKeyDown={handleModalKeyDown}
           className="w-full border border-blue-400 dark:border-blue-500 rounded p-2"
           disabled={isSaving}
-          autoFocus
         />
       )}
 
       <div className="text-xs text-gray-500 dark:text-gray-400">
-        {fieldType === "link" || isLinksArray
-          ? "Edit both text and URL, then save"
-          : fieldType === "textarea"
-            ? "Ctrl+Enter to save, Esc to cancel, Tab to next field"
-            : "Enter to save, Esc to cancel, Tab to next field"}
+        {fieldType === 'link' || isLinksArray
+          ? 'Edit both text and URL, then save'
+          : fieldType === 'textarea'
+            ? 'Ctrl+Enter to save, Esc to cancel, Tab to next field'
+            : 'Enter to save, Esc to cancel, Tab to next field'}
       </div>
 
       {/* Debug information */}
       <DebugInfo
         yamlPath={yamlPath}
-        fieldType={isLinksArray ? "link" : fieldType}
+        fieldType={isLinksArray ? 'link' : fieldType}
         parsedData={parsedData as CVData}
       />
 
@@ -234,10 +222,10 @@ export default function EditModal({
             aria-label="Copy as JSON"
             type="button"
           >
-            {copied ? "✅" : "📋"}
+            {copied ? '✅' : '📋'}
           </button>
           <span className="text-[10px] text-green-700 dark:text-green-300 mt-1">
-            {copied ? "Copied!" : "Copy"}
+            {copied ? 'Copied!' : 'Copy'}
           </span>
         </div>
         <div className="flex flex-col items-center">
@@ -249,11 +237,9 @@ export default function EditModal({
             title="Save (Enter)"
             type="button"
           >
-            {isSaving ? "⏳" : "✓"}
+            {isSaving ? '⏳' : '✓'}
           </button>
-          <span className="text-[10px] text-blue-700 dark:text-blue-300 mt-1">
-            Save
-          </span>
+          <span className="text-[10px] text-blue-700 dark:text-blue-300 mt-1">Save</span>
         </div>
         <div className="flex flex-col items-center">
           <button
@@ -265,11 +251,9 @@ export default function EditModal({
           >
             ✕
           </button>
-          <span className="text-[10px] text-red-500 dark:text-red-400 mt-1">
-            Cancel
-          </span>
+          <span className="text-[10px] text-red-500 dark:text-red-400 mt-1">Cancel</span>
         </div>
       </div>
     </div>
-  );
+  )
 }

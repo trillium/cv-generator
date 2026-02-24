@@ -1,5 +1,5 @@
-"use client";
-import DynamicMultiColumnPage from "@/src/app/DynamicMultiColumnPage";
+'use client'
+import DynamicMultiColumnPage from '@/src/app/DynamicMultiColumnPage'
 export default function DynamicSingleColumnMultiCoverLetterPage() {
   return (
     <DynamicMultiColumnPage
@@ -7,5 +7,5 @@ export default function DynamicSingleColumnMultiCoverLetterPage() {
       layout="single-column"
       defaultRoute="/single-column/cover-letter"
     />
-  );
+  )
 }

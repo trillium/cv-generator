@@ -1,10 +1,10 @@
-import Title from "@/components/Title/Title";
-import EditableField from "@/components/EditableField";
-import type { CVData } from "@/types";
-import React from "react";
+import React from 'react'
+import EditableField from '@/components/EditableField'
+import Title from '@/components/Title/Title'
+import type { CVData } from '@/types'
 
 export default function CareerSummary({ data }: { data: CVData }) {
-  const { careerSummary = [] } = data;
+  const { careerSummary = [] } = data
 
   return (
     <section>
@@ -13,11 +13,7 @@ export default function CareerSummary({ data }: { data: CVData }) {
         {careerSummary.map(({ title, text }, idx) => (
           <React.Fragment key={`career-summary-${idx}`}>
             <div className="col-span-2 list-none" key={idx}>
-              <EditableField
-                yamlPath={`careerSummary.${idx}.title`}
-                value={title}
-                fieldType="text"
-              >
+              <EditableField yamlPath={`careerSummary.${idx}.title`} value={title} fieldType="text">
                 <span className="font-semibold">{title}</span>
               </EditableField>
             </div>
@@ -34,5 +30,5 @@ export default function CareerSummary({ data }: { data: CVData }) {
         ))}
       </div>
     </section>
-  );
+  )
 }

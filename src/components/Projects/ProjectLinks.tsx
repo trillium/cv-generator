@@ -1,9 +1,8 @@
-import { ProfileLinkProps } from "@/components/Profile/ProfileLink/ProfileLink";
-import ProfileLink from "@/components/Profile/ProfileLink/ProfileLink";
+import ProfileLink, { type ProfileLinkProps } from '@/components/Profile/ProfileLink/ProfileLink'
 
 interface ProjectLinksProps {
-  links?: ProfileLinkProps[];
-  projectIndex: number;
+  links?: ProfileLinkProps[]
+  projectIndex: number
 }
 
 const ProjectLinks = ({ links, projectIndex }: ProjectLinksProps) => {
@@ -11,32 +10,27 @@ const ProjectLinks = ({ links, projectIndex }: ProjectLinksProps) => {
     !links || links.length === 0
       ? [
           {
-            icon: "",
-            link: "",
-            name: "",
+            icon: '',
+            link: '',
+            name: '',
           },
         ]
-      : links;
+      : links
   return (
     <ul className="flex flex-row mt">
       {linksToRender.map((link, index) => (
-        <li
-          key={index}
-          className="flex items-center leading-none  border-primary-500"
-        >
+        <li key={index} className="flex items-center leading-none  border-primary-500">
           <ProfileLink
             className="px-1 underline"
             {...link}
             nameYamlPath={`projects.${projectIndex}.links.${index}.name`}
             linkYamlPath={`projects.${projectIndex}.links.${index}.link`}
           />
-          {index !== linksToRender.length - 1 && (
-            <span className="mx-1">·</span>
-          )}
+          {index !== linksToRender.length - 1 && <span className="mx-1">·</span>}
         </li>
       ))}
     </ul>
-  );
-};
+  )
+}
 
-export default ProjectLinks;
+export default ProjectLinks

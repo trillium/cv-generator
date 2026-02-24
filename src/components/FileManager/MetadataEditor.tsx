@@ -1,13 +1,14 @@
-"use client";
+'use client'
 
-import React, { useState } from "react";
-import { ResumeMetadata } from "@/types";
+import type React from 'react'
+import { useState } from 'react'
+import type { ResumeMetadata } from '@/types'
 
 interface MetadataEditorProps {
-  metadata?: ResumeMetadata;
-  filePath: string;
-  onSave: (metadata: ResumeMetadata) => Promise<void>;
-  onCancel: () => void;
+  metadata?: ResumeMetadata
+  filePath: string
+  onSave: (metadata: ResumeMetadata) => Promise<void>
+  onCancel: () => void
 }
 
 export default function MetadataEditor({
@@ -17,57 +18,55 @@ export default function MetadataEditor({
   onCancel,
 }: MetadataEditorProps) {
   const [formData, setFormData] = useState<ResumeMetadata>({
-    targetCompany: metadata?.targetCompany || "",
-    targetPosition: metadata?.targetPosition || "",
-    targetJobUrl: metadata?.targetJobUrl || "",
-    applicationDate: metadata?.applicationDate || "",
-    applicationStatus: metadata?.applicationStatus || "draft",
-    notes: metadata?.notes || "",
+    targetCompany: metadata?.targetCompany || '',
+    targetPosition: metadata?.targetPosition || '',
+    targetJobUrl: metadata?.targetJobUrl || '',
+    applicationDate: metadata?.applicationDate || '',
+    applicationStatus: metadata?.applicationStatus || 'draft',
+    notes: metadata?.notes || '',
     tailoredFor: metadata?.tailoredFor || [],
-  });
+  })
 
-  const [tailoredInput, setTailoredInput] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [tailoredInput, setTailoredInput] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleAddTailored = () => {
     if (tailoredInput.trim()) {
       setFormData({
         ...formData,
         tailoredFor: [...(formData.tailoredFor || []), tailoredInput.trim()],
-      });
-      setTailoredInput("");
+      })
+      setTailoredInput('')
     }
-  };
+  }
 
   const handleRemoveTailored = (index: number) => {
     setFormData({
       ...formData,
       tailoredFor: formData.tailoredFor?.filter((_, i) => i !== index),
-    });
-  };
+    })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setError(null);
+    e.preventDefault()
+    setSaving(true)
+    setError(null)
 
     try {
-      await onSave(formData);
+      await onSave(formData)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save metadata");
-      setSaving(false);
+      setError(err instanceof Error ? err.message : 'Failed to save metadata')
+      setSaving(false)
     }
-  };
+  }
 
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
         Edit Resume Metadata
       </h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 font-mono">
-        {filePath}
-      </p>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 font-mono">{filePath}</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -77,9 +76,7 @@ export default function MetadataEditor({
           <input
             type="text"
             value={formData.targetCompany}
-            onChange={(e) =>
-              setFormData({ ...formData, targetCompany: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, targetCompany: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             placeholder="Google, Meta, etc."
           />
@@ -92,9 +89,7 @@ export default function MetadataEditor({
           <input
             type="text"
             value={formData.targetPosition}
-            onChange={(e) =>
-              setFormData({ ...formData, targetPosition: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, targetPosition: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             placeholder="Senior Frontend Engineer"
           />
@@ -107,9 +102,7 @@ export default function MetadataEditor({
           <input
             type="url"
             value={formData.targetJobUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, targetJobUrl: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, targetJobUrl: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             placeholder="https://..."
           />
@@ -123,9 +116,7 @@ export default function MetadataEditor({
             <input
               type="date"
               value={formData.applicationDate}
-              onChange={(e) =>
-                setFormData({ ...formData, applicationDate: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, applicationDate: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
@@ -139,8 +130,7 @@ export default function MetadataEditor({
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  applicationStatus: e.target
-                    .value as ResumeMetadata["applicationStatus"],
+                  applicationStatus: e.target.value as ResumeMetadata['applicationStatus'],
                 })
               }
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -164,9 +154,7 @@ export default function MetadataEditor({
               type="text"
               value={tailoredInput}
               onChange={(e) => setTailoredInput(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === "Enter" && (e.preventDefault(), handleAddTailored())
-              }
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTailored())}
               className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               placeholder="React, accessibility, etc."
             />
@@ -203,9 +191,7 @@ export default function MetadataEditor({
           </label>
           <textarea
             value={formData.notes}
-            onChange={(e) =>
-              setFormData({ ...formData, notes: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             rows={4}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             placeholder="Notes about this resume version..."
@@ -231,10 +217,10 @@ export default function MetadataEditor({
             disabled={saving}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50"
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? 'Saving...' : 'Save'}
           </button>
         </div>
       </form>
     </div>
-  );
+  )
 }

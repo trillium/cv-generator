@@ -1,164 +1,151 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
+import { useRouter } from 'next/navigation'
+import type React from 'react'
+import { useEffect, useState } from 'react'
+import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
 
 interface CreatedResume {
-  directoryName: string;
-  position: string;
-  company?: string;
+  directoryName: string
+  position: string
+  company?: string
 }
 
 interface ResumeCreatorProps {
-  onClose: () => void;
-  onResumeCreated: (resume: CreatedResume) => void;
+  onClose: () => void
+  onResumeCreated: (resume: CreatedResume) => void
 }
 
 interface DirectoryInfo {
-  name: string;
-  path: string;
+  name: string
+  path: string
 }
 
-const ResumeCreator: React.FC<ResumeCreatorProps> = ({
-  onClose,
-  onResumeCreated,
-}) => {
-  const router = useRouter();
-  const { loading: contextLoading, error: contextError } =
-    useDirectoryManager();
+const ResumeCreator: React.FC<ResumeCreatorProps> = ({ onClose, onResumeCreated }) => {
+  const router = useRouter()
+  const { loading: contextLoading, error: contextError } = useDirectoryManager()
 
-  const [position, setPosition] = useState("");
-  const [company, setCompany] = useState("");
-  const [description, setDescription] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [directories, setDirectories] = useState<DirectoryInfo[]>([]);
-  const [loadingDirs, setLoadingDirs] = useState(true);
+  const [position, setPosition] = useState('')
+  const [company, setCompany] = useState('')
+  const [description, setDescription] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [creating, setCreating] = useState(false)
+  const [directories, setDirectories] = useState<DirectoryInfo[]>([])
+  const [loadingDirs, setLoadingDirs] = useState(true)
 
   useEffect(() => {
-    loadDirectories();
-  }, []);
+    loadDirectories()
+  }, [loadDirectories])
 
   const loadDirectories = async () => {
     try {
-      setLoadingDirs(true);
+      setLoadingDirs(true)
       const response = await fetch(
-        `/api/directory/hierarchy?path=${encodeURIComponent(process.env.NEXT_PUBLIC_PII_PATH || "pii")}`,
-      );
-      const result = await response.json();
+        `/api/directory/hierarchy?path=${encodeURIComponent(process.env.NEXT_PUBLIC_PII_PATH || 'pii')}`,
+      )
+      const result = await response.json()
 
       if (result.success) {
-        const dirs = extractDirectories(result.hierarchy);
-        setDirectories(dirs);
+        const dirs = extractDirectories(result.hierarchy)
+        setDirectories(dirs)
       }
     } catch (err) {
-      console.error("Failed to load directories:", err);
+      console.error('Failed to load directories:', err)
     } finally {
-      setLoadingDirs(false);
+      setLoadingDirs(false)
     }
-  };
+  }
 
   const extractDirectories = (hierarchy: unknown): DirectoryInfo[] => {
-    const dirs: DirectoryInfo[] = [];
+    const dirs: DirectoryInfo[] = []
 
-    if (typeof hierarchy === "object" && hierarchy !== null) {
-      Object.entries(hierarchy as Record<string, unknown>).forEach(
-        ([key, value]) => {
-          if (typeof value === "object" && value !== null) {
-            dirs.push({
-              name: formatDirectoryName(key),
-              path: key,
-            });
-          }
-        },
-      );
+    if (typeof hierarchy === 'object' && hierarchy !== null) {
+      Object.entries(hierarchy as Record<string, unknown>).forEach(([key, value]) => {
+        if (typeof value === 'object' && value !== null) {
+          dirs.push({
+            name: formatDirectoryName(key),
+            path: key,
+          })
+        }
+      })
     }
 
-    return dirs.sort((a, b) => a.name.localeCompare(b.name));
-  };
+    return dirs.sort((a, b) => a.name.localeCompare(b.name))
+  }
 
   const formatDirectoryName = (dirName: string): string => {
-    return dirName
-      .replace(/[-_]/g, " ")
-      .replace(/\b\w/g, (l: string) => l.toUpperCase());
-  };
+    return dirName.replace(/[-_]/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())
+  }
 
   const handleSubmit = async () => {
-    setError(null);
+    setError(null)
 
     if (!position.trim()) {
-      setError("Position is required");
-      return;
+      setError('Position is required')
+      return
     }
 
     try {
-      setCreating(true);
+      setCreating(true)
 
-      const directoryName = position.trim().toLowerCase().replace(/\s+/g, "-");
+      const directoryName = position.trim().toLowerCase().replace(/\s+/g, '-')
 
-      const response = await fetch("/api/directory/create", {
-        method: "POST",
+      const response = await fetch('/api/directory/create', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          parentPath: process.env.NEXT_PUBLIC_PII_PATH || "pii",
+          parentPath: process.env.NEXT_PUBLIC_PII_PATH || 'pii',
           directoryName,
         }),
-      });
+      })
 
-      const result = await response.json();
+      const result = await response.json()
 
       if (!result.success) {
-        throw new Error(result.error || "Failed to create directory");
+        throw new Error(result.error || 'Failed to create directory')
       }
 
       onResumeCreated({
         position: position.trim(),
         company: company.trim(),
         directoryName,
-      });
+      })
 
-      router.push(
-        `/single-column/resume?dir=${encodeURIComponent(result.path)}`,
-      );
-      onClose();
-      resetForm();
+      router.push(`/single-column/resume?dir=${encodeURIComponent(result.path)}`)
+      onClose()
+      resetForm()
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create resume");
+      setError(err instanceof Error ? err.message : 'Failed to create resume')
     } finally {
-      setCreating(false);
+      setCreating(false)
     }
-  };
+  }
 
   const resetForm = () => {
-    setPosition("");
-    setCompany("");
-    setDescription("");
-    setError(null);
-  };
+    setPosition('')
+    setCompany('')
+    setDescription('')
+    setError(null)
+  }
 
   const handleClose = () => {
-    resetForm();
-    onClose();
-  };
+    resetForm()
+    onClose()
+  }
 
   const handleCopyDirectory = async (sourcePath: string) => {
     try {
-      router.push(
-        `/single-column/resume?dir=${encodeURIComponent(sourcePath)}`,
-      );
-      onClose();
+      router.push(`/single-column/resume?dir=${encodeURIComponent(sourcePath)}`)
+      onClose()
     } catch (err) {
-      console.error("Copy directory error:", err);
+      console.error('Copy directory error:', err)
     }
-  };
+  }
 
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-          Create New Resume
-        </h2>
+        <h2 className="text-lg font-medium text-gray-900 dark:text-white">Create New Resume</h2>
         <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
           Create a new resume directory or copy an existing one
         </p>
@@ -175,9 +162,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
                 key={dir.path}
                 className="flex items-center justify-between p-2 bg-white dark:bg-gray-700 rounded text-sm"
               >
-                <span className="text-gray-900 dark:text-white">
-                  {dir.name}
-                </span>
+                <span className="text-gray-900 dark:text-white">{dir.name}</span>
                 <button
                   onClick={() => handleCopyDirectory(dir.path)}
                   className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30"
@@ -193,8 +178,8 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
       <form
         className="space-y-6"
         onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
+          e.preventDefault()
+          handleSubmit()
         }}
       >
         <div>
@@ -251,9 +236,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
 
         {(error || contextError) && (
           <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-            <div className="text-sm text-red-700 dark:text-red-300">
-              {error || contextError}
-            </div>
+            <div className="text-sm text-red-700 dark:text-red-300">{error || contextError}</div>
           </div>
         )}
 
@@ -270,12 +253,12 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({
             disabled={creating || contextLoading}
             className="rounded-md border border-transparent bg-blue-600 dark:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
           >
-            {creating ? "Creating..." : "Create Resume"}
+            {creating ? 'Creating...' : 'Create Resume'}
           </button>
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default ResumeCreator;
+export default ResumeCreator

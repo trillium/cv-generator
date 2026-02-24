@@ -1,49 +1,48 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
-import { useModal } from "@/contexts/ModalContext";
-import { getPdfUrl, isPdfGenerating, hasPdfError } from "./utils";
-import PdfPreview from "./PdfPreview";
+import { useEffect, useState } from 'react'
+import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
+import { useModal } from '@/contexts/ModalContext'
+import PdfPreview from './PdfPreview'
+import { getPdfUrl, hasPdfError, isPdfGenerating } from './utils'
 
 export default function Thumbnail() {
-  const { currentDirectory, documentType, pdfJobs, storedPdfMetadata } =
-    useDirectoryManager();
-  const { openModal } = useModal();
-  const [isLoading, setIsLoading] = useState(true);
+  const { currentDirectory, documentType, pdfJobs, storedPdfMetadata } = useDirectoryManager()
+  const { openModal } = useModal()
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    setIsLoading(true);
-  }, [currentDirectory, documentType]);
+    setIsLoading(true)
+  }, [])
 
-  if (!documentType) return null;
+  if (!documentType) return null
 
-  const pdfUrl = getPdfUrl(currentDirectory, documentType);
-  const isGenerating = isPdfGenerating(pdfJobs, documentType);
-  const hasError = hasPdfError(storedPdfMetadata, documentType);
+  const pdfUrl = getPdfUrl(currentDirectory, documentType)
+  const isGenerating = isPdfGenerating(pdfJobs, documentType)
+  const hasError = hasPdfError(storedPdfMetadata, documentType)
 
   const handleClick = () => {
     if (pdfUrl && !isGenerating) {
-      openModal(<PdfPreview pdfUrl={pdfUrl} />, "xl");
+      openModal(<PdfPreview pdfUrl={pdfUrl} />, 'xl')
     }
-  };
+  }
 
   const handleIframeLoad = () => {
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   const getBorderColor = () => {
-    if (isGenerating) return "border-yellow-500";
-    if (isLoading && !isGenerating) return "border-purple-500";
-    if (hasError) return "border-red-500";
-    return "border-green-500";
-  };
+    if (isGenerating) return 'border-yellow-500'
+    if (isLoading && !isGenerating) return 'border-purple-500'
+    if (hasError) return 'border-red-500'
+    return 'border-green-500'
+  }
 
   const getStatusLabel = () => {
-    if (isGenerating) return "Generating";
-    if (isLoading && !isGenerating) return "Loading";
-    return null;
-  };
+    if (isGenerating) return 'Generating'
+    if (isLoading && !isGenerating) return 'Loading'
+    return null
+  }
 
   return (
     <button
@@ -51,14 +50,8 @@ export default function Thumbnail() {
       onClick={handleClick}
       type="button"
       disabled={isGenerating || !pdfUrl}
-      title={
-        isGenerating
-          ? "PDF generating..."
-          : hasError
-            ? "PDF has errors"
-            : "Preview PDF"
-      }
-      style={{ width: "60px", height: "80px" }}
+      title={isGenerating ? 'PDF generating...' : hasError ? 'PDF has errors' : 'Preview PDF'}
+      style={{ width: '60px', height: '80px' }}
     >
       {isGenerating ? (
         <div className="flex items-center justify-center h-full bg-yellow-50">
@@ -81,10 +74,10 @@ export default function Thumbnail() {
             title="PDF Thumbnail"
             onLoad={handleIframeLoad}
             style={{
-              transform: "scale(0.25)",
-              transformOrigin: "top left",
-              width: "400%",
-              height: "400%",
+              transform: 'scale(0.25)',
+              transformOrigin: 'top left',
+              width: '400%',
+              height: '400%',
             }}
           />
         </>
@@ -97,12 +90,12 @@ export default function Thumbnail() {
       {getStatusLabel() && (
         <div
           className={`absolute bottom-0 left-0 right-0 text-white text-xs text-center py-0.5 ${
-            isGenerating ? "bg-yellow-500" : "bg-purple-500"
+            isGenerating ? 'bg-yellow-500' : 'bg-purple-500'
           }`}
         >
           {getStatusLabel()}
         </div>
       )}
     </button>
-  );
+  )
 }

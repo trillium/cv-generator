@@ -1,5 +1,5 @@
-"use client";
-import DynamicMultiColumnPage from "@/src/app/DynamicMultiColumnPage";
+'use client'
+import DynamicMultiColumnPage from '@/src/app/DynamicMultiColumnPage'
 export default function DynamicTwoColumnMultiResumePage() {
   return (
     <DynamicMultiColumnPage
@@ -7,5 +7,5 @@ export default function DynamicTwoColumnMultiResumePage() {
       layout="two-column"
       defaultRoute="/two-column/resume"
     />
-  );
+  )
 }

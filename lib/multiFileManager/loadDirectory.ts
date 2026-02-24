@@ -1,83 +1,75 @@
+import fsSync from 'node:fs'
+import * as fs from 'node:fs/promises'
+import * as path from 'node:path'
+import type { CVData } from '@/types'
+import type { DirectoryLoadResult, PdfMetadataFile } from '@/types/multiFileManager.types'
+import { getPiiDirectory } from '../getPiiPath'
 import {
-  getAncestorDirectories,
   findDataFilesInDirectory,
+  getAncestorDirectories,
   loadDataFile,
-  parseNumberedArrayFile,
   mergeNumberedArrayFiles,
+  parseNumberedArrayFile,
   validateNumberedArrayFiles,
-} from "../multiFileMapper";
-import { getPiiDirectory } from "../getPiiPath";
-import { validateCVData } from "./validateData";
-import * as path from "path";
-import * as fs from "fs/promises";
-import fsSync from "fs";
-import type { CVData } from "@/types";
-import type {
-  PdfMetadataFile,
-  DirectoryLoadResult,
-} from "@/types/multiFileManager.types";
+} from '../multiFileMapper'
+import { validateCVData } from './validateData'
 
-export async function loadDirectory(
-  dirPath: string,
-): Promise<DirectoryLoadResult> {
-  const ancestorDirs = getAncestorDirectories(dirPath);
-  const filesLoaded: string[] = [];
-  const sources: Record<string, string | string[]> = {};
-  const mergedData: Record<string, unknown> = {};
+export async function loadDirectory(dirPath: string): Promise<DirectoryLoadResult> {
+  const ancestorDirs = getAncestorDirectories(dirPath)
+  const filesLoaded: string[] = []
+  const sources: Record<string, string | string[]> = {}
+  const mergedData: Record<string, unknown> = {}
 
   for (const dir of ancestorDirs) {
-    const dataFiles = findDataFilesInDirectory(dir);
+    const dataFiles = findDataFilesInDirectory(dir)
 
-    validateNumberedArrayFiles(dataFiles, dir);
+    validateNumberedArrayFiles(dataFiles, dir)
 
-    const numberedFiles: string[] = [];
-    const regularFiles: string[] = [];
+    const numberedFiles: string[] = []
+    const regularFiles: string[] = []
 
     for (const filePath of dataFiles) {
-      const filename = path.basename(filePath);
+      const filename = path.basename(filePath)
       if (parseNumberedArrayFile(filename)) {
-        numberedFiles.push(filePath);
+        numberedFiles.push(filePath)
       } else {
-        regularFiles.push(filePath);
+        regularFiles.push(filePath)
       }
     }
 
     for (const filePath of regularFiles) {
-      filesLoaded.push(filePath);
-      const fileData = loadDataFile(filePath);
+      filesLoaded.push(filePath)
+      const fileData = loadDataFile(filePath)
       for (const [section, value] of Object.entries(fileData)) {
-        mergedData[section] = value;
-        sources[section] = filePath;
+        mergedData[section] = value
+        sources[section] = filePath
       }
     }
 
     if (numberedFiles.length > 0) {
-      const mergedArrays = mergeNumberedArrayFiles(numberedFiles);
-      for (const [
-        sectionKey,
-        { data, sources: fileSources },
-      ] of mergedArrays.entries()) {
-        filesLoaded.push(...fileSources);
-        mergedData[sectionKey] = data;
-        sources[sectionKey] = fileSources;
+      const mergedArrays = mergeNumberedArrayFiles(numberedFiles)
+      for (const [sectionKey, { data, sources: fileSources }] of mergedArrays.entries()) {
+        filesLoaded.push(...fileSources)
+        mergedData[sectionKey] = data
+        sources[sectionKey] = fileSources
       }
     }
   }
 
-  let pdfMetadata: PdfMetadataFile | undefined;
+  let pdfMetadata: PdfMetadataFile | undefined
   try {
-    const piiPath = getPiiDirectory();
-    const metadataPath = path.join(piiPath, dirPath, "metadata.json");
+    const piiPath = getPiiDirectory()
+    const metadataPath = path.join(piiPath, dirPath, 'metadata.json')
     if (fsSync.existsSync(metadataPath)) {
-      const metadataContent = await fs.readFile(metadataPath, "utf-8");
-      pdfMetadata = JSON.parse(metadataContent);
+      const metadataContent = await fs.readFile(metadataPath, 'utf-8')
+      pdfMetadata = JSON.parse(metadataContent)
     }
   } catch (err) {
-    console.warn(`Could not load PDF metadata: ${err}`);
+    console.warn(`Could not load PDF metadata: ${err}`)
   }
 
-  const cvData = mergedData as CVData;
-  const validationErrors = validateCVData(cvData, sources);
+  const cvData = mergedData as CVData
+  const validationErrors = validateCVData(cvData, sources)
 
   return {
     data: cvData,
@@ -89,7 +81,6 @@ export async function loadDirectory(
       hasUnsavedChanges: false,
     },
     pdfMetadata,
-    validationErrors:
-      validationErrors.length > 0 ? validationErrors : undefined,
-  };
+    validationErrors: validationErrors.length > 0 ? validationErrors : undefined,
+  }
 }

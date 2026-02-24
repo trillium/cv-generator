@@ -1,5 +1,5 @@
-export { default as ColorPicker } from "./ColorPicker";
-export { ColorPickerSwitch } from "./ColorPickerSwitch";
-export type { TailwindColor, ColorPickerProps } from "./types";
-export { COLOR_FAMILIES, COLOR_SHADES } from "./constants";
-export { getColorFromTailwind } from "./utils";
+export { default as ColorPicker } from './ColorPicker'
+export { ColorPickerSwitch } from './ColorPickerSwitch'
+export { COLOR_FAMILIES, COLOR_SHADES } from './constants'
+export type { ColorPickerProps, TailwindColor } from './types'
+export { getColorFromTailwind } from './utils'

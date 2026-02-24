@@ -1,42 +1,37 @@
-"use client";
+'use client'
 
-import { clsx } from "clsx";
-import {
-  Dialog,
-  DialogPanel,
-  Transition,
-  TransitionChild,
-} from "@headlessui/react";
-import { Fragment } from "react";
-import { useModal } from "@/contexts/ModalContext";
+import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
+import { clsx } from 'clsx'
+import { Fragment } from 'react'
+import { useModal } from '@/contexts/ModalContext'
 
 export default function Modal() {
-  const { isOpen, content, size, closeModal, onClose } = useModal();
+  const { isOpen, content, size, closeModal, onClose } = useModal()
 
-  const getSizeClasses = (size?: "sm" | "md" | "lg" | "xl") => {
+  const getSizeClasses = (size?: 'sm' | 'md' | 'lg' | 'xl') => {
     switch (size) {
-      case "sm":
-        return "sm:max-w-md";
-      case "md":
-        return "sm:max-w-lg";
-      case "lg":
-        return "sm:max-w-2xl";
-      case "xl":
-        return "sm:max-w-4xl";
+      case 'sm':
+        return 'sm:max-w-md'
+      case 'md':
+        return 'sm:max-w-lg'
+      case 'lg':
+        return 'sm:max-w-2xl'
+      case 'xl':
+        return 'sm:max-w-4xl'
       default:
-        return "sm:max-w-lg";
+        return 'sm:max-w-lg'
     }
-  };
+  }
 
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog
-        key={isOpen ? "open" : "closed"}
+        key={isOpen ? 'open' : 'closed'}
         as="div"
         className="relative z-50"
         onClose={() => {
-          onClose?.();
-          closeModal();
+          onClose?.()
+          closeModal()
         }}
       >
         <TransitionChild
@@ -64,7 +59,7 @@ export default function Modal() {
             >
               <DialogPanel
                 className={clsx(
-                  "border-primary-600 relative flex-grow transform overflow-auto rounded-lg border bg-slate-100 dark:bg-gray-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6",
+                  'border-primary-600 relative flex-grow transform overflow-auto rounded-lg border bg-slate-100 dark:bg-gray-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:p-6',
                   getSizeClasses(size),
                 )}
               >
@@ -75,5 +70,5 @@ export default function Modal() {
         </div>
       </Dialog>
     </Transition>
-  );
+  )
 }

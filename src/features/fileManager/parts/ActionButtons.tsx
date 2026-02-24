@@ -1,11 +1,11 @@
-import * as React from "react";
+import type * as React from 'react'
 
 interface ActionButtonsProps {
-  hasUnsavedChanges: boolean;
-  loading: boolean;
-  onDiscard: () => void;
-  onSave: () => void;
-  onSaveAndCommit: () => void;
+  hasUnsavedChanges: boolean
+  loading: boolean
+  onDiscard: () => void
+  onSave: () => void
+  onSaveAndCommit: () => void
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({
@@ -38,6 +38,6 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
       Save & Commit
     </button>
   </div>
-);
+)
 
-export default ActionButtons;
+export default ActionButtons

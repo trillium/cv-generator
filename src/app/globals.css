@@ -88,12 +88,12 @@ body {
 @media print {
   .editable-hover,
   .editable-editing {
-    background-color: transparent !important;
-    box-shadow: none !important;
+    background-color: transparent;
+    box-shadow: none;
   }
 
   [role="button"]:focus {
-    outline: none !important;
-    background-color: transparent !important;
+    outline: none;
+    background-color: transparent;
   }
 }

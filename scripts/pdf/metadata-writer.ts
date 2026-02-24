@@ -1,68 +1,64 @@
-import { writeFileSync, readFileSync, existsSync } from "node:fs";
-import path from "node:path";
-import type { TrailingWordInfo } from "./page-counter";
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import path from 'node:path'
+import type { TrailingWordInfo } from './page-counter'
 
 export interface PdfMetadata {
-  pages: number;
-  lastPageText?: string;
-  lastPageLines?: string[];
-  lineBreaks?: number;
-  trailingWords?: TrailingWordInfo[];
-  orphanCount?: number;
-  generatedAt: string;
+  pages: number
+  lastPageText?: string
+  lastPageLines?: string[]
+  lineBreaks?: number
+  trailingWords?: TrailingWordInfo[]
+  orphanCount?: number
+  generatedAt: string
 }
 
 export interface MetadataFile {
-  noBrowserOpen?: boolean;
+  noBrowserOpen?: boolean
   pdf?: {
-    resume?: PdfMetadata;
-    coverLetter?: PdfMetadata;
-  };
+    resume?: PdfMetadata
+    coverLetter?: PdfMetadata
+  }
 }
 
 export function saveMetadata(
   resumeDir: string,
-  type: "resume" | "coverLetter",
+  type: 'resume' | 'coverLetter',
   metadata: PdfMetadata,
 ): void {
-  const metadataPath = path.join(resumeDir, "metadata.json");
+  const metadataPath = path.join(resumeDir, 'metadata.json')
 
-  let existingMetadata: MetadataFile = {};
+  let existingMetadata: MetadataFile = {}
   if (existsSync(metadataPath)) {
     try {
-      const content = readFileSync(metadataPath, "utf-8");
-      existingMetadata = JSON.parse(content);
+      const content = readFileSync(metadataPath, 'utf-8')
+      existingMetadata = JSON.parse(content)
     } catch (err) {
-      console.warn(`⚠️  Could not read existing metadata: ${err}`);
+      console.warn(`⚠️  Could not read existing metadata: ${err}`)
     }
   }
 
   if (!existingMetadata.pdf) {
-    existingMetadata.pdf = {};
+    existingMetadata.pdf = {}
   }
 
-  existingMetadata.pdf[type] = metadata;
+  existingMetadata.pdf[type] = metadata
 
-  writeFileSync(
-    metadataPath,
-    JSON.stringify(existingMetadata, null, 2),
-    "utf-8",
-  );
-  console.log(`📝 Metadata saved to ${metadataPath}`);
+  writeFileSync(metadataPath, JSON.stringify(existingMetadata, null, 2), 'utf-8')
+  console.log(`📝 Metadata saved to ${metadataPath}`)
 }
 
 export function readMetadata(resumeDir: string): MetadataFile | null {
-  const metadataPath = path.join(resumeDir, "metadata.json");
+  const metadataPath = path.join(resumeDir, 'metadata.json')
 
   if (!existsSync(metadataPath)) {
-    return null;
+    return null
   }
 
   try {
-    const content = readFileSync(metadataPath, "utf-8");
-    return JSON.parse(content);
+    const content = readFileSync(metadataPath, 'utf-8')
+    return JSON.parse(content)
   } catch (err) {
-    console.warn(`⚠️  Could not read metadata: ${err}`);
-    return null;
+    console.warn(`⚠️  Could not read metadata: ${err}`)
+    return null
   }
 }

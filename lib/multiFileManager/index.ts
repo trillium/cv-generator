@@ -1,2 +1,2 @@
-export * from "./multiFileManager";
-export * from "@/types/multiFileManager.types";
+export * from '@/types/multiFileManager.types'
+export * from './multiFileManager'

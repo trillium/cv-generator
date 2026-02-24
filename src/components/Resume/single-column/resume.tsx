@@ -1,13 +1,13 @@
-import type { CVData } from "@/types";
-import Header from "./ui/Header";
-import ProjectsList from "@/components/Projects/ProjectsList";
-import EducationList from "@/components/Education/EducationList";
-import CareerSummary from "./ui/CareerSummary";
-import Footer from "./ui/Footer";
-import WorkExperience from "@/components/WorkExperience/WorkExperience";
+import EducationList from '@/components/Education/EducationList'
+import ProjectsList from '@/components/Projects/ProjectsList'
+import WorkExperience from '@/components/WorkExperience/WorkExperience'
+import type { CVData } from '@/types'
+import CareerSummary from './ui/CareerSummary'
+import Footer from './ui/Footer'
+import Header from './ui/Header'
 
 function TwoColumnResume({ data }: { data: CVData }) {
-  const showBubbles = false;
+  const showBubbles = false
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -19,10 +19,7 @@ function TwoColumnResume({ data }: { data: CVData }) {
         <CareerSummary data={data} />
         <WorkExperience data={data.workExperience} showBubbles={showBubbles} />
         <ProjectsList projects={data.projects} showBubbles={showBubbles} />
-        <EducationList
-          education={data.education}
-          showEducation={data.showEducation}
-        />
+        <EducationList education={data.education} showEducation={data.showEducation} />
 
         {/* Footer - sticks to bottom */}
         <div className="w-full mx-auto">
@@ -30,7 +27,7 @@ function TwoColumnResume({ data }: { data: CVData }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default TwoColumnResume;
+export default TwoColumnResume

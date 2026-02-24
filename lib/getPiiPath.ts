@@ -1,5 +1,5 @@
-import path from "path";
-import fs from "fs";
+import fs from 'node:fs'
+import path from 'node:path'
 
 /**
  * Gets the path to PII data files using the PII_PATH environment variable
@@ -7,20 +7,19 @@ import fs from "fs";
  * @param filename - The filename to join with the PII path (defaults to 'data.yml')
  * @returns The full path to the PII data file
  */
-export function getPiiPath(filename: string = "data.yml"): string {
-  const piiPath = process.env.PII_PATH || "/pii";
+export function getPiiPath(filename: string = 'data.yml'): string {
+  const piiPath = process.env.PII_PATH || '/pii'
 
-  const fullPath = path.join(piiPath, filename);
+  const fullPath = path.join(piiPath, filename)
 
   // Check if the file exists
   if (!fs.existsSync(fullPath)) {
     throw new Error(
-      `File not found: ${fullPath}. ` +
-        `Please ensure the file exists in your PII directory.`,
-    );
+      `File not found: ${fullPath}. Please ensure the file exists in your PII directory.`,
+    )
   }
 
-  return fullPath;
+  return fullPath
 }
 
 /**
@@ -29,14 +28,11 @@ export function getPiiPath(filename: string = "data.yml"): string {
  * @returns The PII directory path
  */
 export function getPiiDirectory(): string {
-  const piiPath = process.env.PII_PATH || "/pii";
+  const piiPath = process.env.PII_PATH || '/pii'
 
   if (!fs.existsSync(piiPath)) {
-    throw new Error(
-      `PII directory not found: ${piiPath}. ` +
-        `Please ensure the directory exists.`,
-    );
+    throw new Error(`PII directory not found: ${piiPath}. Please ensure the directory exists.`)
   }
 
-  return piiPath;
+  return piiPath
 }

@@ -1,27 +1,27 @@
-import React from "react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { FaSquareXTwitter, FaBluesky, FaPhone } from "react-icons/fa6";
-import { BsGlobe } from "react-icons/bs";
-import { MdEmail } from "react-icons/md";
-import { clsx } from "clsx";
-import EditableField from "@/components/EditableField";
-import { useYamlPathUpdater } from "@/hooks/useYamlPathUpdater";
+import { clsx } from 'clsx'
+import type React from 'react'
+import { BsGlobe } from 'react-icons/bs'
+import { FaGithub, FaLinkedin } from 'react-icons/fa'
+import { FaBluesky, FaPhone, FaSquareXTwitter } from 'react-icons/fa6'
+import { MdEmail } from 'react-icons/md'
+import EditableField from '@/components/EditableField'
+import { useYamlPathUpdater } from '@/hooks/useYamlPathUpdater'
 
 export type ProfileLinkProps = {
   /** Only GitHub Twitter LinkedIn Website */
-  icon: string;
+  icon: string
   /** Please, use without https:// */
-  link: string;
+  link: string
   /** Optional: custom display name for the link */
-  name?: string;
-  className?: string;
-};
+  name?: string
+  className?: string
+}
 
 interface EditableProfileLinkProps extends ProfileLinkProps {
   /** YAML path for the link field - required for editing */
-  linkYamlPath: string;
+  linkYamlPath: string
   /** YAML path for the name field - required for editing */
-  nameYamlPath: string;
+  nameYamlPath: string
 }
 
 const ProfileLink = ({
@@ -32,61 +32,61 @@ const ProfileLink = ({
   linkYamlPath,
   nameYamlPath,
 }: EditableProfileLinkProps) => {
-  const { updateYamlPath } = useYamlPathUpdater();
+  const { updateYamlPath } = useYamlPathUpdater()
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
-      case "GitHub":
-        return <FaGithub />;
-      case "Twitter":
-        return <FaSquareXTwitter />;
-      case "LinkedIn":
-        return <FaLinkedin />;
-      case "Website":
-        return <BsGlobe />;
-      case "Bluesky":
-        return <FaBluesky />;
-      case "Email":
-        return <MdEmail />;
-      case "Phone":
-        return <FaPhone />;
-      case "None":
-        return <></>;
+      case 'GitHub':
+        return <FaGithub />
+      case 'Twitter':
+        return <FaSquareXTwitter />
+      case 'LinkedIn':
+        return <FaLinkedin />
+      case 'Website':
+        return <BsGlobe />
+      case 'Bluesky':
+        return <FaBluesky />
+      case 'Email':
+        return <MdEmail />
+      case 'Phone':
+        return <FaPhone />
+      case 'None':
+        return null
       default:
-        return null;
+        return null
     }
-  };
+  }
 
-  const Icon = getIcon(icon);
+  const Icon = getIcon(icon)
 
-  let href: string;
+  let href: string
   const anchorProps: React.AnchorHTMLAttributes<HTMLAnchorElement> = {
-    className: "font-semibold text-inherit flex items-center gap-2",
-  };
+    className: 'font-semibold text-inherit flex items-center gap-2',
+  }
 
-  if (icon === "Email") {
-    href = `mailto:${link}`;
-  } else if (icon === "Phone") {
-    href = `tel:${link}`;
+  if (icon === 'Email') {
+    href = `mailto:${link}`
+  } else if (icon === 'Phone') {
+    href = `tel:${link}`
   } else {
-    href = `https://${link}`;
-    anchorProps.rel = "noopener noreferrer";
-    anchorProps.target = "_blank";
+    href = `https://${link}`
+    anchorProps.rel = 'noopener noreferrer'
+    anchorProps.target = '_blank'
   }
 
   const handleSaveLink = async (text: string, url: string) => {
     try {
       // Update both text and URL fields
-      await updateYamlPath(nameYamlPath, text);
-      await updateYamlPath(linkYamlPath, url);
+      await updateYamlPath(nameYamlPath, text)
+      await updateYamlPath(linkYamlPath, url)
     } catch (error) {
-      console.error("Failed to save link:", error);
+      console.error('Failed to save link:', error)
     }
-  };
+  }
 
   // Use the unified link editing approach
   return (
-    <div className={clsx("text-inherit flex items-center gap-2", className)}>
+    <div className={clsx('text-inherit flex items-center gap-2', className)}>
       {Icon}
       <EditableField
         fieldType="link"
@@ -101,6 +101,7 @@ const ProfileLink = ({
           onSaveLink: handleSaveLink,
         }}
       >
+        {/* biome-ignore lint/complexity/noUselessFragments: Fragment required for EmptyFieldPlaceholder processing */}
         <>
           <a
             key={`${nameYamlPath}-print-link`}
@@ -110,16 +111,13 @@ const ProfileLink = ({
           >
             <span className="text-sm font-bold">{name}</span>
           </a>
-          <div
-            key={`${nameYamlPath}-screen-link`}
-            className="block print:hidden"
-          >
+          <div key={`${nameYamlPath}-screen-link`} className="block print:hidden">
             <span className="text-sm font-bold">{name}</span>
           </div>
         </>
       </EditableField>
     </div>
-  );
-};
+  )
+}
 
-export default ProfileLink;
+export default ProfileLink

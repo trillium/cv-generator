@@ -1,52 +1,42 @@
-import * as React from "react";
-import clsx from "clsx";
-import {
-  MdFolder,
-  MdFolderOpen,
-  MdInsertDriveFile,
-  MdCircle,
-} from "react-icons/md";
-import { TreeNode } from "./types";
-import SectionBadge from "./SectionBadge";
-import Link from "next/link";
+import clsx from 'clsx'
+import Link from 'next/link'
+import type * as React from 'react'
+import { MdCircle, MdFolder, MdFolderOpen, MdInsertDriveFile } from 'react-icons/md'
+import SectionBadge from './SectionBadge'
+import type { TreeNode } from './types'
 
 interface TreeNodeItemProps {
-  node: TreeNode;
-  depth: number;
-  selectedFile: string | null;
-  onSelectFile: (path: string) => void;
-  onSelectDirectory?: (path: string) => void; // Optional, not used for selection
+  node: TreeNode
+  depth: number
+  selectedFile: string | null
+  onSelectFile: (path: string) => void
+  onSelectDirectory?: (path: string) => void // Optional, not used for selection
 }
 
-const TreeNodeItem: React.FC<TreeNodeItemProps> = ({
-  node,
-  depth,
-  selectedFile,
-  onSelectFile,
-}) => {
-  const isExpanded = true; // Always expanded
-  const isSelected = selectedFile === node.path;
-  const hasChildren = node.children && node.children.length > 0;
-  const paddingLeft = depth * 16;
+const TreeNodeItem: React.FC<TreeNodeItemProps> = ({ node, depth, selectedFile, onSelectFile }) => {
+  const isExpanded = true // Always expanded
+  const isSelected = selectedFile === node.path
+  const hasChildren = node.children && node.children.length > 0
+  const paddingLeft = depth * 16
 
   function handleClick() {
     // Just select the node (file or directory) without loading
-    onSelectFile(node.path);
+    onSelectFile(node.path)
   }
 
   return (
     <>
       <div
         className={clsx(
-          "flex items-center py-1.5 px-2 cursor-pointer transition-colors",
+          'flex items-center py-1.5 px-2 cursor-pointer transition-colors',
           isSelected
-            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
-            : "hover:bg-gray-50 dark:hover:bg-gray-700",
+            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+            : 'hover:bg-gray-50 dark:hover:bg-gray-700',
         )}
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleClick}
       >
-        {node.type === "directory" && (
+        {node.type === 'directory' && (
           <span className="mr-1.5 text-gray-500 dark:text-gray-400">
             {hasChildren ? (
               isExpanded ? (
@@ -59,16 +49,16 @@ const TreeNodeItem: React.FC<TreeNodeItemProps> = ({
             )}
           </span>
         )}
-        {node.type === "file" && (
+        {node.type === 'file' && (
           <span className="mr-1.5 text-gray-400 dark:text-gray-500">
             <MdInsertDriveFile className="inline w-4 h-4" />
           </span>
         )}
         <span
           className={clsx(
-            node.type === "directory"
-              ? "font-medium text-gray-900 dark:text-gray-100"
-              : "text-gray-700 dark:text-gray-300",
+            node.type === 'directory'
+              ? 'font-medium text-gray-900 dark:text-gray-100'
+              : 'text-gray-700 dark:text-gray-300',
           )}
         >
           {node.name}
@@ -81,7 +71,7 @@ const TreeNodeItem: React.FC<TreeNodeItemProps> = ({
           </span>
         )}
         {/* Directory action buttons */}
-        {node.type === "directory" && (
+        {node.type === 'directory' && (
           <span className="ml-3 flex gap-2">
             <Link
               href={`/single-column-multi/resume/${node.path}`}
@@ -104,7 +94,7 @@ const TreeNodeItem: React.FC<TreeNodeItemProps> = ({
       </div>
       {hasChildren && isExpanded && (
         <div>
-          {node.children!.map((child) => (
+          {node.children?.map((child) => (
             <TreeNodeItem
               key={child.path}
               node={child}
@@ -116,7 +106,7 @@ const TreeNodeItem: React.FC<TreeNodeItemProps> = ({
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default TreeNodeItem;
+export default TreeNodeItem

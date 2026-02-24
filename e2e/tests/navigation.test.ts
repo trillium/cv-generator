@@ -1,63 +1,63 @@
-import { test } from "node:test";
-import assert from "node:assert";
-import { Browser, Page } from "puppeteer";
-import { launchBrowser, createPage, navigateTo } from "../helpers/browser";
-import { assertNoConsoleErrors } from "../helpers/assertions";
+import assert from 'node:assert'
+import { test } from 'node:test'
+import type { Browser, Page } from 'puppeteer'
+import { assertNoConsoleErrors } from '../helpers/assertions'
+import { createPage, launchBrowser, navigateTo } from '../helpers/browser'
 
 const STATIC_ROUTES = [
-  "/",
-  "/file-manager",
-  "/linkedIn",
-  "/playground",
-  "/two-column-multi/resume/demo",
-  "/two-column-multi/cover-letter/demo",
-];
+  '/',
+  '/file-manager',
+  '/linkedIn',
+  '/playground',
+  '/two-column-multi/resume/demo',
+  '/two-column-multi/cover-letter/demo',
+]
 
-test("navigation smoke tests", async (t) => {
-  let browser: Browser | null = null;
-  let page: Page | null = null;
+test('navigation smoke tests', async (t) => {
+  let browser: Browser | null = null
+  let page: Page | null = null
 
   t.before(async () => {
-    browser = await launchBrowser();
-  });
+    browser = await launchBrowser()
+  })
 
   t.after(async () => {
-    if (browser) await browser.close();
-  });
+    if (browser) await browser.close()
+  })
 
   t.beforeEach(async () => {
     if (browser) {
-      page = await createPage(browser);
+      page = await createPage(browser)
     }
-  });
+  })
 
   t.afterEach(async () => {
     if (page && !page.isClosed()) {
-      await page.close().catch(() => {});
+      await page.close().catch(() => {})
     }
-  });
+  })
 
   for (const route of STATIC_ROUTES) {
     await t.test(`can navigate to ${route} without errors`, async () => {
-      assert(page, "Page should be initialized");
-      await navigateTo(page, route);
-      assertNoConsoleErrors(page);
-    });
+      assert(page, 'Page should be initialized')
+      await navigateTo(page, route)
+      assertNoConsoleErrors(page)
+    })
   }
 
-  await t.test("all routes return 200 status", async () => {
-    assert(page, "Page should be initialized");
+  await t.test('all routes return 200 status', async () => {
+    assert(page, 'Page should be initialized')
 
     for (const route of STATIC_ROUTES) {
       const response = await page.goto(`http://localhost:10301${route}`, {
-        waitUntil: "networkidle0",
-      });
-      assert(response, `Response should exist for ${route}`);
+        waitUntil: 'networkidle0',
+      })
+      assert(response, `Response should exist for ${route}`)
       assert.strictEqual(
         response.status(),
         200,
         `Expected 200 status for ${route}, got ${response.status()}`,
-      );
+      )
     }
-  });
-});
+  })
+})

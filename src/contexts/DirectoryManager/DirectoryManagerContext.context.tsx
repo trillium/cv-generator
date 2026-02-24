@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { createContext } from "react";
-import type { DirectoryManagerContextType } from "./DirectoryManagerContext";
+import { createContext } from 'react'
+import type { DirectoryManagerContextType } from './DirectoryManagerContext'
 
-export const DirectoryManagerContext = createContext<
-  DirectoryManagerContextType | undefined
->(undefined);
+export const DirectoryManagerContext = createContext<DirectoryManagerContextType | undefined>(
+  undefined,
+)

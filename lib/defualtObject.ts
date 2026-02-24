@@ -1,5 +1,5 @@
-import { CVData as CVDataSchema } from "@/types/cvdata.zod";
-import type { CVData, Project } from "@/types";
+import type { CVData, Project } from '@/types'
+import { CVData as CVDataSchema } from '@/types/cvdata.zod'
 
 /**
  * A fully-populated default CVData object with all required and optional properties.
@@ -7,17 +7,17 @@ import type { CVData, Project } from "@/types";
  */
 const defaultCVData: CVData = {
   info: {
-    firstName: "",
-    lastName: "",
-    website: "",
-    phone: "",
-    email: "",
-    bluesky: "",
-    role: "",
-    github: "",
+    firstName: '',
+    lastName: '',
+    website: '',
+    phone: '',
+    email: '',
+    bluesky: '',
+    role: '',
+    github: '',
   },
   header: {
-    name: "",
+    name: '',
     title: [],
     resume: [],
     omitTitle: false,
@@ -35,7 +35,7 @@ const defaultCVData: CVData = {
   languages: [],
   coverLetter: [],
   careerSummary: [],
-};
+}
 
 /**
  * Normalizes a single project's lines property to always be an array of objects with a text property.
@@ -45,23 +45,23 @@ const defaultCVData: CVData = {
 function normalizeProject(project: Partial<Project>): Project {
   const normalizedLines = Array.isArray(project.lines)
     ? project.lines.flatMap((line) => {
-        if (typeof line === "string") return [{ text: line }];
-        if (typeof line === "object" && line !== null && "text" in line) {
-          const text = (line as { text: unknown }).text;
+        if (typeof line === 'string') return [{ text: line }]
+        if (typeof line === 'object' && line !== null && 'text' in line) {
+          const text = (line as { text: unknown }).text
           if (Array.isArray(text)) {
-            return (text as string[]).map((t) => ({ text: t }));
-          } else if (typeof text === "string") {
-            return [{ text }];
+            return (text as string[]).map((t) => ({ text: t }))
+          } else if (typeof text === 'string') {
+            return [{ text }]
           }
         }
-        return [];
+        return []
       })
-    : [];
+    : []
   return {
-    name: project.name ?? "",
+    name: project.name ?? '',
     ...project,
     lines: normalizedLines,
-  } as Project;
+  } as Project
 }
 
 /**
@@ -70,7 +70,7 @@ function normalizeProject(project: Partial<Project>): Project {
  * @returns The normalized array of projects.
  */
 function normalizeProjects(projects: Partial<Project>[] = []): Project[] {
-  return projects.map(normalizeProject);
+  return projects.map(normalizeProject)
 }
 
 /**
@@ -79,8 +79,8 @@ function normalizeProjects(projects: Partial<Project>[] = []): Project[] {
  * @returns True if valid, false otherwise.
  */
 function isValidData(data: unknown): data is CVData {
-  const result = CVDataSchema.safeParse(data);
-  return result.success;
+  const result = CVDataSchema.safeParse(data)
+  return result.success
 }
 
 /**
@@ -88,18 +88,18 @@ function isValidData(data: unknown): data is CVData {
  * @param base - The object to extract languages from.
  * @returns The languages array or an empty array.
  */
-function extractLanguages(base: unknown): CVData["languages"] {
-  if (typeof base !== "object" || base === null) {
-    return [];
+function extractLanguages(base: unknown): CVData['languages'] {
+  if (typeof base !== 'object' || base === null) {
+    return []
   }
-  if (!("languages" in base)) {
-    return [];
+  if (!('languages' in base)) {
+    return []
   }
-  const langs = (base as Record<string, unknown>).languages;
+  const langs = (base as Record<string, unknown>).languages
   if (!Array.isArray(langs)) {
-    return [];
+    return []
   }
-  return langs as CVData["languages"];
+  return langs as CVData['languages']
 }
 
 /**
@@ -109,12 +109,9 @@ function extractLanguages(base: unknown): CVData["languages"] {
  * @param fallbackData - The fallback data source (should be complete and valid).
  * @returns A fully-populated CVData object.
  */
-function defualtObject(
-  scriptData: Partial<CVData>,
-  fallbackData: Partial<CVData>,
-): CVData {
-  const base = isValidData(scriptData) ? scriptData : fallbackData;
-  const languages = extractLanguages(base);
+function defualtObject(scriptData: Partial<CVData>, fallbackData: Partial<CVData>): CVData {
+  const base = isValidData(scriptData) ? scriptData : fallbackData
+  const languages = extractLanguages(base)
   const result: CVData = {
     ...defaultCVData,
     ...base,
@@ -122,11 +119,11 @@ function defualtObject(
     profile: { ...defaultCVData.profile, ...base.profile },
     projects: base.projects ? normalizeProjects(base.projects) : [],
     languages,
-  };
-  if (base.coverLetter) {
-    result.coverLetter = base.coverLetter;
   }
-  return result;
+  if (base.coverLetter) {
+    result.coverLetter = base.coverLetter
+  }
+  return result
 }
 
-export default defualtObject;
+export default defualtObject

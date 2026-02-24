@@ -24,11 +24,7 @@
         },
         {
           "type": "Administrative",
-          "examples": [
-            "Responsible for",
-            "Attended meetings",
-            "Conducted tests"
-          ],
+          "examples": ["Responsible for", "Attended meetings", "Conducted tests"],
           "problem": "Looks like a job description; doesn't prove ability or results."
         },
         {

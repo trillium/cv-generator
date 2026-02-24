@@ -1,31 +1,30 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
-import LinkedInProfile from "@/components/LinkedIn/LinkedInProfile";
-import { LinkedInProvider, useLinkedInData } from "@/contexts/LinkedInContext";
-import { LoadingState, ErrorState } from "@/src/components/SharedUIStates";
+import { useEffect } from 'react'
+import LinkedInProfile from '@/components/LinkedIn/LinkedInProfile'
+import { LinkedInProvider, useLinkedInData } from '@/contexts/LinkedInContext'
+import { ErrorState, LoadingState } from '@/src/components/SharedUIStates'
 
 function LinkedInPageContent() {
-  const { currentLinkedInData, loadLinkedInFile, loading, error } =
-    useLinkedInData();
+  const { currentLinkedInData, loadLinkedInFile, loading, error } = useLinkedInData()
 
   useEffect(() => {
-    loadLinkedInFile("linkedin");
-  }, [loadLinkedInFile]);
+    loadLinkedInFile('linkedin')
+  }, [loadLinkedInFile])
 
   if (loading) {
-    return <LoadingState message="Loading LinkedIn profile..." />;
+    return <LoadingState message="Loading LinkedIn profile..." />
   }
 
   if (error) {
-    return <ErrorState message={error} />;
+    return <ErrorState message={error} />
   }
 
   if (!currentLinkedInData) {
-    return null;
+    return null
   }
 
-  return <LinkedInProfile data={currentLinkedInData} />;
+  return <LinkedInProfile data={currentLinkedInData} />
 }
 
 export default function LinkedInPage() {
@@ -33,5 +32,5 @@ export default function LinkedInPage() {
     <LinkedInProvider>
       <LinkedInPageContent />
     </LinkedInProvider>
-  );
+  )
 }

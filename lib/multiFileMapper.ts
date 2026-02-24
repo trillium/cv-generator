@@ -1,40 +1,40 @@
-import * as fs from "fs";
-import * as path from "path";
-import { parseYamlString } from "./yamlService";
-import { getPiiDirectory } from "./getPiiPath";
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+import { getPiiDirectory } from './getPiiPath'
+import { parseYamlString } from './yamlService'
 
-export const FULL_DATA_FILENAMES = ["data", "resume"];
+export const FULL_DATA_FILENAMES = ['data', 'resume']
 
 export const SECTION_KEY_TO_FILENAME: Record<string, string[]> = {
-  info: ["info"],
-  header: ["header"],
-  careerSummary: ["career"],
-  workExperience: ["work", "experience"],
-  projects: ["projects"],
-  profile: ["profile"],
-  technical: ["technical"],
-  languages: ["languages"],
-  education: ["education"],
-  coverLetter: ["cover-letter"],
-  metadata: ["metadata"],
-  linkedIn: ["linkedIn", "linkedin"],
-  notes: ["notes"],
-  llm: ["llm"],
-};
+  info: ['info'],
+  header: ['header'],
+  careerSummary: ['career'],
+  workExperience: ['work', 'experience'],
+  projects: ['projects'],
+  profile: ['profile'],
+  technical: ['technical'],
+  languages: ['languages'],
+  education: ['education'],
+  coverLetter: ['cover-letter'],
+  metadata: ['metadata'],
+  linkedIn: ['linkedIn', 'linkedin'],
+  notes: ['notes'],
+  llm: ['llm'],
+}
 
-export const SUPPORTED_EXTENSIONS = [".yml", ".yaml", ".json"];
+export const SUPPORTED_EXTENSIONS = ['.yml', '.yaml', '.json']
 
 export interface FileEntry {
-  path: string;
-  sections: string[];
-  format: "yaml" | "json";
+  path: string
+  sections: string[]
+  format: 'yaml' | 'json'
 }
 
 export interface NumberedArrayFileInfo {
-  basename: string;
-  sectionKey: string;
-  number: string;
-  ext: string;
+  basename: string
+  sectionKey: string
+  number: string
+  ext: string
 }
 
 /**
@@ -43,14 +43,14 @@ export interface NumberedArrayFileInfo {
  * @returns Parsed file content as a record
  */
 export function loadDataFile(filePath: string): Record<string, unknown> {
-  const ext = path.extname(filePath);
-  const content = fs.readFileSync(filePath, "utf-8");
+  const ext = path.extname(filePath)
+  const content = fs.readFileSync(filePath, 'utf-8')
 
-  if (ext === ".json") {
-    return JSON.parse(content);
+  if (ext === '.json') {
+    return JSON.parse(content)
   }
 
-  return parseYamlString(content);
+  return parseYamlString(content)
 }
 
 /**
@@ -59,8 +59,8 @@ export function loadDataFile(filePath: string): Record<string, unknown> {
  * @returns True if it's a full data file
  */
 export function isFullDataFilename(filename: string): boolean {
-  const basename = path.basename(filename, path.extname(filename));
-  return FULL_DATA_FILENAMES.includes(basename);
+  const basename = path.basename(filename, path.extname(filename))
+  return FULL_DATA_FILENAMES.includes(basename)
 }
 
 /**
@@ -68,9 +68,9 @@ export function isFullDataFilename(filename: string): boolean {
  * @param filePath - Path to the file
  * @returns 'yaml' or 'json'
  */
-export function getFormat(filePath: string): "yaml" | "json" {
-  const ext = path.extname(filePath);
-  return ext === ".json" ? "json" : "yaml";
+export function getFormat(filePath: string): 'yaml' | 'json' {
+  const ext = path.extname(filePath)
+  return ext === '.json' ? 'json' : 'yaml'
 }
 
 /**
@@ -82,16 +82,16 @@ export function getFormat(filePath: string): "yaml" | "json" {
  * // Returns: ['/pii/base', '/pii/base/google', '/pii/base/google/python']
  */
 export function getAncestorDirectories(dirPath: string): string[] {
-  const piiPath = getPiiDirectory();
-  const parts = dirPath.split(path.sep).filter(Boolean);
-  const ancestors: string[] = [];
+  const piiPath = getPiiDirectory()
+  const parts = dirPath.split(path.sep).filter(Boolean)
+  const ancestors: string[] = []
 
   for (let i = 0; i < parts.length; i++) {
-    const relativePath = parts.slice(0, i + 1).join(path.sep);
-    ancestors.push(path.join(piiPath, relativePath));
+    const relativePath = parts.slice(0, i + 1).join(path.sep)
+    ancestors.push(path.join(piiPath, relativePath))
   }
 
-  return ancestors;
+  return ancestors
 }
 
 /**
@@ -101,53 +101,50 @@ export function getAncestorDirectories(dirPath: string): string[] {
  */
 export function findDataFilesInDirectory(dirPath: string): string[] {
   if (!fs.existsSync(dirPath)) {
-    return [];
+    return []
   }
 
-  const files = fs.readdirSync(dirPath);
-  const dataFiles: string[] = [];
-  const numberedFiles: Array<{ path: string; parsed: NumberedArrayFileInfo }> =
-    [];
+  const files = fs.readdirSync(dirPath)
+  const dataFiles: string[] = []
+  const numberedFiles: Array<{ path: string; parsed: NumberedArrayFileInfo }> = []
 
   for (const file of files) {
-    const filePath = path.join(dirPath, file);
-    const stat = fs.statSync(filePath);
+    const filePath = path.join(dirPath, file)
+    const stat = fs.statSync(filePath)
 
-    if (!stat.isFile()) continue;
+    if (!stat.isFile()) continue
 
-    const ext = path.extname(file);
-    if (!SUPPORTED_EXTENSIONS.includes(ext)) continue;
+    const ext = path.extname(file)
+    if (!SUPPORTED_EXTENSIONS.includes(ext)) continue
 
-    const parsed = parseNumberedArrayFile(file);
+    const parsed = parseNumberedArrayFile(file)
     if (parsed) {
-      numberedFiles.push({ path: filePath, parsed });
-      continue;
+      numberedFiles.push({ path: filePath, parsed })
+      continue
     }
 
-    const basename = path.basename(file, ext);
+    const basename = path.basename(file, ext)
 
-    const isFullData = FULL_DATA_FILENAMES.includes(basename);
-    const isSectionSpecific = Object.values(SECTION_KEY_TO_FILENAME)
-      .flat()
-      .includes(basename);
+    const isFullData = FULL_DATA_FILENAMES.includes(basename)
+    const isSectionSpecific = Object.values(SECTION_KEY_TO_FILENAME).flat().includes(basename)
 
     if (isFullData || isSectionSpecific) {
-      dataFiles.push(filePath);
+      dataFiles.push(filePath)
     }
   }
 
   numberedFiles.sort((a, b) => {
     if (a.parsed.sectionKey !== b.parsed.sectionKey) {
-      return a.parsed.sectionKey.localeCompare(b.parsed.sectionKey);
+      return a.parsed.sectionKey.localeCompare(b.parsed.sectionKey)
     }
-    return parseInt(a.parsed.number, 10) - parseInt(b.parsed.number, 10);
-  });
+    return parseInt(a.parsed.number, 10) - parseInt(b.parsed.number, 10)
+  })
 
   for (const { path: filePath } of numberedFiles) {
-    dataFiles.push(filePath);
+    dataFiles.push(filePath)
   }
 
-  return dataFiles;
+  return dataFiles
 }
 
 /**
@@ -156,31 +153,26 @@ export function findDataFilesInDirectory(dirPath: string): string[] {
  * @param sections - Array of section keys found in the file
  * @throws Error if validation fails
  */
-export function validateSectionSpecificFile(
-  filename: string,
-  sections: string[],
-): void {
-  const basename = path.basename(filename, path.extname(filename));
+export function validateSectionSpecificFile(filename: string, sections: string[]): void {
+  const basename = path.basename(filename, path.extname(filename))
 
-  let expectedSection: string | null = null;
-  for (const [sectionKey, filenames] of Object.entries(
-    SECTION_KEY_TO_FILENAME,
-  )) {
+  let expectedSection: string | null = null
+  for (const [sectionKey, filenames] of Object.entries(SECTION_KEY_TO_FILENAME)) {
     if (filenames.includes(basename)) {
-      expectedSection = sectionKey;
-      break;
+      expectedSection = sectionKey
+      break
     }
   }
 
   if (!expectedSection) {
-    return;
+    return
   }
 
   if (sections.length !== 1 || sections[0] !== expectedSection) {
     throw new Error(
       `Section-specific file '${filename}' must only contain '${expectedSection}' section.\n` +
-        `Found sections: [${sections.join(", ")}]`,
-    );
+        `Found sections: [${sections.join(', ')}]`,
+    )
   }
 }
 
@@ -194,57 +186,51 @@ export function validateSectionSpecificFile(
  * @throws Error if conflicts are detected
  */
 export function validateNoConflicts(files: FileEntry[], dirPath: string): void {
-  const sectionToFiles = new Map<string, string[]>();
-  const basenameToFiles = new Map<string, string[]>();
+  const sectionToFiles = new Map<string, string[]>()
+  const basenameToFiles = new Map<string, string[]>()
 
   for (const file of files) {
-    const basename = path.basename(file.path, path.extname(file.path));
-    const fullBasename = path.basename(file.path);
+    const basename = path.basename(file.path, path.extname(file.path))
+    const fullBasename = path.basename(file.path)
 
     if (!basenameToFiles.has(basename)) {
-      basenameToFiles.set(basename, []);
+      basenameToFiles.set(basename, [])
     }
-    basenameToFiles.get(basename)!.push(fullBasename);
+    basenameToFiles.get(basename)?.push(fullBasename)
 
     for (const section of file.sections) {
       if (!sectionToFiles.has(section)) {
-        sectionToFiles.set(section, []);
+        sectionToFiles.set(section, [])
       }
-      sectionToFiles.get(section)!.push(file.path);
+      sectionToFiles.get(section)?.push(file.path)
     }
   }
 
-  const conflicts: string[] = [];
+  const conflicts: string[] = []
 
   for (const [section, filePaths] of sectionToFiles.entries()) {
-    const sectionSpecificFiles = filePaths.filter(
-      (fp) => !isFullDataFilename(path.basename(fp)),
-    );
+    const sectionSpecificFiles = filePaths.filter((fp) => !isFullDataFilename(path.basename(fp)))
 
     if (sectionSpecificFiles.length > 1) {
       conflicts.push(
-        `Section '${section}' defined in multiple files:\n  ${sectionSpecificFiles.join("\n  ")}`,
-      );
+        `Section '${section}' defined in multiple files:\n  ${sectionSpecificFiles.join('\n  ')}`,
+      )
     }
   }
 
   for (const [basename, fullNames] of basenameToFiles.entries()) {
     if (fullNames.length > 1) {
-      const uniqueExtensions = new Set(
-        fullNames.map((name) => path.extname(name)),
-      );
+      const uniqueExtensions = new Set(fullNames.map((name) => path.extname(name)))
       if (uniqueExtensions.size > 1) {
         conflicts.push(
-          `Files with same basename '${basename}' exist in multiple formats in '${dirPath}':\n  ${fullNames.join("\n  ")}`,
-        );
+          `Files with same basename '${basename}' exist in multiple formats in '${dirPath}':\n  ${fullNames.join('\n  ')}`,
+        )
       }
     }
   }
 
   if (conflicts.length > 0) {
-    throw new Error(
-      `Data conflicts detected in ${dirPath}:\n\n${conflicts.join("\n\n")}`,
-    );
+    throw new Error(`Data conflicts detected in ${dirPath}:\n\n${conflicts.join('\n\n')}`)
   }
 }
 
@@ -254,8 +240,8 @@ export function validateNoConflicts(files: FileEntry[], dirPath: string): void {
  * @returns True if it matches the numbered array file pattern
  */
 export function isNumberedArrayFile(filename: string): boolean {
-  const parsed = parseNumberedArrayFile(filename);
-  return parsed !== null;
+  const parsed = parseNumberedArrayFile(filename)
+  return parsed !== null
 }
 
 /**
@@ -274,20 +260,18 @@ export function isNumberedArrayFile(filename: string): boolean {
  * parseNumberedArrayFile('projects.01.talon.yml')
  * // Returns: { basename: 'talon', sectionKey: 'projects', number: '01', ext: '.yml' }
  */
-export function parseNumberedArrayFile(
-  filename: string,
-): NumberedArrayFileInfo | null {
-  const ext = path.extname(filename);
+export function parseNumberedArrayFile(filename: string): NumberedArrayFileInfo | null {
+  const ext = path.extname(filename)
   if (!SUPPORTED_EXTENSIONS.includes(ext)) {
-    return null;
+    return null
   }
 
-  const nameWithoutExt = path.basename(filename, ext);
-  const parts = nameWithoutExt.split(".");
+  const nameWithoutExt = path.basename(filename, ext)
+  const parts = nameWithoutExt.split('.')
 
   if (parts.length === 3) {
-    const [firstPart, middlePart, lastPart] = parts;
-    const validSectionKeys = Object.keys(SECTION_KEY_TO_FILENAME);
+    const [firstPart, middlePart, lastPart] = parts
+    const validSectionKeys = Object.keys(SECTION_KEY_TO_FILENAME)
 
     if (validSectionKeys.includes(firstPart)) {
       if (/^\d+$/.test(lastPart)) {
@@ -296,7 +280,7 @@ export function parseNumberedArrayFile(
           sectionKey: firstPart,
           number: lastPart,
           ext,
-        };
+        }
       }
 
       if (/^\d+$/.test(middlePart)) {
@@ -305,30 +289,30 @@ export function parseNumberedArrayFile(
           sectionKey: firstPart,
           number: middlePart,
           ext,
-        };
+        }
       }
     }
   }
 
   if (parts.length === 2) {
-    const [basename, sectionAndNumber] = parts;
+    const [basename, sectionAndNumber] = parts
 
     for (const sectionKey of Object.keys(SECTION_KEY_TO_FILENAME)) {
       if (sectionAndNumber.startsWith(sectionKey)) {
-        const numberPart = sectionAndNumber.substring(sectionKey.length);
+        const numberPart = sectionAndNumber.substring(sectionKey.length)
         if (/^\d+$/.test(numberPart)) {
           return {
             basename,
             sectionKey,
             number: numberPart,
             ext,
-          };
+          }
         }
       }
     }
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -339,53 +323,50 @@ export function parseNumberedArrayFile(
 export function mergeNumberedArrayFiles(
   filePaths: string[],
 ): Map<string, { data: unknown[]; sources: string[] }> {
-  const grouped = new Map<
-    string,
-    Array<{ path: string; number: number; data: unknown[] }>
-  >();
+  const grouped = new Map<string, Array<{ path: string; number: number; data: unknown[] }>>()
 
   for (const filePath of filePaths) {
-    const filename = path.basename(filePath);
-    const parsed = parseNumberedArrayFile(filename);
-    if (!parsed) continue;
+    const filename = path.basename(filePath)
+    const parsed = parseNumberedArrayFile(filename)
+    if (!parsed) continue
 
-    const fileData = loadDataFile(filePath);
-    const sectionData = fileData[parsed.sectionKey];
+    const fileData = loadDataFile(filePath)
+    const sectionData = fileData[parsed.sectionKey]
 
     if (!Array.isArray(sectionData)) {
       throw new Error(
         `Numbered array file '${filePath}' must contain an array for section '${parsed.sectionKey}'`,
-      );
+      )
     }
 
     if (!grouped.has(parsed.sectionKey)) {
-      grouped.set(parsed.sectionKey, []);
+      grouped.set(parsed.sectionKey, [])
     }
 
-    grouped.get(parsed.sectionKey)!.push({
+    grouped.get(parsed.sectionKey)?.push({
       path: filePath,
       number: parseInt(parsed.number, 10),
       data: sectionData,
-    });
+    })
   }
 
-  const result = new Map<string, { data: unknown[]; sources: string[] }>();
+  const result = new Map<string, { data: unknown[]; sources: string[] }>()
 
   for (const [sectionKey, files] of grouped.entries()) {
-    files.sort((a, b) => a.number - b.number);
+    files.sort((a, b) => a.number - b.number)
 
-    const mergedData: unknown[] = [];
-    const sources: string[] = [];
+    const mergedData: unknown[] = []
+    const sources: string[] = []
 
     for (const file of files) {
-      mergedData.push(...file.data);
-      sources.push(file.path);
+      mergedData.push(...file.data)
+      sources.push(file.path)
     }
 
-    result.set(sectionKey, { data: mergedData, sources });
+    result.set(sectionKey, { data: mergedData, sources })
   }
 
-  return result;
+  return result
 }
 
 /**
@@ -394,87 +375,76 @@ export function mergeNumberedArrayFiles(
  * @param dirPath - Directory path for error messages
  * @throws Error if validation fails
  */
-export function validateNumberedArrayFiles(
-  filePaths: string[],
-  dirPath: string,
-): void {
-  const numberedFiles: Array<{ path: string; parsed: NumberedArrayFileInfo }> =
-    [];
-  const regularSectionFiles = new Map<string, string>();
+export function validateNumberedArrayFiles(filePaths: string[], dirPath: string): void {
+  const numberedFiles: Array<{ path: string; parsed: NumberedArrayFileInfo }> = []
+  const regularSectionFiles = new Map<string, string>()
 
   for (const filePath of filePaths) {
-    const filename = path.basename(filePath);
-    const parsed = parseNumberedArrayFile(filename);
+    const filename = path.basename(filePath)
+    const parsed = parseNumberedArrayFile(filename)
 
     if (parsed) {
-      numberedFiles.push({ path: filePath, parsed });
+      numberedFiles.push({ path: filePath, parsed })
 
-      const fileData = loadDataFile(filePath);
-      const sections = Object.keys(fileData);
+      const fileData = loadDataFile(filePath)
+      const sections = Object.keys(fileData)
 
       if (sections.length !== 1 || sections[0] !== parsed.sectionKey) {
         throw new Error(
           `Numbered array file '${filename}' must only contain '${parsed.sectionKey}' section.\n` +
-            `Found sections: [${sections.join(", ")}]`,
-        );
+            `Found sections: [${sections.join(', ')}]`,
+        )
       }
 
       if (!Array.isArray(fileData[parsed.sectionKey])) {
         throw new Error(
           `Numbered array file '${filename}' must contain an array for section '${parsed.sectionKey}'`,
-        );
+        )
       }
     } else {
-      const ext = path.extname(filename);
-      if (!SUPPORTED_EXTENSIONS.includes(ext)) continue;
+      const ext = path.extname(filename)
+      if (!SUPPORTED_EXTENSIONS.includes(ext)) continue
 
-      const basename = path.basename(filename, ext);
-      const isSectionSpecific = Object.values(SECTION_KEY_TO_FILENAME)
-        .flat()
-        .includes(basename);
+      const basename = path.basename(filename, ext)
+      const isSectionSpecific = Object.values(SECTION_KEY_TO_FILENAME).flat().includes(basename)
 
       if (isSectionSpecific) {
-        for (const [sectionKey, filenames] of Object.entries(
-          SECTION_KEY_TO_FILENAME,
-        )) {
+        for (const [sectionKey, filenames] of Object.entries(SECTION_KEY_TO_FILENAME)) {
           if (filenames.includes(basename)) {
-            regularSectionFiles.set(sectionKey, filePath);
-            break;
+            regularSectionFiles.set(sectionKey, filePath)
+            break
           }
         }
       }
     }
   }
 
-  const groupedBySection = new Map<
-    string,
-    Array<{ path: string; number: number }>
-  >();
+  const groupedBySection = new Map<string, Array<{ path: string; number: number }>>()
   for (const { path: filePath, parsed } of numberedFiles) {
     if (!groupedBySection.has(parsed.sectionKey)) {
-      groupedBySection.set(parsed.sectionKey, []);
+      groupedBySection.set(parsed.sectionKey, [])
     }
-    groupedBySection.get(parsed.sectionKey)!.push({
+    groupedBySection.get(parsed.sectionKey)?.push({
       path: filePath,
       number: parseInt(parsed.number, 10),
-    });
+    })
   }
 
-  const errors: string[] = [];
+  const errors: string[] = []
 
   for (const [sectionKey, files] of groupedBySection.entries()) {
     if (regularSectionFiles.has(sectionKey)) {
       errors.push(
         `Section '${sectionKey}' has both numbered files and a regular section file:\n` +
           `  Regular: ${regularSectionFiles.get(sectionKey)}\n` +
-          `  Numbered: ${files.map((f) => f.path).join(", ")}`,
-      );
+          `  Numbered: ${files.map((f) => f.path).join(', ')}`,
+      )
     }
   }
 
   if (errors.length > 0) {
     throw new Error(
-      `Numbered array file validation failed in ${dirPath}:\n\n${errors.join("\n\n")}`,
-    );
+      `Numbered array file validation failed in ${dirPath}:\n\n${errors.join('\n\n')}`,
+    )
   }
 }

@@ -1,56 +1,51 @@
-import type {
-  CVData,
-  WorkExperience,
-  Project,
-  TechnicalCategory,
-} from "@/types";
 import {
-  getResume,
+  getCareerSummary,
+  getCoverLetter,
+  getEducation,
   getHeader,
   getHeaderResumeLines,
   getHeaderTitleLines,
+  getLanguages,
   getProfile,
   getProfileLines,
   getProfileLinks,
-  getCareerSummary,
-  getWorkExperiences,
-  getWorkExperienceBubbles,
-  getWorkExperienceLines,
-  getProjects,
   getProjectBubbles,
   getProjectLines,
   getProjectLinks,
-  getTechnicalCategories,
+  getProjects,
+  getResume,
   getTechnicalBubbles,
-  getEducation,
-  getLanguages,
-  getCoverLetter,
-} from "@/lib/db/queries";
+  getTechnicalCategories,
+  getWorkExperienceBubbles,
+  getWorkExperienceLines,
+  getWorkExperiences,
+} from '@/lib/db/queries'
+import type { CVData, Project, TechnicalCategory, WorkExperience } from '@/types'
 
 export async function getFullResume(resumeId: number): Promise<CVData | null> {
-  const resume = await getResume(resumeId);
-  if (!resume) return null;
+  const resume = await getResume(resumeId)
+  if (!resume) return null
 
-  const header = await getHeader(resumeId);
-  const profile = await getProfile(resumeId);
-  const careerSummary = await getCareerSummary(resumeId);
-  const workExperiences = await getWorkExperiences(resumeId);
-  const projects = await getProjects(resumeId);
-  const technicalCategories = await getTechnicalCategories(resumeId);
-  const education = await getEducation(resumeId);
-  const languages = await getLanguages(resumeId);
-  const coverLetter = await getCoverLetter(resumeId);
+  const header = await getHeader(resumeId)
+  const profile = await getProfile(resumeId)
+  const careerSummary = await getCareerSummary(resumeId)
+  const workExperiences = await getWorkExperiences(resumeId)
+  const projects = await getProjects(resumeId)
+  const technicalCategories = await getTechnicalCategories(resumeId)
+  const education = await getEducation(resumeId)
+  const languages = await getLanguages(resumeId)
+  const coverLetter = await getCoverLetter(resumeId)
 
   const workExperienceData: WorkExperience[] = await Promise.all(
     workExperiences.map(async (we): Promise<WorkExperience> => {
-      const lines = await getWorkExperienceLines(we.id);
-      const bubbles = await getWorkExperienceBubbles(we.id);
+      const lines = await getWorkExperienceLines(we.id)
+      const bubbles = await getWorkExperienceBubbles(we.id)
 
       return {
         position: we.position,
         company: we.company,
-        location: we.location || "",
-        icon: we.icon || "",
+        location: we.location || '',
+        icon: we.icon || '',
         bubbles: bubbles.length > 0 ? bubbles.map((b) => b.text) : undefined,
         details: [
           {
@@ -62,15 +57,15 @@ export async function getFullResume(resumeId: number): Promise<CVData | null> {
             })),
           },
         ],
-      };
+      }
     }),
-  );
+  )
 
   const projectData: Project[] = await Promise.all(
     projects.map(async (p): Promise<Project> => {
-      const lines = await getProjectLines(p.id);
-      const links = await getProjectLinks(p.id);
-      const bubbles = await getProjectBubbles(p.id);
+      const lines = await getProjectLines(p.id)
+      const links = await getProjectLinks(p.id)
+      const bubbles = await getProjectBubbles(p.id)
 
       return {
         name: p.name,
@@ -82,16 +77,16 @@ export async function getFullResume(resumeId: number): Promise<CVData | null> {
         links: links.map((link) => ({
           name: link.name,
           link: link.link,
-          icon: link.icon ?? "",
+          icon: link.icon ?? '',
         })),
-      };
+      }
     }),
-  );
+  )
 
-  const headerResumeLines = header ? await getHeaderResumeLines(header.id) : [];
-  const headerTitleLines = header ? await getHeaderTitleLines(header.id) : [];
-  const profileLines = profile ? await getProfileLines(profile.id) : [];
-  const profileLinks = profile ? await getProfileLinks(profile.id) : [];
+  const headerResumeLines = header ? await getHeaderResumeLines(header.id) : []
+  const headerTitleLines = header ? await getHeaderTitleLines(header.id) : []
+  const profileLines = profile ? await getProfileLines(profile.id) : []
+  const profileLinks = profile ? await getProfileLinks(profile.id) : []
 
   const technicalData: TechnicalCategory[] = await Promise.all(
     technicalCategories.map(
@@ -100,19 +95,19 @@ export async function getFullResume(resumeId: number): Promise<CVData | null> {
         bubbles: (await getTechnicalBubbles(cat.id)).map((b) => b.text),
       }),
     ),
-  );
+  )
 
   const cvData: CVData = {
     info: {
-      firstName: header?.first_name || "",
-      lastName: header?.last_name || "",
-      email: header?.email || "",
-      phone: header?.phone || "",
-      role: header?.role || "",
-      website: header?.website || "",
+      firstName: header?.first_name || '',
+      lastName: header?.last_name || '',
+      email: header?.email || '',
+      phone: header?.phone || '',
+      role: header?.role || '',
+      website: header?.website || '',
     },
     header: {
-      name: header?.name || "",
+      name: header?.name || '',
       resume: headerResumeLines.map((l) => l.text),
       title: headerTitleLines.map((l) => l.text),
     },
@@ -128,29 +123,27 @@ export async function getFullResume(resumeId: number): Promise<CVData | null> {
       links: profileLinks.map((link) => ({
         name: link.name,
         link: link.link,
-        icon: link.icon ?? "",
+        icon: link.icon ?? '',
       })),
     },
     technical: technicalData,
     education: education.length
       ? education.map((edu) => ({
-          degree: edu.degree || "",
+          degree: edu.degree || '',
           school: edu.school,
-          location: edu.location || "",
-          years: edu.years || "",
+          location: edu.location || '',
+          years: edu.years || '',
         }))
       : undefined,
     languages: languages.length
       ? languages.map((lang) => ({
           language: lang.name,
-          abbreviation: "",
-          level: lang.proficiency ?? "",
+          abbreviation: '',
+          level: lang.proficiency ?? '',
         }))
       : undefined,
-    coverLetter: coverLetter.length
-      ? coverLetter.map((line) => line.text ?? "")
-      : undefined,
-  };
+    coverLetter: coverLetter.length ? coverLetter.map((line) => line.text ?? '') : undefined,
+  }
 
-  return cvData;
+  return cvData
 }

@@ -1,7 +1,5 @@
-"use client";
+'use client'
 
-import { Fragment, useEffect, useState } from "react";
-import { useTheme } from "next-themes";
 import {
   Menu,
   MenuButton,
@@ -10,7 +8,9 @@ import {
   Radio,
   RadioGroup,
   Transition,
-} from "@headlessui/react";
+} from '@headlessui/react'
+import { useTheme } from 'next-themes'
+import { Fragment, useEffect, useState } from 'react'
 
 const Sun = () => (
   <svg
@@ -25,7 +25,7 @@ const Sun = () => (
       clipRule="evenodd"
     />
   </svg>
-);
+)
 const Moon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -35,7 +35,7 @@ const Moon = () => (
   >
     <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
   </svg>
-);
+)
 const Monitor = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -51,30 +51,22 @@ const Monitor = () => (
     <line x1="7" y1="17" x2="13" y2="17"></line>
     <line x1="10" y1="13" x2="10" y2="17"></line>
   </svg>
-);
-const Blank = () => <svg className="h-6 w-6" />;
+)
+const Blank = () => <svg className="h-6 w-6" />
 
 const ThemeSwitch = () => {
-  const [mounted, setMounted] = useState(false);
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false)
+  const { theme, setTheme, resolvedTheme } = useTheme()
 
   // When mounted on client, now we can show the UI
-  useEffect(() => setMounted(true), []);
+  useEffect(() => setMounted(true), [])
 
   return (
     <div className="mr-5 flex items-center">
       <Menu as="div" className="relative inline-block text-left">
         <div className="hover:text-primary-500 dark:hover:text-primary-400 flex items-center justify-center">
           <MenuButton aria-label="Theme switcher">
-            {mounted ? (
-              resolvedTheme === "dark" ? (
-                <Moon />
-              ) : (
-                <Sun />
-              )
-            ) : (
-              <Blank />
-            )}
+            {mounted ? resolvedTheme === 'dark' ? <Moon /> : <Sun /> : <Blank />}
           </MenuButton>
         </div>
         <Transition
@@ -93,7 +85,7 @@ const ThemeSwitch = () => {
                   <MenuItem>
                     {({ focus }) => (
                       <button
-                        className={`${focus ? "bg-primary-600 text-white" : ""} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                        className={`${focus ? 'bg-primary-600 text-white' : ''} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                       >
                         <div className="mr-2">
                           <Sun />
@@ -108,7 +100,7 @@ const ThemeSwitch = () => {
                     {({ focus }) => (
                       <button
                         className={`${
-                          focus ? "bg-primary-600 text-white" : ""
+                          focus ? 'bg-primary-600 text-white' : ''
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                       >
                         <div className="mr-2">
@@ -124,7 +116,7 @@ const ThemeSwitch = () => {
                     {({ focus }) => (
                       <button
                         className={`${
-                          focus ? "bg-primary-600 text-white" : ""
+                          focus ? 'bg-primary-600 text-white' : ''
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                       >
                         <div className="mr-2">
@@ -141,7 +133,7 @@ const ThemeSwitch = () => {
         </Transition>
       </Menu>
     </div>
-  );
-};
+  )
+}
 
-export default ThemeSwitch;
+export default ThemeSwitch

@@ -1,55 +1,49 @@
-"use client";
+'use client'
 
-import React from "react";
-import { useRouter } from "next/navigation";
-import { useModal } from "@/contexts/ModalContext";
-import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
-import DirectoryTree from "@/features/fileManager/parts/DirectoryTree";
+import { useRouter } from 'next/navigation'
+import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
+import { useModal } from '@/contexts/ModalContext'
+import DirectoryTree from '@/features/fileManager/parts/DirectoryTree'
 
 interface ResumeNavigatorProps {
-  onSelectResume?: (dirPath: string) => void;
+  onSelectResume?: (dirPath: string) => void
 }
 
 function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
-  const { closeModal } = useModal();
-  const router = useRouter();
-  const { loading, error } = useDirectoryManager();
+  const { closeModal } = useModal()
+  const router = useRouter()
+  const { loading, error } = useDirectoryManager()
 
   const stripBasePath = (fullPath: string): string => {
-    const piiPath = process.env.NEXT_PUBLIC_PII_PATH || "pii";
-    const piiIndex = fullPath.lastIndexOf(`/${piiPath}/`);
+    const piiPath = process.env.NEXT_PUBLIC_PII_PATH || 'pii'
+    const piiIndex = fullPath.lastIndexOf(`/${piiPath}/`)
     if (piiIndex !== -1) {
-      return fullPath.substring(piiIndex + piiPath.length + 2);
+      return fullPath.substring(piiIndex + piiPath.length + 2)
     }
-    return fullPath;
-  };
+    return fullPath
+  }
 
   const handleSelectDirectory = (dirPath: string) => {
-    const relativePath = stripBasePath(dirPath);
-    const pathSegments = relativePath
-      .split("/")
-      .map(encodeURIComponent)
-      .join("/");
-    router.push(`/single-column-multi/resume/${pathSegments}`);
+    const relativePath = stripBasePath(dirPath)
+    const pathSegments = relativePath.split('/').map(encodeURIComponent).join('/')
+    router.push(`/single-column-multi/resume/${pathSegments}`)
 
     if (onSelectResume) {
-      onSelectResume(relativePath);
+      onSelectResume(relativePath)
     }
 
-    closeModal();
-  };
+    closeModal()
+  }
 
   const handleSelectFile = (filePath: string) => {
-    const dirPath = filePath.split("/").slice(0, -1).join("/");
-    handleSelectDirectory(dirPath);
-  };
+    const dirPath = filePath.split('/').slice(0, -1).join('/')
+    handleSelectDirectory(dirPath)
+  }
 
   return (
     <div>
       <div className="mb-4">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-          Resume Navigator
-        </h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Resume Navigator</h3>
         <p className="text-sm text-gray-600 dark:text-gray-300">
           Select a resume directory to view
         </p>
@@ -61,11 +55,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
         </div>
       )}
 
-      <DirectoryTree
-        selectedFile={null}
-        onSelectFile={handleSelectFile}
-        loading={loading}
-      />
+      <DirectoryTree selectedFile={null} onSelectFile={handleSelectFile} loading={loading} />
 
       <div className="flex justify-end pt-4 border-t mt-4">
         <button
@@ -76,7 +66,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
         </button>
       </div>
     </div>
-  );
+  )
 }
 
-export default ResumeNavigator;
+export default ResumeNavigator

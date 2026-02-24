@@ -1,103 +1,101 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { LuPaintbrushVertical } from "react-icons/lu";
-import colors from "tailwindcss/colors";
-import { useModal } from "@/contexts/ModalContext";
-import { toast } from "sonner";
-import ColorPicker from "./ColorPicker";
-import { TailwindColor } from "./types";
-import { getColorFromTailwind } from "./utils";
+import { useEffect, useState } from 'react'
+import { LuPaintbrushVertical } from 'react-icons/lu'
+import { toast } from 'sonner'
+import colors from 'tailwindcss/colors'
+import { useModal } from '@/contexts/ModalContext'
+import ColorPicker from './ColorPicker'
+import type { TailwindColor } from './types'
+import { getColorFromTailwind } from './utils'
 
 // ColorPickerSwitch - A self-contained color picker button with modal
 export function ColorPickerSwitch() {
-  const [selectedColor, setSelectedColor] = useState<string | undefined>(
-    undefined,
-  );
-  const { openModal, closeModal } = useModal();
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined)
+  const { openModal, closeModal } = useModal()
 
   // Load selected color from localStorage on client side only
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedColor = localStorage.getItem("selectedColor");
+    if (typeof window !== 'undefined') {
+      const storedColor = localStorage.getItem('selectedColor')
       if (storedColor) {
-        setSelectedColor(storedColor);
+        setSelectedColor(storedColor)
       }
     }
-  }, []);
+  }, [])
 
   const handleColorSelect = (color: TailwindColor) => {
-    const colorKey = `${color.name}-${color.shade}`;
-    setSelectedColor(colorKey);
-    localStorage.setItem("selectedColor", colorKey);
+    const colorKey = `${color.name}-${color.shade}`
+    setSelectedColor(colorKey)
+    localStorage.setItem('selectedColor', colorKey)
 
-    type TailwindColors = typeof colors;
-    type ColorShadeValue = string | Record<string, string>;
+    type TailwindColors = typeof colors
+    type ColorShadeValue = string | Record<string, string>
 
     const colorFamily = (colors as TailwindColors)[
       color.name as keyof TailwindColors
-    ] as ColorShadeValue;
-    if (colorFamily && typeof colorFamily === "object") {
+    ] as ColorShadeValue
+    if (colorFamily && typeof colorFamily === 'object') {
       document.documentElement.style.setProperty(
-        "--color-primary",
+        '--color-primary',
         colorFamily[color.shade] || color.hex,
-      );
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-50",
-        colorFamily["50"] || color.hex,
-      );
+        '--color-primary-50',
+        colorFamily['50'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-100",
-        colorFamily["100"] || color.hex,
-      );
+        '--color-primary-100',
+        colorFamily['100'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-200",
-        colorFamily["200"] || color.hex,
-      );
+        '--color-primary-200',
+        colorFamily['200'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-300",
-        colorFamily["300"] || color.hex,
-      );
+        '--color-primary-300',
+        colorFamily['300'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-400",
-        colorFamily["400"] || color.hex,
-      );
+        '--color-primary-400',
+        colorFamily['400'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-500",
-        colorFamily["500"] || color.hex,
-      );
+        '--color-primary-500',
+        colorFamily['500'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-600",
-        colorFamily["600"] || color.hex,
-      );
+        '--color-primary-600',
+        colorFamily['600'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-700",
-        colorFamily["700"] || color.hex,
-      );
+        '--color-primary-700',
+        colorFamily['700'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-800",
-        colorFamily["800"] || color.hex,
-      );
+        '--color-primary-800',
+        colorFamily['800'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-900",
-        colorFamily["900"] || color.hex,
-      );
+        '--color-primary-900',
+        colorFamily['900'] || color.hex,
+      )
       document.documentElement.style.setProperty(
-        "--color-primary-950",
-        colorFamily["950"] || color.hex,
-      );
+        '--color-primary-950',
+        colorFamily['950'] || color.hex,
+      )
     } else {
       // Fallback to selected color
-      document.documentElement.style.setProperty("--color-primary", color.hex);
+      document.documentElement.style.setProperty('--color-primary', color.hex)
     }
 
-    toast.success(`Accent color changed to ${color.name} ${color.shade}`);
+    toast.success(`Accent color changed to ${color.name} ${color.shade}`)
 
-    closeModal();
-  };
+    closeModal()
+  }
 
   const openColorPickerModal = () => {
-    toast.info("Opening color picker...");
+    toast.info('Opening color picker...')
 
     const ColorPickerModal = () => (
       <div className="space-y-4">
@@ -125,11 +123,11 @@ export function ColorPickerSwitch() {
           </button>
         </div>
       </div>
-    );
+    )
 
-    const modalContent = <ColorPickerModal />;
-    openModal(modalContent, "lg");
-  };
+    const modalContent = <ColorPickerModal />
+    openModal(modalContent, 'lg')
+  }
 
   return (
     <button
@@ -143,14 +141,11 @@ export function ColorPickerSwitch() {
           className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800"
           style={{
             backgroundColor: selectedColor
-              ? getColorFromTailwind(
-                  selectedColor.split("-")[0],
-                  selectedColor.split("-")[1],
-                )
+              ? getColorFromTailwind(selectedColor.split('-')[0], selectedColor.split('-')[1])
               : undefined,
           }}
         />
       )}
     </button>
-  );
+  )
 }

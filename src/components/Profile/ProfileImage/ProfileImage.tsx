@@ -1,19 +1,19 @@
-import useProfilePicture from "@/hooks/useProfilePicture";
-import clsx from "clsx";
+import clsx from 'clsx'
+import useProfilePicture from '@/hooks/useProfilePicture'
 
 type ImageOptions = {
-  circular?: boolean;
-  border?: boolean;
-};
+  circular?: boolean
+  border?: boolean
+}
 
 const ProfileImage = (options: ImageOptions = {}) => {
-  const profilePicture = useProfilePicture();
+  const profilePicture = useProfilePicture()
 
   const profilePictureClasses = clsx(
-    "flex items-center justify-center w-24 h-24 overflow-hidden bg-white shadow-sm",
-    { "rounded-full": options.circular },
-    { "ring-2 ring-gray-300": options.border },
-  );
+    'flex items-center justify-center w-24 h-24 overflow-hidden bg-white shadow-sm',
+    { 'rounded-full': options.circular },
+    { 'ring-2 ring-gray-300': options.border },
+  )
 
   return (
     <>
@@ -23,7 +23,7 @@ const ProfileImage = (options: ImageOptions = {}) => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default ProfileImage;
+export default ProfileImage

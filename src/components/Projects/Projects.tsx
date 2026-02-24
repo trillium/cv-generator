@@ -1,20 +1,14 @@
-import Title from "@/components/Title/Title";
-import ProjectLinks from "./ProjectLinks";
-import LineList from "@/components/WorkExperience/LineList";
-import EditableField from "@/components/EditableField";
-import type { Project } from "@/types";
+import EditableField from '@/components/EditableField'
+import Title from '@/components/Title/Title'
+import LineList from '@/components/WorkExperience/LineList'
+import type { Project } from '@/types'
+import ProjectLinks from './ProjectLinks'
 
-const Projects = ({
-  data,
-  showBubbles,
-}: {
-  data: Project[];
-  showBubbles: boolean;
-}) => {
+const Projects = ({ data, showBubbles }: { data: Project[]; showBubbles: boolean }) => {
   // Defensive check: if data is undefined or not an array, render nothing
   if (!data || !Array.isArray(data)) {
-    console.warn("Projects component received invalid data:", data);
-    return null;
+    console.warn('Projects component received invalid data:', data)
+    return null
   }
 
   return (
@@ -22,44 +16,30 @@ const Projects = ({
       <Title text="Projects" />
       <div>
         {data.map((item, num) => {
-          return (
-            <ProjectItem
-              key={num}
-              data={item}
-              showBubbles={showBubbles}
-              index={num}
-            />
-          );
+          return <ProjectItem key={num} data={item} showBubbles={showBubbles} index={num} />
         })}
       </div>
     </section>
-  );
-};
+  )
+}
 
 function ProjectItem({
   data,
   showBubbles = true,
   index,
 }: {
-  data: Project;
-  showBubbles: boolean;
-  index: number;
+  data: Project
+  showBubbles: boolean
+  index: number
 }) {
-  const { bubbles = [], lines = [], links = [] } = data;
+  const { bubbles = [], lines = [], links = [] } = data
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between">
-        <EditableField
-          yamlPath={`projects.${index}.name`}
-          value={data.name}
-          fieldType="text"
-        >
+        <EditableField yamlPath={`projects.${index}.name`} value={data.name} fieldType="text">
           <div className="font-bold">{data.name}</div>
         </EditableField>
-        <ProjectLinks
-          links={Array.isArray(links) ? links : []}
-          projectIndex={index}
-        />
+        <ProjectLinks links={Array.isArray(links) ? links : []} projectIndex={index} />
       </div>
       {showBubbles && bubbles.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-2">
@@ -79,7 +59,7 @@ function ProjectItem({
       )}
       <LineList lines={lines} yamlBasePath={`projects.${index}`} />
     </div>
-  );
+  )
 }
 
-export default Projects;
+export default Projects

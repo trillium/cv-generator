@@ -1,22 +1,21 @@
-"use client";
+'use client'
 
-import { clsx } from "clsx";
-import LayoutSelector from "./LayoutSelector";
-import { ColorPickerSwitch } from "@/components/ColorPicker";
+import { clsx } from 'clsx'
+import { ColorPickerSwitch } from '@/components/ColorPicker'
+import { Thumbnail } from '@/components/PdfPreview'
 
-import PrintPageSize, { DEFAULT_PAGE_SIZES } from "@/components/PrintPageSize";
-import ResumeSelector from "@/components/ResumeSelector/ResumeSelector";
-import ThemeSwitch from "@/components/ThemeSwitch";
-import HomeButton from "./HomeButton";
-import FileBrowserButton from "./FileBrowserButton";
-import { Thumbnail } from "@/components/PdfPreview";
-
-import TypeToggle from "./TypeToggle";
-import ReprintButton from "./ReprintButton";
+import PrintPageSize, { DEFAULT_PAGE_SIZES } from '@/components/PrintPageSize'
+import ResumeSelector from '@/components/ResumeSelector/ResumeSelector'
+import ThemeSwitch from '@/components/ThemeSwitch'
+import FileBrowserButton from './FileBrowserButton'
+import HomeButton from './HomeButton'
+import LayoutSelector from './LayoutSelector'
+import ReprintButton from './ReprintButton'
+import TypeToggle from './TypeToggle'
 
 export default function Navigation() {
   return (
-    <nav className={clsx("print:hidden top-4 right-4 z-40")}>
+    <nav className={clsx('print:hidden top-4 right-4 z-40')}>
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-center gap-4 flex-wrap">
           <ResumeSelector />
@@ -44,5 +43,5 @@ export default function Navigation() {
         </div>
       </div>
     </nav>
-  );
+  )
 }

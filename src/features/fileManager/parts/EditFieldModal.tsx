@@ -1,11 +1,11 @@
-import * as React from "react";
-import { EditingFieldState } from "./types";
+import type * as React from 'react'
+import type { EditingFieldState } from './types'
 
 interface EditFieldModalProps {
-  editingField: EditingFieldState;
-  onSave: () => void;
-  onCancel: () => void;
-  onChange: (value: string) => void;
+  editingField: EditingFieldState
+  onSave: () => void
+  onCancel: () => void
+  onChange: (value: string) => void
 }
 
 const EditFieldModal: React.FC<EditFieldModalProps> = ({
@@ -16,9 +16,7 @@ const EditFieldModal: React.FC<EditFieldModalProps> = ({
 }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-        Edit Field
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Edit Field</h3>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Path: {editingField.path}
@@ -46,6 +44,6 @@ const EditFieldModal: React.FC<EditFieldModalProps> = ({
       </div>
     </div>
   </div>
-);
+)
 
-export default EditFieldModal;
+export default EditFieldModal

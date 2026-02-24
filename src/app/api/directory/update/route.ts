@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { MultiFileManager } from "@/lib/multiFileManager";
-import { getPdfsToRegenerate } from "@/lib/pdfSectionMapper";
-import { rebuildPdfs } from "@/lib/pdfRebuilder";
+import { type NextRequest, NextResponse } from 'next/server'
+import { MultiFileManager } from '@/lib/multiFileManager'
+import { rebuildPdfs } from '@/lib/pdfRebuilder'
+import { getPdfsToRegenerate } from '@/lib/pdfSectionMapper'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { directoryPath, yamlPath, value } = body;
+    const body = await request.json()
+    const { directoryPath, yamlPath, value } = body
 
     console.log(`🔵 [API /directory/update] Request received:`, {
       directoryPath,
@@ -14,54 +14,54 @@ export async function POST(request: NextRequest) {
       valueType: typeof value,
       valuePreview: Array.isArray(value)
         ? `Array[${value.length}]`
-        : typeof value === "string"
+        : typeof value === 'string'
           ? value.substring(0, 100)
           : JSON.stringify(value).substring(0, 100),
-    });
+    })
 
     if (!directoryPath || !yamlPath || value === undefined) {
       return NextResponse.json(
         {
           success: false,
-          error: "Missing required fields: directoryPath, yamlPath, value",
+          error: 'Missing required fields: directoryPath, yamlPath, value',
         },
         { status: 400 },
-      );
+      )
     }
 
-    const manager = new MultiFileManager();
-    const result = await manager.updatePath(directoryPath, yamlPath, value);
+    const manager = new MultiFileManager()
+    const result = await manager.updatePath(directoryPath, yamlPath, value)
 
-    console.log(`📄 File updated: ${result.updatedFile}`);
+    console.log(`📄 File updated: ${result.updatedFile}`)
 
-    const pdfOutputDir = directoryPath;
+    const pdfOutputDir = directoryPath
 
-    console.log(`📁 PDF output directory: ${pdfOutputDir}`);
+    console.log(`📁 PDF output directory: ${pdfOutputDir}`)
 
-    const pdfsToRegenerate = getPdfsToRegenerate(yamlPath);
+    const pdfsToRegenerate = getPdfsToRegenerate(yamlPath)
 
     if (pdfsToRegenerate.length === 0) {
-      console.log(`⏭️  Section doesn't affect PDFs, skipping regeneration`);
+      console.log(`⏭️  Section doesn't affect PDFs, skipping regeneration`)
       return NextResponse.json({
         ...result,
-        pdf: { skipped: true, reason: "Section does not affect PDFs" },
-      });
+        pdf: { skipped: true, reason: 'Section does not affect PDFs' },
+      })
     }
 
-    const pdfResult = await rebuildPdfs(pdfOutputDir, pdfsToRegenerate);
+    const pdfResult = await rebuildPdfs(pdfOutputDir, pdfsToRegenerate)
 
     return NextResponse.json({
       ...result,
       pdf: pdfResult,
-    });
+    })
   } catch (error) {
-    console.error("[API /directory/update POST] Error updating data:", error);
+    console.error('[API /directory/update POST] Error updating data:', error)
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to update data",
+        error: error instanceof Error ? error.message : 'Failed to update data',
       },
       { status: 500 },
-    );
+    )
   }
 }
