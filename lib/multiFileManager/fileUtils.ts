@@ -6,6 +6,7 @@ import type { FileMetadata } from "@/types/fileManager";
 import { ARRAY_INDEX_PATTERN } from "./constants";
 
 export { ARRAY_INDEX_PATTERN };
+export { extractTopLevelKey, deriveDirectoryFromSources } from "./pathUtils";
 
 export function isSectionSpecificFile(basename: string): boolean {
   const sectionFiles = [
@@ -37,11 +38,6 @@ export function serializeData(
     const doc = createYamlDocument(data);
     return documentToString(doc);
   }
-}
-
-export function extractTopLevelKey(dataPath: string): string {
-  const parts = dataPath.split(/[.[\]]+/g);
-  return parts[0];
 }
 
 export function setNestedValue(
