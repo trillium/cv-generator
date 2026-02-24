@@ -49,3 +49,4 @@ out
 tsconfig.tsbuildinfo
 .claude/
 textContent-debug.json
+test-pii/
