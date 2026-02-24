@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import * as yaml from "js-yaml";
+import { parseYamlString } from "./yamlService";
 import { getPiiDirectory } from "./getPiiPath";
 
 export const FULL_DATA_FILENAMES = ["data", "resume"];
@@ -50,7 +50,7 @@ export function loadDataFile(filePath: string): Record<string, unknown> {
     return JSON.parse(content);
   }
 
-  return yaml.load(content) as Record<string, unknown>;
+  return parseYamlString(content);
 }
 
 /**

@@ -10,7 +10,7 @@ import { getPiiDirectory } from "../getPiiPath";
 import * as path from "path";
 import * as fs from "fs/promises";
 import fsSync from "fs";
-import * as yaml from "js-yaml";
+import { createYamlDocument, documentToString } from "../yamlService";
 import type { UpdateResult } from "@/types/multiFileManager.types";
 import { serializeData, extractTopLevelKey, setNestedValue } from "./fileUtils";
 import { ARRAY_INDEX_PATTERN } from "./constants";
@@ -195,7 +195,8 @@ export async function updatePath(
     }
     const fileData: Record<string, unknown> = {};
     setNestedValue(fileData, yamlPath, value);
-    await fs.writeFile(targetFile, yaml.dump(fileData), "utf-8");
+    const doc = createYamlDocument(fileData);
+    await fs.writeFile(targetFile, documentToString(doc), "utf-8");
     console.log(`✅ [updatePath] New file created and written successfully`);
     return {
       success: true,

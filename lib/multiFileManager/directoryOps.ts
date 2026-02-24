@@ -3,7 +3,11 @@ import { loadDataFile, SECTION_KEY_TO_FILENAME } from "../multiFileMapper";
 import * as path from "path";
 import * as fs from "fs/promises";
 import fsSync from "fs";
-import * as yaml from "js-yaml";
+import {
+  parseYamlString,
+  createYamlDocument,
+  documentToString,
+} from "../yamlService";
 
 export async function createDirectory(
   parentPath: string,
@@ -57,7 +61,7 @@ export async function splitSectionToFile(
       shouldUpdateSource = false;
     } else {
       const sourceContent = await fs.readFile(fullSourcePath, "utf-8");
-      sourceData = yaml.load(sourceContent) as Record<string, unknown>;
+      sourceData = parseYamlString(sourceContent);
       targetDir = path.dirname(fullSourcePath);
       shouldUpdateSource = true;
     }
@@ -87,44 +91,16 @@ export async function splitSectionToFile(
       Object.keys(targetData).length > 0;
 
     if (allSectionsSelected) {
-      await fs.writeFile(
-        targetPath,
-        yaml.dump(targetData, {
-          indent: 2,
-          lineWidth: -1,
-          noRefs: true,
-          sortKeys: false,
-        }),
-      );
+      const doc = createYamlDocument(targetData);
+      await fs.writeFile(targetPath, documentToString(doc));
     } else if (shouldUpdateSource) {
-      await fs.writeFile(
-        fullSourcePath,
-        yaml.dump(sourceData, {
-          indent: 2,
-          lineWidth: -1,
-          noRefs: true,
-          sortKeys: false,
-        }),
-      );
-      await fs.writeFile(
-        targetPath,
-        yaml.dump(targetData, {
-          indent: 2,
-          lineWidth: -1,
-          noRefs: true,
-          sortKeys: false,
-        }),
-      );
+      const sourceDoc = createYamlDocument(sourceData);
+      await fs.writeFile(fullSourcePath, documentToString(sourceDoc));
+      const targetDoc = createYamlDocument(targetData);
+      await fs.writeFile(targetPath, documentToString(targetDoc));
     } else {
-      await fs.writeFile(
-        targetPath,
-        yaml.dump(targetData, {
-          indent: 2,
-          lineWidth: -1,
-          noRefs: true,
-          sortKeys: false,
-        }),
-      );
+      const doc = createYamlDocument(targetData);
+      await fs.writeFile(targetPath, documentToString(doc));
     }
 
     const relativeTargetPath = path.relative(piiPath, targetPath);
@@ -242,15 +218,8 @@ export async function splitArrayToNumberedFiles(
       const fileItems = arrayData.slice(startIndex, endIndex);
 
       const fileContent = { [sectionKey]: fileItems };
-      await fs.writeFile(
-        numberedFilePath,
-        yaml.dump(fileContent, {
-          indent: 2,
-          lineWidth: -1,
-          noRefs: true,
-          sortKeys: false,
-        }),
-      );
+      const doc = createYamlDocument(fileContent);
+      await fs.writeFile(numberedFilePath, documentToString(doc));
 
       createdFiles.push(path.relative(piiPath, numberedFilePath));
     }

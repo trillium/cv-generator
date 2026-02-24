@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import yaml from "js-yaml";
+import { parseYamlString } from "./yamlService";
 import { CVData as CVDataSchema } from "@/types/cvdata.zod";
 import type { CVData } from "@/types";
 
@@ -18,7 +18,7 @@ export function parseAndWriteDataFile(
   const fileContent = readFileSync(inputPath, "utf-8");
   let parsed: unknown;
   if (ext === ".yml" || ext === ".yaml") {
-    parsed = yaml.load(fileContent);
+    parsed = parseYamlString(fileContent);
   } else if (ext === ".json") {
     parsed = JSON.parse(fileContent);
   } else {

@@ -2,7 +2,7 @@
 // Basic script to convert ./data.yml to ./src/data.json
 import fs from "node:fs";
 import path from "node:path";
-import yaml from "js-yaml";
+import { parseYamlString } from "./yamlService";
 import { config } from "dotenv";
 import { CVData } from "@/types/cvdata.zod";
 
@@ -32,7 +32,7 @@ function main() {
     }
 
     const ymlText = fs.readFileSync(inputPath, "utf8");
-    const data = yaml.load(ymlText);
+    const data = parseYamlString(ymlText);
     const parseResult = CVData.safeParse(data);
     if (!parseResult.success) {
       console.error(

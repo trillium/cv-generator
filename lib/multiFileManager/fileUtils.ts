@@ -1,5 +1,5 @@
 import * as path from "path";
-import * as yaml from "js-yaml";
+import { createYamlDocument, documentToString } from "../yamlService";
 import * as fs from "fs/promises";
 import { getPiiDirectory } from "../getPiiPath";
 import type { FileMetadata } from "@/types/fileManager";
@@ -34,11 +34,8 @@ export function serializeData(
   if (ext === ".json") {
     return JSON.stringify(data, null, 2);
   } else {
-    return yaml.dump(data, {
-      indent: 2,
-      lineWidth: -1,
-      noRefs: true,
-    });
+    const doc = createYamlDocument(data);
+    return documentToString(doc);
   }
 }
 
