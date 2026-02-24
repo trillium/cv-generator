@@ -19,9 +19,9 @@ export async function POST(req: NextRequest) {
     args.push(`--print=${print.join(",")}`);
   }
 
-  console.log(`📄 Triggering PDF generation: pnpm ${args.join(" ")}`);
+  console.log(`📄 Triggering PDF generation: bun ${args.join(" ")}`);
 
-  const child = spawn("pnpm", args, {
+  const child = spawn("bun", args, {
     cwd: process.cwd(),
     detached: true,
     stdio: "ignore",
