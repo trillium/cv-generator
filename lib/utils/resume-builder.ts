@@ -27,41 +27,24 @@ import {
   getCoverLetter,
 } from "@/lib/db/queries";
 
-export function getFullResume(resumeId: number): CVData | null {
-  const resume = getResume(resumeId);
+export async function getFullResume(resumeId: number): Promise<CVData | null> {
+  const resume = await getResume(resumeId);
   if (!resume) return null;
 
-  const header = getHeader(resumeId);
-  const profile = getProfile(resumeId);
-  const careerSummary = getCareerSummary(resumeId);
-  const workExperiences = getWorkExperiences(resumeId);
-  const projects = getProjects(resumeId);
-  const technicalCategories = getTechnicalCategories(resumeId);
-  const education = getEducation(resumeId);
-  const languages = getLanguages(resumeId);
-  const coverLetter = getCoverLetter(resumeId);
+  const header = await getHeader(resumeId);
+  const profile = await getProfile(resumeId);
+  const careerSummary = await getCareerSummary(resumeId);
+  const workExperiences = await getWorkExperiences(resumeId);
+  const projects = await getProjects(resumeId);
+  const technicalCategories = await getTechnicalCategories(resumeId);
+  const education = await getEducation(resumeId);
+  const languages = await getLanguages(resumeId);
+  const coverLetter = await getCoverLetter(resumeId);
 
-  const cvData: CVData = {
-    info: {
-      firstName: header?.first_name || "",
-      lastName: header?.last_name || "",
-      email: header?.email || "",
-      phone: header?.phone || "",
-      role: header?.role || "",
-      website: header?.website || "",
-    },
-    header: {
-      name: header?.name || "",
-      resume: header ? getHeaderResumeLines(header.id).map((l) => l.text) : [],
-      title: header ? getHeaderTitleLines(header.id).map((l) => l.text) : [],
-    },
-    careerSummary: careerSummary.map((item) => ({
-      title: item.title,
-      text: item.text,
-    })),
-    workExperience: workExperiences.map((we): WorkExperience => {
-      const lines = getWorkExperienceLines(we.id);
-      const bubbles = getWorkExperienceBubbles(we.id);
+  const workExperienceData: WorkExperience[] = await Promise.all(
+    workExperiences.map(async (we): Promise<WorkExperience> => {
+      const lines = await getWorkExperienceLines(we.id);
+      const bubbles = await getWorkExperienceBubbles(we.id);
 
       return {
         position: we.position,
@@ -81,10 +64,13 @@ export function getFullResume(resumeId: number): CVData | null {
         ],
       };
     }),
-    projects: projects.map((p): Project => {
-      const lines = getProjectLines(p.id);
-      const links = getProjectLinks(p.id);
-      const bubbles = getProjectBubbles(p.id);
+  );
+
+  const projectData: Project[] = await Promise.all(
+    projects.map(async (p): Promise<Project> => {
+      const lines = await getProjectLines(p.id);
+      const links = await getProjectLinks(p.id);
+      const bubbles = await getProjectBubbles(p.id);
 
       return {
         name: p.name,
@@ -96,27 +82,56 @@ export function getFullResume(resumeId: number): CVData | null {
         links: links.map((link) => ({
           name: link.name,
           link: link.link,
-          icon: link.icon || undefined,
+          icon: link.icon ?? "",
         })),
       };
     }),
-    profile: {
-      shouldDisplayProfileImage: profile?.should_display_profile_image === 1,
-      lines: profile ? getProfileLines(profile.id).map((l) => l.text) : [],
-      links: profile
-        ? getProfileLinks(profile.id).map((link) => ({
-            name: link.name,
-            link: link.link,
-            icon: link.icon || undefined,
-          }))
-        : [],
-    },
-    technical: technicalCategories.map(
-      (cat): TechnicalCategory => ({
+  );
+
+  const headerResumeLines = header ? await getHeaderResumeLines(header.id) : [];
+  const headerTitleLines = header ? await getHeaderTitleLines(header.id) : [];
+  const profileLines = profile ? await getProfileLines(profile.id) : [];
+  const profileLinks = profile ? await getProfileLinks(profile.id) : [];
+
+  const technicalData: TechnicalCategory[] = await Promise.all(
+    technicalCategories.map(
+      async (cat): Promise<TechnicalCategory> => ({
         category: cat.category,
-        bubbles: getTechnicalBubbles(cat.id).map((b) => b.text),
+        bubbles: (await getTechnicalBubbles(cat.id)).map((b) => b.text),
       }),
     ),
+  );
+
+  const cvData: CVData = {
+    info: {
+      firstName: header?.first_name || "",
+      lastName: header?.last_name || "",
+      email: header?.email || "",
+      phone: header?.phone || "",
+      role: header?.role || "",
+      website: header?.website || "",
+    },
+    header: {
+      name: header?.name || "",
+      resume: headerResumeLines.map((l) => l.text),
+      title: headerTitleLines.map((l) => l.text),
+    },
+    careerSummary: careerSummary.map((item) => ({
+      title: item.title,
+      text: item.text,
+    })),
+    workExperience: workExperienceData,
+    projects: projectData,
+    profile: {
+      shouldDisplayProfileImage: profile?.should_display_profile_image === 1,
+      lines: profileLines.map((l) => l.text),
+      links: profileLinks.map((link) => ({
+        name: link.name,
+        link: link.link,
+        icon: link.icon ?? "",
+      })),
+    },
+    technical: technicalData,
     education: education.length
       ? education.map((edu) => ({
           degree: edu.degree || "",
@@ -127,12 +142,13 @@ export function getFullResume(resumeId: number): CVData | null {
       : undefined,
     languages: languages.length
       ? languages.map((lang) => ({
-          name: lang.name,
-          proficiency: lang.proficiency || undefined,
+          language: lang.name,
+          abbreviation: "",
+          level: lang.proficiency ?? "",
         }))
       : undefined,
     coverLetter: coverLetter.length
-      ? coverLetter.map((line) => line.text || null)
+      ? coverLetter.map((line) => line.text ?? "")
       : undefined,
   };
 

@@ -1,8 +1,10 @@
 import { getFullResume } from "@/lib/utils/resume-builder";
 import { DbResumeDisplay } from "./DbResumeDisplay";
 
-export default function DbResumePage() {
-  const cvData = getFullResume(1);
+export const dynamic = "force-dynamic";
+
+export default async function DbResumePage() {
+  const cvData = await getFullResume(1);
 
   if (!cvData) {
     return (

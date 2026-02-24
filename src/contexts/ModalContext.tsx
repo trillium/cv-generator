@@ -27,7 +27,7 @@ interface ModalContextValue {
     onClose?: () => void,
   ) => void;
   closeModal: () => void;
-  useAutoFocus: <T extends HTMLElement>() => React.RefObject<T>;
+  useAutoFocus: <T extends HTMLElement>() => React.RefObject<T | null>;
 }
 
 const ModalContext = createContext<ModalContextValue | undefined>(undefined);

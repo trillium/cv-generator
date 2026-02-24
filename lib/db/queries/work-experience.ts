@@ -5,28 +5,30 @@ import type {
   DbWorkExperienceLine,
 } from "../types";
 
-export function getWorkExperiences(resumeId: number): DbWorkExperience[] {
-  const db = getDb();
+export async function getWorkExperiences(
+  resumeId: number,
+): Promise<DbWorkExperience[]> {
+  const db = await getDb();
   const query = db.query(
     "SELECT * FROM work_experiences WHERE resume_id = ? ORDER BY order_index",
   );
   return query.all(resumeId) as DbWorkExperience[];
 }
 
-export function getWorkExperienceBubbles(
+export async function getWorkExperienceBubbles(
   workExperienceId: number,
-): DbWorkExperienceBubble[] {
-  const db = getDb();
+): Promise<DbWorkExperienceBubble[]> {
+  const db = await getDb();
   const query = db.query(
     "SELECT * FROM work_experience_bubbles WHERE work_experience_id = ? ORDER BY order_index",
   );
   return query.all(workExperienceId) as DbWorkExperienceBubble[];
 }
 
-export function getWorkExperienceLines(
+export async function getWorkExperienceLines(
   workExperienceId: number,
-): DbWorkExperienceLine[] {
-  const db = getDb();
+): Promise<DbWorkExperienceLine[]> {
+  const db = await getDb();
   const query = db.query(
     "SELECT * FROM work_experience_lines WHERE work_experience_id = ? ORDER BY order_index",
   );

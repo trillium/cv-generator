@@ -1,11 +1,4 @@
-import * as fs from "fs";
 import { parseDocument, Document } from "yaml";
-
-export function loadYamlFile(filePath: string): Record<string, unknown> {
-  const content = fs.readFileSync(filePath, "utf-8");
-  const doc = parseDocument(content);
-  return doc.toJS() as Record<string, unknown>;
-}
 
 export function parseYamlString(yamlString: string): Record<string, unknown> {
   const doc = parseDocument(yamlString);

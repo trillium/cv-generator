@@ -6,34 +6,38 @@ import type {
   DbLanguage,
 } from "../types";
 
-export function getTechnicalCategories(
+export async function getTechnicalCategories(
   resumeId: number,
-): DbTechnicalCategory[] {
-  const db = getDb();
+): Promise<DbTechnicalCategory[]> {
+  const db = await getDb();
   const query = db.query(
     "SELECT * FROM technical_categories WHERE resume_id = ? ORDER BY order_index",
   );
   return query.all(resumeId) as DbTechnicalCategory[];
 }
 
-export function getTechnicalBubbles(categoryId: number): DbTechnicalBubble[] {
-  const db = getDb();
+export async function getTechnicalBubbles(
+  categoryId: number,
+): Promise<DbTechnicalBubble[]> {
+  const db = await getDb();
   const query = db.query(
     "SELECT * FROM technical_bubbles WHERE technical_category_id = ? ORDER BY order_index",
   );
   return query.all(categoryId) as DbTechnicalBubble[];
 }
 
-export function getEducation(resumeId: number): DbEducationRecord[] {
-  const db = getDb();
+export async function getEducation(
+  resumeId: number,
+): Promise<DbEducationRecord[]> {
+  const db = await getDb();
   const query = db.query(
     "SELECT * FROM education_records WHERE resume_id = ? ORDER BY order_index",
   );
   return query.all(resumeId) as DbEducationRecord[];
 }
 
-export function getLanguages(resumeId: number): DbLanguage[] {
-  const db = getDb();
+export async function getLanguages(resumeId: number): Promise<DbLanguage[]> {
+  const db = await getDb();
   const query = db.query(
     "SELECT * FROM languages WHERE resume_id = ? ORDER BY order_index",
   );

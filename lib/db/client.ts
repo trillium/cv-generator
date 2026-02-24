@@ -1,10 +1,11 @@
-import { Database } from "bun:sqlite";
 import path from "path";
 
-let dbInstance: Database | null = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let dbInstance: any = null;
 
-export function getDb(): Database {
+export async function getDb() {
   if (!dbInstance) {
+    const { Database } = await import("bun:sqlite");
     const dbPath = path.join(process.cwd(), "pii", "db.sqlite");
     dbInstance = new Database(dbPath);
     dbInstance.exec("PRAGMA foreign_keys = ON");

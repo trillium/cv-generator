@@ -1,6 +1,8 @@
 import { getFullResume } from "@/lib/utils/resume-builder";
 import DynamicDbPage from "@/src/app/DynamicDbPage";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ "resume-id": string }>;
 }
@@ -11,7 +13,7 @@ export default async function SingleColumnDbCoverLetterPage({
   const { "resume-id": resumeIdStr } = await params;
   const resumeId = parseInt(resumeIdStr, 10);
 
-  const cvData = getFullResume(resumeId);
+  const cvData = await getFullResume(resumeId);
 
   if (!cvData) {
     return (

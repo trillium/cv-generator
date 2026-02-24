@@ -49,11 +49,11 @@ export function DbResumeDisplay({ cvData }: { cvData: CVData }) {
         )}
 
         {cvData.workExperience && cvData.workExperience.length > 0 && (
-          <WorkExperience workExperience={cvData.workExperience} />
+          <WorkExperience data={cvData.workExperience} />
         )}
 
         {cvData.projects && cvData.projects.length > 0 && (
-          <Projects projects={cvData.projects} />
+          <Projects data={cvData.projects} showBubbles={false} />
         )}
 
         {cvData.technical && cvData.technical.length > 0 && (

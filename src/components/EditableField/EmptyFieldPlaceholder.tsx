@@ -87,7 +87,10 @@ export default function EmptyFieldPlaceholder({
 
     // If it's a React element, check its children
     const element = node as React.ReactElement;
-    const { children: elementChildren, ...props } = element.props;
+    const { children: elementChildren, ...props } = element.props as Record<
+      string,
+      unknown
+    >;
 
     if (elementChildren == null) {
       return element;
@@ -98,11 +101,9 @@ export default function EmptyFieldPlaceholder({
       typeof elementChildren === "string" &&
       isContentBlank(elementChildren)
     ) {
-      const newProps = { ...props };
-      if (
-        element.type === "a" &&
-        (!newProps.href || newProps.href.trim() === "")
-      ) {
+      const newProps: Record<string, unknown> = { ...props };
+      const href = newProps.href as string | undefined;
+      if (element.type === "a" && (!href || href.trim() === "")) {
         newProps.href = "#";
       }
 
