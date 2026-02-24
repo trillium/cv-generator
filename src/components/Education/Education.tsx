@@ -1,11 +1,11 @@
-import Title from "@/components/Title/Title";
-import EditableField from "@/components/EditableField";
-import type { Education as EducationType } from "@/types";
+import EditableField from '@/components/EditableField'
+import Title from '@/components/Title/Title'
+import type { Education as EducationType } from '@/types'
 
 const Education = ({ data }: { data: EducationType[] }) => {
   if (!data || !Array.isArray(data)) {
-    console.warn("Education component received invalid data:", data);
-    return null;
+    console.warn('Education component received invalid data:', data)
+    return null
   }
 
   return (
@@ -13,21 +13,15 @@ const Education = ({ data }: { data: EducationType[] }) => {
       <Title text="Education" />
       <div className="w-full">
         {data.map((item, num) => {
-          return <EducationItem key={num} data={item} index={num} />;
+          return <EducationItem key={num} data={item} index={num} />
         })}
       </div>
     </section>
-  );
-};
+  )
+}
 
-function EducationItem({
-  data,
-  index,
-}: {
-  data: EducationType;
-  index: number;
-}) {
-  const hasDegree = data.degree && data.degree.trim().length > 0;
+function EducationItem({ data, index }: { data: EducationType; index: number }) {
+  const hasDegree = data.degree && data.degree.trim().length > 0
 
   return (
     <div className="flex w-full flex-col">
@@ -66,11 +60,7 @@ function EducationItem({
           >
             <div className="font-bold">{data.school}</div>
           </EditableField>
-          <EditableField
-            yamlPath={`education.${index}.years`}
-            value={data.years}
-            fieldType="text"
-          >
+          <EditableField yamlPath={`education.${index}.years`} value={data.years} fieldType="text">
             <div className="text-base font-medium">{data.years}</div>
           </EditableField>
         </div>
@@ -80,12 +70,10 @@ function EducationItem({
         value={data.location}
         fieldType="text"
       >
-        <div className="text-sm text-neutral-500 dark:text-neutral-400">
-          {data.location}
-        </div>
+        <div className="text-sm text-neutral-500 dark:text-neutral-400">{data.location}</div>
       </EditableField>
     </div>
-  );
+  )
 }
 
-export default Education;
+export default Education

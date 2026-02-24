@@ -1,1 +1,1 @@
-export { DirectoryManagerProvider } from "./DirectoryManager/DirectoryManagerContext";
+export { DirectoryManagerProvider } from './DirectoryManager/DirectoryManagerContext'

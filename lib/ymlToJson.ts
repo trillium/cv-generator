@@ -1,54 +1,47 @@
 // lib/ymlToJson.ts
 // Basic script to convert ./data.yml to ./src/data.json
-import fs from "node:fs";
-import path from "node:path";
-import { parseYamlString } from "./yamlService";
-import { config } from "dotenv";
-import { CVData } from "@/types/cvdata.zod";
+import fs from 'node:fs'
+import path from 'node:path'
+import { config } from 'dotenv'
+import { CVData } from '@/types/cvdata.zod'
+import { parseYamlString } from './yamlService'
 
 // Load environment variables from .env file
-config();
+config()
 
 // Use PII_PATH environment variable, fallback to current directory
-const piiPath = process.env.PII_PATH;
+const piiPath = process.env.PII_PATH
 if (!piiPath) {
   throw new Error(
-    "PII_PATH environment variable is required. Please set PII_PATH to the directory containing your data.yml file.",
-  );
+    'PII_PATH environment variable is required. Please set PII_PATH to the directory containing your data.yml file.',
+  )
 }
-const inputPath = path.join(piiPath, "data.yml");
-const outputPath = "./src/data.json";
+const inputPath = path.join(piiPath, 'data.yml')
+const outputPath = './src/data.json'
 
 function main() {
   try {
-    console.log(`Reading from: ${inputPath}`);
+    console.log(`Reading from: ${inputPath}`)
 
     if (!fs.existsSync(inputPath)) {
-      console.error(`❌ data.yml not found at ${inputPath}`);
-      console.error(
-        `Please ensure your PII_PATH environment variable is set correctly.`,
-      );
-      process.exit(1);
+      console.error(`❌ data.yml not found at ${inputPath}`)
+      console.error(`Please ensure your PII_PATH environment variable is set correctly.`)
+      process.exit(1)
     }
 
-    const ymlText = fs.readFileSync(inputPath, "utf8");
-    const data = parseYamlString(ymlText);
-    const parseResult = CVData.safeParse(data);
+    const ymlText = fs.readFileSync(inputPath, 'utf8')
+    const data = parseYamlString(ymlText)
+    const parseResult = CVData.safeParse(data)
     if (!parseResult.success) {
-      console.error(
-        "Validation failed (formatted):",
-        parseResult.error.format(),
-      );
-      console.error("Validation failed (raw):", parseResult.error);
+      console.error('Validation failed (formatted):', parseResult.error.format())
+      console.error('Validation failed (raw):', parseResult.error)
     } else {
-      fs.writeFileSync(outputPath, JSON.stringify(parseResult.data, null, 2));
-      console.log(
-        `✅ Converted ${inputPath} to ${outputPath} and validated with Zod.`,
-      );
+      fs.writeFileSync(outputPath, JSON.stringify(parseResult.data, null, 2))
+      console.log(`✅ Converted ${inputPath} to ${outputPath} and validated with Zod.`)
     }
   } catch (e) {
-    console.error("Error:", e);
+    console.error('Error:', e)
   }
 }
 
-main();
+main()

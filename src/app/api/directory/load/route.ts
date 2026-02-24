@@ -1,20 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
-import { MultiFileManager } from "@/lib/multiFileManager";
+import { type NextRequest, NextResponse } from 'next/server'
+import { MultiFileManager } from '@/lib/multiFileManager'
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const dirPath = searchParams.get("path");
+    const { searchParams } = new URL(request.url)
+    const dirPath = searchParams.get('path')
 
     if (!dirPath) {
       return NextResponse.json(
-        { success: false, error: "Directory path is required" },
+        { success: false, error: 'Directory path is required' },
         { status: 400 },
-      );
+      )
     }
 
-    const manager = new MultiFileManager();
-    const result = await manager.loadDirectory(dirPath);
+    const manager = new MultiFileManager()
+    const result = await manager.loadDirectory(dirPath)
 
     return NextResponse.json({
       success: true,
@@ -23,16 +23,15 @@ export async function GET(request: NextRequest) {
       metadata: result.metadata,
       pdfMetadata: result.pdfMetadata,
       validationErrors: result.validationErrors,
-    });
+    })
   } catch (error) {
-    console.error("[API /directory/load GET] Error loading directory:", error);
+    console.error('[API /directory/load GET] Error loading directory:', error)
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error ? error.message : "Failed to load directory",
+        error: error instanceof Error ? error.message : 'Failed to load directory',
       },
       { status: 500 },
-    );
+    )
   }
 }

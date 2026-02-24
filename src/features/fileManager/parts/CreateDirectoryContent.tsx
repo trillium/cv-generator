@@ -1,11 +1,11 @@
-import * as React from "react";
-import { useState } from "react";
-import { useModal } from "@/contexts/ModalContext";
+import type * as React from 'react'
+import { useState } from 'react'
+import { useModal } from '@/contexts/ModalContext'
 
 interface CreateDirectoryContentProps {
-  currentDirectory: string;
-  onClose: () => void;
-  onCreate: (directoryName: string) => void;
+  currentDirectory: string
+  onClose: () => void
+  onCreate: (directoryName: string) => void
 }
 
 const CreateDirectoryContent: React.FC<CreateDirectoryContentProps> = ({
@@ -13,14 +13,14 @@ const CreateDirectoryContent: React.FC<CreateDirectoryContentProps> = ({
   onClose,
   onCreate,
 }) => {
-  const [directoryName, setDirectoryName] = useState("");
-  const { useAutoFocus } = useModal();
-  const inputRef = useAutoFocus<HTMLInputElement>();
+  const [directoryName, setDirectoryName] = useState('')
+  const { useAutoFocus } = useModal()
+  const inputRef = useAutoFocus<HTMLInputElement>()
 
   function handleCreate() {
-    console.log("handleCreate", directoryName);
+    console.log('handleCreate', directoryName)
     if (directoryName.trim()) {
-      onCreate(directoryName.trim());
+      onCreate(directoryName.trim())
     }
   }
 
@@ -40,7 +40,7 @@ const CreateDirectoryContent: React.FC<CreateDirectoryContentProps> = ({
           onChange={(e) => setDirectoryName(e.target.value)}
           placeholder="Directory name"
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-          onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+          onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
         />
       </div>
       <div className="flex gap-3 justify-end">
@@ -59,7 +59,7 @@ const CreateDirectoryContent: React.FC<CreateDirectoryContentProps> = ({
         </button>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default CreateDirectoryContent;
+export default CreateDirectoryContent

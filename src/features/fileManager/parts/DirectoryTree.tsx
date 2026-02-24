@@ -1,14 +1,14 @@
-import * as React from "react";
-import { DirectoryFileInfo } from "@/lib/multiFileManager";
-import TreeNodeItem from "./TreeNodeItem";
-import { buildTree } from "./utils";
-import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
+import type * as React from 'react'
+import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
+import type { DirectoryFileInfo } from '@/lib/multiFileManager'
+import TreeNodeItem from './TreeNodeItem'
+import { buildTree } from './utils'
 
 interface DirectoryTreeProps {
-  files?: DirectoryFileInfo[];
-  selectedFile: string | null;
-  onSelectFile: (path: string) => void;
-  loading?: boolean;
+  files?: DirectoryFileInfo[]
+  selectedFile: string | null
+  onSelectFile: (path: string) => void
+  loading?: boolean
 }
 
 const DirectoryTree: React.FC<DirectoryTreeProps> = ({
@@ -18,10 +18,10 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
   loading,
 }) => {
   // If files or loading are not provided, get them from directory manager context
-  const directoryManager = useDirectoryManager();
-  const effectiveFiles = files ?? directoryManager.files;
-  const effectiveLoading = loading ?? directoryManager.loading;
-  const tree = buildTree(effectiveFiles);
+  const directoryManager = useDirectoryManager()
+  const effectiveFiles = files ?? directoryManager.files
+  const effectiveLoading = loading ?? directoryManager.loading
+  const tree = buildTree(effectiveFiles)
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
@@ -31,9 +31,7 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
       {effectiveLoading ? (
         <p className="text-gray-600 dark:text-gray-400">Loading...</p>
       ) : effectiveFiles.length === 0 ? (
-        <p className="text-gray-600 dark:text-gray-400">
-          No files found in this directory
-        </p>
+        <p className="text-gray-600 dark:text-gray-400">No files found in this directory</p>
       ) : (
         <div className="space-y-0.5">
           {tree.map((node) => (
@@ -48,7 +46,7 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default DirectoryTree;
+export default DirectoryTree

@@ -1,18 +1,18 @@
-import Title from "@/components/Title/Title";
-import LineList from "./LineList";
-import EditableField from "@/components/EditableField";
-import type { WorkExperience as WorkExperienceType } from "@/types";
+import EditableField from '@/components/EditableField'
+import Title from '@/components/Title/Title'
+import type { WorkExperience as WorkExperienceType } from '@/types'
+import LineList from './LineList'
 
 const WorkExperience = ({
   data,
   showBubbles = true,
 }: {
-  data: WorkExperienceType[];
-  showBubbles?: boolean;
+  data: WorkExperienceType[]
+  showBubbles?: boolean
 }) => {
   if (!data || !Array.isArray(data)) {
-    console.warn("WorkExperience component received invalid data:", data);
-    return null;
+    console.warn('WorkExperience component received invalid data:', data)
+    return null
   }
 
   return (
@@ -30,18 +30,18 @@ const WorkExperience = ({
         ))}
       </div>
     </section>
-  );
-};
+  )
+}
 
 function WorkExperienceItem({
   item,
   index,
   showBubbles = true,
 }: {
-  item: WorkExperienceType;
-  index: number;
-  isLast: boolean;
-  showBubbles?: boolean;
+  item: WorkExperienceType
+  index: number
+  isLast: boolean
+  showBubbles?: boolean
 }) {
   return (
     <div className="flex flex-col">
@@ -110,7 +110,7 @@ function WorkExperienceItem({
         </div>
       ))}
     </div>
-  );
+  )
 }
 
-export default WorkExperience;
+export default WorkExperience

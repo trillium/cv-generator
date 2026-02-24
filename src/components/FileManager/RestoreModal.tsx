@@ -1,18 +1,15 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import {
-  XMarkIcon,
-  ExclamationTriangleIcon,
-} from "@heroicons/react/24/outline";
-import { Version } from "@/types/fileManager";
+import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useState } from 'react'
+import type { Version } from '@/types/fileManager'
 
 interface RestoreModalProps {
-  isOpen: boolean;
-  fileName: string;
-  version: Version | null;
-  onClose: () => void;
-  onConfirm: () => void;
+  isOpen: boolean
+  fileName: string
+  version: Version | null
+  onClose: () => void
+  onConfirm: () => void
 }
 
 export default function RestoreModal({
@@ -22,26 +19,26 @@ export default function RestoreModal({
   onClose,
   onConfirm,
 }: RestoreModalProps) {
-  const [confirmed, setConfirmed] = useState(false);
+  const [confirmed, setConfirmed] = useState(false)
 
   function handleConfirm() {
-    if (!confirmed) return;
-    onConfirm();
-    onClose();
-    setConfirmed(false);
+    if (!confirmed) return
+    onConfirm()
+    onClose()
+    setConfirmed(false)
   }
 
   function formatDate(date: Date): string {
-    return new Date(date).toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return new Date(date).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
   }
 
-  if (!isOpen || !version) return null;
+  if (!isOpen || !version) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -70,9 +67,8 @@ export default function RestoreModal({
         <div className="space-y-4">
           <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
             <p className="text-sm text-orange-800 dark:text-orange-200">
-              <strong>Warning:</strong> Restoring this version will replace the
-              current file content. A backup of the current state will be
-              created automatically.
+              <strong>Warning:</strong> Restoring this version will replace the current file
+              content. A backup of the current state will be created automatically.
             </p>
           </div>
 
@@ -109,12 +105,9 @@ export default function RestoreModal({
               onChange={(e) => setConfirmed(e.target.checked)}
               className="mt-1"
             />
-            <label
-              htmlFor="confirm-restore"
-              className="text-sm text-gray-700 dark:text-gray-300"
-            >
-              I understand that this will replace the current file content with
-              the selected version.
+            <label htmlFor="confirm-restore" className="text-sm text-gray-700 dark:text-gray-300">
+              I understand that this will replace the current file content with the selected
+              version.
             </label>
           </div>
         </div>
@@ -137,5 +130,5 @@ export default function RestoreModal({
         </div>
       </div>
     </div>
-  );
+  )
 }

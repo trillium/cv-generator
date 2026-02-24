@@ -1,29 +1,29 @@
-"use client";
+'use client'
 
-import { MdRefresh } from "react-icons/md";
-import { toast } from "sonner";
+import { MdRefresh } from 'react-icons/md'
+import { toast } from 'sonner'
 
 export default function ReprintButton() {
   const handleReprint = async () => {
     try {
-      toast.info("Triggering PDF regeneration...");
+      toast.info('Triggering PDF regeneration...')
 
-      const response = await fetch("/api/pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error("Failed to trigger PDF generation");
+        throw new Error('Failed to trigger PDF generation')
       }
 
-      toast.success("PDF regeneration started");
+      toast.success('PDF regeneration started')
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      toast.error(`Failed to reprint: ${message}`);
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      toast.error(`Failed to reprint: ${message}`)
     }
-  };
+  }
 
   return (
     <button
@@ -34,5 +34,5 @@ export default function ReprintButton() {
       <MdRefresh className="w-4 h-4" />
       <span>Reprint</span>
     </button>
-  );
+  )
 }

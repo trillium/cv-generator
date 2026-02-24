@@ -1,87 +1,87 @@
-export type Lines = { text: string; bulletPoint?: boolean }[];
-export type Notes = string[];
+export type Lines = { text: string; bulletPoint?: boolean }[]
+export type Notes = string[]
 
 export type WorkExperienceDetail = {
-  subhead?: string;
-  years?: string;
-  lines: Lines;
-};
+  subhead?: string
+  years?: string
+  lines: Lines
+}
 
 export type WorkExperience = {
-  position?: string;
-  company?: string;
-  location: string;
-  icon: string;
-  bubbles?: string[];
-  details: WorkExperienceDetail[];
-  notes?: Notes;
-};
+  position?: string
+  company?: string
+  location: string
+  icon: string
+  bubbles?: string[]
+  details: WorkExperienceDetail[]
+  notes?: Notes
+}
 
 export type Project = {
-  name: string;
-  duration?: string;
-  bubbles?: string[];
-  lines?: Lines;
-  links?: ProfileLinkProps[];
-  notes?: Notes;
-};
+  name: string
+  duration?: string
+  bubbles?: string[]
+  lines?: Lines
+  links?: ProfileLinkProps[]
+  notes?: Notes
+}
 
 export type TechnicalCategory = {
-  category: string;
-  bubbles: string[];
-  notes?: Notes;
-};
+  category: string
+  bubbles: string[]
+  notes?: Notes
+}
 
 export type Education = {
-  degree: string;
-  school: string;
-  location: string;
-  years: string;
-  notes?: Notes;
-};
+  degree: string
+  school: string
+  location: string
+  years: string
+  notes?: Notes
+}
 
-import type { ProfileLinkProps } from "../components/Profile/ProfileLink/ProfileLink";
-import type { Language } from "../components/Profile/ProfileLanguages/ProfileLanguages";
+import type { Language } from '../components/Profile/ProfileLanguages/ProfileLanguages'
+import type { ProfileLinkProps } from '../components/Profile/ProfileLink/ProfileLink'
 
 export type LLMInfo =
   | {
-      prompt: string;
-      notes?: Notes;
-      [key: string]: unknown;
+      prompt: string
+      notes?: Notes
+      [key: string]: unknown
     }
-  | string;
+  | string
 
-import { HeaderProps } from "../components/Header/Header";
-import type { LinkedInProfile } from "./linkedin";
+import type { HeaderProps } from '../components/Header/Header'
+import type { LinkedInProfile } from './linkedin'
 
 export type CVData = {
-  info: InfoType & { notes?: Notes };
-  careerSummary: CareerSummary & { notes?: Notes };
-  header: HeaderProps & { notes?: Notes };
-  workExperience: WorkExperience[] & { notes?: Notes };
-  projects?: Project[] & { notes?: Notes };
+  info: InfoType & { notes?: Notes }
+  careerSummary: CareerSummary & { notes?: Notes }
+  header: HeaderProps & { notes?: Notes }
+  workExperience: WorkExperience[] & { notes?: Notes }
+  projects?: Project[] & { notes?: Notes }
   profile: {
-    shouldDisplayProfileImage: boolean;
-    lines: string[];
-    links: ProfileLinkProps[];
-    notes?: Notes;
-  };
-  technical: TechnicalCategory[] & { notes?: Notes };
-  languages?: Language[] & { notes?: Notes };
-  education?: Education[] & { notes?: Notes };
-  showEducation?: boolean;
-  coverLetter?: string[] & { notes?: Notes };
-  metadata?: ResumeMetadata & { notes?: Notes };
-  linkedIn?: LinkedInProfile & { notes?: Notes };
-  notes?: Notes;
-  llm?: LLMInfo;
-};
+    shouldDisplayProfileImage: boolean
+    lines: string[]
+    links: ProfileLinkProps[]
+    notes?: Notes
+  }
+  technical: TechnicalCategory[] & { notes?: Notes }
+  languages?: Language[] & { notes?: Notes }
+  education?: Education[] & { notes?: Notes }
+  showEducation?: boolean
+  coverLetter?: string[] & { notes?: Notes }
+  metadata?: ResumeMetadata & { notes?: Notes }
+  linkedIn?: LinkedInProfile & { notes?: Notes }
+  notes?: Notes
+  llm?: LLMInfo
+}
 
 /**
  * Extended type that encompasses all candidate data including resume, LinkedIn profile, and notes.
  * This is the top-level type for a complete candidate profile.
  */
-export type CandidateProfile = CVData;
+export type CandidateProfile = CVData
 
 /**
  * Alternative names for CandidateProfile for backward compatibility or preference:
@@ -94,28 +94,28 @@ export type CandidateProfile = CVData;
  * - ExtendedCVData
  * - CandidateData
  */
-export type ResumeObjectType = CandidateProfile;
-export type ResumeType = CandidateProfile;
+export type ResumeObjectType = CandidateProfile
+export type ResumeType = CandidateProfile
 
 export type InfoType = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  role: string;
-  website?: string;
-  bluesky?: string;
-  github?: string;
-  linkedIn?: string;
-};
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  role: string
+  website?: string
+  bluesky?: string
+  github?: string
+  linkedIn?: string
+}
 
 export type CareerSummaryItem = {
-  title: string;
-  text: string;
-  notes?: Notes;
-};
+  title: string
+  text: string
+  notes?: Notes
+}
 
-export type CareerSummary = CareerSummaryItem[];
+export type CareerSummary = CareerSummaryItem[]
 
 /**
  * Metadata for resume tracking and management.
@@ -127,21 +127,15 @@ export type CareerSummary = CareerSummaryItem[];
  * - Enable metadata queries without loading full resume data
  */
 export type ResumeMetadata = {
-  targetCompany?: string;
-  targetPosition?: string;
-  targetJobUrl?: string;
-  applicationDate?: string;
-  applicationStatus?:
-    | "draft"
-    | "applied"
-    | "interview"
-    | "offer"
-    | "rejected"
-    | "withdrawn";
-  notes?: string;
-  tailoredFor?: string[];
-  lastModified?: string;
-  pages?: number;
-  lastPageText?: string;
-  lastPageLineBreaks?: number;
-};
+  targetCompany?: string
+  targetPosition?: string
+  targetJobUrl?: string
+  applicationDate?: string
+  applicationStatus?: 'draft' | 'applied' | 'interview' | 'offer' | 'rejected' | 'withdrawn'
+  notes?: string
+  tailoredFor?: string[]
+  lastModified?: string
+  pages?: number
+  lastPageText?: string
+  lastPageLineBreaks?: number
+}

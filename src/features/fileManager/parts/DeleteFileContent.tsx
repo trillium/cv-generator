@@ -1,10 +1,10 @@
-import * as React from "react";
-import { useModal } from "@/contexts/ModalContext";
+import type * as React from 'react'
+import { useModal } from '@/contexts/ModalContext'
 
 interface DeleteFileContentProps {
-  selectedFile: string;
-  onClose: () => void;
-  onDelete: () => void;
+  selectedFile: string
+  onClose: () => void
+  onDelete: () => void
 }
 
 const DeleteFileContent: React.FC<DeleteFileContentProps> = ({
@@ -12,11 +12,11 @@ const DeleteFileContent: React.FC<DeleteFileContentProps> = ({
   onClose,
   onDelete,
 }) => {
-  const { useAutoFocus } = useModal();
-  const deleteButtonRef = useAutoFocus<HTMLButtonElement>();
+  const { useAutoFocus } = useModal()
+  const deleteButtonRef = useAutoFocus<HTMLButtonElement>()
 
   // Prevent deletion of the root "resumes" folder
-  const isRootResumesFolder = selectedFile === "resumes";
+  const isRootResumesFolder = selectedFile === 'resumes'
 
   if (isRootResumesFolder) {
     return (
@@ -25,8 +25,8 @@ const DeleteFileContent: React.FC<DeleteFileContentProps> = ({
           Cannot Delete Root Folder
         </h3>
         <p className="text-red-600 dark:text-red-400 mb-4">
-          The root <strong>resumes</strong> folder cannot be deleted as it is
-          the base directory for all resume files.
+          The root <strong>resumes</strong> folder cannot be deleted as it is the base directory for
+          all resume files.
         </p>
         <div className="flex gap-3 justify-end">
           <button
@@ -38,14 +38,12 @@ const DeleteFileContent: React.FC<DeleteFileContentProps> = ({
           </button>
         </div>
       </>
-    );
+    )
   }
 
   return (
     <>
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-        Delete File
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Delete File</h3>
       <p className="text-gray-700 dark:text-gray-300 mb-4">
         Are you sure you want to delete <strong>{selectedFile}</strong>?
       </p>
@@ -68,7 +66,7 @@ const DeleteFileContent: React.FC<DeleteFileContentProps> = ({
         </button>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default DeleteFileContent;
+export default DeleteFileContent

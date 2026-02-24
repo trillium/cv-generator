@@ -1,29 +1,22 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
-import { LoadingState, ErrorState } from "@/src/components/SharedUIStates";
+import { useState } from 'react'
+import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
+import { ErrorState, LoadingState } from '@/src/components/SharedUIStates'
 
 export default function PlaygroundPage() {
-  const [inputPath, setInputPath] = useState("");
-  const [submittedPath, setSubmittedPath] = useState<string | null>(null);
-  const {
-    currentDirectory,
-    data,
-    sources,
-    metadata,
-    loading,
-    error,
-    loadDirectory,
-  } = useDirectoryManager();
+  const [inputPath, setInputPath] = useState('')
+  const [submittedPath, setSubmittedPath] = useState<string | null>(null)
+  const { currentDirectory, data, sources, metadata, loading, error, loadDirectory } =
+    useDirectoryManager()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (inputPath.trim()) {
-      setSubmittedPath(inputPath.trim());
-      await loadDirectory(inputPath.trim());
+      setSubmittedPath(inputPath.trim())
+      await loadDirectory(inputPath.trim())
     }
-  };
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white dark:bg-gray-900 min-h-screen">
@@ -50,18 +43,14 @@ export default function PlaygroundPage() {
       {submittedPath && (
         <div className="mb-4">
           <p>
-            <span className="font-semibold text-gray-900 dark:text-white">
-              Current Directory:
-            </span>{" "}
-            {currentDirectory || "(none)"}
+            <span className="font-semibold text-gray-900 dark:text-white">Current Directory:</span>{' '}
+            {currentDirectory || '(none)'}
           </p>
         </div>
       )}
       {data && (
         <div>
-          <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
-            Merged Data
-          </h2>
+          <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Merged Data</h2>
           <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded text-xs overflow-x-auto text-gray-900 dark:text-gray-100">
             {JSON.stringify(data, null, 2)}
           </pre>
@@ -88,5 +77,5 @@ export default function PlaygroundPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

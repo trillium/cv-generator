@@ -1,37 +1,30 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useModal } from "@/contexts/ModalContext";
-import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
-import { getPdfMetadata } from "./utils";
-import {
-  DEFAULT_SCALE,
-  MIN_SCALE,
-  MAX_SCALE,
-  SCALE_STEP,
-} from "./PdfPreview.constants";
-import { PdfPreviewProps } from "./types";
+import { useState } from 'react'
+import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
+import { useModal } from '@/contexts/ModalContext'
+import { DEFAULT_SCALE, MAX_SCALE, MIN_SCALE, SCALE_STEP } from './PdfPreview.constants'
+import type { PdfPreviewProps } from './types'
+import { getPdfMetadata } from './utils'
 
 export default function PdfPreview({ pdfUrl }: PdfPreviewProps) {
-  const [scale, setScale] = useState(DEFAULT_SCALE);
-  const { closeModal } = useModal();
-  const { storedPdfMetadata, documentType } = useDirectoryManager();
+  const [scale, setScale] = useState(DEFAULT_SCALE)
+  const { closeModal } = useModal()
+  const { storedPdfMetadata, documentType } = useDirectoryManager()
 
-  const metadata = documentType
-    ? getPdfMetadata(storedPdfMetadata, documentType)
-    : null;
+  const metadata = documentType ? getPdfMetadata(storedPdfMetadata, documentType) : null
 
   const handleZoomIn = () => {
-    setScale((prev) => Math.min(prev + SCALE_STEP, MAX_SCALE));
-  };
+    setScale((prev) => Math.min(prev + SCALE_STEP, MAX_SCALE))
+  }
 
   const handleZoomOut = () => {
-    setScale((prev) => Math.max(prev - SCALE_STEP, MIN_SCALE));
-  };
+    setScale((prev) => Math.max(prev - SCALE_STEP, MIN_SCALE))
+  }
 
   const handleDownload = () => {
-    window.open(pdfUrl, "_blank");
-  };
+    window.open(pdfUrl, '_blank')
+  }
 
   return (
     <div className="pdf-preview-container flex flex-col h-full">
@@ -45,9 +38,7 @@ export default function PdfPreview({ pdfUrl }: PdfPreviewProps) {
           >
             -
           </button>
-          <span className="text-sm font-medium">
-            {Math.round(scale * 100)}%
-          </span>
+          <span className="text-sm font-medium">{Math.round(scale * 100)}%</span>
           <button
             onClick={handleZoomIn}
             disabled={scale >= MAX_SCALE}
@@ -61,7 +52,7 @@ export default function PdfPreview({ pdfUrl }: PdfPreviewProps) {
         <div className="flex items-center gap-2">
           {metadata?.pageCount !== undefined && (
             <span className="text-sm text-gray-600">
-              {metadata.pageCount} {metadata.pageCount === 1 ? "page" : "pages"}
+              {metadata.pageCount} {metadata.pageCount === 1 ? 'page' : 'pages'}
             </span>
           )}
           {metadata?.error && (
@@ -91,32 +82,24 @@ export default function PdfPreview({ pdfUrl }: PdfPreviewProps) {
           className="pdf-container mx-auto bg-white shadow-lg"
           style={{
             transform: `scale(${scale})`,
-            transformOrigin: "top center",
-            transition: "transform 0.2s ease-in-out",
+            transformOrigin: 'top center',
+            transition: 'transform 0.2s ease-in-out',
           }}
         >
-          <iframe
-            src={pdfUrl}
-            className="w-full h-screen border-0"
-            title="PDF Preview"
-          />
+          <iframe src={pdfUrl} className="w-full h-screen border-0" title="PDF Preview" />
         </div>
       </div>
 
       {metadata?.offScreenText && metadata.offScreenText.length > 0 && (
         <div className="pdf-warnings p-4 border-t bg-yellow-50">
-          <p className="text-sm font-medium text-yellow-800 mb-2">
-            ⚠️ Off-screen content detected:
-          </p>
+          <p className="text-sm font-medium text-yellow-800 mb-2">⚠️ Off-screen content detected:</p>
           <ul className="text-xs text-yellow-700 list-disc list-inside">
-            {metadata.offScreenText
-              .slice(0, 5)
-              .map((text: string, i: number) => (
-                <li key={i}>{text}</li>
-              ))}
+            {metadata.offScreenText.slice(0, 5).map((text: string, i: number) => (
+              <li key={i}>{text}</li>
+            ))}
           </ul>
         </div>
       )}
     </div>
-  );
+  )
 }

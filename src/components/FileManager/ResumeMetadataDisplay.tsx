@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { ResumeMetadata } from "@/types";
-import { FiCalendar, FiBriefcase, FiFileText, FiEdit2 } from "react-icons/fi";
+import { FiBriefcase, FiCalendar, FiEdit2, FiFileText } from 'react-icons/fi'
+import type { ResumeMetadata } from '@/types'
 
 interface ResumeMetadataDisplayProps {
-  metadata?: ResumeMetadata;
-  onEdit?: () => void;
-  showEditButton?: boolean;
+  metadata?: ResumeMetadata
+  onEdit?: () => void
+  showEditButton?: boolean
 }
 
 export default function ResumeMetadataDisplay({
@@ -20,34 +20,34 @@ export default function ResumeMetadataDisplay({
       metadata.targetPosition ||
       metadata.applicationStatus ||
       metadata.notes ||
-      (metadata.tailoredFor && metadata.tailoredFor.length > 0));
+      (metadata.tailoredFor && metadata.tailoredFor.length > 0))
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "draft":
-        return "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300";
-      case "applied":
-        return "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300";
-      case "interview":
-        return "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300";
-      case "offer":
-        return "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300";
-      case "rejected":
-        return "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300";
-      case "withdrawn":
-        return "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300";
+      case 'draft':
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+      case 'applied':
+        return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+      case 'interview':
+        return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
+      case 'offer':
+        return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+      case 'rejected':
+        return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+      case 'withdrawn':
+        return 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
       default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300";
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
     }
-  };
+  }
 
   return (
     <div className="space-y-2 mb-3 group/metadata relative">
       {showEditButton && onEdit && (
         <button
           onClick={(e) => {
-            e.stopPropagation();
-            onEdit();
+            e.stopPropagation()
+            onEdit()
           }}
           className="absolute -top-1 -right-1 p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded opacity-0 group-hover/metadata:opacity-100 transition-opacity z-10"
           title="Edit metadata"
@@ -59,8 +59,8 @@ export default function ResumeMetadataDisplay({
       {!hasMetadata && showEditButton && onEdit && (
         <button
           onClick={(e) => {
-            e.stopPropagation();
-            onEdit();
+            e.stopPropagation()
+            onEdit()
           }}
           className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
         >
@@ -120,5 +120,5 @@ export default function ResumeMetadataDisplay({
         </div>
       )}
     </div>
-  );
+  )
 }

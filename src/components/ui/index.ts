@@ -1,3 +1,3 @@
-export { ColorPicker } from "../ColorPicker";
-export type { TailwindColor } from "../ColorPicker";
-export { default as Modal } from "./modal";
+export type { TailwindColor } from '../ColorPicker'
+export { ColorPicker } from '../ColorPicker'
+export { default as Modal } from './modal'

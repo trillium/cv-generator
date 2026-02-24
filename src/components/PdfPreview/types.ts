@@ -1,3 +1,3 @@
 export interface PdfPreviewProps {
-  pdfUrl: string;
+  pdfUrl: string
 }

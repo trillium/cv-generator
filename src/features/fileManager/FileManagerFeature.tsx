@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
-import { useModal } from "@/contexts/ModalContext";
-import PageHeader from "./parts/PageHeader";
-import ErrorDisplay from "./parts/ErrorDisplay";
-import DirectoryTree from "./parts/DirectoryTree";
-import DirectoryInfo from "./parts/DirectoryInfo";
-import SectionSources from "./parts/SectionSources";
-import DataPreview from "./parts/DataPreview";
-import SelectedFileInfo from "./parts/SelectedFileInfo";
-import ActionButtons from "./parts/ActionButtons";
-import EditFieldModal from "./parts/EditFieldModal";
-import CreateDirectoryContent from "./parts/CreateDirectoryContent";
-import SplitSectionContent from "./parts/SplitSectionContent";
-import DeleteFileContent from "./parts/DeleteFileContent";
-import { EditingFieldState } from "./parts/types";
+import { useEffect, useState } from 'react'
+import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
+import { useModal } from '@/contexts/ModalContext'
+import ActionButtons from './parts/ActionButtons'
+import CreateDirectoryContent from './parts/CreateDirectoryContent'
+import DataPreview from './parts/DataPreview'
+import DeleteFileContent from './parts/DeleteFileContent'
+import DirectoryInfo from './parts/DirectoryInfo'
+import DirectoryTree from './parts/DirectoryTree'
+import EditFieldModal from './parts/EditFieldModal'
+import ErrorDisplay from './parts/ErrorDisplay'
+import PageHeader from './parts/PageHeader'
+import SectionSources from './parts/SectionSources'
+import SelectedFileInfo from './parts/SelectedFileInfo'
+import SplitSectionContent from './parts/SplitSectionContent'
+import type { EditingFieldState } from './parts/types'
 
 export default function FileManagerFeature() {
   const {
@@ -35,102 +35,97 @@ export default function FileManagerFeature() {
     createDirectory,
     splitSectionToFile,
     deleteFileToDeleted,
-  } = useDirectoryManager();
+  } = useDirectoryManager()
 
-  const { openModal, closeModal } = useModal();
+  const { openModal, closeModal } = useModal()
 
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [editingField, setEditingField] = useState<EditingFieldState | null>(
-    null,
-  );
+  const [selectedFile, setSelectedFile] = useState<string | null>(null)
+  const [editingField, setEditingField] = useState<EditingFieldState | null>(null)
 
   useEffect(() => {
     loadAllResumes().then(() => {
       if (!currentDirectory) {
-        setCurrentResume("resumes");
+        setCurrentResume('resumes')
       }
-    });
-  }, [loadAllResumes, setCurrentResume, currentDirectory]);
+    })
+  }, [loadAllResumes, setCurrentResume, currentDirectory])
 
   async function handleSave() {
-    await saveDirectory();
+    await saveDirectory()
   }
 
   async function handleSaveAndCommit() {
-    await saveDirectory();
+    await saveDirectory()
   }
 
   async function handleDiscard() {
-    await discardChanges();
+    await discardChanges()
   }
 
   async function handleFieldSave() {
     if (editingField) {
-      await updateDataPath(editingField.path, editingField.value);
-      setEditingField(null);
+      await updateDataPath(editingField.path, editingField.value)
+      setEditingField(null)
     }
   }
 
   function handleFieldCancel() {
-    setEditingField(null);
+    setEditingField(null)
   }
 
   function handleFieldChange(value: string) {
     if (editingField) {
-      setEditingField({ ...editingField, value });
+      setEditingField({ ...editingField, value })
     }
   }
 
   async function handleCreateDirectory(directoryName: string) {
-    if (!currentDirectory) return;
+    if (!currentDirectory) return
     try {
-      await createDirectory(currentDirectory, directoryName);
-      closeModal();
+      await createDirectory(currentDirectory, directoryName)
+      closeModal()
     } catch (err) {
-      console.error("Failed to create directory:", err);
+      console.error('Failed to create directory:', err)
     }
   }
 
-  async function handleSplitSection(
-    sectionKeys: string[],
-    targetFileName: string,
-  ) {
-    if (!selectedFile && !currentDirectory) return;
+  async function handleSplitSection(sectionKeys: string[], targetFileName: string) {
+    if (!selectedFile && !currentDirectory) return
     try {
-      const sourcePath = selectedFile || currentDirectory || "";
-      await splitSectionToFile(sourcePath, sectionKeys, targetFileName);
-      closeModal();
+      const sourcePath = selectedFile || currentDirectory || ''
+      await splitSectionToFile(sourcePath, sectionKeys, targetFileName)
+      closeModal()
     } catch (err) {
-      console.error("Failed to split section:", err);
+      console.error('Failed to split section:', err)
     }
   }
 
   async function handleDeleteFile() {
-    if (!selectedFile) return;
+    if (!selectedFile) return
     try {
-      await deleteFileToDeleted(selectedFile);
-      closeModal();
-      setSelectedFile(null);
+      await deleteFileToDeleted(selectedFile)
+      closeModal()
+      setSelectedFile(null)
     } catch (err) {
-      console.error("Failed to delete file:", err);
+      console.error('Failed to delete file:', err)
     }
   }
 
   function showCreateDirectoryModal() {
-    if (!currentDirectory) return;
+    if (!currentDirectory) return
     openModal(
       <CreateDirectoryContent
         currentDirectory={currentDirectory}
         onClose={closeModal}
         onCreate={handleCreateDirectory}
       />,
-      "md",
-    );
+      'md',
+    )
   }
 
   function showSplitSectionModal() {
-    if (!selectedFile) return;
-    const fileInfo = files.find((f) => f.path === selectedFile);
+    if (!selectedFile) return
+    const fileInfo = files.find((f) => f.path === selectedFile)
     openModal(
       <SplitSectionContent
         selectedFile={selectedFile}
@@ -140,20 +135,20 @@ export default function FileManagerFeature() {
         onClose={closeModal}
         onSplit={handleSplitSection}
       />,
-      "md",
-    );
+      'md',
+    )
   }
 
   function showDeleteFileModal() {
-    if (!selectedFile) return;
+    if (!selectedFile) return
     openModal(
       <DeleteFileContent
         selectedFile={selectedFile}
         onClose={closeModal}
         onDelete={handleDeleteFile}
       />,
-      "md",
-    );
+      'md',
+    )
   }
 
   return (
@@ -180,13 +175,9 @@ export default function FileManagerFeature() {
           </button>
           <button
             onClick={showDeleteFileModal}
-            disabled={!selectedFile || loading || selectedFile === "resumes"}
+            disabled={!selectedFile || loading || selectedFile === 'resumes'}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            title={
-              selectedFile === "resumes"
-                ? "Cannot delete the root resumes folder"
-                : ""
-            }
+            title={selectedFile === 'resumes' ? 'Cannot delete the root resumes folder' : ''}
           >
             Delete File
           </button>
@@ -203,9 +194,7 @@ export default function FileManagerFeature() {
           </div>
 
           <div className="space-y-6">
-            {selectedFile && (
-              <SelectedFileInfo selectedFile={selectedFile} files={files} />
-            )}
+            {selectedFile && <SelectedFileInfo selectedFile={selectedFile} files={files} />}
 
             {metadata && (
               <DirectoryInfo
@@ -241,5 +230,5 @@ export default function FileManagerFeature() {
         )}
       </div>
     </div>
-  );
+  )
 }

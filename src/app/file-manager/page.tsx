@@ -1,5 +1,5 @@
-import FileManagerFeature from "@/features/fileManager/FileManagerFeature";
+import FileManagerFeature from '@/features/fileManager/FileManagerFeature'
 
 export default function FileManagerPage() {
-  return <FileManagerFeature />;
+  return <FileManagerFeature />
 }

@@ -1,16 +1,16 @@
-import Header from "@/components/Header/Header";
-import WorkExperience from "@/components/WorkExperience/WorkExperience";
-import Profile from "@/components/Profile/Profile";
-import ProjectsList from "@/components/Projects/ProjectsList";
-import type { CVData } from "@/types";
+import Header from '@/components/Header/Header'
+import Profile from '@/components/Profile/Profile'
+import ProjectsList from '@/components/Projects/ProjectsList'
+import WorkExperience from '@/components/WorkExperience/WorkExperience'
+import type { CVData } from '@/types'
 
 function SingleColumnResume({ data }: { data: CVData }) {
   // Defensive check: ensure critical data exists
   if (!data.header || !data.workExperience) {
-    console.warn("Two-column resume received incomplete data:", {
+    console.warn('Two-column resume received incomplete data:', {
       hasHeader: !!data.header,
       hasWorkExperience: !!data.workExperience,
-    });
+    })
     return (
       <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center">
@@ -23,7 +23,7 @@ function SingleColumnResume({ data }: { data: CVData }) {
           </p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -39,7 +39,7 @@ function SingleColumnResume({ data }: { data: CVData }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default SingleColumnResume;
+export default SingleColumnResume

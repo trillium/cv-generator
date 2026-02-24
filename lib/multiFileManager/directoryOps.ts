@@ -1,40 +1,35 @@
-import { getPiiDirectory } from "../getPiiPath";
-import { loadDataFile, SECTION_KEY_TO_FILENAME } from "../multiFileMapper";
-import * as path from "path";
-import * as fs from "fs/promises";
-import fsSync from "fs";
-import {
-  parseYamlString,
-  createYamlDocument,
-  documentToString,
-} from "../yamlService";
+import fsSync from 'node:fs'
+import * as fs from 'node:fs/promises'
+import * as path from 'node:path'
+import { getPiiDirectory } from '../getPiiPath'
+import { loadDataFile, SECTION_KEY_TO_FILENAME } from '../multiFileMapper'
+import { createYamlDocument, documentToString, parseYamlString } from '../yamlService'
 
 export async function createDirectory(
   parentPath: string,
   directoryName: string,
 ): Promise<{ success: boolean; path: string; error?: string }> {
   try {
-    const piiPath = getPiiDirectory();
-    const newDirPath = path.join(piiPath, parentPath, directoryName);
+    const piiPath = getPiiDirectory()
+    const newDirPath = path.join(piiPath, parentPath, directoryName)
     if (fsSync.existsSync(newDirPath)) {
       return {
         success: false,
         path: path.join(parentPath, directoryName),
-        error: "Directory already exists",
-      };
+        error: 'Directory already exists',
+      }
     }
-    await fs.mkdir(newDirPath, { recursive: true });
+    await fs.mkdir(newDirPath, { recursive: true })
     return {
       success: true,
       path: path.join(parentPath, directoryName),
-    };
+    }
   } catch (error) {
     return {
       success: false,
       path: path.join(parentPath, directoryName),
-      error:
-        error instanceof Error ? error.message : "Failed to create directory",
-    };
+      error: error instanceof Error ? error.message : 'Failed to create directory',
+    }
   }
 }
 
@@ -45,74 +40,74 @@ export async function splitSectionToFile(
   mergedData?: Record<string, unknown>,
 ): Promise<{ success: boolean; targetPath?: string; error?: string }> {
   try {
-    const piiPath = getPiiDirectory();
-    const fullSourcePath = path.join(piiPath, sourceFilePath);
+    const piiPath = getPiiDirectory()
+    const fullSourcePath = path.join(piiPath, sourceFilePath)
     const isDirectory = fsSync.existsSync(fullSourcePath)
       ? fsSync.statSync(fullSourcePath).isDirectory()
-      : false;
+      : false
 
-    let sourceData: Record<string, unknown>;
-    let targetDir: string;
-    let shouldUpdateSource = false;
+    let sourceData: Record<string, unknown>
+    let targetDir: string
+    let shouldUpdateSource = false
 
     if (mergedData && (isDirectory || !fsSync.existsSync(fullSourcePath))) {
-      sourceData = mergedData;
-      targetDir = isDirectory ? fullSourcePath : path.dirname(fullSourcePath);
-      shouldUpdateSource = false;
+      sourceData = mergedData
+      targetDir = isDirectory ? fullSourcePath : path.dirname(fullSourcePath)
+      shouldUpdateSource = false
     } else {
-      const sourceContent = await fs.readFile(fullSourcePath, "utf-8");
-      sourceData = parseYamlString(sourceContent);
-      targetDir = path.dirname(fullSourcePath);
-      shouldUpdateSource = true;
+      const sourceContent = await fs.readFile(fullSourcePath, 'utf-8')
+      sourceData = parseYamlString(sourceContent)
+      targetDir = path.dirname(fullSourcePath)
+      shouldUpdateSource = true
     }
 
     for (const sectionKey of sectionKeys) {
       if (!(sectionKey in sourceData)) {
         return {
           success: false,
-          error: `Section "${sectionKey}" not found in ${mergedData ? "merged data" : "source file"}`,
-        };
+          error: `Section "${sectionKey}" not found in ${mergedData ? 'merged data' : 'source file'}`,
+        }
       }
     }
 
-    const targetData: Record<string, unknown> = {};
+    const targetData: Record<string, unknown> = {}
     for (const sectionKey of sectionKeys) {
-      targetData[sectionKey] = sourceData[sectionKey];
+      targetData[sectionKey] = sourceData[sectionKey]
       if (shouldUpdateSource) {
-        delete sourceData[sectionKey];
+        delete sourceData[sectionKey]
       }
     }
 
-    const targetPath = path.join(targetDir, targetFileName);
+    const targetPath = path.join(targetDir, targetFileName)
 
     const allSectionsSelected =
       shouldUpdateSource &&
       Object.keys(sourceData).length === 0 &&
-      Object.keys(targetData).length > 0;
+      Object.keys(targetData).length > 0
 
     if (allSectionsSelected) {
-      const doc = createYamlDocument(targetData);
-      await fs.writeFile(targetPath, documentToString(doc));
+      const doc = createYamlDocument(targetData)
+      await fs.writeFile(targetPath, documentToString(doc))
     } else if (shouldUpdateSource) {
-      const sourceDoc = createYamlDocument(sourceData);
-      await fs.writeFile(fullSourcePath, documentToString(sourceDoc));
-      const targetDoc = createYamlDocument(targetData);
-      await fs.writeFile(targetPath, documentToString(targetDoc));
+      const sourceDoc = createYamlDocument(sourceData)
+      await fs.writeFile(fullSourcePath, documentToString(sourceDoc))
+      const targetDoc = createYamlDocument(targetData)
+      await fs.writeFile(targetPath, documentToString(targetDoc))
     } else {
-      const doc = createYamlDocument(targetData);
-      await fs.writeFile(targetPath, documentToString(doc));
+      const doc = createYamlDocument(targetData)
+      await fs.writeFile(targetPath, documentToString(doc))
     }
 
-    const relativeTargetPath = path.relative(piiPath, targetPath);
+    const relativeTargetPath = path.relative(piiPath, targetPath)
     return {
       success: true,
       targetPath: relativeTargetPath,
-    };
+    }
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to split section",
-    };
+      error: error instanceof Error ? error.message : 'Failed to split section',
+    }
   }
 }
 
@@ -120,31 +115,27 @@ export async function deleteFile(
   filePath: string,
 ): Promise<{ success: boolean; deletedPath?: string; error?: string }> {
   try {
-    const piiPath = getPiiDirectory();
-    const fullSourcePath = path.join(piiPath, filePath);
+    const piiPath = getPiiDirectory()
+    const fullSourcePath = path.join(piiPath, filePath)
     if (!fsSync.existsSync(fullSourcePath)) {
       return {
         success: false,
-        error: "File does not exist",
-      };
+        error: 'File does not exist',
+      }
     }
-    const deletedDirPath = path.join(
-      piiPath,
-      "deleted",
-      path.dirname(filePath),
-    );
-    const deletedFilePath = path.join(piiPath, "deleted", filePath);
-    await fs.mkdir(deletedDirPath, { recursive: true });
-    await fs.rename(fullSourcePath, deletedFilePath);
+    const deletedDirPath = path.join(piiPath, 'deleted', path.dirname(filePath))
+    const deletedFilePath = path.join(piiPath, 'deleted', filePath)
+    await fs.mkdir(deletedDirPath, { recursive: true })
+    await fs.rename(fullSourcePath, deletedFilePath)
     return {
       success: true,
-      deletedPath: path.join("deleted", filePath),
-    };
+      deletedPath: path.join('deleted', filePath),
+    }
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to delete file",
-    };
+      error: error instanceof Error ? error.message : 'Failed to delete file',
+    }
   }
 }
 
@@ -154,90 +145,84 @@ export async function splitArrayToNumberedFiles(
   itemsPerFile: number = 1,
   numberIncrement: number = 10,
 ): Promise<{
-  success: boolean;
-  createdFiles?: string[];
-  backupPath?: string;
-  error?: string;
+  success: boolean
+  createdFiles?: string[]
+  backupPath?: string
+  error?: string
 }> {
   try {
-    const piiPath = getPiiDirectory();
-    const fullSourcePath = path.join(piiPath, sourceFile);
+    const piiPath = getPiiDirectory()
+    const fullSourcePath = path.join(piiPath, sourceFile)
 
     if (!fsSync.existsSync(fullSourcePath)) {
       return {
         success: false,
-        error: "Source file does not exist",
-      };
+        error: 'Source file does not exist',
+      }
     }
 
-    const fileData = loadDataFile(fullSourcePath);
-    const arrayData = fileData[sectionKey];
+    const fileData = loadDataFile(fullSourcePath)
+    const arrayData = fileData[sectionKey]
 
     if (!Array.isArray(arrayData)) {
       return {
         success: false,
         error: `Section '${sectionKey}' is not an array`,
-      };
+      }
     }
 
     if (arrayData.length === 0) {
       return {
         success: false,
-        error: "Array is empty, nothing to split",
-      };
+        error: 'Array is empty, nothing to split',
+      }
     }
 
-    const backupDir = path.join(piiPath, "backups");
-    await fs.mkdir(backupDir, { recursive: true });
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const backupFileName = `${path.basename(sourceFile, path.extname(sourceFile))}.${timestamp}${path.extname(sourceFile)}`;
-    const backupPath = path.join(backupDir, backupFileName);
-    await fs.copyFile(fullSourcePath, backupPath);
+    const backupDir = path.join(piiPath, 'backups')
+    await fs.mkdir(backupDir, { recursive: true })
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+    const backupFileName = `${path.basename(sourceFile, path.extname(sourceFile))}.${timestamp}${path.extname(sourceFile)}`
+    const backupPath = path.join(backupDir, backupFileName)
+    await fs.copyFile(fullSourcePath, backupPath)
 
-    const sourceDir = path.dirname(fullSourcePath);
-    const sourceExt = path.extname(sourceFile);
+    const sourceDir = path.dirname(fullSourcePath)
+    const sourceExt = path.extname(sourceFile)
 
-    const sectionFilenames = SECTION_KEY_TO_FILENAME[sectionKey];
-    const baseFilename = sectionFilenames ? sectionFilenames[0] : sectionKey;
+    const sectionFilenames = SECTION_KEY_TO_FILENAME[sectionKey]
+    const baseFilename = sectionFilenames ? sectionFilenames[0] : sectionKey
 
-    const createdFiles: string[] = [];
-    const numFiles = Math.ceil(arrayData.length / itemsPerFile);
-    const maxNumber = (numFiles - 1) * numberIncrement + numberIncrement;
-    const paddingLength = String(maxNumber).length;
+    const createdFiles: string[] = []
+    const numFiles = Math.ceil(arrayData.length / itemsPerFile)
+    const maxNumber = (numFiles - 1) * numberIncrement + numberIncrement
+    const paddingLength = String(maxNumber).length
 
     for (let i = 0; i < numFiles; i++) {
-      const fileNumber = String((i + 1) * numberIncrement).padStart(
-        paddingLength,
-        "0",
-      );
-      const numberedFileName = `${baseFilename}.${sectionKey}${fileNumber}${sourceExt}`;
-      const numberedFilePath = path.join(sourceDir, numberedFileName);
+      const fileNumber = String((i + 1) * numberIncrement).padStart(paddingLength, '0')
+      const numberedFileName = `${baseFilename}.${sectionKey}${fileNumber}${sourceExt}`
+      const numberedFilePath = path.join(sourceDir, numberedFileName)
 
-      const startIndex = i * itemsPerFile;
-      const endIndex = Math.min(startIndex + itemsPerFile, arrayData.length);
-      const fileItems = arrayData.slice(startIndex, endIndex);
+      const startIndex = i * itemsPerFile
+      const endIndex = Math.min(startIndex + itemsPerFile, arrayData.length)
+      const fileItems = arrayData.slice(startIndex, endIndex)
 
-      const fileContent = { [sectionKey]: fileItems };
-      const doc = createYamlDocument(fileContent);
-      await fs.writeFile(numberedFilePath, documentToString(doc));
+      const fileContent = { [sectionKey]: fileItems }
+      const doc = createYamlDocument(fileContent)
+      await fs.writeFile(numberedFilePath, documentToString(doc))
 
-      createdFiles.push(path.relative(piiPath, numberedFilePath));
+      createdFiles.push(path.relative(piiPath, numberedFilePath))
     }
 
-    await fs.unlink(fullSourcePath);
+    await fs.unlink(fullSourcePath)
 
     return {
       success: true,
       createdFiles,
       backupPath: path.relative(piiPath, backupPath),
-    };
+    }
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to split array to numbered files",
-    };
+      error: error instanceof Error ? error.message : 'Failed to split array to numbered files',
+    }
   }
 }

@@ -1,20 +1,20 @@
-"use client";
+'use client'
 
-import React, { ReactNode, cloneElement, isValidElement } from "react";
+import React, { cloneElement, isValidElement, type ReactNode } from 'react'
 
 interface EmptyFieldPlaceholderProps {
-  children: ReactNode;
-  fieldType: "text" | "textarea" | "array" | "link";
-  isEmpty: boolean;
-  yamlPath: string;
+  children: ReactNode
+  fieldType: 'text' | 'textarea' | 'array' | 'link'
+  isEmpty: boolean
+  yamlPath: string
   linkData?: {
-    text: string;
-    url: string;
-    icon?: ReactNode;
-    textYamlPath: string;
-    urlYamlPath: string;
-    onSaveLink?: (text: string, url: string) => Promise<void>;
-  };
+    text: string
+    url: string
+    icon?: ReactNode
+    textYamlPath: string
+    urlYamlPath: string
+    onSaveLink?: (text: string, url: string) => Promise<void>
+  }
 }
 
 export default function EmptyFieldPlaceholder({
@@ -25,50 +25,45 @@ export default function EmptyFieldPlaceholder({
 }: EmptyFieldPlaceholderProps) {
   // Generate specific placeholder messages for technical skills
   const getPlaceholderMessage = () => {
-    if (fieldType === "link" || yamlPath.includes("links")) {
-      return `Click to add ${yamlPath}`;
+    if (fieldType === 'link' || yamlPath.includes('links')) {
+      return `Click to add ${yamlPath}`
     }
-    if (yamlPath.includes("technical")) {
-      if (yamlPath.includes(".category")) {
-        return "Click to add Category";
-      } else if (yamlPath.includes(".bubbles.")) {
-        return "Click to add Skill";
-      } else if (yamlPath.includes("bubbles") && !yamlPath.includes(".")) {
-        return "Click to add Skills";
-      } else if (
-        yamlPath.includes("technical.") &&
-        yamlPath.split(".").length === 2
-      ) {
-        return "Click to add technical skills section";
+    if (yamlPath.includes('technical')) {
+      if (yamlPath.includes('.category')) {
+        return 'Click to add Category'
+      } else if (yamlPath.includes('.bubbles.')) {
+        return 'Click to add Skill'
+      } else if (yamlPath.includes('bubbles') && !yamlPath.includes('.')) {
+        return 'Click to add Skills'
+      } else if (yamlPath.includes('technical.') && yamlPath.split('.').length === 2) {
+        return 'Click to add technical skills section'
       }
     }
-    return `Click to edit ${yamlPath} (not visible in print view)`;
-  };
+    return `Click to edit ${yamlPath} (not visible in print view)`
+  }
 
   const isContentBlank = (content: unknown): boolean => {
-    if (typeof content === "string") {
-      return content.trim() === "";
+    if (typeof content === 'string') {
+      return content.trim() === ''
     }
     if (Array.isArray(content)) {
-      return (
-        content.length === 0 || content.every((item) => isContentBlank(item))
-      );
+      return content.length === 0 || content.every((item) => isContentBlank(item))
     }
-    return content == null || content === "";
-  };
+    return content == null || content === ''
+  }
 
   // Function to recursively replace blank content with placeholder
   const replaceBlankContent = (node: ReactNode): ReactNode => {
     if (!isValidElement(node)) {
       // If it's a text node or other non-element, check if it's blank
-      if (typeof node === "string" && isContentBlank(node)) {
+      if (typeof node === 'string' && isContentBlank(node)) {
         return (
           <span className="text-gray-400 italic opacity-70 hover:opacity-90 transition-opacity block print:hidden">
             {getPlaceholderMessage()}
           </span>
-        );
+        )
       }
-      return node;
+      return node
     }
 
     // Handle null children for empty arrays
@@ -76,35 +71,29 @@ export default function EmptyFieldPlaceholder({
       !isValidElement(node) &&
       node == null &&
       isEmpty &&
-      (fieldType === "link" || yamlPath.includes("links"))
+      (fieldType === 'link' || yamlPath.includes('links'))
     ) {
       return (
         <span className="text-gray-400 italic opacity-70 hover:opacity-90 transition-opacity block print:hidden">
           {getPlaceholderMessage()}
         </span>
-      );
+      )
     }
 
     // If it's a React element, check its children
-    const element = node as React.ReactElement;
-    const { children: elementChildren, ...props } = element.props as Record<
-      string,
-      unknown
-    >;
+    const element = node as React.ReactElement
+    const { children: elementChildren, ...props } = element.props as Record<string, unknown>
 
     if (elementChildren == null) {
-      return element;
+      return element
     }
 
     // If children is a string and blank, replace it
-    if (
-      typeof elementChildren === "string" &&
-      isContentBlank(elementChildren)
-    ) {
-      const newProps: Record<string, unknown> = { ...props };
-      const href = newProps.href as string | undefined;
-      if (element.type === "a" && (!href || href.trim() === "")) {
-        newProps.href = "#";
+    if (typeof elementChildren === 'string' && isContentBlank(elementChildren)) {
+      const newProps: Record<string, unknown> = { ...props }
+      const href = newProps.href as string | undefined
+      if (element.type === 'a' && (!href || href.trim() === '')) {
+        newProps.href = '#'
       }
 
       return cloneElement(
@@ -115,37 +104,35 @@ export default function EmptyFieldPlaceholder({
             {getPlaceholderMessage()}
           </span>
           <span className="text-gray-400 italic opacity-70 hover:opacity-90 transition-opacity print:inline-block hidden">
-            {" "}
+            {' '}
           </span>
         </React.Fragment>,
-      );
+      )
     }
 
     // If children is an array, process each child
     if (Array.isArray(elementChildren)) {
-      const processedChildren = elementChildren.map((child) =>
-        replaceBlankContent(child),
-      );
-      return cloneElement(element, props, processedChildren);
+      const processedChildren = elementChildren.map((child) => replaceBlankContent(child))
+      return cloneElement(element, props, processedChildren)
     }
 
     // If children is a single React element, process it recursively
     if (isValidElement(elementChildren)) {
-      const processedChild = replaceBlankContent(elementChildren);
-      return cloneElement(element, props, processedChild);
+      const processedChild = replaceBlankContent(elementChildren)
+      return cloneElement(element, props, processedChild)
     }
 
     // Otherwise, return as-is
-    return element;
-  };
+    return element
+  }
 
   if (isEmpty) {
     // Replace blank content with placeholder while preserving wrapper and styling
-    const processedChildren = replaceBlankContent(children);
+    const processedChildren = replaceBlankContent(children)
 
     // Don't wrap in additional div to preserve click event bubbling
-    return <>{processedChildren}</>;
+    return <>{processedChildren}</>
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }

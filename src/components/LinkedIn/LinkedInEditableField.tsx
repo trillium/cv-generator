@@ -1,112 +1,103 @@
-"use client";
+'use client'
 
-import React, { useState, useEffect, ReactNode } from "react";
-import clsx from "clsx";
-import {
-  useLinkedInYamlUpdater,
-  getNestedValue,
-} from "@/hooks/useLinkedInYamlUpdater";
-import { useLinkedInData } from "@/contexts/LinkedInContext";
-import { useModal } from "@/contexts/ModalContext";
-import EditModal from "@/components/EditableField/EditModal";
-import EmptyFieldPlaceholder from "@/components/EditableField/EmptyFieldPlaceholder";
-import { isFieldEmpty } from "@/components/EditableField/editableFieldUtils";
+import clsx from 'clsx'
+import type React from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
+import EditModal from '@/components/EditableField/EditModal'
+import EmptyFieldPlaceholder from '@/components/EditableField/EmptyFieldPlaceholder'
+import { isFieldEmpty } from '@/components/EditableField/editableFieldUtils'
+import { useLinkedInData } from '@/contexts/LinkedInContext'
+import { useModal } from '@/contexts/ModalContext'
+import { getNestedValue, useLinkedInYamlUpdater } from '@/hooks/useLinkedInYamlUpdater'
 
 interface LinkedInEditableFieldProps<T> {
-  yamlPath: string;
-  value: T;
-  fieldType?: "text" | "textarea" | "array" | "link";
-  children: ReactNode;
-  className?: string;
+  yamlPath: string
+  value: T
+  fieldType?: 'text' | 'textarea' | 'array' | 'link'
+  children: ReactNode
+  className?: string
 }
 
 export default function LinkedInEditableField<T extends string | string[]>({
   yamlPath,
   value,
-  fieldType = "text",
+  fieldType = 'text',
   children,
-  className = "",
+  className = '',
 }: LinkedInEditableFieldProps<T>) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState<string>(
-    Array.isArray(value) ? value.join("\n") : String(value || ""),
-  );
-  const [isSaving, setIsSaving] = useState(false);
+    Array.isArray(value) ? value.join('\n') : String(value || ''),
+  )
+  const [isSaving, setIsSaving] = useState(false)
 
-  const { updateYamlPath } = useLinkedInYamlUpdater();
-  const { parsedData, error } = useLinkedInData();
-  const { openModal, closeModal } = useModal();
+  const { updateYamlPath } = useLinkedInYamlUpdater()
+  const { parsedData, error } = useLinkedInData()
+  const { openModal, closeModal } = useModal()
 
-  const isEmpty = isFieldEmpty(value);
+  const isEmpty = isFieldEmpty(value)
 
   useEffect(() => {
-    if (!yamlPath || typeof yamlPath !== "string") return;
-    const currentValue = getNestedValue(parsedData, yamlPath);
+    if (!yamlPath || typeof yamlPath !== 'string') return
+    const currentValue = getNestedValue(parsedData, yamlPath)
     const stringValue = Array.isArray(currentValue)
-      ? currentValue.join("\n")
-      : String(currentValue || "");
-    setEditValue(stringValue);
-  }, [parsedData, yamlPath]);
+      ? currentValue.join('\n')
+      : String(currentValue || '')
+    setEditValue(stringValue)
+  }, [parsedData, yamlPath])
 
-  if (!yamlPath || typeof yamlPath !== "string") {
-    console.warn(
-      "LinkedInEditableField: yamlPath is required but was not provided",
-    );
-    return <div className={className}>{children}</div>;
+  if (!yamlPath || typeof yamlPath !== 'string') {
+    console.warn('LinkedInEditableField: yamlPath is required but was not provided')
+    return <div className={className}>{children}</div>
   }
 
   const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation()
     if (!isEditing && !error) {
-      setIsEditing(true);
-      openEditModal();
+      setIsEditing(true)
+      openEditModal()
     }
-  };
+  }
 
   const handleSave = async (modalEditValue: string | string[] | unknown[]) => {
-    const currentValue = Array.isArray(value)
-      ? value.join("\n")
-      : String(value || "");
+    const currentValue = Array.isArray(value) ? value.join('\n') : String(value || '')
 
     if (JSON.stringify(modalEditValue) !== JSON.stringify(currentValue)) {
-      setIsSaving(true);
+      setIsSaving(true)
       try {
-        let newValue: string | string[] | unknown[] = modalEditValue;
+        let newValue: string | string[] | unknown[] = modalEditValue
 
-        if (fieldType === "array" && typeof modalEditValue === "string") {
+        if (fieldType === 'array' && typeof modalEditValue === 'string') {
           newValue = modalEditValue
-            .split("\n")
+            .split('\n')
             .map((line) => line.trim())
-            .filter((line) => line.length > 0);
+            .filter((line) => line.length > 0)
         }
 
-        await updateYamlPath(yamlPath, newValue);
+        await updateYamlPath(yamlPath, newValue)
         const stringValue = Array.isArray(newValue)
-          ? Array.isArray(newValue[0]) ||
-            (newValue.length > 0 && typeof newValue[0] === "object")
+          ? Array.isArray(newValue[0]) || (newValue.length > 0 && typeof newValue[0] === 'object')
             ? JSON.stringify(newValue) // For object arrays like links
-            : newValue.join("\n") // For string arrays
-          : String(newValue || "");
-        setEditValue(stringValue);
+            : newValue.join('\n') // For string arrays
+          : String(newValue || '')
+        setEditValue(stringValue)
       } catch (error) {
-        console.error("Error saving field:", yamlPath, error);
-        throw error;
+        console.error('Error saving field:', yamlPath, error)
+        throw error
       } finally {
-        setIsSaving(false);
+        setIsSaving(false)
       }
     }
-    setIsEditing(false);
-    closeModal();
-  };
+    setIsEditing(false)
+    closeModal()
+  }
 
   const handleCancel = () => {
-    const originalValue = Array.isArray(value)
-      ? value.join("\n")
-      : String(value || "");
-    setEditValue(originalValue);
-    setIsEditing(false);
-    closeModal();
-  };
+    const originalValue = Array.isArray(value) ? value.join('\n') : String(value || '')
+    setEditValue(originalValue)
+    setIsEditing(false)
+    closeModal()
+  }
 
   const openEditModal = () => {
     const ModalContent = () => (
@@ -121,55 +112,44 @@ export default function LinkedInEditableField<T extends string | string[]>({
         onSave={handleSave}
         onCancel={handleCancel}
       />
-    );
+    )
 
-    openModal(<ModalContent />, "md", handleCancel);
-  };
+    openModal(<ModalContent />, 'md', handleCancel)
+  }
 
   const handleWrapperKeyDown = (e: React.KeyboardEvent) => {
-    if (!isEditing && (e.key === "Enter" || e.key === " ")) {
-      e.preventDefault();
+    if (!isEditing && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault()
       if (!error) {
-        setIsEditing(true);
-        openEditModal();
+        setIsEditing(true)
+        openEditModal()
       }
     }
-  };
+  }
 
-  const cursorClasses = "cursor-pointer";
-  const baseLayoutClasses =
-    "relative block group relative transition-all duration-200";
+  const cursorClasses = 'cursor-pointer'
+  const baseLayoutClasses = 'relative block group relative transition-all duration-200'
 
-  const wrapperStyles = clsx(baseLayoutClasses, cursorClasses, className);
+  const wrapperStyles = clsx(baseLayoutClasses, cursorClasses, className)
 
   const HighlightOverlay = () => (
     <div className="absolute inset-0 group-hover:bg-blue-500/20 dark:group-hover:bg-blue-900/50 group-hover:shadow group-hover:shadow-blue-200/50 dark:group-hover:shadow-blue-700/50 group-hover:rounded active:bg-blue-100 dark:active:bg-blue-800/50 active:scale-[0.98] z-10 pointer-events-none top-0 right-0 left-0 bottom-0 rounded-lg bg-transparent print:group-hover:bg-transparent print:group-hover:shadow-transparent" />
-  );
+  )
 
   return (
-    <>
-      <div
-        className={wrapperStyles}
-        onClick={handleClick}
-        onKeyDown={handleWrapperKeyDown}
-        tabIndex={!error ? 0 : -1}
-        role="button"
-        aria-label={`Edit ${yamlPath?.split(".").pop() || "field"}`}
-        title={
-          !error
-            ? "Click to edit (or press Enter/Space)"
-            : "Cannot edit: YAML has errors"
-        }
-      >
-        <HighlightOverlay />
-        <EmptyFieldPlaceholder
-          fieldType={fieldType}
-          isEmpty={isEmpty}
-          yamlPath={yamlPath}
-        >
-          {children}
-        </EmptyFieldPlaceholder>
-      </div>
-    </>
-  );
+    <div
+      className={wrapperStyles}
+      onClick={handleClick}
+      onKeyDown={handleWrapperKeyDown}
+      tabIndex={!error ? 0 : -1}
+      role="button"
+      aria-label={`Edit ${yamlPath?.split('.').pop() || 'field'}`}
+      title={!error ? 'Click to edit (or press Enter/Space)' : 'Cannot edit: YAML has errors'}
+    >
+      <HighlightOverlay />
+      <EmptyFieldPlaceholder fieldType={fieldType} isEmpty={isEmpty} yamlPath={yamlPath}>
+        {children}
+      </EmptyFieldPlaceholder>
+    </div>
+  )
 }

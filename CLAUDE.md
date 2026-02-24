@@ -61,26 +61,26 @@ When you run into a problem you didn't expect, write yourself some exploratory c
 - **Install dependencies:** `bun install` (preferred; or `npm install`/`yarn install`)
 - **Start dev server:** `bun dev`
 - **Build:** `bun build`
-- **Lint (auto-fix):** `bun lint`
-- **Format:** `bun format` (Prettier)
+- **Lint (auto-fix):** `bun lint` (Biome)
+- **Format:** `bun format` (Biome)
 - **Test (all):** `bun test`
 - **Test (watch):** `bun test:watch`
 - **Test (coverage):** `bun test:coverage`
 - **Test (single file):** `bun test path/to/file.test.ts` (or use `vitest` CLI directly)
 - **Spellcheck:** `bun spellcheck` (or `bun spellcheck:fix`)
-- **Pre-commit:** Uses lint-staged for ESLint, Prettier, and spellcheck on staged files
+- **Pre-commit:** Uses lint-staged with Biome for linting and formatting on staged files
 
 ## Code Style Guidelines
 
 - **Package manager:** Use `bun` (see `package.json` for version)
 - **Imports:** Use ES6 import syntax. Group external, then internal modules
-- **Formatting:** Prettier config: no semicolons, single quotes, 2 spaces, 100 char line, trailing commas (es5), bracket spacing, Tailwind plugin
-- **Linting:** ESLint with TypeScript, Next.js, a11y, and Prettier. All lint errors must be fixed before merging
+- **Formatting:** Biome config: no semicolons, single quotes, 2 spaces, 100 char line, trailing commas, bracket spacing
+- **Linting:** Biome with recommended rules. All lint errors must be fixed before merging
 - **Types:** Use TypeScript types and interfaces. Prefer explicit types for function signatures and exports
 - **Naming:** camelCase for variables/functions, PascalCase for types/classes/components, UPPER_CASE for constants
 - **Error Handling:** Use try/catch for async code. Log errors with context. Avoid silent failures
 - **Testing:** Place tests in `__tests__` folders or alongside modules. Use descriptive test names
-- **Ignore/format:** See `.prettierignore` for files not formatted; see `.eslint.config.mjs` for ignored files
+- **Ignore/format:** See `biome.json` for ignored files and formatting/linting config
 
 # Developer Tools
 

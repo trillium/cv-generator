@@ -1,16 +1,16 @@
-import * as React from "react";
-import { useState } from "react";
-import { useModal } from "@/contexts/ModalContext";
-import type { DirectoryFileInfo } from "@/types/multiFileManager.types";
-import type { CVData } from "@/types";
+import type * as React from 'react'
+import { useState } from 'react'
+import { useModal } from '@/contexts/ModalContext'
+import type { CVData } from '@/types'
+import type { DirectoryFileInfo } from '@/types/multiFileManager.types'
 
 interface SplitSectionContentProps {
-  selectedFile: string;
-  fileInfo: DirectoryFileInfo | undefined;
-  currentDirectory: string | null;
-  parsedData: CVData | null;
-  onClose: () => void;
-  onSplit: (sectionKeys: string[], targetFileName: string) => void;
+  selectedFile: string
+  fileInfo: DirectoryFileInfo | undefined
+  currentDirectory: string | null
+  parsedData: CVData | null
+  onClose: () => void
+  onSplit: (sectionKeys: string[], targetFileName: string) => void
 }
 
 const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
@@ -21,41 +21,38 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
   onClose,
   onSplit,
 }) => {
-  const [selectedSections, setSelectedSections] = useState<Set<string>>(
-    new Set(),
-  );
-  const [targetFileName, setTargetFileName] = useState("");
-  const { useAutoFocus } = useModal();
-  const inputRef = useAutoFocus<HTMLInputElement>();
+  const [selectedSections, setSelectedSections] = useState<Set<string>>(new Set())
+  const [targetFileName, setTargetFileName] = useState('')
+  const { useAutoFocus } = useModal()
+  const inputRef = useAutoFocus<HTMLInputElement>()
 
-  const fileSections = fileInfo?.sections || [];
-  const mergedDataSections = parsedData ? Object.keys(parsedData) : [];
-  const sections = fileSections.length > 0 ? fileSections : mergedDataSections;
-  const isUsingMergedData =
-    fileSections.length === 0 && mergedDataSections.length > 0;
-  const allSelected = selectedSections.size === sections.length;
+  const fileSections = fileInfo?.sections || []
+  const mergedDataSections = parsedData ? Object.keys(parsedData) : []
+  const sections = fileSections.length > 0 ? fileSections : mergedDataSections
+  const isUsingMergedData = fileSections.length === 0 && mergedDataSections.length > 0
+  const allSelected = selectedSections.size === sections.length
 
   function toggleSection(section: string) {
-    const newSelection = new Set(selectedSections);
+    const newSelection = new Set(selectedSections)
     if (newSelection.has(section)) {
-      newSelection.delete(section);
+      newSelection.delete(section)
     } else {
-      newSelection.add(section);
+      newSelection.add(section)
     }
-    setSelectedSections(newSelection);
+    setSelectedSections(newSelection)
   }
 
   function toggleAll() {
     if (allSelected) {
-      setSelectedSections(new Set());
+      setSelectedSections(new Set())
     } else {
-      setSelectedSections(new Set(sections));
+      setSelectedSections(new Set(sections))
     }
   }
 
   function handleSplit() {
     if (selectedSections.size > 0 && targetFileName.trim()) {
-      onSplit(Array.from(selectedSections), targetFileName.trim());
+      onSplit(Array.from(selectedSections), targetFileName.trim())
     }
   }
 
@@ -77,7 +74,7 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
           </button>
         </div>
       </>
-    );
+    )
   }
 
   return (
@@ -89,8 +86,7 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           {isUsingMergedData ? (
             <>
-              Target Directory:{" "}
-              <span className="font-mono">{currentDirectory}</span>
+              Target Directory: <span className="font-mono">{currentDirectory}</span>
               <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Sections from merged data (inherited from parent directories)
               </div>
@@ -109,7 +105,7 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
               onClick={toggleAll}
               className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
             >
-              {allSelected ? "Deselect All" : "Select All"}
+              {allSelected ? 'Deselect All' : 'Select All'}
             </button>
           </div>
 
@@ -146,7 +142,7 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
           onChange={(e) => setTargetFileName(e.target.value)}
           placeholder="Target file name (e.g., work.yml)"
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-          onKeyDown={(e) => e.key === "Enter" && handleSplit()}
+          onKeyDown={(e) => e.key === 'Enter' && handleSplit()}
         />
       </div>
       <div className="flex gap-3 justify-end">
@@ -161,15 +157,11 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
           disabled={selectedSections.size === 0 || !targetFileName.trim()}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isUsingMergedData
-            ? "Create File"
-            : allSelected
-              ? "Duplicate File"
-              : "Split Sections"}
+          {isUsingMergedData ? 'Create File' : allSelected ? 'Duplicate File' : 'Split Sections'}
         </button>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default SplitSectionContent;
+export default SplitSectionContent

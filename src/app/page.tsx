@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function HomePage() {
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(() => {
-    router.push("/file-manager");
-  }, [router]);
+    router.push('/file-manager')
+  }, [router])
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
@@ -17,5 +17,5 @@ export default function HomePage() {
         <p className="text-gray-600 dark:text-gray-400">Redirecting...</p>
       </div>
     </div>
-  );
+  )
 }

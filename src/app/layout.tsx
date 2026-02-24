@@ -1,16 +1,12 @@
-import "./globals.css";
-import Navigation from "@/components/Navigation/Navigation";
-import { DirectoryManagerProvider } from "@/src/contexts/DirectoryManagerContext";
-import { ModalProvider } from "@/contexts/ModalContext";
-import Modal from "@/components/ui/modal";
-import { ThemeProviders } from "./theme-providers";
-import { Toaster } from "sonner";
+import './globals.css'
+import { Toaster } from 'sonner'
+import Navigation from '@/components/Navigation/Navigation'
+import Modal from '@/components/ui/modal'
+import { ModalProvider } from '@/contexts/ModalContext'
+import { DirectoryManagerProvider } from '@/src/contexts/DirectoryManagerContext'
+import { ThemeProviders } from './theme-providers'
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className="bg-white dark:bg-gray-800 min-w-2xl">
@@ -28,5 +24,5 @@ export default function RootLayout({
         </ThemeProviders>
       </body>
     </html>
-  );
+  )
 }

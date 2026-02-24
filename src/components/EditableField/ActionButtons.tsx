@@ -1,19 +1,19 @@
-"use client";
+'use client'
 
-import React from "react";
-import { FiChevronUp, FiChevronDown } from "react-icons/fi";
+import type React from 'react'
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi'
 
 interface ActionButtonsProps {
-  canShowAddButtons: boolean;
-  onDelete: (e: React.MouseEvent) => void;
-  onAddAbove: (e: React.MouseEvent) => void;
-  onAddBelow: (e: React.MouseEvent) => void;
-  onMoveUp: (e: React.MouseEvent) => void;
-  onMoveDown: (e: React.MouseEvent) => void;
-  onEdit: (e: React.MouseEvent) => void;
+  canShowAddButtons: boolean
+  onDelete: (e: React.MouseEvent) => void
+  onAddAbove: (e: React.MouseEvent) => void
+  onAddBelow: (e: React.MouseEvent) => void
+  onMoveUp: (e: React.MouseEvent) => void
+  onMoveDown: (e: React.MouseEvent) => void
+  onEdit: (e: React.MouseEvent) => void
 }
 
-const buttonSizeClassses = "w-5 h-5";
+const buttonSizeClassses = 'w-5 h-5'
 
 export default function ActionButtons({
   canShowAddButtons,
@@ -122,12 +122,7 @@ export default function ActionButtons({
           className="bg-blue-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-blue-600 transition-colors"
           title="Edit this field"
         >
-          <svg
-            className={buttonSizeClassses}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className={buttonSizeClassses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -138,5 +133,5 @@ export default function ActionButtons({
         </button>
       </div>
     </div>
-  );
+  )
 }

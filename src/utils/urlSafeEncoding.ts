@@ -4,7 +4,7 @@
  * This ensures file paths like "resumes/software-engineer/data.yml" can be safely used in URLs
  */
 
-const URL_SAFE_SEPARATOR = "-slash-"; // Safe replacement for forward slashes in file paths
+const URL_SAFE_SEPARATOR = '-slash-' // Safe replacement for forward slashes in file paths
 
 /**
  * Encode a file path for safe use in URL search parameters
@@ -13,10 +13,10 @@ const URL_SAFE_SEPARATOR = "-slash-"; // Safe replacement for forward slashes in
  * @example encodeFilePathForUrl("resumes/software-engineer/data.yml") // "resumes-slash-software-engineer-slash-data.yml"
  */
 export function encodeFilePathForUrl(filePath: string): string {
-  if (!filePath) return "";
+  if (!filePath) return ''
 
   // Replace all forward slashes with the safe separator
-  return filePath.replace(/\//g, URL_SAFE_SEPARATOR);
+  return filePath.replace(/\//g, URL_SAFE_SEPARATOR)
 }
 
 /**
@@ -26,10 +26,10 @@ export function encodeFilePathForUrl(filePath: string): string {
  * @example decodeFilePathFromUrl("resumes-slash-software-engineer-slash-data.yml") // "resumes/software-engineer/data.yml"
  */
 export function decodeFilePathFromUrl(encodedPath: string): string {
-  if (!encodedPath) return "";
+  if (!encodedPath) return ''
 
   // Replace the safe separators back with forward slashes
-  return encodedPath.replace(new RegExp(URL_SAFE_SEPARATOR, "g"), "/");
+  return encodedPath.replace(new RegExp(URL_SAFE_SEPARATOR, 'g'), '/')
 }
 
 /**
@@ -44,24 +44,24 @@ export function updateUrlWithResumePath(
   router: unknown,
   pathname: string,
 ): void {
-  const encodedPath = encodeFilePathForUrl(resumePath);
-  const searchParams = new URLSearchParams(window.location.search);
+  const encodedPath = encodeFilePathForUrl(resumePath)
+  const searchParams = new URLSearchParams(window.location.search)
 
   if (encodedPath) {
-    searchParams.set("resume", encodedPath);
+    searchParams.set('resume', encodedPath)
   } else {
-    searchParams.delete("resume");
+    searchParams.delete('resume')
   }
 
-  const newUrl = `${pathname}?${searchParams.toString()}`;
+  const newUrl = `${pathname}?${searchParams.toString()}`
   if (
-    typeof router === "object" &&
+    typeof router === 'object' &&
     router !== null &&
-    typeof (router as { replace?: unknown }).replace === "function"
+    typeof (router as { replace?: unknown }).replace === 'function'
   ) {
-    (
-      router as { replace: (url: string, opts: { scroll: boolean }) => void }
-    ).replace(newUrl, { scroll: false });
+    ;(router as { replace: (url: string, opts: { scroll: boolean }) => void }).replace(newUrl, {
+      scroll: false,
+    })
   }
 }
 
@@ -71,11 +71,9 @@ export function updateUrlWithResumePath(
  * @returns Decoded file path or null if not found (e.g., "resumes/software-engineer/data.yml")
  * @example getResumePathFromUrl(searchParams) // "resumes/software-engineer/data.yml"
  */
-export function getResumePathFromUrl(
-  searchParams: URLSearchParams,
-): string | null {
-  const encodedPath = searchParams.get("resume");
-  return encodedPath ? decodeFilePathFromUrl(encodedPath) : null;
+export function getResumePathFromUrl(searchParams: URLSearchParams): string | null {
+  const encodedPath = searchParams.get('resume')
+  return encodedPath ? decodeFilePathFromUrl(encodedPath) : null
 }
 
 /**
@@ -85,10 +83,7 @@ export function getResumePathFromUrl(
  * @returns Full URL with resume parameter (e.g., "/single-column/resume?resume=resumes-slash-software-engineer-slash-data.yml")
  * @example createUrlWithResumePath("/single-column/resume", "resumes/software-engineer/data.yml") // "/single-column/resume?resume=resumes-slash-software-engineer-slash-data.yml"
  */
-export function createUrlWithResumePath(
-  basePath: string,
-  resumePath: string,
-): string {
-  const encodedPath = encodeFilePathForUrl(resumePath);
-  return `${basePath}?resume=${encodedPath}`;
+export function createUrlWithResumePath(basePath: string, resumePath: string): string {
+  const encodedPath = encodeFilePathForUrl(resumePath)
+  return `${basePath}?resume=${encodedPath}`
 }

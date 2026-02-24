@@ -1,24 +1,24 @@
-"use client";
+'use client'
 
 import {
   ArrowUpTrayIcon,
-  XMarkIcon,
-  DocumentDuplicateIcon,
-  ClockIcon,
-  TagIcon,
-  PencilSquareIcon,
   CheckIcon,
-} from "@heroicons/react/24/outline";
+  ClockIcon,
+  DocumentDuplicateIcon,
+  PencilSquareIcon,
+  TagIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline'
 
 interface QuickActionsProps {
-  hasUnsavedChanges?: boolean;
-  onSave?: (commit: boolean) => void;
-  onDiscard?: () => void;
-  onDuplicate?: () => void;
-  onViewHistory?: () => void;
-  onEditTags?: () => void;
-  onEditDescription?: () => void;
-  disabled?: boolean;
+  hasUnsavedChanges?: boolean
+  onSave?: (commit: boolean) => void
+  onDiscard?: () => void
+  onDuplicate?: () => void
+  onViewHistory?: () => void
+  onEditTags?: () => void
+  onEditDescription?: () => void
+  disabled?: boolean
 }
 
 export default function QuickActions({
@@ -119,5 +119,5 @@ export default function QuickActions({
         )}
       </div>
     </div>
-  );
+  )
 }

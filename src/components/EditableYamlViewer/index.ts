@@ -1,1 +1,1 @@
-export { default } from "./EditableYamlViewer";
+export { default } from './EditableYamlViewer'

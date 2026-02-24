@@ -1,25 +1,21 @@
-"use client";
+'use client'
 
-import { useDirectoryManager } from "@/contexts/DirectoryManager/DirectoryManagerContext.hook";
-import type { PrintPageSizeProps } from "./PrintPageSize.constants";
+import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
+import type { PrintPageSizeProps } from './PrintPageSize.constants'
 
-export default function PrintPageSize({
-  pdfType = "resume",
-}: PrintPageSizeProps) {
-  const { pdfJobs, storedPdfMetadata } = useDirectoryManager();
+export default function PrintPageSize({ pdfType = 'resume' }: PrintPageSizeProps) {
+  const { pdfJobs, storedPdfMetadata } = useDirectoryManager()
 
   const currentPdfJob = pdfJobs.find(
     (job) =>
-      job.pdfTypes.includes(pdfType) &&
-      (job.status === "processing" || job.status === "complete"),
-  );
+      job.pdfTypes.includes(pdfType) && (job.status === 'processing' || job.status === 'complete'),
+  )
 
-  const isGenerating = currentPdfJob?.status === "processing";
-  const storedMetadata =
-    storedPdfMetadata?.pdf?.[pdfType as "resume" | "coverLetter"];
+  const isGenerating = currentPdfJob?.status === 'processing'
+  const storedMetadata = storedPdfMetadata?.pdf?.[pdfType as 'resume' | 'coverLetter']
 
-  const pageCount = storedMetadata?.pages;
-  const hasPdfMetadata = pageCount !== undefined;
+  const pageCount = storedMetadata?.pages
+  const hasPdfMetadata = pageCount !== undefined
 
   return (
     <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-600">
@@ -38,17 +34,15 @@ export default function PrintPageSize({
       </svg>
       <span className="font-medium">
         {isGenerating ? (
-          <span className="text-blue-500 dark:text-blue-400">
-            Generating...
-          </span>
+          <span className="text-blue-500 dark:text-blue-400">Generating...</span>
         ) : !hasPdfMetadata ? (
           <span className="text-red-500 dark:text-red-400">PDF missing</span>
         ) : (
           <>
-            {pageCount} page{pageCount !== 1 ? "s" : ""}
+            {pageCount} page{pageCount !== 1 ? 's' : ''}
           </>
         )}
       </span>
     </div>
-  );
+  )
 }

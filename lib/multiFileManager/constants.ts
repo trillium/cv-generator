@@ -1,1 +1,1 @@
-export const ARRAY_INDEX_PATTERN = /^\w+[.[](\d+)[\].]?/;
+export const ARRAY_INDEX_PATTERN = /^\w+[.[](\d+)[\].]?/

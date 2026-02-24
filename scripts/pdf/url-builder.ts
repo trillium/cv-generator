@@ -3,16 +3,13 @@ export function buildUrls(
   resumeType: string,
   resumePath: string,
 ): { resumeUrl: string; coverLetterUrl: string } {
-  const resumeUrl = new URL(
-    `/${resumeType}-multi/resume/${resumePath}`,
-    serverUrl,
-  ).toString();
+  const resumeUrl = new URL(`/${resumeType}-multi/resume/${resumePath}`, serverUrl).toString()
   const coverLetterUrl = new URL(
     `/${resumeType}-multi/cover-letter/${resumePath}`,
     serverUrl,
-  ).toString();
+  ).toString()
 
-  console.log(`📄 Using resume path: ${resumePath}`);
+  console.log(`📄 Using resume path: ${resumePath}`)
 
-  return { resumeUrl, coverLetterUrl };
+  return { resumeUrl, coverLetterUrl }
 }

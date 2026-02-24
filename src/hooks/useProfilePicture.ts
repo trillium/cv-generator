@@ -1,28 +1,28 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from 'react'
 
 const useProfilePicture = (): string | null => {
-  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [profilePicture, setProfilePicture] = useState<string | null>(null)
 
   useEffect(() => {
     const loadProfilePicture = async () => {
-      const extensions = ["png", "jpeg", "jpg", "gif", "webp", "svg"];
+      const extensions = ['png', 'jpeg', 'jpg', 'gif', 'webp', 'svg']
       for (const extension of extensions) {
         try {
-          const module = await import(`../assets/profile.${extension}`);
-          setProfilePicture(module.default);
-          break;
+          const module = await import(`../assets/profile.${extension}`)
+          setProfilePicture(module.default)
+          break
         } catch {
           // Ignore error and try next extension
         }
       }
-    };
+    }
 
-    loadProfilePicture();
-  }, []);
+    loadProfilePicture()
+  }, [])
 
-  return profilePicture;
-};
+  return profilePicture
+}
 
-export default useProfilePicture;
+export default useProfilePicture

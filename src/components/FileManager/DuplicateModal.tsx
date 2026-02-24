@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import { useEffect, useState } from 'react'
 
 interface DuplicateModalProps {
-  isOpen: boolean;
-  fileName: string;
-  onClose: () => void;
-  onConfirm: (newName: string, tags?: string[], description?: string) => void;
+  isOpen: boolean
+  fileName: string
+  onClose: () => void
+  onConfirm: (newName: string, tags?: string[], description?: string) => void
 }
 
 export default function DuplicateModal({
@@ -16,49 +16,45 @@ export default function DuplicateModal({
   onClose,
   onConfirm,
 }: DuplicateModalProps) {
-  const [newName, setNewName] = useState("");
-  const [tags, setTags] = useState("");
-  const [description, setDescription] = useState("");
-  const [error, setError] = useState("");
+  const [newName, setNewName] = useState('')
+  const [tags, setTags] = useState('')
+  const [description, setDescription] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (isOpen) {
       // Generate suggested name
-      const parsed = fileName.match(/^(.+?)(\.[^.]+)?$/);
-      const baseName = parsed?.[1] || fileName;
-      const ext = parsed?.[2] || "";
-      setNewName(`${baseName}_copy${ext}`);
-      setTags("");
-      setDescription("");
-      setError("");
+      const parsed = fileName.match(/^(.+?)(\.[^.]+)?$/)
+      const baseName = parsed?.[1] || fileName
+      const ext = parsed?.[2] || ''
+      setNewName(`${baseName}_copy${ext}`)
+      setTags('')
+      setDescription('')
+      setError('')
     }
-  }, [isOpen, fileName]);
+  }, [isOpen, fileName])
 
   function handleConfirm() {
     if (!newName.trim()) {
-      setError("Filename is required");
-      return;
+      setError('Filename is required')
+      return
     }
 
     if (!newName.match(/\.(yml|yaml)$/)) {
-      setError("Filename must end with .yml or .yaml");
-      return;
+      setError('Filename must end with .yml or .yaml')
+      return
     }
 
     const tagsList = tags
-      .split(",")
+      .split(',')
       .map((t) => t.trim())
-      .filter(Boolean);
+      .filter(Boolean)
 
-    onConfirm(
-      newName,
-      tagsList.length > 0 ? tagsList : undefined,
-      description || undefined,
-    );
-    onClose();
+    onConfirm(newName, tagsList.length > 0 ? tagsList : undefined, description || undefined)
+    onClose()
   }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -69,9 +65,7 @@ export default function DuplicateModal({
       <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Duplicate File
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Duplicate File</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
@@ -99,18 +93,13 @@ export default function DuplicateModal({
               type="text"
               value={newName}
               onChange={(e) => {
-                setNewName(e.target.value);
-                setError("");
+                setNewName(e.target.value)
+                setError('')
               }}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="my_file_copy.yml"
-              autoFocus
             />
-            {error && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {error}
-              </p>
-            )}
+            {error && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>}
           </div>
 
           <div>
@@ -157,5 +146,5 @@ export default function DuplicateModal({
         </div>
       </div>
     </div>
-  );
+  )
 }
