@@ -1,4 +1,8 @@
-import * as yaml from "js-yaml";
+import {
+  parseYamlString,
+  createYamlDocument,
+  documentToString,
+} from "@/lib/yamlService";
 import { useLinkedInData } from "@/contexts/LinkedInContext";
 
 export function getNestedValue(obj: unknown, path: string): unknown {
@@ -80,18 +84,14 @@ export function useLinkedInYamlUpdater() {
         yamlContentLength: yamlContent.length,
       });
 
-      const data = yaml.load(yamlContent) as Record<string, unknown>;
+      const data = parseYamlString(yamlContent);
       console.log("📋 Parsed current YAML data:", data);
 
       setNestedValue(data, path, newValue);
       console.log("🔄 Updated data after setNestedValue:", data);
 
-      const updatedYaml = yaml.dump(data, {
-        indent: 2,
-        lineWidth: -1,
-        noRefs: true,
-        skipInvalid: true,
-      });
+      const doc = createYamlDocument(data);
+      const updatedYaml = documentToString(doc);
       console.log("📄 Generated updated YAML:", {
         length: updatedYaml.length,
         preview: updatedYaml.substring(0, 200) + "...",

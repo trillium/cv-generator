@@ -1,4 +1,8 @@
-import * as yaml from "js-yaml";
+import {
+  parseYamlString,
+  createYamlDocument,
+  documentToString,
+} from "@/lib/yamlService";
 
 // Define which YAML sections should be shown for each route type
 export const ROUTE_FILTERS = {
@@ -26,17 +30,13 @@ export function filterYamlForRoute(
   routeType: RouteType,
 ): string {
   try {
-    // Parse the YAML string into an object
-    const data = yaml.load(yamlString) as Record<string, unknown>;
+    const data = parseYamlString(yamlString);
 
     if (!data || typeof data !== "object") {
-      return yamlString; // Return original if parsing fails
+      return yamlString;
     }
 
-    // Get the allowed fields for this route
     const allowedFields = ROUTE_FILTERS[routeType];
-
-    // Filter the data to only include allowed fields
     const filteredData: Record<string, unknown> = {};
 
     allowedFields.forEach((field) => {
@@ -45,16 +45,11 @@ export function filterYamlForRoute(
       }
     });
 
-    // Convert back to YAML string
-    return yaml.dump(filteredData, {
-      indent: 2,
-      lineWidth: -1, // Prevent line wrapping
-      noRefs: true,
-      skipInvalid: true,
-    });
+    const doc = createYamlDocument(filteredData);
+    return documentToString(doc);
   } catch (error) {
     console.error("Error filtering YAML:", error);
-    return yamlString; // Return original on error
+    return yamlString;
   }
 }
 

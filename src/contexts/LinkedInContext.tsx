@@ -9,7 +9,11 @@ import React, {
   useRef,
 } from "react";
 import { LinkedInData } from "@/types/linkedin";
-import * as yaml from "js-yaml";
+import {
+  parseYamlString,
+  createYamlDocument,
+  documentToString,
+} from "@/lib/yamlService";
 
 interface LinkedInContextType {
   currentLinkedInData: LinkedInData | null;
@@ -67,12 +71,8 @@ export function LinkedInProvider({ children }: LinkedInProviderProps) {
       }
 
       const parsed = result.data as LinkedInData;
-      const yamlText = yaml.dump(parsed, {
-        indent: 2,
-        lineWidth: -1,
-        noRefs: true,
-        sortKeys: false,
-      });
+      const doc = createYamlDocument(parsed);
+      const yamlText = documentToString(doc);
 
       setYamlContent(yamlText);
       setCurrentLinkedInData(parsed);
@@ -111,14 +111,11 @@ export function LinkedInProvider({ children }: LinkedInProviderProps) {
       setError(null);
 
       try {
-        const yamlToSave =
-          yamlContent ||
-          yaml.dump(currentLinkedInData, {
-            indent: 2,
-            lineWidth: -1,
-            noRefs: true,
-            sortKeys: false,
-          });
+        let yamlToSave = yamlContent;
+        if (!yamlToSave) {
+          const doc = createYamlDocument(currentLinkedInData);
+          yamlToSave = documentToString(doc);
+        }
 
         const response = await fetch("/api/linkedin/save", {
           method: "POST",
@@ -155,7 +152,7 @@ export function LinkedInProvider({ children }: LinkedInProviderProps) {
       try {
         isUpdatingYamlContent.current = true;
 
-        const parsed = yaml.load(newContent) as LinkedInData;
+        const parsed = parseYamlString(newContent) as LinkedInData;
 
         setYamlContent(newContent);
         setCurrentLinkedInData(parsed);

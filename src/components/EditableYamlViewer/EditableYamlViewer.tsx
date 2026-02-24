@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { clsx } from "clsx";
-import * as yaml from "js-yaml";
+import { parseYamlString } from "@/lib/yamlService";
 
 interface EditableYamlViewerProps {
   yamlContent: string;
@@ -28,7 +28,7 @@ const EditableYamlViewer: React.FC<EditableYamlViewerProps> = ({
 
   const validateYaml = (content: string) => {
     try {
-      yaml.load(content);
+      parseYamlString(content);
       setError(null);
       return true;
     } catch (err) {
