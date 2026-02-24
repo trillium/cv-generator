@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { deriveDirectoryFromSources } from "./pathUtils";
 
 describe("deriveDirectoryFromSources - numbered array bug reproduction", () => {
   const mockSources = {
@@ -9,32 +10,6 @@ describe("deriveDirectoryFromSources - numbered array bug reproduction", () => {
     ],
     personalInfo: "pii/resumes/this-dot-labs/info.yml",
     career: "pii/resumes/this-dot-labs/career.yml",
-  };
-
-  const deriveDirectoryFromSources = (
-    section: string,
-    currentSources: Record<string, string | string[]>,
-    yamlPath: string,
-    currentDirectory: string = "resumes",
-  ): string => {
-    const sourceFile = currentSources[section];
-    if (!sourceFile) {
-      return currentDirectory;
-    }
-
-    let sourcePath: string;
-    if (Array.isArray(sourceFile)) {
-      const arrayIndexMatch = yamlPath.match(/^\w+[.[](\d+)[\].]?/);
-      const arrayIndex = arrayIndexMatch ? parseInt(arrayIndexMatch[1], 10) : 0;
-      sourcePath = sourceFile[arrayIndex] || sourceFile[0];
-    } else {
-      sourcePath = sourceFile;
-    }
-
-    const withoutPii = sourcePath.replace(/^pii\//, "");
-    const dirPath = withoutPii.substring(0, withoutPii.lastIndexOf("/"));
-
-    return dirPath || currentDirectory;
   };
 
   it("should extract correct directory from single source", () => {
