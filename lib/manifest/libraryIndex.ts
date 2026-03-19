@@ -1,7 +1,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import { DIRECTORY_TO_SECTION, parseLibraryFilename } from './schema'
 import { yaml } from '../yamlService'
+import { DIRECTORY_TO_SECTION, parseLibraryFilename } from './schema'
 
 export type ItemIndex = {
   scopes: string[]
