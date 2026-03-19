@@ -259,4 +259,164 @@ describe('MultiFileManager', () => {
       expect((result.data.info as { lastName: string }).lastName).toBe('Smith')
     })
   })
+
+  describe('loadDirectory - manifest loading', () => {
+    function setupManifestFixture() {
+      const companyDir = path.join(TEST_PII_DIR, 'resumes', 'acme')
+      const libraryDir = path.join(TEST_PII_DIR, 'library')
+      const workExpDir = path.join(libraryDir, 'workExperience')
+      const projectsDir = path.join(libraryDir, 'projects')
+      const headerDir = path.join(libraryDir, 'header')
+
+      fs.mkdirSync(companyDir, { recursive: true })
+      fs.mkdirSync(workExpDir, { recursive: true })
+      fs.mkdirSync(projectsDir, { recursive: true })
+      fs.mkdirSync(headerDir, { recursive: true })
+
+      fs.writeFileSync(
+        path.join(headerDir, 'engineer.default.yml'),
+        yaml.dump({ header: { name: 'John Doe', tagline: 'Engineer' } }),
+      )
+
+      fs.writeFileSync(
+        path.join(workExpDir, 'acme-corp.backend.yml'),
+        yaml.dump({ workExperience: [{ position: 'Backend Engineer', company: 'ACME' }] }),
+      )
+
+      fs.writeFileSync(
+        path.join(workExpDir, 'startup.fullstack.yml'),
+        yaml.dump({ workExperience: [{ position: 'Fullstack Dev', company: 'Startup' }] }),
+      )
+
+      fs.writeFileSync(
+        path.join(projectsDir, 'cool-app.saas.yml'),
+        yaml.dump({ projects: [{ name: 'Cool App' }] }),
+      )
+
+      fs.writeFileSync(
+        path.join(companyDir, 'manifest.yml'),
+        yaml.dump({
+          header: 'engineer.default',
+          workExperience: ['acme-corp.backend', 'startup.fullstack'],
+          projects: ['cool-app.saas'],
+        }),
+      )
+
+      fs.writeFileSync(
+        path.join(companyDir, 'info.yml'),
+        yaml.dump({ info: { firstName: 'John', lastName: 'Doe' } }),
+      )
+
+      return { companyDir, libraryDir, workExpDir, projectsDir, headerDir }
+    }
+
+    it('should load data via manifest when manifest.yml exists', async () => {
+      setupManifestFixture()
+
+      const result = await manager.loadDirectory('resumes/acme')
+
+      expect(result.data).toHaveProperty('header')
+      expect(result.data).toHaveProperty('workExperience')
+      expect(result.data).toHaveProperty('projects')
+      expect((result.data.header as { name: string }).name).toBe('John Doe')
+    })
+
+    it('should maintain manifest array order for sections', async () => {
+      setupManifestFixture()
+
+      const result = await manager.loadDirectory('resumes/acme')
+      const work = result.data.workExperience as Array<{ position: string }>
+
+      expect(work).toHaveLength(2)
+      expect(work[0].position).toBe('Backend Engineer')
+      expect(work[1].position).toBe('Fullstack Dev')
+    })
+
+    it('should build sources mapping with library paths', async () => {
+      setupManifestFixture()
+
+      const result = await manager.loadDirectory('resumes/acme')
+
+      expect(Array.isArray(result.sources.workExperience)).toBe(true)
+      const workSources = result.sources.workExperience as string[]
+      expect(workSources).toHaveLength(2)
+      expect(workSources[0]).toContain('library/workExperience/acme-corp.backend.yml')
+      expect(workSources[1]).toContain('library/workExperience/startup.fullstack.yml')
+    })
+
+    it('should use single source path for singleton sections', async () => {
+      setupManifestFixture()
+
+      const result = await manager.loadDirectory('resumes/acme')
+
+      expect(typeof result.sources.header).toBe('string')
+      expect(result.sources.header as string).toContain('library/header/engineer.default.yml')
+    })
+
+    it('should load info.yml from company folder', async () => {
+      setupManifestFixture()
+
+      const result = await manager.loadDirectory('resumes/acme')
+
+      expect(result.data).toHaveProperty('info')
+      expect((result.data.info as { firstName: string }).firstName).toBe('John')
+      expect(typeof result.sources.info).toBe('string')
+      expect(result.sources.info as string).toContain('resumes/acme/info.yml')
+    })
+
+    it('should load info.yml from ancestor directory', async () => {
+      const resumesDir = path.join(TEST_PII_DIR, 'resumes')
+      const companyDir = path.join(resumesDir, 'acme')
+      const libraryDir = path.join(TEST_PII_DIR, 'library')
+      const workExpDir = path.join(libraryDir, 'workExperience')
+
+      fs.mkdirSync(companyDir, { recursive: true })
+      fs.mkdirSync(workExpDir, { recursive: true })
+
+      fs.writeFileSync(
+        path.join(resumesDir, 'info.yml'),
+        yaml.dump({ info: { firstName: 'Base', lastName: 'Info' } }),
+      )
+
+      fs.writeFileSync(
+        path.join(workExpDir, 'job.default.yml'),
+        yaml.dump({ workExperience: [{ position: 'Dev' }] }),
+      )
+
+      fs.writeFileSync(
+        path.join(companyDir, 'manifest.yml'),
+        yaml.dump({ workExperience: ['job.default'] }),
+      )
+
+      const result = await manager.loadDirectory('resumes/acme')
+
+      expect((result.data.info as { firstName: string }).firstName).toBe('Base')
+    })
+
+    it('should load metadata.json from company folder', async () => {
+      const { companyDir } = setupManifestFixture()
+
+      fs.writeFileSync(
+        path.join(companyDir, 'metadata.json'),
+        JSON.stringify({ pdf: { resume: { pages: 1, generatedAt: '2026-01-01' } } }),
+      )
+
+      const result = await manager.loadDirectory('resumes/acme')
+
+      expect(result.pdfMetadata).toBeDefined()
+      expect(result.pdfMetadata?.pdf?.resume?.pages).toBe(1)
+    })
+
+    it('should track all loaded files including manifest and library files', async () => {
+      setupManifestFixture()
+
+      const result = await manager.loadDirectory('resumes/acme')
+
+      expect(result.metadata.filesLoaded.some((f) => f.endsWith('manifest.yml'))).toBe(true)
+      expect(result.metadata.filesLoaded.some((f) => f.endsWith('acme-corp.backend.yml'))).toBe(
+        true,
+      )
+      expect(result.metadata.filesLoaded.some((f) => f.endsWith('info.yml'))).toBe(true)
+    })
+  })
 })
