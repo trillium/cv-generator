@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     print = ['resume', 'cover'],
   } = await req.json()
 
-  const args = ['pdf', `--${mode}`, `--resumeType=${resumeType}`]
+  const args = ['scripts/pdf/pdf.ts', `--${mode}`, `--resumeType=${resumeType}`]
 
   if (resumePath) {
     args.push(`--resumePath=${resumePath}`)

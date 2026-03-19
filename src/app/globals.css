@@ -84,6 +84,36 @@ body {
   border-radius: 2px;
 }
 
+/* PDF page overflow warning */
+.resume-content.page-overflow {
+  outline: 3px dashed #f59e0b;
+  background-color: #fef3c7;
+}
+
+.resume-content.page-overflow::after {
+  content: "⚠ Content exceeds one page";
+  position: fixed;
+  top: 4rem;
+  right: 1rem;
+  background: #f59e0b;
+  color: #000;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  z-index: 50;
+}
+
+@media print {
+  .resume-content.page-overflow {
+    outline: none;
+    background-color: transparent;
+  }
+  .resume-content.page-overflow::after {
+    display: none;
+  }
+}
+
 /* Print compatibility - hide all edit UI */
 @media print {
   .editable-hover,
