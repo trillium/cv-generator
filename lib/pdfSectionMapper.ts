@@ -4,25 +4,10 @@
  */
 
 import path from 'node:path'
+import { directoryToSection } from './manifest/schema'
 import { parseNumberedArrayFile, SECTION_KEY_TO_FILENAME } from './multiFileMapper'
 
 export type PdfType = 'resume' | 'cover'
-
-const LIBRARY_DIR_TO_SECTION: Record<string, string> = {
-  header: 'header',
-  'career-summary': 'careerSummary',
-  workExperience: 'workExperience',
-  projects: 'projects',
-  technical: 'technical',
-  education: 'education',
-  'cover-letter': 'coverLetter',
-  profile: 'profile',
-  languages: 'languages',
-}
-
-function libraryDirToSectionKey(dirName: string): string | null {
-  return LIBRARY_DIR_TO_SECTION[dirName] || null
-}
 
 /**
  * Mapping of section keys to which PDFs they affect
@@ -78,7 +63,7 @@ export function getPdfsToRegenerateFromFile(filePath: string): PdfType[] {
   const libraryMatch = filePath.match(/library\/([^/]+)\//)
   if (libraryMatch) {
     const librarySection = libraryMatch[1]
-    const sectionKey = libraryDirToSectionKey(librarySection)
+    const sectionKey = directoryToSection(librarySection)
     if (sectionKey) {
       const pdfs = SECTION_TO_PDF_MAP[sectionKey]
       if (pdfs && pdfs.length > 0) return pdfs

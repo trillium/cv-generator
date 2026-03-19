@@ -47,6 +47,17 @@ export function sectionToDirectory(section: ManifestSectionKey): string {
   return map[section]
 }
 
+const _DIRECTORY_TO_SECTION: Record<string, ManifestSectionKey> = {}
+for (const section of ALL_MANIFEST_SECTIONS) {
+  _DIRECTORY_TO_SECTION[sectionToDirectory(section)] = section
+}
+export const DIRECTORY_TO_SECTION: Readonly<Record<string, ManifestSectionKey>> =
+  _DIRECTORY_TO_SECTION
+
+export function directoryToSection(dirName: string): ManifestSectionKey | null {
+  return DIRECTORY_TO_SECTION[dirName] ?? null
+}
+
 export function parseManifestFile(manifestPath: string): Manifest {
   const content = fs.readFileSync(manifestPath, 'utf-8')
   const raw = parseYamlString(content)
