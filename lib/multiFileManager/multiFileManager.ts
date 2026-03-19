@@ -20,8 +20,13 @@ export class MultiFileManager {
     return loadDirectory(dirPath)
   }
 
-  async updatePath(dirPath: string, yamlPath: string, value: unknown): Promise<UpdateResult> {
-    return updatePath(dirPath, yamlPath, value)
+  async updatePath(
+    dirPath: string,
+    yamlPath: string,
+    value: unknown,
+    sourceFile?: string,
+  ): Promise<UpdateResult> {
+    return updatePath(dirPath, yamlPath, value, sourceFile)
   }
 
   async listDirectoryFiles(dirPath: string): Promise<DirectoryFileInfo[]> {

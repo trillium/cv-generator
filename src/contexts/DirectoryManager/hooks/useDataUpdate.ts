@@ -1,7 +1,11 @@
 'use client'
 
 import { useCallback } from 'react'
-import { deriveDirectoryFromSources, extractTopLevelKey } from '@/lib/multiFileManager/pathUtils'
+import {
+  deriveDirectoryFromSources,
+  deriveSourceFile,
+  extractTopLevelKey,
+} from '@/lib/multiFileManager/pathUtils'
 import type { CVData } from '@/types'
 import type { DirectoryLoadResult } from '@/types/multiFileManager.types'
 
@@ -97,6 +101,7 @@ export function useDataUpdate({
           yamlPath,
           currentDirectory,
         )
+        const sourceFile = deriveSourceFile(section, sources, yamlPath)
 
         const response = await fetch('/api/directory/update', {
           method: 'POST',
@@ -105,6 +110,7 @@ export function useDataUpdate({
             directoryPath: targetDirectory,
             yamlPath,
             value,
+            sourceFile,
           }),
         })
 

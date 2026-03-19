@@ -55,6 +55,7 @@ export async function updatePath(
   dirPath: string,
   yamlPath: string,
   value: unknown,
+  sourceFile?: string,
 ): Promise<UpdateResult> {
   console.log(`🟢 [updatePath] Called with:`, {
     dirPath,
@@ -76,6 +77,41 @@ export async function updatePath(
     arrayIndex,
     hasArrayIndex: arrayIndex !== null,
   })
+
+  if (sourceFile) {
+    const piiPath = getPiiDirectory()
+    const absoluteSourceFile = sourceFile.startsWith(piiPath)
+      ? sourceFile
+      : path.join(piiPath, sourceFile.replace(/^pii\//, ''))
+
+    if (fsSync.existsSync(absoluteSourceFile)) {
+      console.log(`📚 [updatePath] Library file mode: ${absoluteSourceFile}`)
+      const fileData = loadDataFile(absoluteSourceFile)
+
+      let adjustedLibraryPath = yamlPath
+      if (arrayIndex !== null) {
+        const bracketPattern = new RegExp(`^${section}\\[(\\d+)\\]`)
+        const dotPattern = new RegExp(`^${section}\\.(\\d+)\\.`)
+        if (bracketPattern.test(yamlPath)) {
+          adjustedLibraryPath = yamlPath.replace(bracketPattern, `${section}[0]`)
+        } else if (dotPattern.test(yamlPath)) {
+          adjustedLibraryPath = yamlPath.replace(dotPattern, `${section}.0.`)
+        }
+        console.log(`     📝 Adjusted path for library file: ${yamlPath} → ${adjustedLibraryPath}`)
+      }
+
+      setNestedValue(fileData, adjustedLibraryPath, value)
+      const content = serializeData(fileData, absoluteSourceFile)
+      await fs.writeFile(absoluteSourceFile, content, 'utf-8')
+      console.log(`✅ [updatePath] Library file updated successfully`)
+      return {
+        success: true,
+        updatedFile: absoluteSourceFile,
+        section,
+      }
+    }
+    console.log(`⚠️  [updatePath] Source file not found: ${absoluteSourceFile}, falling back to directory scan`)
+  }
 
   const ancestorDirs = getAncestorDirectories(dirPath).reverse()
   console.log(`📂 [updatePath] Searching directories (deepest first):`, ancestorDirs)

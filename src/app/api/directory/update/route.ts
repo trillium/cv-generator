@@ -6,7 +6,7 @@ import { getPdfsToRegenerate } from '@/lib/pdfSectionMapper'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { directoryPath, yamlPath, value } = body
+    const { directoryPath, yamlPath, value, sourceFile } = body
 
     console.log(`🔵 [API /directory/update] Request received:`, {
       directoryPath,
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     const manager = new MultiFileManager()
-    const result = await manager.updatePath(directoryPath, yamlPath, value)
+    const result = await manager.updatePath(directoryPath, yamlPath, value, sourceFile)
 
     console.log(`📄 File updated: ${result.updatedFile}`)
 
