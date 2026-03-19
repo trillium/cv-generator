@@ -108,3 +108,52 @@ describe('deriveDirectoryFromSources - numbered array bug reproduction', () => {
     expect(result).toBe('resumes/this-dot-labs')
   })
 })
+
+describe('deriveDirectoryFromSources - library/manifest paths', () => {
+  const librarySources = {
+    workExperience: [
+      'pii/library/workExperience/ts-consulting.agentic.yml',
+      'pii/library/workExperience/hackforla.leadership.yml',
+    ],
+    header: 'pii/library/header/product-engineer.default.yml',
+    coverLetter: ['pii/library/cover-letter/posthog.product.yml'],
+    info: 'pii/resumes/posthog/info.yml',
+  }
+
+  it('should resolve library path for array source at index 0', () => {
+    const result = deriveDirectoryFromSources(
+      'workExperience',
+      librarySources,
+      'workExperience[0].position',
+    )
+    expect(result).toBe('library/workExperience')
+  })
+
+  it('should resolve library path for array source at index 1', () => {
+    const result = deriveDirectoryFromSources(
+      'workExperience',
+      librarySources,
+      'workExperience[1].position',
+    )
+    expect(result).toBe('library/workExperience')
+  })
+
+  it('should resolve library path for singleton source', () => {
+    const result = deriveDirectoryFromSources('header', librarySources, 'header.name')
+    expect(result).toBe('library/header')
+  })
+
+  it('should resolve library path for cover letter', () => {
+    const result = deriveDirectoryFromSources(
+      'coverLetter',
+      librarySources,
+      'coverLetter[0].text',
+    )
+    expect(result).toBe('library/cover-letter')
+  })
+
+  it('should still resolve company-local paths (info stays in resumes)', () => {
+    const result = deriveDirectoryFromSources('info', librarySources, 'info.firstName')
+    expect(result).toBe('resumes/posthog')
+  })
+})
