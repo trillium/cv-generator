@@ -306,7 +306,7 @@ function buildManifestYaml(entries: ManifestEntry[]): string {
     }
   }
 
-  return yaml.dump(manifest, { lineWidth: -1 })
+  return yaml.dump(manifest)
 }
 
 function libraryFilePath(piiPath: string, entry: LibraryEntry): string {
@@ -347,7 +347,7 @@ export function executeMigration(piiPath: string, migrations: CompanyMigration[]
 
       if (!created.has(targetPath)) {
         fs.mkdirSync(targetDir, { recursive: true })
-        fs.writeFileSync(targetPath, yaml.dump(entry.content, { lineWidth: -1 }))
+        fs.writeFileSync(targetPath, yaml.dump(entry.content))
         created.add(targetPath)
       }
     }

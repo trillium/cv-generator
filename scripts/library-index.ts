@@ -129,7 +129,7 @@ export function generateIndex(piiPath: string): LibraryIndex {
 
 export function writeIndex(piiPath: string, index: LibraryIndex): void {
   const indexPath = path.join(piiPath, 'library', 'index.yml')
-  fs.writeFileSync(indexPath, yaml.dump(index, { lineWidth: -1 }))
+  fs.writeFileSync(indexPath, yaml.dump(index))
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
@@ -137,5 +137,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const index = generateIndex(piiPath)
   writeIndex(piiPath, index)
   console.log('Library index generated at pii/library/index.yml')
-  console.log(yaml.dump(index, { lineWidth: -1 }))
+  console.log(yaml.dump(index))
 }

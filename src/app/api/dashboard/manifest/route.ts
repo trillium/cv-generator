@@ -27,10 +27,7 @@ export async function POST(request: NextRequest) {
   const { dirPath, manifest } = body
 
   if (!dirPath || !manifest) {
-    return NextResponse.json(
-      { error: 'Missing dirPath or manifest' },
-      { status: 400 },
-    )
+    return NextResponse.json({ error: 'Missing dirPath or manifest' }, { status: 400 })
   }
 
   const piiPath = getPiiDirectory()
@@ -41,7 +38,7 @@ export async function POST(request: NextRequest) {
     fs.mkdirSync(dir, { recursive: true })
   }
 
-  fs.writeFileSync(manifestPath, yaml.dump(manifest, { lineWidth: -1 }))
+  fs.writeFileSync(manifestPath, yaml.dump(manifest))
 
   return NextResponse.json({ success: true })
 }

@@ -19,9 +19,7 @@ export async function GET() {
     return NextResponse.json({ resumes: [] })
   }
 
-  const dirs = fs
-    .readdirSync(resumesPath, { withFileTypes: true })
-    .filter((e) => e.isDirectory())
+  const dirs = fs.readdirSync(resumesPath, { withFileTypes: true }).filter((e) => e.isDirectory())
 
   const resumes: ResumeTarget[] = dirs.map((dir) => {
     const dirPath = `resumes/${dir.name}`
