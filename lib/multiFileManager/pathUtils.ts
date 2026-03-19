@@ -1,32 +1,32 @@
-import { ARRAY_INDEX_PATTERN } from "./constants";
+import { ARRAY_INDEX_PATTERN } from './constants'
 
 export function extractTopLevelKey(dataPath: string): string {
-  const parts = dataPath.split(/[.[\]]+/g);
-  return parts[0];
+  const parts = dataPath.split(/[.[\]]+/g)
+  return parts[0]
 }
 
 export function deriveDirectoryFromSources(
   section: string,
   currentSources: Record<string, string | string[]>,
   yamlPath: string,
-  currentDirectory: string = "",
+  currentDirectory: string = '',
 ): string {
-  const sourceFile = currentSources[section];
+  const sourceFile = currentSources[section]
   if (!sourceFile) {
-    return currentDirectory;
+    return currentDirectory
   }
 
-  let sourcePath: string;
+  let sourcePath: string
   if (Array.isArray(sourceFile)) {
-    const arrayIndexMatch = yamlPath.match(ARRAY_INDEX_PATTERN);
-    const arrayIndex = arrayIndexMatch ? parseInt(arrayIndexMatch[1], 10) : 0;
-    sourcePath = sourceFile[arrayIndex] || sourceFile[0];
+    const arrayIndexMatch = yamlPath.match(ARRAY_INDEX_PATTERN)
+    const arrayIndex = arrayIndexMatch ? parseInt(arrayIndexMatch[1], 10) : 0
+    sourcePath = sourceFile[arrayIndex] || sourceFile[0]
   } else {
-    sourcePath = sourceFile;
+    sourcePath = sourceFile
   }
 
-  const withoutPii = sourcePath.replace(/^pii\//, "");
-  const dirPath = withoutPii.substring(0, withoutPii.lastIndexOf("/"));
+  const withoutPii = sourcePath.replace(/^pii\//, '')
+  const dirPath = withoutPii.substring(0, withoutPii.lastIndexOf('/'))
 
-  return dirPath || currentDirectory;
+  return dirPath || currentDirectory
 }
