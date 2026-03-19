@@ -20,22 +20,32 @@ export default function DashboardPage() {
   const [selectedResume, setSelectedResume] = useState<ResumeTarget | null>(null)
   const [manifest, setManifest] = useState<Manifest | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     Promise.all([
       fetch('/api/dashboard/resumes').then((r) => r.json()),
       fetch('/api/dashboard/library').then((r) => r.json()),
-    ]).then(([resumeData, libraryData]) => {
-      setResumes(resumeData.resumes || [])
-      setLibrary(libraryData.library || {})
-      setLoading(false)
-    })
+    ])
+      .then(([resumeData, libraryData]) => {
+        setResumes(resumeData.resumes || [])
+        setLibrary(libraryData.library || {})
+        setLoading(false)
+      })
+      .catch(() => {
+        setError('Failed to load dashboard data')
+        setLoading(false)
+      })
   }, [])
 
   const loadManifest = useCallback(async (resume: ResumeTarget) => {
-    const res = await fetch(`/api/dashboard/manifest?path=${encodeURIComponent(resume.path)}`)
-    const data = await res.json()
-    setManifest(data.manifest || {})
+    try {
+      const res = await fetch(`/api/dashboard/manifest?path=${encodeURIComponent(resume.path)}`)
+      const data = await res.json()
+      setManifest(data.manifest || {})
+    } catch {
+      setError('Failed to load manifest')
+    }
   }, [])
 
   function handleSelect(resume: ResumeTarget) {
@@ -48,22 +58,32 @@ export default function DashboardPage() {
   }
 
   async function handlePrint(resume: ResumeTarget) {
-    await fetch('/api/pdf', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ directoryPath: resume.path }),
-    })
+    try {
+      const res = await fetch('/api/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ directoryPath: resume.path }),
+      })
+      if (!res.ok) setError('Print failed')
+    } catch {
+      setError('Print failed')
+    }
   }
 
   async function handleManifestUpdate(updated: Manifest) {
     if (!selectedResume) return
     setManifest(updated)
 
-    await fetch('/api/dashboard/manifest', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ dirPath: selectedResume.path, manifest: updated }),
-    })
+    try {
+      const res = await fetch('/api/dashboard/manifest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dirPath: selectedResume.path, manifest: updated }),
+      })
+      if (!res.ok) setError('Failed to save manifest')
+    } catch {
+      setError('Failed to save manifest')
+    }
   }
 
   function handleAddRef(section: ManifestSectionKey) {
@@ -108,6 +128,15 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-6xl mx-auto">
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm flex justify-between items-center">
+          <span>{error}</span>
+          <button type="button" onClick={() => setError(null)} className="ml-2 font-bold">
+            x
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="md:col-span-1">
           <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
