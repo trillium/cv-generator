@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ModalProvider>
               <Navigation />
               <div className="m-6 print:m-0">
-                <main className="resume-content">{children}</main>
+                <main className="resume-content min-h-[1260px] flex flex-col">{children}</main>
               </div>
               <Modal />
               <Toaster />

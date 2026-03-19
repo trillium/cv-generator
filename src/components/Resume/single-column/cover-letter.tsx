@@ -8,13 +8,13 @@ import Header from './ui/Header'
 
 function SingleColumnCoverLetter({ data }: { data: CVData }) {
   return (
-    <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex flex-col items-center justify-between">
-      <div className="w-full max-w-5xl mx-auto rounded-md bg-white dark:bg-gray-800">
+    <div className="w-full flex-1 bg-white dark:bg-gray-800 flex flex-col items-center">
+      <div className="w-full flex-1 flex flex-col max-w-5xl mx-auto rounded-md bg-white dark:bg-gray-800">
         <Header data={data} />
-
         <Title text="Cover Letter" />
-
-        <CoverLetterContent coverLetterLines={data.coverLetter || []} />
+        <div className="flex-1">
+          <CoverLetterContent coverLetterLines={data.coverLetter || []} />
+        </div>
       </div>
       <div className="w-full">
         <Footer data={data} />

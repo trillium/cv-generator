@@ -129,7 +129,7 @@ export default function DynamicMultiColumnPage({
   }
 
   return (
-    <div>
+    <div className="flex-1 flex flex-col">
       <div className="sr-only">Currently displaying directory: {resolvedDirPath || dirPath}</div>
       <Component data={parsedData as CVData} />
     </div>
