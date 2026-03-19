@@ -1,12 +1,14 @@
 import { NextRequest } from 'next/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+const mockUpdatePath = vi.fn().mockResolvedValue({
+  success: true,
+  updatedFile: 'info.yml',
+})
+
 vi.mock('@/lib/multiFileManager', () => ({
   MultiFileManager: vi.fn().mockImplementation(() => ({
-    updatePath: vi.fn().mockResolvedValue({
-      success: true,
-      updatedFile: 'info.yml',
-    }),
+    updatePath: mockUpdatePath,
   })),
 }))
 
@@ -47,6 +49,27 @@ describe('POST /api/directory/update', () => {
 
     expect(data.success).toBe(true)
     expect(mockRebuildPdfs).toHaveBeenCalledWith('resumes/facebook', ['resume', 'cover'])
+  })
+
+  it('should pass sourceFile to updatePath when provided', async () => {
+    const request = new NextRequest('http://localhost:3000/api/directory/update', {
+      method: 'POST',
+      body: JSON.stringify({
+        directoryPath: 'library/workExperience',
+        yamlPath: 'workExperience[0].position',
+        value: 'Senior Dev',
+        sourceFile: 'pii/library/workExperience/ts-consulting.agentic.yml',
+      }),
+    })
+
+    await POST(request)
+
+    expect(mockUpdatePath).toHaveBeenCalledWith(
+      'library/workExperience',
+      'workExperience[0].position',
+      'Senior Dev',
+      'pii/library/workExperience/ts-consulting.agentic.yml',
+    )
   })
 
   it('should trigger PDF generation in base directory when base file is edited', async () => {

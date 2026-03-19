@@ -419,4 +419,100 @@ describe('MultiFileManager', () => {
       expect(result.metadata.filesLoaded.some((f) => f.endsWith('info.yml'))).toBe(true)
     })
   })
+
+  describe('updatePath - library file writes via sourceFile', () => {
+    function setupLibraryFixture() {
+      const companyDir = path.join(TEST_PII_DIR, 'resumes', 'acme')
+      const libraryDir = path.join(TEST_PII_DIR, 'library')
+      const workExpDir = path.join(libraryDir, 'workExperience')
+      const headerDir = path.join(libraryDir, 'header')
+
+      fs.mkdirSync(companyDir, { recursive: true })
+      fs.mkdirSync(workExpDir, { recursive: true })
+      fs.mkdirSync(headerDir, { recursive: true })
+
+      const workFile = path.join(workExpDir, 'acme-corp.backend.yml')
+      fs.writeFileSync(
+        workFile,
+        yaml.dump({
+          workExperience: [
+            {
+              position: 'Backend Engineer',
+              company: 'ACME',
+              details: [{ subhead: 'ACME Corp', lines: [{ text: 'Built things' }] }],
+            },
+          ],
+        }),
+      )
+
+      const headerFile = path.join(headerDir, 'engineer.default.yml')
+      fs.writeFileSync(
+        headerFile,
+        yaml.dump({ header: { name: 'John Doe', tagline: 'Engineer' } }),
+      )
+
+      return { companyDir, workFile, headerFile }
+    }
+
+    it('should write to library file when sourceFile is provided', async () => {
+      const { workFile } = setupLibraryFixture()
+
+      await manager.updatePath(
+        'library/workExperience',
+        'workExperience[0].position',
+        'Senior Backend Engineer',
+        workFile,
+      )
+
+      const updated = yaml.load(fs.readFileSync(workFile, 'utf-8')) as Record<string, unknown>
+      const work = updated.workExperience as Array<{ position: string }>
+      expect(work[0].position).toBe('Senior Backend Engineer')
+    })
+
+    it('should adjust array index to 0 for library files', async () => {
+      const { workFile } = setupLibraryFixture()
+
+      await manager.updatePath(
+        'library/workExperience',
+        'workExperience[5].position',
+        'Adjusted Position',
+        workFile,
+      )
+
+      const updated = yaml.load(fs.readFileSync(workFile, 'utf-8')) as Record<string, unknown>
+      const work = updated.workExperience as Array<{ position: string }>
+      expect(work[0].position).toBe('Adjusted Position')
+    })
+
+    it('should handle nested path updates in library files', async () => {
+      const { workFile } = setupLibraryFixture()
+
+      await manager.updatePath(
+        'library/workExperience',
+        'workExperience[0].details[0].lines[0].text',
+        'Shipped features',
+        workFile,
+      )
+
+      const updated = yaml.load(fs.readFileSync(workFile, 'utf-8')) as Record<string, unknown>
+      const work = updated.workExperience as Array<{
+        details: Array<{ lines: Array<{ text: string }> }>
+      }>
+      expect(work[0].details[0].lines[0].text).toBe('Shipped features')
+    })
+
+    it('should write to singleton library file', async () => {
+      const { headerFile } = setupLibraryFixture()
+
+      await manager.updatePath(
+        'library/header',
+        'header.name',
+        'Jane Doe',
+        headerFile,
+      )
+
+      const updated = yaml.load(fs.readFileSync(headerFile, 'utf-8')) as Record<string, unknown>
+      expect((updated.header as { name: string }).name).toBe('Jane Doe')
+    })
+  })
 })
