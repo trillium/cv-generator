@@ -446,10 +446,7 @@ describe('MultiFileManager', () => {
       )
 
       const headerFile = path.join(headerDir, 'engineer.default.yml')
-      fs.writeFileSync(
-        headerFile,
-        yaml.dump({ header: { name: 'John Doe', tagline: 'Engineer' } }),
-      )
+      fs.writeFileSync(headerFile, yaml.dump({ header: { name: 'John Doe', tagline: 'Engineer' } }))
 
       return { companyDir, workFile, headerFile }
     }
@@ -504,12 +501,7 @@ describe('MultiFileManager', () => {
     it('should write to singleton library file', async () => {
       const { headerFile } = setupLibraryFixture()
 
-      await manager.updatePath(
-        'library/header',
-        'header.name',
-        'Jane Doe',
-        headerFile,
-      )
+      await manager.updatePath('library/header', 'header.name', 'Jane Doe', headerFile)
 
       const updated = yaml.load(fs.readFileSync(headerFile, 'utf-8')) as Record<string, unknown>
       expect((updated.header as { name: string }).name).toBe('Jane Doe')

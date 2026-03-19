@@ -110,7 +110,9 @@ export async function updatePath(
         section,
       }
     }
-    console.log(`⚠️  [updatePath] Source file not found: ${absoluteSourceFile}, falling back to directory scan`)
+    console.log(
+      `⚠️  [updatePath] Source file not found: ${absoluteSourceFile}, falling back to directory scan`,
+    )
   }
 
   const ancestorDirs = getAncestorDirectories(dirPath).reverse()

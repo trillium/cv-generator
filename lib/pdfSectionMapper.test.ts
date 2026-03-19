@@ -166,27 +166,28 @@ describe('pdfSectionMapper', () => {
     })
 
     it('should return cover for library cover-letter file', () => {
-      expect(
-        getPdfsToRegenerateFromFile('library/cover-letter/posthog.product.yml'),
-      ).toEqual(['cover'])
+      expect(getPdfsToRegenerateFromFile('library/cover-letter/posthog.product.yml')).toEqual([
+        'cover',
+      ])
     })
 
     it('should return resume for library projects file', () => {
-      expect(
-        getPdfsToRegenerateFromFile('library/projects/booking-saas.serverless.yml'),
-      ).toEqual(['resume'])
+      expect(getPdfsToRegenerateFromFile('library/projects/booking-saas.serverless.yml')).toEqual([
+        'resume',
+      ])
     })
 
     it('should return resume and cover for library header file', () => {
-      expect(
-        getPdfsToRegenerateFromFile('library/header/product-engineer.default.yml'),
-      ).toEqual(['resume', 'cover'])
+      expect(getPdfsToRegenerateFromFile('library/header/product-engineer.default.yml')).toEqual([
+        'resume',
+        'cover',
+      ])
     })
 
     it('should return resume for library career-summary file', () => {
-      expect(
-        getPdfsToRegenerateFromFile('library/career-summary/product-eng.agentic.yml'),
-      ).toEqual(['resume'])
+      expect(getPdfsToRegenerateFromFile('library/career-summary/product-eng.agentic.yml')).toEqual(
+        ['resume'],
+      )
     })
 
     it('should handle pii-prefixed library paths', () => {

@@ -83,7 +83,9 @@ export function getPdfsToRegenerateFromFile(filePath: string): PdfType[] {
       const pdfs = SECTION_TO_PDF_MAP[sectionKey]
       if (pdfs && pdfs.length > 0) return pdfs
       if (pdfs && pdfs.length === 0) {
-        console.log(`Library file ${filename} (section: ${sectionKey}) doesn't affect PDFs, skipping regeneration`)
+        console.log(
+          `Library file ${filename} (section: ${sectionKey}) doesn't affect PDFs, skipping regeneration`,
+        )
         return []
       }
     }

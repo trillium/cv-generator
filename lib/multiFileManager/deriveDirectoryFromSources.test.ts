@@ -144,11 +144,7 @@ describe('deriveDirectoryFromSources - library/manifest paths', () => {
   })
 
   it('should resolve library path for cover letter', () => {
-    const result = deriveDirectoryFromSources(
-      'coverLetter',
-      librarySources,
-      'coverLetter[0].text',
-    )
+    const result = deriveDirectoryFromSources('coverLetter', librarySources, 'coverLetter[0].text')
     expect(result).toBe('library/cover-letter')
   })
 
