@@ -14,6 +14,7 @@ import { yaml } from '../lib/yamlService'
 const SKIP_SECTIONS = new Set(['info', 'metadata', 'llm', 'notes', 'linkedIn'])
 const SKIP_FILES = new Set(['metadata.json', 'llm.json'])
 const SKIP_EXTENSIONS = new Set(['.pdf', '.md'])
+const STUB_BASENAMES = new Set(['work', 'experience', 'project', 'data', 'resume', 'career', 'edu'])
 
 const ALL_MANIFEST_SECTION_KEYS = new Set<string>([
   'header',
@@ -73,6 +74,34 @@ function sanitizeItemName(name: string): string {
     .replace(/[^a-z0-9-]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
+}
+
+function extractItemName(sectionKey: string, sectionData: unknown): string | null {
+  const entry = Array.isArray(sectionData) ? sectionData[0] : sectionData
+  if (!entry || typeof entry !== 'object') return null
+
+  const record = entry as Record<string, unknown>
+
+  if (sectionKey === 'workExperience') {
+    if (typeof record.company === 'string') return sanitizeItemName(record.company)
+    const details = record.details
+    if (Array.isArray(details)) {
+      const subhead = details.find((d) => typeof d === 'object' && d !== null && 'subhead' in d) as
+        | Record<string, unknown>
+        | undefined
+      if (subhead && typeof subhead.subhead === 'string') return sanitizeItemName(subhead.subhead)
+    }
+  }
+
+  if (sectionKey === 'projects' && typeof record.name === 'string') {
+    return sanitizeItemName(record.name)
+  }
+
+  if (sectionKey === 'education' && typeof record.school === 'string') {
+    return sanitizeItemName(record.school)
+  }
+
+  return null
 }
 
 function isEmpty(value: unknown): boolean {
@@ -192,8 +221,15 @@ function scanCompanyDir(
         continue
       }
 
-      const hasDuplicateBasename = (basenameCounts.get(file.basename) || 0) > 1
-      const rawItem = hasDuplicateBasename ? `${file.basename}-${file.number}` : file.basename
+      const filebaseName = sanitizeItemName(file.basename)
+      const sectionRoot = sectionKey.replace(/([A-Z])/g, '').toLowerCase()
+      const isStubName =
+        /^\d+$/.test(file.basename) ||
+        file.basename === sectionKey ||
+        file.basename === sectionRoot ||
+        STUB_BASENAMES.has(file.basename)
+      const contentName = isStubName ? extractItemName(sectionKey, fileData[sectionKey]) : null
+      const rawItem = contentName ?? filebaseName
       const item = sanitizeItemName(rawItem)
       addEntry(
         sectionKey as ManifestSectionKey,
@@ -234,7 +270,8 @@ function scanCompanyDir(
       if (sectionsHandledByNumbered.has(sectionKey)) continue
 
       const section = sectionKey as ManifestSectionKey
-      const item = sanitizeItemName(sectionKey)
+      const contentName = extractItemName(sectionKey, sectionData)
+      const item = contentName ?? sanitizeItemName(sectionKey)
       addEntry(
         section,
         item,
@@ -250,36 +287,7 @@ function scanCompanyDir(
   }
 
   for (const filename of fullDataFiles) {
-    const filePath = path.join(companyPath, filename)
-    const fileData = safeLoadDataFile(filePath)
-    if (!fileData) {
-      skippedFiles.push(filename)
-      continue
-    }
-
-    const sections = extractMigratableSections(fileData)
-    if (sections.length === 0) {
-      skippedFiles.push(filename)
-      continue
-    }
-
-    for (const [sectionKey, sectionData] of sections) {
-      if (sectionsHandledByNumbered.has(sectionKey)) continue
-
-      const section = sectionKey as ManifestSectionKey
-      const item = sanitizeItemName(sectionKey)
-      addEntry(
-        section,
-        item,
-        defaultScope,
-        sectionKey,
-        sectionData,
-        filePath,
-        libraryEntries,
-        manifestEntries,
-        order++,
-      )
-    }
+    skippedFiles.push(filename)
   }
 
   return { company: companyName, libraryEntries, manifestEntries, skippedFiles }
@@ -314,7 +322,7 @@ function libraryFilePath(piiPath: string, entry: LibraryEntry): string {
   return path.join(piiPath, 'library', dirName, `${entry.item}.${entry.scope}.yml`)
 }
 
-export function planMigration(piiPath: string, defaultScope = 'default'): CompanyMigration[] {
+export function planMigration(piiPath: string, defaultScope?: string): CompanyMigration[] {
   const resumesPath = path.join(piiPath, 'resumes')
   if (!fs.existsSync(resumesPath)) return []
 
@@ -327,7 +335,8 @@ export function planMigration(piiPath: string, defaultScope = 'default'): Compan
 
   for (const company of companies) {
     const companyPath = path.join(resumesPath, company)
-    const migration = scanCompanyDir(companyPath, company, defaultScope)
+    const scope = defaultScope ?? sanitizeItemName(company)
+    const migration = scanCompanyDir(companyPath, company, scope)
 
     if (migration.libraryEntries.length > 0) {
       migrations.push(migration)
@@ -391,7 +400,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2)
   const execute = args.includes('--execute')
   const scopeIdx = args.indexOf('--scope')
-  const defaultScope = scopeIdx >= 0 ? args[scopeIdx + 1] : 'default'
+  const defaultScope = scopeIdx >= 0 ? args[scopeIdx + 1] : undefined
 
   const piiPath = path.resolve(process.cwd(), 'pii')
   const migrations = planMigration(piiPath, defaultScope)
