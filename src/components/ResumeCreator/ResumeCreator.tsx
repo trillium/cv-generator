@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useState } from 'react'
+import { FiFolder } from 'react-icons/fi'
 import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
 
 interface CreatedResume {
@@ -50,9 +51,10 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({ onClose, onResumeCreated 
     }
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: loadDirectories is stable, runs once on mount
   useEffect(() => {
     loadDirectories()
-  }, [loadDirectories])
+  }, [])
 
   const extractDirectories = (hierarchy: unknown): DirectoryInfo[] => {
     const dirs: DirectoryInfo[] = []
@@ -154,7 +156,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({ onClose, onResumeCreated 
       {!loadingDirs && directories.length > 0 && (
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
           <h3 className="text-md font-medium text-gray-900 dark:text-white mb-3">
-            📁 Existing Directories
+            <FiFolder className="inline-block mr-1" /> Existing Directories
           </h3>
           <div className="max-h-48 overflow-y-auto space-y-2">
             {directories.map((dir) => (
@@ -164,6 +166,7 @@ const ResumeCreator: React.FC<ResumeCreatorProps> = ({ onClose, onResumeCreated 
               >
                 <span className="text-gray-900 dark:text-white">{dir.name}</span>
                 <button
+                  type="button"
                   onClick={() => handleCopyDirectory(dir.path)}
                   className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800/30"
                 >

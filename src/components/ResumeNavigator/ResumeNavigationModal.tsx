@@ -25,7 +25,7 @@ export default function ResumeNavigationModal({
   }
 
   return (
-    <button onClick={openNavigator} className={buttonClassName}>
+    <button type="button" onClick={openNavigator} className={buttonClassName}>
       {buttonText}
     </button>
   )

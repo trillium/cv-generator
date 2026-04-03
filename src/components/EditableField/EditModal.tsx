@@ -150,10 +150,14 @@ export default function EditModal({
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              htmlFor="edit-link-text"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Display Text
             </label>
             <input
+              id="edit-link-text"
               ref={modalInputRef as React.RefObject<HTMLInputElement>}
               type="text"
               value={linkText}
@@ -164,10 +168,14 @@ export default function EditModal({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              htmlFor="edit-link-url"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               URL
             </label>
             <input
+              id="edit-link-url"
               type="text"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}

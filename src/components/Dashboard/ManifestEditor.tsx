@@ -36,7 +36,7 @@ function ManifestSection({
       <div className="space-y-1">
         {refs.map((ref, index) => (
           <div
-            key={`${ref}-${index}`}
+            key={ref}
             className="flex items-center gap-1 text-sm py-1 px-2 rounded bg-gray-50 dark:bg-gray-700/50"
           >
             {!isSingleton && <span className="text-xs text-gray-400 w-4">{index + 1}.</span>}

@@ -67,6 +67,7 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
         </p>
         <div className="flex gap-3 justify-end">
           <button
+            type="button"
             onClick={onClose}
             className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
           >
@@ -83,7 +84,7 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
         Split Section to New File
       </h3>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <span className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           {isUsingMergedData ? (
             <>
               Target Directory: <span className="font-mono">{currentDirectory}</span>
@@ -94,7 +95,7 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
           ) : (
             <>Source File: {selectedFile}</>
           )}
-        </label>
+        </span>
 
         <div className="mb-3">
           <div className="flex items-center justify-between mb-2">
@@ -102,6 +103,7 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
               Select Sections ({selectedSections.size}/{sections.length})
             </span>
             <button
+              type="button"
               onClick={toggleAll}
               className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
             >
@@ -147,12 +149,14 @@ const SplitSectionContent: React.FC<SplitSectionContentProps> = ({
       </div>
       <div className="flex gap-3 justify-end">
         <button
+          type="button"
           onClick={onClose}
           className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
         >
           Cancel
         </button>
         <button
+          type="button"
           onClick={handleSplit}
           disabled={selectedSections.size === 0 || !targetFileName.trim()}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"

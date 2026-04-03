@@ -71,6 +71,7 @@ const EditableYamlViewer: React.FC<EditableYamlViewerProps> = ({
         <h3 className="text-lg font-semibold text-gray-800">Edit YAML Data</h3>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={handleReset}
             disabled={!hasChanges}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 rounded-md border border-gray-300 transition-colors"
@@ -78,6 +79,7 @@ const EditableYamlViewer: React.FC<EditableYamlViewerProps> = ({
             Reset
           </button>
           <button
+            type="button"
             onClick={handleSave}
             disabled={!hasChanges || !!error || isValidating}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 rounded-md transition-colors"
@@ -105,8 +107,11 @@ const EditableYamlViewer: React.FC<EditableYamlViewerProps> = ({
 
       {/* Editor */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">YAML Content</label>
+        <label htmlFor="yaml-content" className="block text-sm font-medium text-gray-700">
+          YAML Content
+        </label>
         <textarea
+          id="yaml-content"
           value={editContent}
           onChange={(e) => handleContentChange(e.target.value)}
           className={clsx(

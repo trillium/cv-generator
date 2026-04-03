@@ -8,6 +8,7 @@ export default function HomeButton() {
   return (
     <Link href="/">
       <button
+        type="button"
         onClick={() => toast.info('Navigating to home')}
         className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
         title="Go to home"

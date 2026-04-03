@@ -59,6 +59,7 @@ function ResumeNavigator({ onSelectResume }: ResumeNavigatorProps) {
 
       <div className="flex justify-end pt-4 border-t mt-4">
         <button
+          type="button"
           onClick={closeModal}
           className="px-4 py-2 bg-gray-600 dark:bg-gray-700 text-white rounded hover:bg-gray-700 dark:hover:bg-gray-600"
         >

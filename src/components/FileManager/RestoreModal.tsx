@@ -42,8 +42,8 @@ export default function RestoreModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop dismiss pattern */}
+      <div className="absolute inset-0 bg-black/50" role="presentation" onClick={onClose} />
 
       {/* Modal */}
       <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
@@ -56,6 +56,7 @@ export default function RestoreModal({
             </h2>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
           >
@@ -73,18 +74,18 @@ export default function RestoreModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <span className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               File
-            </label>
+            </span>
             <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded text-sm text-gray-600 dark:text-gray-400">
               {fileName}
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <span className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Restore from
-            </label>
+            </span>
             <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded text-sm">
               <div className="font-medium text-gray-900 dark:text-gray-100">
                 {formatDate(version.timestamp)}
@@ -115,12 +116,14 @@ export default function RestoreModal({
         {/* Actions */}
         <div className="flex gap-3 mt-6">
           <button
+            type="button"
             onClick={onClose}
             className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleConfirm}
             disabled={!confirmed}
             className="flex-1 px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"

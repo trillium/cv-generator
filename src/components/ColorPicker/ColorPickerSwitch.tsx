@@ -116,6 +116,7 @@ export function ColorPickerSwitch() {
 
         <div className="flex justify-end gap-2 pt-4 border-t border-gray-200 dark:border-gray-600">
           <button
+            type="button"
             onClick={closeModal}
             className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded-md transition-colors"
           >
@@ -131,6 +132,7 @@ export function ColorPickerSwitch() {
 
   return (
     <button
+      type="button"
       onClick={openColorPickerModal}
       className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors relative"
       title="Choose accent color"

@@ -40,6 +40,7 @@ export default function TypeToggle() {
     <div className="flex bg-gray-100 dark:bg-gray-700 rounded-md p-1">
       {types.map((type) => (
         <button
+          type="button"
           key={type.value}
           onClick={() => handleTypeChange(type.value)}
           className={clsx('px-3 py-1 text-sm font-medium rounded transition-colors', {

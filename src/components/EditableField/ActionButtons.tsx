@@ -30,11 +30,13 @@ export default function ActionButtons({
       {canShowAddButtons && (
         <div className="absolute top-1/2 -left-5 transform -translate-y-1/2 z-10 print:hidden hidden group-hover:block">
           <button
+            type="button"
             onClick={onDelete}
             className="bg-red-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-red-600 transition-colors"
             title="Delete this item"
           >
             <svg
+              aria-hidden="true"
               className={buttonSizeClassses}
               fill="none"
               stroke="currentColor"
@@ -55,6 +57,7 @@ export default function ActionButtons({
       {canShowAddButtons && (
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10 print:hidden hidden group-hover:flex space-x-1">
           <button
+            type="button"
             onClick={onMoveUp}
             className="bg-blue-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-blue-600 transition-colors"
             title="Move up"
@@ -62,11 +65,13 @@ export default function ActionButtons({
             <FiChevronUp className={buttonSizeClassses} />
           </button>
           <button
+            type="button"
             onClick={onAddAbove}
             className="bg-green-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-green-600 transition-colors"
             title="Add new item above"
           >
             <svg
+              aria-hidden="true"
               className={buttonSizeClassses}
               fill="none"
               stroke="currentColor"
@@ -87,6 +92,7 @@ export default function ActionButtons({
       {canShowAddButtons && (
         <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-40 print:hidden hidden group-hover:flex space-x-1">
           <button
+            type="button"
             onClick={onMoveDown}
             className="bg-blue-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-blue-600 transition-colors"
             title="Move down"
@@ -94,11 +100,13 @@ export default function ActionButtons({
             <FiChevronDown className={buttonSizeClassses} />
           </button>
           <button
+            type="button"
             onClick={onAddBelow}
             className="bg-green-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-green-600 transition-colors"
             title="Add new item below"
           >
             <svg
+              aria-hidden="true"
               className={buttonSizeClassses}
               fill="none"
               stroke="currentColor"
@@ -118,11 +126,18 @@ export default function ActionButtons({
       {/* Edit button on the right */}
       <div className="absolute top-1/2 -right-5 transform -translate-y-1/2 z-10 print:hidden hidden group-hover:block">
         <button
+          type="button"
           onClick={onEdit}
           className="bg-blue-500 text-white text-xs px-1 py-0.5 rounded-full shadow-sm hover:bg-blue-600 transition-colors"
           title="Edit this field"
         >
-          <svg className={buttonSizeClassses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            aria-hidden="true"
+            className={buttonSizeClassses}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

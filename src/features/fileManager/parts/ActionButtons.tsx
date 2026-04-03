@@ -17,6 +17,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 }) => (
   <div className="mt-6 flex gap-3 justify-end">
     <button
+      type="button"
       onClick={onDiscard}
       disabled={!hasUnsavedChanges || loading}
       className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -24,6 +25,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
       Discard Changes
     </button>
     <button
+      type="button"
       onClick={onSave}
       disabled={!hasUnsavedChanges || loading}
       className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -31,6 +33,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
       Save
     </button>
     <button
+      type="button"
       onClick={onSaveAndCommit}
       disabled={!hasUnsavedChanges || loading}
       className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"

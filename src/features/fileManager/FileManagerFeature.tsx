@@ -160,6 +160,7 @@ export default function FileManagerFeature() {
 
         <div className="mb-4 flex gap-3">
           <button
+            type="button"
             onClick={showCreateDirectoryModal}
             disabled={!currentDirectory || loading}
             className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -167,6 +168,7 @@ export default function FileManagerFeature() {
             Create Directory
           </button>
           <button
+            type="button"
             onClick={showSplitSectionModal}
             disabled={!selectedFile || loading}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -174,6 +176,7 @@ export default function FileManagerFeature() {
             Split Section
           </button>
           <button
+            type="button"
             onClick={showDeleteFileModal}
             disabled={!selectedFile || loading || selectedFile === 'resumes'}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"

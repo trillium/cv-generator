@@ -37,6 +37,7 @@ export default function QuickActions({
         <div className="flex items-center gap-2">
           {/* Save */}
           <button
+            type="button"
             onClick={() => onSave?.(false)}
             disabled={disabled || !hasUnsavedChanges}
             className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -48,6 +49,7 @@ export default function QuickActions({
 
           {/* Commit */}
           <button
+            type="button"
             onClick={() => onSave?.(true)}
             disabled={disabled || !hasUnsavedChanges}
             className="flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded hover:bg-green-100 dark:hover:bg-green-900/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -60,6 +62,7 @@ export default function QuickActions({
           {/* Discard */}
           {hasUnsavedChanges && (
             <button
+              type="button"
               onClick={onDiscard}
               disabled={disabled}
               className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -73,6 +76,7 @@ export default function QuickActions({
 
           {/* Duplicate */}
           <button
+            type="button"
             onClick={onDuplicate}
             disabled={disabled}
             className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -83,6 +87,7 @@ export default function QuickActions({
 
           {/* View History */}
           <button
+            type="button"
             onClick={onViewHistory}
             disabled={disabled}
             className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -93,6 +98,7 @@ export default function QuickActions({
 
           {/* Edit Tags */}
           <button
+            type="button"
             onClick={onEditTags}
             disabled={disabled}
             className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -103,6 +109,7 @@ export default function QuickActions({
 
           {/* Edit Description */}
           <button
+            type="button"
             onClick={onEditDescription}
             disabled={disabled}
             className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
