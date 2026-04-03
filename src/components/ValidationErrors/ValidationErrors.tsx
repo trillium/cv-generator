@@ -35,9 +35,9 @@ export default function ValidationErrors({ errors, directoryPath }: ValidationEr
       </div>
 
       <div className="space-y-4">
-        {errors.map((error, index) => (
+        {errors.map((error, _index) => (
           <div
-            key={index}
+            key={`${error.field}-${error.message}`}
             className={`p-4 rounded border-l-4 ${
               error.severity === 'error'
                 ? 'bg-white border-red-500'

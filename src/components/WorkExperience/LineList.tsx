@@ -21,7 +21,7 @@ function LineList({
 
         return (
           <li
-            key={line_index}
+            key={line.text}
             className={clsx('text-base', {
               'list-disc ml-6 [&>div]:block': showBullet,
               'list-none': !showBullet,

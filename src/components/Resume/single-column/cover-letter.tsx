@@ -55,7 +55,7 @@ function CoverLetterContent({ coverLetterLines }: { coverLetterLines: string[] }
         })
         return (
           <EditableField
-            key={index}
+            key={line}
             yamlPath={`coverLetter.${index}`}
             value={line || ''}
             fieldType="text"

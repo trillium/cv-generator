@@ -45,6 +45,7 @@ export default function ResumeMetadataDisplay({
     <div className="space-y-2 mb-3 group/metadata relative">
       {showEditButton && onEdit && (
         <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation()
             onEdit()
@@ -58,6 +59,7 @@ export default function ResumeMetadataDisplay({
 
       {!hasMetadata && showEditButton && onEdit && (
         <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation()
             onEdit()
@@ -103,9 +105,9 @@ export default function ResumeMetadataDisplay({
 
       {metadata?.tailoredFor && metadata.tailoredFor.length > 0 && (
         <div className="flex items-center gap-1 flex-wrap">
-          {metadata.tailoredFor.map((item, idx) => (
+          {metadata.tailoredFor.map((item, _idx) => (
             <span
-              key={idx}
+              key={item}
               className="px-1.5 py-0.5 rounded text-xs bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
             >
               {item}

@@ -10,8 +10,8 @@ function BubbleList({
 }) {
   return (
     <div className={clsx('flex text-xs', className)}>
-      {bubbles.map((bubble, bubble_index) => (
-        <Bubble key={bubble_index} text={bubble} />
+      {bubbles.map((bubble, _bubble_index) => (
+        <Bubble key={bubble} text={bubble} />
       ))}
     </div>
   )

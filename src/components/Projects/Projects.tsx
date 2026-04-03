@@ -16,7 +16,7 @@ const Projects = ({ data, showBubbles }: { data: Project[]; showBubbles: boolean
       <Title text="Projects" />
       <div>
         {data.map((item, num) => {
-          return <ProjectItem key={num} data={item} showBubbles={showBubbles} index={num} />
+          return <ProjectItem key={item.name} data={item} showBubbles={showBubbles} index={num} />
         })}
       </div>
     </section>
@@ -45,7 +45,7 @@ function ProjectItem({
         <div className="flex flex-wrap gap-1 mb-2">
           {bubbles.map((bubble, bubbleIndex) => (
             <EditableField
-              key={bubbleIndex}
+              key={bubble}
               yamlPath={`projects.${index}.bubbles.${bubbleIndex}`}
               value={bubble}
               fieldType="text"

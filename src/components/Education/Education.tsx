@@ -13,7 +13,7 @@ const Education = ({ data }: { data: EducationType[] }) => {
       <Title text="Education" />
       <div className="w-full">
         {data.map((item, num) => {
-          return <EducationItem key={num} data={item} index={num} />
+          return <EducationItem key={`${item.school}-${item.degree}`} data={item} index={num} />
         })}
       </div>
     </section>

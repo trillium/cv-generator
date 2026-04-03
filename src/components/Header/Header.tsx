@@ -26,7 +26,7 @@ const Header = ({ name, title, resume, omitTitle = false, omitBlurb = false }: H
         <div className="my-1">
           {title.map((line, index) => (
             <EditableField
-              key={index}
+              key={`title-${line}`}
               yamlPath={`header.title.${index}`}
               value={line}
               fieldType="text"
@@ -40,7 +40,7 @@ const Header = ({ name, title, resume, omitTitle = false, omitBlurb = false }: H
         <div className="mt-2">
           {resume.map((line, index) => (
             <EditableField
-              key={index}
+              key={`resume-${line}`}
               yamlPath={`header.resume.${index}`}
               value={line}
               fieldType="textarea"

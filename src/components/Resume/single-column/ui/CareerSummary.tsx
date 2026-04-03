@@ -11,8 +11,8 @@ export default function CareerSummary({ data }: { data: CVData }) {
       <Title text="Career Summary" />
       <div className="grid grid-cols-10 gap-2">
         {careerSummary.map(({ title, text }, idx) => (
-          <React.Fragment key={`career-summary-${idx}`}>
-            <div className="col-span-2 list-none" key={idx}>
+          <React.Fragment key={title}>
+            <div className="col-span-2 list-none">
               <EditableField yamlPath={`careerSummary.${idx}.title`} value={title} fieldType="text">
                 <span className="font-semibold">{title}</span>
               </EditableField>

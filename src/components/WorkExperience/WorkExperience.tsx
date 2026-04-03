@@ -21,7 +21,7 @@ const WorkExperience = ({
       <div className="flex flex-col gap-2">
         {data.map((item, index) => (
           <WorkExperienceItem
-            key={index}
+            key={`${item.position}-${item.company}`}
             item={item}
             index={index}
             isLast={index !== data.length - 1}
@@ -69,7 +69,7 @@ function WorkExperienceItem({
         <div className="flex flex-wrap gap-1 mb-2">
           {item.bubbles.map((bubble, bubbleIndex) => (
             <EditableField
-              key={bubbleIndex}
+              key={bubble}
               yamlPath={`workExperience.${index}.bubbles.${bubbleIndex}`}
               value={bubble}
               fieldType="text"
@@ -82,7 +82,7 @@ function WorkExperienceItem({
         </div>
       )}
       {item.details.map((detail, detailIndex) => (
-        <div key={detailIndex} className="flex flex-col mt-2">
+        <div key={`${detail.subhead}-${detail.years}`} className="flex flex-col mt-2">
           <div className="flex flex-row justify-between">
             {detail.subhead && (
               <EditableField

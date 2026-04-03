@@ -97,8 +97,8 @@ export default function PdfPreview({ pdfUrl }: PdfPreviewProps) {
             <FiAlertTriangle className="inline" /> Off-screen content detected:
           </p>
           <ul className="text-xs text-yellow-700 list-disc list-inside">
-            {metadata.offScreenText.slice(0, 5).map((text: string, i: number) => (
-              <li key={i}>{text}</li>
+            {metadata.offScreenText.slice(0, 5).map((text: string, _i: number) => (
+              <li key={text}>{text}</li>
             ))}
           </ul>
         </div>

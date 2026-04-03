@@ -18,9 +18,12 @@ const ProfileLanguages = ({
     <div className="w-full flex flex-col gap-2">
       <Title text="Languages" />
       <div className="flex flex-col items-start gap-1">
-        {languages.map((language, index) => {
+        {languages.map((language, _index) => {
           return (
-            <div className="flex items-center gap-2 text-base leading-tight" key={index}>
+            <div
+              className="flex items-center gap-2 text-base leading-tight"
+              key={`${language.language}-${language.level}`}
+            >
               <span className="font-semibold text-gray-700">
                 {showAbbreviation && language.abbreviation
                   ? language.abbreviation

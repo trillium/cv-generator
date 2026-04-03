@@ -15,14 +15,12 @@ export const ProfileHeader = ({ lines, links, shouldDisplayProfileImage }: Data[
       <div className="flex flex-col items-start">
         {lines.map((line, index) => (
           <EditableField
-            key={index}
+            key={line}
             yamlPath={`profile.lines.${index}`}
             value={line}
             fieldType="text"
           >
-            <p key={index} className="text-base text-neutral-700 dark:text-neutral-300 m-0">
-              {line}
-            </p>
+            <p className="text-base text-neutral-700 dark:text-neutral-300 m-0">{line}</p>
           </EditableField>
         ))}
       </div>
@@ -30,7 +28,7 @@ export const ProfileHeader = ({ lines, links, shouldDisplayProfileImage }: Data[
         {links.map((link, index) => {
           return (
             <ProfileLink
-              key={index}
+              key={link.link}
               {...link}
               nameYamlPath={`profile.links.${index}.name`}
               linkYamlPath={`profile.links.${index}.link`}
@@ -66,7 +64,7 @@ const ProfileSkills = ({ technical }: { technical: TechnicalCategory[] }) => {
               {tech.bubbles && tech.bubbles.length > 0 ? (
                 tech.bubbles.map((bubble, bubbleIndex) => (
                   <EditableField
-                    key={bubbleIndex}
+                    key={bubble}
                     yamlPath={`technical.${index}.bubbles.${bubbleIndex}`}
                     value={bubble}
                     fieldType="text"
@@ -98,7 +96,7 @@ const ProfileEducation = ({ education }: { education?: Education[] }) => {
       <div className="flex flex-col gap-2">
         {education.map((edu, index) => {
           return (
-            <div className="flex flex-col gap-0.5" key={index}>
+            <div className="flex flex-col gap-0.5" key={`${edu.degree}-${edu.school}`}>
               <EditableField
                 yamlPath={`education.${index}.degree`}
                 value={edu.degree}

@@ -19,7 +19,7 @@ const ProjectLinks = ({ links, projectIndex }: ProjectLinksProps) => {
   return (
     <ul className="flex flex-row mt">
       {linksToRender.map((link, index) => (
-        <li key={index} className="flex items-center leading-none  border-primary-500">
+        <li key={link.link} className="flex items-center leading-none  border-primary-500">
           <ProfileLink
             className="px-1 underline"
             {...link}

@@ -107,7 +107,7 @@ function ExperienceSection({ experiences }: { experiences: LinkedInProfileType['
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Experience</h2>
       <div className="space-y-6">
         {experiences.map((exp, index) => (
-          <div key={index} className="flex gap-4">
+          <div key={`${exp.company}-${exp.title}`} className="flex gap-4">
             <div className="flex-shrink-0 w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded" />
             <div className="flex-1">
               <LinkedInEditableField
@@ -175,7 +175,7 @@ function EducationSection({ education }: { education: LinkedInProfileType['educa
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Education</h2>
       <div className="space-y-6">
         {education.map((edu, index) => (
-          <div key={index} className="flex gap-4">
+          <div key={`${edu.institution}-${edu.degree}`} className="flex gap-4">
             <div className="flex-shrink-0 w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded" />
             <div className="flex-1">
               <LinkedInEditableField
@@ -247,9 +247,9 @@ function SkillsSection({ skills }: { skills: string[] }) {
     <div className="border-t border-gray-200 dark:border-gray-700 py-6">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Skills</h2>
       <div className="flex flex-wrap gap-2">
-        {skills.map((skill, index) => (
+        {skills.map((skill, _index) => (
           <span
-            key={index}
+            key={skill}
             className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm"
           >
             {skill}
@@ -269,8 +269,11 @@ function RecommendationsSection({
     <div className="border-t border-gray-200 dark:border-gray-700 py-6">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Recommendations</h2>
       <div className="space-y-6">
-        {recommendations.map((rec, index) => (
-          <div key={index} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+        {recommendations.map((rec, _index) => (
+          <div
+            key={`${rec.recommender}-${rec.date}`}
+            className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
+          >
             <div className="flex items-start gap-3 mb-3">
               <div className="flex-shrink-0 w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-white font-semibold">
                 {rec.recommender
@@ -305,8 +308,8 @@ function CertificationsSection({
         Licenses & Certifications
       </h2>
       <div className="space-y-4">
-        {certifications?.map((cert, index) => (
-          <div key={index}>
+        {certifications?.map((cert, _index) => (
+          <div key={`${cert.name}-${cert.issuer}`}>
             <h3 className="font-semibold text-gray-900 dark:text-white">{cert.name}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {cert.issuer}
@@ -324,8 +327,8 @@ function InterestsSection({ interests }: { interests: string[] }) {
     <div className="border-t border-gray-200 dark:border-gray-700 py-6">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Interests</h2>
       <ul className="list-disc list-inside space-y-1">
-        {interests.map((interest, index) => (
-          <li key={index} className="text-gray-700 dark:text-gray-300">
+        {interests.map((interest, _index) => (
+          <li key={interest} className="text-gray-700 dark:text-gray-300">
             {interest}
           </li>
         ))}
