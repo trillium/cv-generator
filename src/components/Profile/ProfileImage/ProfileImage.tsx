@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import Image from 'next/image'
 import useProfilePicture from '@/hooks/useProfilePicture'
 
 type ImageOptions = {
@@ -10,7 +11,7 @@ const ProfileImage = (options: ImageOptions = {}) => {
   const profilePicture = useProfilePicture()
 
   const profilePictureClasses = clsx(
-    'flex items-center justify-center w-24 h-24 overflow-hidden bg-white shadow-sm',
+    'relative flex items-center justify-center w-24 h-24 overflow-hidden bg-white shadow-sm',
     { 'rounded-full': options.circular },
     { 'ring-2 ring-gray-300': options.border },
   )
@@ -19,7 +20,7 @@ const ProfileImage = (options: ImageOptions = {}) => {
     <>
       {profilePicture && (
         <div className={profilePictureClasses}>
-          <img src={profilePicture} alt="Profile" />
+          <Image src={profilePicture} alt="Profile" fill className="object-cover" />
         </div>
       )}
     </>

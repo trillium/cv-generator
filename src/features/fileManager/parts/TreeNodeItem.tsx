@@ -34,7 +34,12 @@ const TreeNodeItem: React.FC<TreeNodeItemProps> = ({ node, depth, selectedFile, 
             : 'hover:bg-gray-50 dark:hover:bg-gray-700',
         )}
         style={{ paddingLeft: `${paddingLeft}px` }}
+        role="treeitem"
+        tabIndex={0}
         onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') handleClick()
+        }}
       >
         {node.type === 'directory' && (
           <span className="mr-1.5 text-gray-500 dark:text-gray-400">

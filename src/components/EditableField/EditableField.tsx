@@ -242,6 +242,7 @@ export default function EditableField<T extends string | string[]>({
 
   // Render view mode
   return (
+    // biome-ignore lint/a11y/useSemanticElements: complex wrapper needs div, role="button" provides semantics
     <div
       className={wrapperStyles}
       onClick={handleClick}

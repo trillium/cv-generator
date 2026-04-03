@@ -226,6 +226,8 @@ describe('EmptyFieldPlaceholder', () => {
     it('handles anchor elements with blank href', () => {
       render(
         <EmptyFieldPlaceholder fieldType="text" isEmpty={true} yamlPath="test.path">
+          {/* biome-ignore lint/a11y/useValidAnchor: testing empty anchor handling */}
+          {/* biome-ignore lint/a11y/useAnchorContent: testing empty content handling */}
           <a href="">{''}</a>
         </EmptyFieldPlaceholder>,
       )
@@ -272,6 +274,7 @@ describe('EmptyFieldPlaceholder', () => {
         <EmptyFieldPlaceholder fieldType="link" isEmpty={true} yamlPath="profile.links.0">
           {/* biome-ignore lint/complexity/noUselessFragments: Fragment required for EmptyFieldPlaceholder processing */}
           <>
+            {/* biome-ignore lint/a11y/useValidAnchor: testing empty anchor handling */}
             <a href="" className="print:block hidden">
               <span className="text-sm font-bold">{''}</span>
             </a>

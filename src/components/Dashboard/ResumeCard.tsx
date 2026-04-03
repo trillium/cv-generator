@@ -18,13 +18,19 @@ export default function ResumeCard({
   onPrint,
 }: ResumeCardProps) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: card with complex children needs div, role="button" provides semantics
     <div
       className={`p-3 rounded-lg border cursor-pointer transition-colors ${
         isSelected
           ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 dark:border-primary-400'
           : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
       }`}
+      role="button"
+      tabIndex={0}
       onClick={() => onSelect(resume)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') onSelect(resume)
+      }}
     >
       <div className="flex items-center justify-between">
         <div>

@@ -57,8 +57,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
   // Hook that modal content components can use to auto-focus an element
   const useAutoFocus = useCallback(<T extends HTMLElement>() => {
+    // biome-ignore lint/correctness/useHookAtTopLevel: hooks inside useCallback is intentional — this is a factory for modal consumers
     const elementRef = useRef<T>(null)
-
+    // biome-ignore lint/correctness/useHookAtTopLevel: see above
     useEffect(() => {
       // Delay to ensure modal transition is complete and element is rendered
       const timer = setTimeout(() => {

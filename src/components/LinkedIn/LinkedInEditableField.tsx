@@ -137,6 +137,7 @@ export default function LinkedInEditableField<T extends string | string[]>({
   )
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: complex wrapper needs div, role="button" provides semantics
     <div
       className={wrapperStyles}
       onClick={handleClick}

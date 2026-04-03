@@ -15,7 +15,7 @@ let nonYamlFiles = 0
 try {
   const files = fs.readdirSync(piiFolder)
   console.log(`Files in ${piiFolder}:`)
-  files.forEach((file) => console.log(`  - ${file}`))
+  for (const file of files) console.log(`  - ${file}`)
   console.log('')
 
   for (const file of files) {
