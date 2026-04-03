@@ -3,6 +3,7 @@
 import { clsx } from 'clsx'
 import type React from 'react'
 import { useEffect, useState } from 'react'
+import { FiCheckCircle, FiXCircle } from 'react-icons/fi'
 import { parseYamlString } from '@/lib/yamlService'
 
 interface EditableYamlViewerProps {
@@ -123,7 +124,17 @@ const EditableYamlViewer: React.FC<EditableYamlViewerProps> = ({
             Lines: {editContent.split('\n').length} | Characters: {editContent.length}
           </span>
           <span>
-            {isValidating ? 'Validating...' : error ? '❌ Invalid YAML' : '✅ Valid YAML'}
+            {isValidating ? (
+              'Validating...'
+            ) : error ? (
+              <>
+                <FiXCircle className="inline" /> Invalid YAML
+              </>
+            ) : (
+              <>
+                <FiCheckCircle className="inline" /> Valid YAML
+              </>
+            )}
           </span>
         </div>
       </div>

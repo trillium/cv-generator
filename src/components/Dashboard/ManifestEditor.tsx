@@ -1,5 +1,6 @@
 'use client'
 
+import { FiChevronDown, FiChevronUp, FiX } from 'react-icons/fi'
 import type { Manifest, ManifestSectionKey } from '@/lib/manifest/types'
 import { SINGLETON_SECTIONS } from '@/lib/manifest/types'
 
@@ -48,7 +49,7 @@ function ManifestSection({
                   disabled={index === 0}
                   className="text-xs px-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 disabled:opacity-30 disabled:cursor-default"
                 >
-                  ↑
+                  <FiChevronUp size={12} />
                 </button>
                 <button
                   type="button"
@@ -56,7 +57,7 @@ function ManifestSection({
                   disabled={index === refs.length - 1}
                   className="text-xs px-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 disabled:opacity-30 disabled:cursor-default"
                 >
-                  ↓
+                  <FiChevronDown size={12} />
                 </button>
               </>
             )}
@@ -65,7 +66,7 @@ function ManifestSection({
               onClick={() => onRemove(index)}
               className="text-xs px-1 text-red-400 hover:text-red-600 dark:hover:text-red-300"
             >
-              ✕
+              <FiX size={12} />
             </button>
           </div>
         ))}

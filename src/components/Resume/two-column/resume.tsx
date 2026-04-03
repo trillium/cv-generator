@@ -1,3 +1,4 @@
+import { FiAlertTriangle } from 'react-icons/fi'
 import Header from '@/components/Header/Header'
 import Profile from '@/components/Profile/Profile'
 import ProjectsList from '@/components/Projects/ProjectsList'
@@ -14,7 +15,9 @@ function SingleColumnResume({ data }: { data: CVData }) {
     return (
       <div className="w-full bg-white dark:bg-gray-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">⚠️</div>
+          <div className="text-6xl mb-4 text-yellow-500">
+            <FiAlertTriangle className="mx-auto" />
+          </div>
           <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
             Incomplete Resume Data
           </h1>

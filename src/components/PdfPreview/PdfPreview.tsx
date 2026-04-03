@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { FiAlertTriangle } from 'react-icons/fi'
 import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
 import { useModal } from '@/contexts/ModalContext'
 import { DEFAULT_SCALE, MAX_SCALE, MIN_SCALE, SCALE_STEP } from './PdfPreview.constants'
@@ -57,7 +58,7 @@ export default function PdfPreview({ pdfUrl }: PdfPreviewProps) {
           )}
           {metadata?.error && (
             <span className="text-sm text-red-600" title={metadata.error}>
-              ⚠️ Has errors
+              <FiAlertTriangle className="inline" /> Has errors
             </span>
           )}
           <button
@@ -92,7 +93,9 @@ export default function PdfPreview({ pdfUrl }: PdfPreviewProps) {
 
       {metadata?.offScreenText && metadata.offScreenText.length > 0 && (
         <div className="pdf-warnings p-4 border-t bg-yellow-50">
-          <p className="text-sm font-medium text-yellow-800 mb-2">⚠️ Off-screen content detected:</p>
+          <p className="text-sm font-medium text-yellow-800 mb-2">
+            <FiAlertTriangle className="inline" /> Off-screen content detected:
+          </p>
           <ul className="text-xs text-yellow-700 list-disc list-inside">
             {metadata.offScreenText.slice(0, 5).map((text: string, i: number) => (
               <li key={i}>{text}</li>

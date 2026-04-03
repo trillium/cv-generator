@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
 
 type ItemIndex = {
   scopes: string[]
@@ -49,7 +50,9 @@ export default function LibraryBrowser({ library, onSelectRef }: LibraryBrowserP
               onClick={() => toggleSection(section)}
               className="flex items-center gap-1 w-full text-left text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 py-1"
             >
-              <span className="text-xs text-gray-400">{isExpanded ? '▼' : '▶'}</span>
+              <span className="text-xs text-gray-400">
+                {isExpanded ? <FiChevronDown size={12} /> : <FiChevronRight size={12} />}
+              </span>
               <span>{section}/</span>
               <span className="text-xs text-gray-400 ml-auto">{Object.keys(items).length}</span>
             </button>

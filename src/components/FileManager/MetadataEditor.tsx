@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import { useState } from 'react'
+import { FiX } from 'react-icons/fi'
 import type { ResumeMetadata } from '@/types'
 
 interface MetadataEditorProps {
@@ -178,7 +179,7 @@ export default function MetadataEditor({
                   onClick={() => handleRemoveTailored(idx)}
                   className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
                 >
-                  ×
+                  <FiX size={12} />
                 </button>
               </span>
             ))}

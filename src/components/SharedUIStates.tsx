@@ -1,3 +1,6 @@
+import type { ReactNode } from 'react'
+import { FiAlertTriangle, FiXCircle } from 'react-icons/fi'
+
 export function LoadingState({ message }: { message?: string }) {
   return (
     <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
@@ -25,7 +28,9 @@ export function ErrorState({
   return (
     <div className="min-h-screen w-full bg-white dark:bg-gray-900 flex items-center justify-center">
       <div className="text-center max-w-md">
-        <div className="text-6xl mb-4">❌</div>
+        <div className="text-6xl mb-4 text-red-500">
+          <FiXCircle className="mx-auto" />
+        </div>
         <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">{title}</h1>
         <p className="text-gray-600 dark:text-gray-400 mb-4 whitespace-pre-wrap">{message}</p>
         {path && (
@@ -50,16 +55,18 @@ export function ErrorState({
 export function EmptyState({
   title = 'No Data',
   message,
-  icon = '⚠️',
+  icon,
 }: {
   title?: string
   message: string
-  icon?: string
+  icon?: ReactNode
 }) {
   return (
     <div className="min-h-screen w-full bg-white dark:bg-gray-800 flex items-center justify-center">
       <div className="text-center">
-        <div className="text-6xl mb-4">{icon}</div>
+        <div className="text-6xl mb-4 text-yellow-500">
+          {icon ?? <FiAlertTriangle className="mx-auto" />}
+        </div>
         <h1 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">{title}</h1>
         <p className="text-gray-600 dark:text-gray-400">{message}</p>
       </div>

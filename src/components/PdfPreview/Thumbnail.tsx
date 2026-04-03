@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { FiAlertTriangle, FiDownload, FiLoader } from 'react-icons/fi'
 import { useDirectoryManager } from '@/contexts/DirectoryManager/DirectoryManagerContext.hook'
 import { useModal } from '@/contexts/ModalContext'
 import PdfPreview from './PdfPreview'
@@ -55,17 +56,17 @@ export default function Thumbnail() {
     >
       {isGenerating ? (
         <div className="flex items-center justify-center h-full bg-yellow-50">
-          <span className="text-2xl">⏳</span>
+          <FiLoader className="text-2xl animate-spin" />
         </div>
       ) : hasError ? (
         <div className="flex items-center justify-center h-full bg-red-50">
-          <span className="text-2xl">⚠️</span>
+          <FiAlertTriangle className="text-2xl text-red-500" />
         </div>
       ) : pdfUrl ? (
         <>
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-purple-50 z-10">
-              <span className="text-2xl">📥</span>
+              <FiDownload className="text-2xl" />
             </div>
           )}
           <iframe

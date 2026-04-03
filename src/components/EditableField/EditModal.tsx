@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { FiCheck, FiCopy, FiLoader, FiX } from 'react-icons/fi'
 import { extractCopyData } from '@/lib/utility/index'
 import type { CVData } from '@/types'
 import DebugInfo from './DebugInfo'
@@ -222,7 +223,7 @@ export default function EditModal({
             aria-label="Copy as JSON"
             type="button"
           >
-            {copied ? '✅' : '📋'}
+            {copied ? <FiCheck /> : <FiCopy />}
           </button>
           <span className="text-[10px] text-green-700 dark:text-green-300 mt-1">
             {copied ? 'Copied!' : 'Copy'}
@@ -237,7 +238,7 @@ export default function EditModal({
             title="Save (Enter)"
             type="button"
           >
-            {isSaving ? '⏳' : '✓'}
+            {isSaving ? <FiLoader className="animate-spin" /> : <FiCheck />}
           </button>
           <span className="text-[10px] text-blue-700 dark:text-blue-300 mt-1">Save</span>
         </div>
@@ -249,7 +250,7 @@ export default function EditModal({
             title="Cancel (Esc)"
             type="button"
           >
-            ✕
+            <FiX />
           </button>
           <span className="text-[10px] text-red-500 dark:text-red-400 mt-1">Cancel</span>
         </div>
