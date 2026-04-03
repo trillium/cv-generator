@@ -71,10 +71,14 @@ export default function MetadataEditor({
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label
+            htmlFor="meta-target-company"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
             Target Company
           </label>
           <input
+            id="meta-target-company"
             type="text"
             value={formData.targetCompany}
             onChange={(e) => setFormData({ ...formData, targetCompany: e.target.value })}
@@ -84,10 +88,14 @@ export default function MetadataEditor({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label
+            htmlFor="meta-target-position"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
             Target Position
           </label>
           <input
+            id="meta-target-position"
             type="text"
             value={formData.targetPosition}
             onChange={(e) => setFormData({ ...formData, targetPosition: e.target.value })}
@@ -97,10 +105,14 @@ export default function MetadataEditor({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label
+            htmlFor="meta-job-url"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
             Job Posting URL
           </label>
           <input
+            id="meta-job-url"
             type="url"
             value={formData.targetJobUrl}
             onChange={(e) => setFormData({ ...formData, targetJobUrl: e.target.value })}
@@ -111,10 +123,14 @@ export default function MetadataEditor({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="meta-app-date"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Application Date
             </label>
             <input
+              id="meta-app-date"
               type="date"
               value={formData.applicationDate}
               onChange={(e) => setFormData({ ...formData, applicationDate: e.target.value })}
@@ -123,10 +139,14 @@ export default function MetadataEditor({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="meta-app-status"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Application Status
             </label>
             <select
+              id="meta-app-status"
               value={formData.applicationStatus}
               onChange={(e) =>
                 setFormData({
@@ -147,15 +167,24 @@ export default function MetadataEditor({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label
+            htmlFor="meta-tailored"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
             Tailored For
           </label>
           <div className="flex gap-2 mb-2">
             <input
+              id="meta-tailored"
               type="text"
               value={tailoredInput}
               onChange={(e) => setTailoredInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTailored())}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleAddTailored()
+                }
+              }}
               className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               placeholder="React, accessibility, etc."
             />
@@ -170,7 +199,7 @@ export default function MetadataEditor({
           <div className="flex flex-wrap gap-2">
             {formData.tailoredFor?.map((item, idx) => (
               <span
-                key={idx}
+                key={item}
                 className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-lg text-sm flex items-center gap-2"
               >
                 {item}
@@ -187,10 +216,14 @@ export default function MetadataEditor({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label
+            htmlFor="meta-notes"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
             Notes
           </label>
           <textarea
+            id="meta-notes"
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             rows={4}
