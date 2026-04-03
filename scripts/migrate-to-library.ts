@@ -200,7 +200,7 @@ function scanCompanyDir(
       continue
     }
 
-    const sorted = [...files].sort((a, b) => Number.parseInt(a.number) - Number.parseInt(b.number))
+    const sorted = [...files].sort((a, b) => Number.parseInt(a.number, 10) - Number.parseInt(b.number, 10))
 
     const basenameCounts = new Map<string, number>()
     for (const f of sorted) {

@@ -221,7 +221,6 @@ describe('migrate-to-library', () => {
       executeMigration(TEST_PII_DIR, migrations)
 
       expect(fs.existsSync(path.join(companyDir, 'info.yml'))).toBe(true)
-      const libraryInfoGlob = path.join(TEST_PII_DIR, 'library', '**', 'info*')
       expect(fs.existsSync(path.join(TEST_PII_DIR, 'library', 'info'))).toBe(false)
     })
 

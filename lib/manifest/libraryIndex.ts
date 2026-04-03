@@ -94,7 +94,7 @@ export function scanManifestUsage(resumesPath: string): Map<string, Set<string>>
 
         const key = parsed.item
         if (!usageMap.has(key)) usageMap.set(key, new Set())
-        usageMap.get(key)!.add(company.name)
+        usageMap.get(key)?.add(company.name)
       }
     }
   }

@@ -46,7 +46,7 @@ describe('library-index', () => {
 
     expect(index.workExperience).toBeDefined()
     expect(index.workExperience['ts-consulting'].scopes).toEqual(['agentic', 'fullstack'])
-    expect(index.workExperience['hackforla'].scopes).toEqual(['leadership'])
+    expect(index.workExperience.hackforla.scopes).toEqual(['leadership'])
   })
 
   it('parses item.scope-variant.yml correctly', () => {
