@@ -46,7 +46,13 @@ export default function LayoutSelector() {
     <Menu>
       <MenuButton className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md border border-gray-300 dark:border-gray-600 transition-colors">
         {currentLayoutOption?.label || 'Single Column'}
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          aria-hidden="true"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </MenuButton>
@@ -59,6 +65,7 @@ export default function LayoutSelector() {
           <MenuItem key={layout.value}>
             {({ active }) => (
               <button
+                type="button"
                 onClick={() => handleLayoutChange(layout.value)}
                 className={clsx(
                   'w-full text-left px-3 py-2 text-sm first:rounded-t-md last:rounded-b-md transition-all hover:font-semibold',

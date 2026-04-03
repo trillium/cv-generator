@@ -14,6 +14,7 @@ import { Fragment, useEffect, useState } from 'react'
 
 const Sun = () => (
   <svg
+    aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
     fill="currentColor"
@@ -28,6 +29,7 @@ const Sun = () => (
 )
 const Moon = () => (
   <svg
+    aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
     fill="currentColor"
@@ -38,6 +40,7 @@ const Moon = () => (
 )
 const Monitor = () => (
   <svg
+    aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
     fill="none"
@@ -52,7 +55,7 @@ const Monitor = () => (
     <line x1="10" y1="13" x2="10" y2="17"></line>
   </svg>
 )
-const Blank = () => <svg className="h-6 w-6" />
+const Blank = () => <svg aria-hidden="true" className="h-6 w-6" />
 
 const ThemeSwitch = () => {
   const [mounted, setMounted] = useState(false)
@@ -85,6 +88,7 @@ const ThemeSwitch = () => {
                   <MenuItem>
                     {({ focus }) => (
                       <button
+                        type="button"
                         className={`${focus ? 'bg-primary-600 text-white' : ''} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                       >
                         <div className="mr-2">
@@ -99,6 +103,7 @@ const ThemeSwitch = () => {
                   <MenuItem>
                     {({ focus }) => (
                       <button
+                        type="button"
                         className={`${
                           focus ? 'bg-primary-600 text-white' : ''
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
@@ -115,6 +120,7 @@ const ThemeSwitch = () => {
                   <MenuItem>
                     {({ focus }) => (
                       <button
+                        type="button"
                         className={`${
                           focus ? 'bg-primary-600 text-white' : ''
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}

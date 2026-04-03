@@ -20,6 +20,7 @@ export default function PrintPageSize({ pdfType = 'resume' }: PrintPageSizeProps
   return (
     <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-600">
       <svg
+        aria-hidden="true"
         className="w-4 h-4 text-gray-500 dark:text-gray-400"
         fill="none"
         stroke="currentColor"
