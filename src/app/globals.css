@@ -95,6 +95,11 @@ body {
   justify-content: center;
   padding: 1rem 0;
   background-color: #e5e7eb;
+
+  @media print {
+    background-color: transparent;
+    padding: 0;
+  }
 }
 
 .dark .paper-sheet-wrapper {
