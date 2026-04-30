@@ -38,7 +38,7 @@ export function getPiiDirectory(): string {
 }
 
 export function safePiiResolve(subPath: string): string | null {
-  const piiPath = getPiiDirectory()
+  const piiPath = path.resolve(getPiiDirectory())
   const resolved = path.resolve(piiPath, subPath)
   if (!resolved.startsWith(piiPath + path.sep) && resolved !== piiPath) {
     return null
