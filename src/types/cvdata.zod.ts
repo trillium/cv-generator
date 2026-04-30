@@ -61,6 +61,7 @@ export const CVData = z.object({
   info: z.record(z.any()).optional(),
   header: Header,
   workExperience: z.array(WorkExperience),
+  openSource: z.array(WorkExperience).optional(),
   projects: z.array(Project).optional(),
   profile: Profile,
   technical: z.array(TechnicalCategory).optional(),

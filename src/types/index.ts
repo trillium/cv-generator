@@ -59,6 +59,7 @@ export type CVData = {
   careerSummary: CareerSummary & { notes?: Notes }
   header: HeaderProps & { notes?: Notes }
   workExperience: WorkExperience[] & { notes?: Notes }
+  openSource?: WorkExperience[] & { notes?: Notes }
   projects?: Project[] & { notes?: Notes }
   profile: {
     shouldDisplayProfileImage: boolean

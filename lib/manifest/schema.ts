@@ -37,6 +37,7 @@ export function sectionToDirectory(section: ManifestSectionKey): string {
     header: 'header',
     careerSummary: 'career-summary',
     workExperience: 'workExperience',
+    openSource: 'open-source',
     projects: 'projects',
     technical: 'technical',
     education: 'education',
