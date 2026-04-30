@@ -31,8 +31,8 @@ export function deriveDirectoryFromSources(
   const sourcePath = resolveSourcePath(section, currentSources, yamlPath)
   if (!sourcePath) return currentDirectory
 
-  const withoutPii = sourcePath.replace(/^pii\//, '')
-  const dirPath = withoutPii.substring(0, withoutPii.lastIndexOf('/'))
+  const normalized = sourcePath.replace(/^(.*\/)?pii\//, '')
+  const dirPath = normalized.substring(0, normalized.lastIndexOf('/'))
 
   return dirPath || currentDirectory
 }
