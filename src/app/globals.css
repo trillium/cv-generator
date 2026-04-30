@@ -84,14 +84,55 @@ body {
   border-radius: 2px;
 }
 
-/* PDF page overflow warning */
-.resume-content.page-overflow {
-  outline: 3px dashed #f59e0b;
-  background-color: #fef3c7;
+/* Paper sheet — WYSIWYG paper simulation */
+@page {
+  size: letter;
+  margin: 0.25in;
 }
 
-.resume-content.page-overflow::after {
-  content: "⚠ Content exceeds one page";
+.paper-sheet-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+  background-color: #e5e7eb;
+}
+
+.dark .paper-sheet-wrapper {
+  background-color: #1f2937;
+}
+
+.paper-sheet {
+  position: relative;
+  margin: 0 auto;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: visible;
+}
+
+.page-break-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2px dashed #ef4444;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.page-break-line::after {
+  content: "page break";
+  position: absolute;
+  right: -5rem;
+  top: -0.625rem;
+  font-size: 0.625rem;
+  color: #ef4444;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.page-overflow-badge {
   position: fixed;
   top: 4rem;
   right: 1rem;
@@ -102,16 +143,6 @@ body {
   font-size: 0.875rem;
   font-weight: 600;
   z-index: 50;
-}
-
-@media print {
-  .resume-content.page-overflow {
-    outline: none;
-    background-color: transparent;
-  }
-  .resume-content.page-overflow::after {
-    display: none;
-  }
 }
 
 /* Print compatibility - hide all edit UI */
