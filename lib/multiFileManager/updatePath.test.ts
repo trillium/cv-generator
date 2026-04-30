@@ -401,3 +401,85 @@ describe('updatePath YAML array syntax', () => {
     expect(updatedContent).not.toContain('- lines:')
   })
 })
+
+describe('updatePath sourceFile handling', () => {
+  beforeEach(() => {
+    if (fs.existsSync(TEST_PII_DIR)) {
+      fs.rmSync(TEST_PII_DIR, { recursive: true })
+    }
+    fs.mkdirSync(TEST_PII_DIR, { recursive: true })
+  })
+
+  afterEach(() => {
+    if (fs.existsSync(TEST_PII_DIR)) {
+      fs.rmSync(TEST_PII_DIR, { recursive: true })
+    }
+  })
+
+  it('should write to sourceFile when it exists (relative path)', async () => {
+    const libDir = path.join(TEST_PII_DIR, 'library')
+    fs.mkdirSync(libDir, { recursive: true })
+
+    const libFile = path.join(libDir, 'skills.yml')
+    fs.writeFileSync(libFile, yaml.dump({ skills: [{ name: 'TypeScript' }] }))
+
+    const result = await updatePath(
+      'resumes/test-company',
+      'skills[0].name',
+      'Rust',
+      'library/skills.yml',
+    )
+
+    expect(result.success).toBe(true)
+    expect(result.updatedFile).toBe(libFile)
+
+    const updated = yaml.load(fs.readFileSync(libFile, 'utf-8')) as Record<string, unknown>
+    const skills = updated.skills as Array<{ name: string }>
+    expect(skills[0].name).toBe('Rust')
+  })
+
+  it('should write to sourceFile when it exists (absolute path)', async () => {
+    const libDir = path.join(TEST_PII_DIR, 'library')
+    fs.mkdirSync(libDir, { recursive: true })
+
+    const libFile = path.join(libDir, 'skills.yml')
+    fs.writeFileSync(libFile, yaml.dump({ skills: [{ name: 'TypeScript' }] }))
+
+    const result = await updatePath('resumes/test-company', 'skills[0].name', 'Go', libFile)
+
+    expect(result.success).toBe(true)
+    expect(result.updatedFile).toBe(libFile)
+
+    const updated = yaml.load(fs.readFileSync(libFile, 'utf-8')) as Record<string, unknown>
+    const skills = updated.skills as Array<{ name: string }>
+    expect(skills[0].name).toBe('Go')
+  })
+
+  it('should write to sourceFile with pii/ prefix stripped', async () => {
+    const libDir = path.join(TEST_PII_DIR, 'library')
+    fs.mkdirSync(libDir, { recursive: true })
+
+    const libFile = path.join(libDir, 'work.yml')
+    fs.writeFileSync(libFile, yaml.dump({ workExperience: [{ position: 'Dev' }] }))
+
+    const result = await updatePath(
+      'resumes/test-company',
+      'workExperience[0].position',
+      'Senior Dev',
+      'pii/library/work.yml',
+    )
+
+    expect(result.success).toBe(true)
+    expect(result.updatedFile).toBe(libFile)
+
+    const updated = yaml.load(fs.readFileSync(libFile, 'utf-8')) as Record<string, unknown>
+    const work = updated.workExperience as Array<{ position: string }>
+    expect(work[0].position).toBe('Senior Dev')
+  })
+
+  it('should throw when sourceFile does not exist', async () => {
+    await expect(
+      updatePath('resumes/test-company', 'skills[0].name', 'Rust', 'library/nonexistent.yml'),
+    ).rejects.toThrow(/nonexistent\.yml/)
+  })
+})
