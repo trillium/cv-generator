@@ -6,9 +6,13 @@ import LineList from './LineList'
 const WorkExperience = ({
   data,
   showBubbles = true,
+  title = 'Professional Experience',
+  sectionKey = 'workExperience',
 }: {
   data: WorkExperienceType[]
   showBubbles?: boolean
+  title?: string
+  sectionKey?: string
 }) => {
   if (!data || !Array.isArray(data)) {
     console.warn('WorkExperience component received invalid data:', data)
@@ -17,7 +21,7 @@ const WorkExperience = ({
 
   return (
     <section className="flex flex-col items-start gap-2">
-      <Title text="Professional Experience" />
+      <Title text={title} />
       <div className="flex flex-col gap-2">
         {data.map((item, index) => (
           <WorkExperienceItem
@@ -26,6 +30,7 @@ const WorkExperience = ({
             index={index}
             isLast={index !== data.length - 1}
             showBubbles={showBubbles}
+            sectionKey={sectionKey}
           />
         ))}
       </div>
@@ -37,18 +42,20 @@ function WorkExperienceItem({
   item,
   index,
   showBubbles = true,
+  sectionKey = 'workExperience',
 }: {
   item: WorkExperienceType
   index: number
   isLast: boolean
   showBubbles?: boolean
+  sectionKey?: string
 }) {
   return (
     <div className="flex flex-col">
       {item.position && (
         <div className="flex flex-row justify-between">
           <EditableField
-            yamlPath={`workExperience.${index}.position`}
+            yamlPath={`${sectionKey}.${index}.position`}
             value={item.position}
             fieldType="text"
           >
@@ -58,7 +65,7 @@ function WorkExperienceItem({
       )}
       {item.company && (
         <EditableField
-          yamlPath={`workExperience.${index}.company`}
+          yamlPath={`${sectionKey}.${index}.company`}
           value={item.company}
           fieldType="text"
         >
@@ -70,7 +77,7 @@ function WorkExperienceItem({
           {item.bubbles.map((bubble, bubbleIndex) => (
             <EditableField
               key={bubbleIndex}
-              yamlPath={`workExperience.${index}.bubbles.${bubbleIndex}`}
+              yamlPath={`${sectionKey}.${index}.bubbles.${bubbleIndex}`}
               value={bubble}
               fieldType="text"
             >
@@ -86,7 +93,7 @@ function WorkExperienceItem({
           <div className="flex flex-row justify-between">
             {detail.subhead && (
               <EditableField
-                yamlPath={`workExperience.${index}.details.${detailIndex}.subhead`}
+                yamlPath={`${sectionKey}.${index}.details.${detailIndex}.subhead`}
                 value={detail.subhead}
                 fieldType="text"
               >
@@ -95,7 +102,7 @@ function WorkExperienceItem({
             )}
             {detail.years && (
               <EditableField
-                yamlPath={`workExperience.${index}.details.${detailIndex}.years`}
+                yamlPath={`${sectionKey}.${index}.details.${detailIndex}.years`}
                 value={detail.years}
                 fieldType="text"
               >
