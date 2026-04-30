@@ -2,6 +2,7 @@ import { exec } from 'node:child_process'
 import { writeFileSync } from 'node:fs'
 import path from 'node:path'
 import type { Browser, Page } from 'puppeteer'
+import { PDF_CONFIG } from '@/components/PrintPageSize/PrintPageSize.constants'
 import type { CVData } from '@/types'
 import { ensureDirectoryExists, getOutputFilename } from './file-utils'
 import { readMetadata } from './metadata-writer'
@@ -34,13 +35,19 @@ export async function generateAndSavePdf({
   trailingWords: TrailingWordInfo[]
 }> {
   const page = await browser.newPage()
+  const { margins, scale } = PDF_CONFIG
   const pdf = await generatePdf(
     url,
     {
       format: 'letter',
-      margin: { top: '.25in', bottom: '.25in', left: '.25in', right: '.25in' },
+      margin: {
+        top: `${margins.top}in`,
+        bottom: `${margins.bottom}in`,
+        left: `${margins.left}in`,
+        right: `${margins.right}in`,
+      },
       printBackground: true,
-      scale: 0.8,
+      scale,
       tagged: true,
       displayHeaderFooter: false,
     },
