@@ -4,6 +4,7 @@ export type ManifestSectionKey =
   | 'header'
   | 'careerSummary'
   | 'workExperience'
+  | 'openSource'
   | 'projects'
   | 'technical'
   | 'education'
@@ -16,6 +17,7 @@ export const SINGLETON_SECTIONS: ManifestSectionKey[] = ['header', 'profile']
 export const ARRAY_SECTIONS: ManifestSectionKey[] = [
   'careerSummary',
   'workExperience',
+  'openSource',
   'projects',
   'technical',
   'education',

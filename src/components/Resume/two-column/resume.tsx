@@ -36,6 +36,9 @@ function SingleColumnResume({ data }: { data: CVData }) {
         <div className="col-span-7 flex flex-col gap-2">
           <Header {...data.header} />
           <WorkExperience data={data.workExperience} />
+          {data.openSource && (
+            <WorkExperience data={data.openSource} title="Open Source" sectionKey="openSource" />
+          )}
           <ProjectsList projects={data.projects} />
         </div>
         <div className="col-span-3 h-full flex flex-col border-primary-500 border-l px-4 bg-neutral-100 dark:bg-gray-800 rounded-r-md max-w-xs w-full">

@@ -11,6 +11,10 @@ export function validateCVData(
     errors.push(...validateWorkExperience(data.workExperience, sources.workExperience))
   }
 
+  if (data.openSource) {
+    errors.push(...validateWorkExperienceSection(data.openSource, sources.openSource, 'openSource'))
+  }
+
   return errors
 }
 
@@ -18,22 +22,30 @@ function validateWorkExperience(
   workExperience: unknown,
   sourceFile: string | string[],
 ): ValidationError[] {
+  return validateWorkExperienceSection(workExperience, sourceFile, 'workExperience')
+}
+
+function validateWorkExperienceSection(
+  data: unknown,
+  sourceFile: string | string[],
+  sectionKey: string,
+): ValidationError[] {
   const errors: ValidationError[] = []
 
-  if (!Array.isArray(workExperience)) {
+  if (!Array.isArray(data)) {
     errors.push({
-      field: 'workExperience',
-      message: 'workExperience must be an array',
+      field: sectionKey,
+      message: `${sectionKey} must be an array`,
       sourceFile,
       expected: 'array',
-      actual: typeof workExperience,
+      actual: typeof data,
       severity: 'error',
     })
     return errors
   }
 
-  workExperience.forEach((item: unknown, index: number) => {
-    const itemErrors = validateWorkExperienceItem(item, index, sourceFile)
+  data.forEach((item: unknown, index: number) => {
+    const itemErrors = validateWorkExperienceItem(item, index, sourceFile, sectionKey)
     errors.push(...itemErrors)
   })
 
@@ -44,12 +56,13 @@ function validateWorkExperienceItem(
   item: unknown,
   index: number,
   sourceFile: string | string[],
+  sectionKey = 'workExperience',
 ): ValidationError[] {
   const errors: ValidationError[] = []
 
   if (typeof item !== 'object' || item === null) {
     errors.push({
-      field: `workExperience[${index}]`,
+      field: `${sectionKey}[${index}]`,
       message: 'Work experience item must be an object',
       sourceFile,
       expected: 'object',
@@ -65,7 +78,7 @@ function validateWorkExperienceItem(
   requiredFields.forEach((field) => {
     if (!(field in workItem)) {
       errors.push({
-        field: `workExperience[${index}].${field}`,
+        field: `${sectionKey}[${index}].${field}`,
         message: `Missing required field: ${field}`,
         sourceFile,
         expected: field === 'details' ? 'array of details' : 'string',
@@ -79,7 +92,7 @@ function validateWorkExperienceItem(
     const details = workItem.details
     if (!Array.isArray(details)) {
       errors.push({
-        field: `workExperience[${index}].details`,
+        field: `${sectionKey}[${index}].details`,
         message: 'details must be an array, not an object or other type',
         sourceFile,
         expected: "array (e.g., [{subhead: '...', lines: [...]}])",
@@ -92,7 +105,13 @@ function validateWorkExperienceItem(
       })
     } else {
       details.forEach((detail: unknown, detailIndex: number) => {
-        const detailErrors = validateWorkExperienceDetail(detail, index, detailIndex, sourceFile)
+        const detailErrors = validateWorkExperienceDetail(
+          detail,
+          index,
+          detailIndex,
+          sourceFile,
+          sectionKey,
+        )
         errors.push(...detailErrors)
       })
     }
@@ -106,12 +125,13 @@ function validateWorkExperienceDetail(
   itemIndex: number,
   detailIndex: number,
   sourceFile: string | string[],
+  sectionKey = 'workExperience',
 ): ValidationError[] {
   const errors: ValidationError[] = []
 
   if (typeof detail !== 'object' || detail === null) {
     errors.push({
-      field: `workExperience[${itemIndex}].details[${detailIndex}]`,
+      field: `${sectionKey}[${itemIndex}].details[${detailIndex}]`,
       message: 'Work experience detail must be an object',
       sourceFile,
       expected: 'object with subhead and lines',
@@ -125,7 +145,7 @@ function validateWorkExperienceDetail(
 
   if (!('lines' in detailObj)) {
     errors.push({
-      field: `workExperience[${itemIndex}].details[${detailIndex}].lines`,
+      field: `${sectionKey}[${itemIndex}].details[${detailIndex}].lines`,
       message: 'Missing required field: lines',
       sourceFile,
       expected: 'array',
@@ -134,7 +154,7 @@ function validateWorkExperienceDetail(
     })
   } else if (!Array.isArray(detailObj.lines)) {
     errors.push({
-      field: `workExperience[${itemIndex}].details[${detailIndex}].lines`,
+      field: `${sectionKey}[${itemIndex}].details[${detailIndex}].lines`,
       message: 'lines must be an array',
       sourceFile,
       expected: 'array',

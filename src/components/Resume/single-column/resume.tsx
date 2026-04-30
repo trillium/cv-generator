@@ -17,6 +17,14 @@ function TwoColumnResume({ data }: { data: CVData }) {
         <CareerSummary data={data} />
         <div className="flex-1 flex flex-col justify-evenly">
           <WorkExperience data={data.workExperience} showBubbles={showBubbles} />
+          {data.openSource && (
+            <WorkExperience
+              data={data.openSource}
+              title="Open Source"
+              sectionKey="openSource"
+              showBubbles={showBubbles}
+            />
+          )}
           <ProjectsList projects={data.projects} showBubbles={showBubbles} />
           <EducationList education={data.education} showEducation={data.showEducation} />
         </div>

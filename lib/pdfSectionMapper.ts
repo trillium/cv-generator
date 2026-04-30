@@ -17,6 +17,7 @@ export const SECTION_TO_PDF_MAP: Record<string, PdfType[]> = {
   header: ['resume', 'cover'],
   careerSummary: ['resume'],
   workExperience: ['resume'],
+  openSource: ['resume'],
   projects: ['resume'],
   profile: ['resume'],
   technical: ['resume'],

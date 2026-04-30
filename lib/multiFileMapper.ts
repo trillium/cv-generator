@@ -10,6 +10,7 @@ export const SECTION_KEY_TO_FILENAME: Record<string, string[]> = {
   header: ['header'],
   careerSummary: ['career'],
   workExperience: ['work', 'experience'],
+  openSource: ['open-source'],
   projects: ['projects'],
   profile: ['profile'],
   technical: ['technical'],
