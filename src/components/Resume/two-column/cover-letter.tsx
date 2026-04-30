@@ -2,14 +2,15 @@
 
 import EditableField from '@/components/EditableField/EditableField'
 import Header from '@/components/Header/Header'
+import PaperSheet from '@/components/PaperSheet'
 import { ProfileHeader } from '@/components/Profile/Profile'
 import Title from '@/components/Title/Title'
 import type { CVData } from '@/types'
 
 function TwoColumnCoverLetter({ data }: { data: CVData }) {
   return (
-    <div className="w-full bg-white dark:bg-gray-800 flex flex-col items-center justify-center ">
-      <div className="grid grid-cols-10 gap-10 w-full max-w-6xl mx-auto rounded-md bg-white dark:bg-gray-800">
+    <PaperSheet>
+      <div className="grid grid-cols-10 gap-10 w-full rounded-md bg-white dark:bg-gray-800">
         <div className="col-span-7 flex flex-col gap-2">
           <Header {...data.header} omitBlurb={true} />
 
@@ -22,7 +23,7 @@ function TwoColumnCoverLetter({ data }: { data: CVData }) {
           <ProfileHeader {...data.profile} />
         </div>
       </div>
-    </div>
+    </PaperSheet>
   )
 }
 

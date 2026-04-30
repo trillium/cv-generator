@@ -1,5 +1,6 @@
 import { FiAlertTriangle } from 'react-icons/fi'
 import Header from '@/components/Header/Header'
+import PaperSheet from '@/components/PaperSheet'
 import Profile from '@/components/Profile/Profile'
 import ProjectsList from '@/components/Projects/ProjectsList'
 import WorkExperience from '@/components/WorkExperience/WorkExperience'
@@ -30,8 +31,8 @@ function SingleColumnResume({ data }: { data: CVData }) {
   }
 
   return (
-    <div className="w-full bg-white dark:bg-gray-800 flex flex-col items-center justify-center ">
-      <div className="grid grid-cols-10 gap-6 w-full max-w-6xl mx-auto rounded-md bg-white dark:bg-gray-800">
+    <PaperSheet>
+      <div className="grid grid-cols-10 gap-6 w-full rounded-md bg-white dark:bg-gray-800">
         <div className="col-span-7 flex flex-col gap-2">
           <Header {...data.header} />
           <WorkExperience data={data.workExperience} />
@@ -41,7 +42,7 @@ function SingleColumnResume({ data }: { data: CVData }) {
           <Profile data={data} />
         </div>
       </div>
-    </div>
+    </PaperSheet>
   )
 }
 

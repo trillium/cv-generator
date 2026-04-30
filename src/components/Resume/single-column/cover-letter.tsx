@@ -1,6 +1,7 @@
 'use client'
 
 import EditableField from '@/components/EditableField'
+import PaperSheet from '@/components/PaperSheet'
 import Title from '@/components/Title/Title'
 import type { CVData } from '@/types'
 import Footer from './ui/Footer'
@@ -8,18 +9,18 @@ import Header from './ui/Header'
 
 function SingleColumnCoverLetter({ data }: { data: CVData }) {
   return (
-    <div className="w-full flex-1 bg-white dark:bg-gray-800 flex flex-col items-center">
-      <div className="w-full flex-1 flex flex-col max-w-5xl mx-auto rounded-md bg-white dark:bg-gray-800">
+    <PaperSheet>
+      <div className="w-full flex-1 flex flex-col bg-white dark:bg-gray-800">
         <Header data={data} />
         <Title text="Cover Letter" />
         <div className="flex-1">
           <CoverLetterContent coverLetterLines={data.coverLetter || []} />
         </div>
+        <div className="w-full">
+          <Footer data={data} />
+        </div>
       </div>
-      <div className="w-full">
-        <Footer data={data} />
-      </div>
-    </div>
+    </PaperSheet>
   )
 }
 

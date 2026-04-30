@@ -1,7 +1,6 @@
 import './globals.css'
 import { Toaster } from 'sonner'
 import Navigation from '@/components/Navigation/Navigation'
-import PageContainer from '@/components/PageContainer'
 import Modal from '@/components/ui/modal'
 import { ModalProvider } from '@/contexts/ModalContext'
 import { DirectoryManagerProvider } from '@/src/contexts/DirectoryManagerContext'
@@ -15,9 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <DirectoryManagerProvider>
             <ModalProvider>
               <Navigation />
-              <div className="m-6 print:m-0">
-                <PageContainer>{children}</PageContainer>
-              </div>
+              <div className="print:m-0">{children}</div>
               <Modal />
               <Toaster />
             </ModalProvider>
