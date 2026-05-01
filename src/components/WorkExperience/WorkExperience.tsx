@@ -51,7 +51,7 @@ function WorkExperienceItem({
   sectionKey?: string
 }) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-1">
       {item.position && (
         <div className="flex flex-row justify-between">
           <EditableField
@@ -89,7 +89,7 @@ function WorkExperienceItem({
         </div>
       )}
       {item.details.map((detail, detailIndex) => (
-        <div key={`${detail.subhead}-${detail.years}`} className="flex flex-col mt-2">
+        <div key={`${detail.subhead}-${detail.years}`} className="flex flex-col gap-1 mt-2">
           <div className="flex flex-row justify-between">
             {detail.subhead && (
               <EditableField
