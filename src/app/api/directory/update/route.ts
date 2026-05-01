@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { MultiFileManager } from '@/lib/multiFileManager'
 import { rebuildPdfs } from '@/lib/pdfRebuilder'
 import { getPdfsToRegenerate } from '@/lib/pdfSectionMapper'
+import { broadcast } from '@/lib/sseNotifier'
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,6 +43,14 @@ export async function POST(request: NextRequest) {
 
     if (pdfsToRegenerate.length === 0) {
       console.log(`⏭️  Section doesn't affect PDFs, skipping regeneration`)
+
+      broadcast({
+        path: result.updatedFile,
+        type: 'change',
+        timestamp: Date.now(),
+        source: 'api-update',
+      })
+
       return NextResponse.json({
         ...result,
         pdf: { skipped: true, reason: 'Section does not affect PDFs' },
@@ -49,6 +58,13 @@ export async function POST(request: NextRequest) {
     }
 
     const pdfResult = await rebuildPdfs(pdfOutputDir, pdfsToRegenerate)
+
+    broadcast({
+      path: result.updatedFile,
+      type: 'change',
+      timestamp: Date.now(),
+      source: 'api-update',
+    })
 
     return NextResponse.json({
       ...result,

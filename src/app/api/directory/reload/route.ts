@@ -1,6 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { rebuildPdfs, wasRecentlyRebuilt } from '@/lib/pdfRebuilder'
 import { getPdfsToRegenerateFromFile } from '@/lib/pdfSectionMapper'
+import {
+  addSubscriber,
+  broadcast,
+  getSubscriberCount,
+  removeSubscriber,
+  sendToController,
+} from '@/lib/sseNotifier'
 
 interface ReloadPayload {
   path: string
@@ -8,7 +15,6 @@ interface ReloadPayload {
   timestamp: number
 }
 
-const subscribers = new Set<ReadableStreamDefaultController>()
 const REBUILD_DEBOUNCE_MS = 5000
 
 export async function POST(request: NextRequest) {
@@ -56,20 +62,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const message = `data: ${JSON.stringify(payload)}\n\n`
-
-    subscribers.forEach((controller) => {
-      try {
-        controller.enqueue(new TextEncoder().encode(message))
-      } catch (err) {
-        console.error(`[Reload] Failed to send to subscriber:`, err)
-        subscribers.delete(controller)
-      }
-    })
+    broadcast({ ...payload })
 
     return NextResponse.json({
       success: true,
-      subscribers: subscribers.size,
+      subscribers: getSubscriberCount(),
       payload,
     })
   } catch (error) {
@@ -87,26 +84,22 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   const stream = new ReadableStream({
     start(controller) {
-      subscribers.add(controller)
-      console.log(`[Reload] New subscriber connected (total: ${subscribers.size})`)
+      addSubscriber(controller)
 
-      controller.enqueue(
-        new TextEncoder().encode(`data: ${JSON.stringify({ type: 'connected' })}\n\n`),
-      )
+      sendToController(controller, `data: ${JSON.stringify({ type: 'connected' })}\n\n`)
 
       const keepAlive = setInterval(() => {
         try {
-          controller.enqueue(new TextEncoder().encode(`: keepalive\n\n`))
+          sendToController(controller, `: keepalive\n\n`)
         } catch {
           clearInterval(keepAlive)
-          subscribers.delete(controller)
+          removeSubscriber(controller)
         }
       }, 30000)
 
       return () => {
         clearInterval(keepAlive)
-        subscribers.delete(controller)
-        console.log(`[Reload] Subscriber disconnected (total: ${subscribers.size})`)
+        removeSubscriber(controller)
       }
     },
   })
