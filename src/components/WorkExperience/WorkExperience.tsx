@@ -91,7 +91,7 @@ function WorkExperienceItem({
       {item.details.map((detail, detailIndex) => (
         <div key={`${detail.subhead}-${detail.years}`} className="flex flex-col gap-1 mt-2">
           <div className="flex flex-row justify-between">
-            {detail.subhead && (
+            {detail.subhead && detail.subhead !== item.company && (
               <EditableField
                 yamlPath={`${sectionKey}.${index}.details.${detailIndex}.subhead`}
                 value={detail.subhead}
