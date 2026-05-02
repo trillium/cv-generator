@@ -20,7 +20,7 @@ const WorkExperience = ({
   }
 
   return (
-    <section className="flex flex-col items-start gap-2">
+    <section className="flex flex-col items-start gap-1">
       <Title text={title} />
       <div className="flex flex-col gap-2">
         {data.map((item, index) => (
@@ -64,13 +64,24 @@ function WorkExperienceItem({
         </div>
       )}
       {item.company && (
-        <EditableField
-          yamlPath={`${sectionKey}.${index}.company`}
-          value={item.company}
-          fieldType="text"
-        >
-          <div className="text-base font-medium">{item.company}</div>
-        </EditableField>
+        <div className="flex flex-row justify-between">
+          <EditableField
+            yamlPath={`${sectionKey}.${index}.company`}
+            value={item.company}
+            fieldType="text"
+          >
+            <div className="text-base font-medium">{item.company}</div>
+          </EditableField>
+          {item.details.length === 1 && item.details[0].years && (
+            <EditableField
+              yamlPath={`${sectionKey}.${index}.details.0.years`}
+              value={item.details[0].years}
+              fieldType="text"
+            >
+              <div className="text-base font-medium">{item.details[0].years}</div>
+            </EditableField>
+          )}
+        </div>
       )}
       {showBubbles && item.bubbles && item.bubbles.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-2">
@@ -100,7 +111,7 @@ function WorkExperienceItem({
                 <div className="font-medium">{detail.subhead}</div>
               </EditableField>
             )}
-            {detail.years && (
+            {detail.years && item.details.length > 1 && (
               <EditableField
                 yamlPath={`${sectionKey}.${index}.details.${detailIndex}.years`}
                 value={detail.years}
