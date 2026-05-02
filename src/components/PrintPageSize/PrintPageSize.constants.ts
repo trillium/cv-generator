@@ -21,9 +21,9 @@ const DEFAULT_PAGE_SIZES = {
 export { DEFAULT_PAGE_SIZES }
 
 const CSS_DPI = 96
-const PDF_SCALE = 0.8
+const PDF_SCALE = 1
 
-const PDF_MARGINS: PageMargins = { top: 0.25, bottom: 0.25, left: 0.25, right: 0.25 }
+const PDF_MARGINS: PageMargins = { top: 0.5, bottom: 0.5, left: 0.5, right: 0.5 }
 
 function computeContentDimensions(page: PageSize, margins: PageMargins, scale: number) {
   const contentWidthInches = page.width - margins.left - margins.right
