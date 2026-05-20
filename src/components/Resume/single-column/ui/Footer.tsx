@@ -20,7 +20,10 @@ export default function Footer({ data }: { data: CVData }) {
   return (
     <>
       <Separator className="" />
-      <footer className="flex justify-center pt-2 gap-x-4">
+      <footer
+        className="flex justify-center gap-x-4"
+        style={{ paddingTop: `${data.layout?.spacing?.footerPaddingTop ?? 8}px` }}
+      >
         {footerLinks.map((link, _index) => {
           // Find the original index in the links array for proper YAML path
           const originalIndex = links.findIndex((l) => l.icon === link.icon && l.link === link.link)

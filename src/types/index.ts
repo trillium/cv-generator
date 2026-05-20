@@ -54,6 +54,22 @@ export type LLMInfo =
 import type { HeaderProps } from '../components/Header/Header'
 import type { LinkedInProfile } from './linkedin'
 
+export type LayoutConfig = {
+  fontSize?: number
+  spacing?: {
+    careerSummaryGapX?: number
+    careerSummaryGapY?: number
+    sectionMarginTop?: number
+    sectionSeparatorMarginBottom?: number
+    workExperienceSectionGap?: number
+    workExperienceItemGap?: number
+    workExperienceInnerGap?: number
+    workExperienceDetailMarginTop?: number
+    headerContactPaddingTop?: number
+    footerPaddingTop?: number
+  }
+}
+
 export type CVData = {
   info: InfoType & { notes?: Notes }
   careerSummary: CareerSummary & { notes?: Notes }
@@ -76,6 +92,7 @@ export type CVData = {
   linkedIn?: LinkedInProfile & { notes?: Notes }
   notes?: Notes
   llm?: LLMInfo
+  layout?: LayoutConfig
 }
 
 /**
@@ -131,6 +148,7 @@ export type ResumeMetadata = {
   targetCompany?: string
   targetPosition?: string
   targetJobUrl?: string
+  jobId?: string
   applicationDate?: string
   applicationStatus?: 'draft' | 'applied' | 'interview' | 'offer' | 'rejected' | 'withdrawn'
   notes?: string

@@ -12,20 +12,30 @@ function TwoColumnResume({ data }: { data: CVData }) {
 
   return (
     <PaperSheet>
-      <div className="w-full flex-1 bg-white dark:bg-gray-800 flex flex-col">
+      <div
+        className="w-full flex-1 bg-white dark:bg-gray-800 flex flex-col"
+        style={data.layout?.fontSize ? { fontSize: `${data.layout.fontSize}px` } : undefined}
+      >
         <Header data={data} />
         <CareerSummary data={data} />
         <div className="flex-1 flex flex-col justify-evenly">
-          <WorkExperience data={data.workExperience} showBubbles={showBubbles} />
+          <WorkExperience
+            data={data.workExperience}
+            showBubbles={showBubbles}
+            spacing={data.layout?.spacing}
+          />
           {data.openSource && (
             <WorkExperience
               data={data.openSource}
               title="Open Source"
               sectionKey="openSource"
               showBubbles={showBubbles}
+              spacing={data.layout?.spacing}
             />
           )}
-          <ProjectsList projects={data.projects} showBubbles={showBubbles} />
+          {data.projects && data.projects.length > 0 && (
+            <ProjectsList projects={data.projects} showBubbles={showBubbles} />
+          )}
           <EducationList education={data.education} showEducation={data.showEducation} />
         </div>
         <div className="w-full">

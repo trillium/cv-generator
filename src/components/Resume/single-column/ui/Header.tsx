@@ -50,7 +50,10 @@ export default function Header({ data }: { data: CVData }) {
           </EditableField>
         </span>
       </div>
-      <div className="text-center pt-2">
+      <div
+        className="text-center"
+        style={{ paddingTop: `${data.layout?.spacing?.headerContactPaddingTop ?? 8}px` }}
+      >
         <EditableField yamlPath="info.email" value={email} fieldType="text">
           <span className="inline-block mr-4">
             <ProfileLink

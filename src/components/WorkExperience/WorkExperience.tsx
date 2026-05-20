@@ -1,6 +1,6 @@
 import EditableField from '@/components/EditableField'
 import Title from '@/components/Title/Title'
-import type { WorkExperience as WorkExperienceType } from '@/types'
+import type { LayoutConfig, WorkExperience as WorkExperienceType } from '@/types'
 import LineList from './LineList'
 
 const WorkExperience = ({
@@ -8,21 +8,26 @@ const WorkExperience = ({
   showBubbles = true,
   title = 'Professional Experience',
   sectionKey = 'workExperience',
+  spacing,
 }: {
   data: WorkExperienceType[]
   showBubbles?: boolean
   title?: string
   sectionKey?: string
+  spacing?: LayoutConfig['spacing']
 }) => {
   if (!data || !Array.isArray(data)) {
     console.warn('WorkExperience component received invalid data:', data)
     return null
   }
 
+  const sectionGap = spacing?.workExperienceSectionGap ?? 4
+  const itemGap = spacing?.workExperienceItemGap ?? 8
+
   return (
-    <section className="flex flex-col items-start gap-1">
-      <Title text={title} />
-      <div className="flex flex-col gap-2">
+    <section className="flex flex-col items-start" style={{ gap: `${sectionGap}px` }}>
+      <Title text={title} spacing={spacing} />
+      <div className="flex flex-col" style={{ gap: `${itemGap}px` }}>
         {data.map((item, index) => (
           <WorkExperienceItem
             key={`${item.position}-${item.company}`}
@@ -31,6 +36,7 @@ const WorkExperience = ({
             isLast={index !== data.length - 1}
             showBubbles={showBubbles}
             sectionKey={sectionKey}
+            spacing={spacing}
           />
         ))}
       </div>
@@ -43,15 +49,20 @@ function WorkExperienceItem({
   index,
   showBubbles = true,
   sectionKey = 'workExperience',
+  spacing,
 }: {
   item: WorkExperienceType
   index: number
   isLast: boolean
   showBubbles?: boolean
   sectionKey?: string
+  spacing?: LayoutConfig['spacing']
 }) {
+  const innerGap = spacing?.workExperienceInnerGap ?? 4
+  const detailMarginTop = spacing?.workExperienceDetailMarginTop ?? 8
+
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col" style={{ gap: `${innerGap}px` }}>
       {item.position && (
         <div className="flex flex-row justify-between">
           <EditableField
@@ -100,7 +111,11 @@ function WorkExperienceItem({
         </div>
       )}
       {item.details.map((detail, detailIndex) => (
-        <div key={`${detail.subhead}-${detail.years}`} className="flex flex-col gap-1 mt-2">
+        <div
+          key={`${detail.subhead}-${detail.years}`}
+          className="flex flex-col"
+          style={{ gap: `${innerGap}px`, marginTop: `${detailMarginTop}px` }}
+        >
           <div className="flex flex-row justify-between">
             {detail.subhead && detail.subhead !== item.company && (
               <EditableField
