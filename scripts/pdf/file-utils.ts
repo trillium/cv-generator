@@ -14,7 +14,10 @@ export function getOutputFilename({
   data: CVData
   type: 'Resume' | 'CoverLetter'
 }): string {
-  return `${[data.header.name.split(' ').join('_'), type].join('_')}.pdf`
+  const parts = [data.header.name.split(' ').join('_'), type]
+  if (data.metadata?.targetCompany) parts.push(data.metadata.targetCompany.replace(/\s+/g, '_'))
+  if (data.metadata?.jobId) parts.push(data.metadata.jobId)
+  return `${parts.join('_')}.pdf`
 }
 
 export function resetScriptDataJson(outputPath: string) {

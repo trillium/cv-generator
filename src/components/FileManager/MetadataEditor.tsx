@@ -22,6 +22,7 @@ export default function MetadataEditor({
     targetCompany: metadata?.targetCompany || '',
     targetPosition: metadata?.targetPosition || '',
     targetJobUrl: metadata?.targetJobUrl || '',
+    jobId: metadata?.jobId || '',
     applicationDate: metadata?.applicationDate || '',
     applicationStatus: metadata?.applicationStatus || 'draft',
     notes: metadata?.notes || '',
@@ -118,6 +119,23 @@ export default function MetadataEditor({
             onChange={(e) => setFormData({ ...formData, targetJobUrl: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             placeholder="https://..."
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="meta-job-id"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
+            Job ID / Requisition Number
+          </label>
+          <input
+            id="meta-job-id"
+            type="text"
+            value={formData.jobId}
+            onChange={(e) => setFormData({ ...formData, jobId: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="R165370"
           />
         </div>
 
