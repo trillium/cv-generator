@@ -52,7 +52,7 @@ export default function Header({ data }: { data: CVData }) {
       </div>
       <div
         className="text-center"
-        style={{ paddingTop: `${data.layout?.spacing?.headerContactPaddingTop ?? 8}px` }}
+        style={{ paddingTop: `${data.layout?.spacing?.header?.contactPaddingTop ?? 8}px` }}
       >
         <EditableField yamlPath="info.email" value={email} fieldType="text">
           <span className="inline-block mr-4">

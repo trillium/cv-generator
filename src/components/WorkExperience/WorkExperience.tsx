@@ -1,5 +1,6 @@
 import EditableField from '@/components/EditableField'
 import Title from '@/components/Title/Title'
+import { resolveSpacingValue } from '@/lib/spacing'
 import type { LayoutConfig, WorkExperience as WorkExperienceType } from '@/types'
 import LineList from './LineList'
 
@@ -21,19 +22,16 @@ const WorkExperience = ({
     return null
   }
 
-  const sectionGap = spacing?.workExperienceSectionGap ?? 4
-  const itemGap = spacing?.workExperienceItemGap ?? 8
-
   return (
-    <section className="flex flex-col items-start" style={{ gap: `${sectionGap}px` }}>
+    <section className="flex flex-col items-start">
       <Title text={title} spacing={spacing} />
-      <div className="flex flex-col" style={{ gap: `${itemGap}px` }}>
+      <div className="flex flex-col">
         {data.map((item, index) => (
           <WorkExperienceItem
             key={`${item.position}-${item.company}`}
             item={item}
             index={index}
-            isLast={index !== data.length - 1}
+            isFirst={index === 0}
             showBubbles={showBubbles}
             sectionKey={sectionKey}
             spacing={spacing}
@@ -47,24 +45,33 @@ const WorkExperience = ({
 function WorkExperienceItem({
   item,
   index,
+  isFirst,
   showBubbles = true,
   sectionKey = 'workExperience',
   spacing,
 }: {
   item: WorkExperienceType
   index: number
-  isLast: boolean
+  isFirst: boolean
   showBubbles?: boolean
   sectionKey?: string
   spacing?: LayoutConfig['spacing']
 }) {
-  const innerGap = spacing?.workExperienceInnerGap ?? 4
-  const detailMarginTop = spacing?.workExperienceDetailMarginTop ?? 8
+  const we = spacing?.workExperience
+  const positionMarginBottom = resolveSpacingValue(we?.positionMarginBottom, index, 2)
+  const companyMarginBottom = resolveSpacingValue(we?.companyMarginBottom, index, 4)
+  const subheadMarginBottom = resolveSpacingValue(we?.subheadMarginBottom, index, 2)
+  const detailGap = resolveSpacingValue(we?.detailGap, index, 6)
+  const bulletGap = resolveSpacingValue(we?.bulletGap, index, 0)
+  const itemMarginTop = isFirst ? 0 : resolveSpacingValue(we?.itemGap, index - 1, 8)
 
   return (
-    <div className="flex flex-col" style={{ gap: `${innerGap}px` }}>
+    <div className="flex flex-col" style={{ marginTop: `${itemMarginTop}px` }}>
       {item.position && (
-        <div className="flex flex-row justify-between">
+        <div
+          className="flex flex-row justify-between"
+          style={{ marginBottom: `${positionMarginBottom}px` }}
+        >
           <EditableField
             yamlPath={`${sectionKey}.${index}.position`}
             value={item.position}
@@ -75,7 +82,10 @@ function WorkExperienceItem({
         </div>
       )}
       {item.company && (
-        <div className="flex flex-row justify-between">
+        <div
+          className="flex flex-row justify-between"
+          style={{ marginBottom: `${companyMarginBottom}px` }}
+        >
           <EditableField
             yamlPath={`${sectionKey}.${index}.company`}
             value={item.company}
@@ -114,9 +124,12 @@ function WorkExperienceItem({
         <div
           key={`${detail.subhead}-${detail.years}`}
           className="flex flex-col"
-          style={{ gap: `${innerGap}px`, marginTop: `${detailMarginTop}px` }}
+          style={{ marginTop: detailIndex > 0 ? `${detailGap}px` : undefined }}
         >
-          <div className="flex flex-row justify-between">
+          <div
+            className="flex flex-row justify-between"
+            style={{ marginBottom: `${subheadMarginBottom}px` }}
+          >
             {detail.subhead && detail.subhead !== item.company && (
               <EditableField
                 yamlPath={`${sectionKey}.${index}.details.${detailIndex}.subhead`}
@@ -139,6 +152,7 @@ function WorkExperienceItem({
           <LineList
             lines={detail.lines}
             yamlBasePath={`${sectionKey}.${index}.details.${detailIndex}`}
+            bulletGap={bulletGap}
           />
         </div>
       ))}

@@ -51,22 +51,37 @@ export type LLMInfo =
     }
   | string
 
+import type { SpacingValue } from '@/lib/spacing'
 import type { HeaderProps } from '../components/Header/Header'
 import type { LinkedInProfile } from './linkedin'
 
 export type LayoutConfig = {
   fontSize?: number
   spacing?: {
-    careerSummaryGapX?: number
-    careerSummaryGapY?: number
     sectionMarginTop?: number
     sectionSeparatorMarginBottom?: number
-    workExperienceSectionGap?: number
-    workExperienceItemGap?: number
-    workExperienceInnerGap?: number
-    workExperienceDetailMarginTop?: number
-    headerContactPaddingTop?: number
-    footerPaddingTop?: number
+
+    header?: {
+      contactPaddingTop?: number
+    }
+
+    careerSummary?: {
+      gapX?: number
+      gapY?: number
+    }
+
+    workExperience?: {
+      positionMarginBottom?: SpacingValue
+      companyMarginBottom?: SpacingValue
+      subheadMarginBottom?: SpacingValue
+      detailGap?: SpacingValue
+      bulletGap?: SpacingValue
+      itemGap?: SpacingValue
+    }
+
+    footer?: {
+      paddingTop?: number
+    }
   }
 }
 

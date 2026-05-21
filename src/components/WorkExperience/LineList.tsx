@@ -7,14 +7,19 @@ function LineList({
   lines = [],
   className = '',
   yamlBasePath = '',
+  bulletGap = 0,
 }: {
   lines?: Line[]
   className?: string
   yamlBasePath?: string
+  bulletGap?: number
 }) {
   const lines_ = lines.length > 0 ? lines : [{ text: '', bulletPoint: true }]
   return (
-    <ul className={clsx('flex flex-col p-0 m-0', className)}>
+    <ul
+      className={clsx('flex flex-col p-0 m-0', className)}
+      style={bulletGap ? { gap: `${bulletGap}px` } : undefined}
+    >
       {lines_.map((line, line_index) => {
         const showBullet = line.bulletPoint !== false
         const yamlPath = yamlBasePath ? `${yamlBasePath}.lines.${line_index}.text` : ''

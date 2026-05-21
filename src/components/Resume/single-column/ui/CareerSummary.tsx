@@ -5,8 +5,8 @@ import type { CVData } from '@/types'
 
 export default function CareerSummary({ data }: { data: CVData }) {
   const { careerSummary = [] } = data
-  const gapX = data.layout?.spacing?.careerSummaryGapX ?? 8
-  const gapY = data.layout?.spacing?.careerSummaryGapY ?? 8
+  const gapX = data.layout?.spacing?.careerSummary?.gapX ?? 8
+  const gapY = data.layout?.spacing?.careerSummary?.gapY ?? 8
 
   return (
     <section>

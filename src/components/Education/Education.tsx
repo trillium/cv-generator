@@ -1,16 +1,16 @@
 import EditableField from '@/components/EditableField'
 import Title from '@/components/Title/Title'
-import type { Education as EducationType } from '@/types'
+import type { Education as EducationType, LayoutConfig } from '@/types'
 
-const Education = ({ data }: { data: EducationType[] }) => {
+const Education = ({ data, spacing }: { data: EducationType[]; spacing?: LayoutConfig['spacing'] }) => {
   if (!data || !Array.isArray(data)) {
     console.warn('Education component received invalid data:', data)
     return null
   }
 
   return (
-    <section className="flex flex-col items-start gap-2">
-      <Title text="Education" />
+    <section className="flex flex-col items-start">
+      <Title text="Education" spacing={spacing} />
       <div className="w-full">
         {data.map((item, num) => {
           return <EducationItem key={`${item.school}-${item.degree}`} data={item} index={num} />
