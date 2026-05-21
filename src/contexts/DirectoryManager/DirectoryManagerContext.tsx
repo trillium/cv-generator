@@ -115,12 +115,19 @@ export function DirectoryManagerProvider({ children }: DirectoryManagerProviderP
       const isRootDirectory = path === 'resumes'
       const isDirectory = allDirs.includes(path)
       const isFile = allFiles.includes(path)
+      const withPrefix = `resumes/${path}`
+      const isPrefixedDirectory = allDirs.includes(withPrefix)
+      const isPrefixedFile = allFiles.includes(withPrefix)
 
       if (!isRootDirectory && !isDirectory && !isFile) {
-        if (!path.endsWith('.yml') && !path.endsWith('.yaml')) {
+        if (isPrefixedDirectory || isPrefixedFile) {
+          resolvedPath = withPrefix
+        } else if (!path.endsWith('.yml') && !path.endsWith('.yaml')) {
           const withExtension = `${path}.yml`
-          if (allFiles.includes(withExtension)) {
-            resolvedPath = withExtension
+          if (allFiles.includes(withExtension) || allFiles.includes(`resumes/${withExtension}`)) {
+            resolvedPath = allFiles.includes(withExtension)
+              ? withExtension
+              : `resumes/${withExtension}`
           } else {
             throw new Error(
               `Directory/file not found: ${path}. Available files: ${allFiles.slice(0, 5).join(', ')}...`,
