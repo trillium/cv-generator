@@ -5,19 +5,19 @@
 @custom-variant dark (&:where(.dark, .dark *)); /* Tailwind v4 dark mode variant */
 
 @theme {
-  /* Teal color palette for primary (matching teal[800] as default) */
-  --color-primary-50: #f0fdfa;
-  --color-primary-100: #ccfbf1;
-  --color-primary-200: #99f6e4;
-  --color-primary-300: #5eead4;
-  --color-primary-400: #2dd4bf;
-  --color-primary-500: #14b8a6;
-  --color-primary-600: #0d9488;
-  --color-primary-700: #0f766e;
-  --color-primary-800: #115e59;
-  --color-primary-900: #134e4a;
-  --color-primary-950: #042f2e;
-  --color-primary: var(--color-primary-800);
+  /* Grey color palette for primary (all stages set to 900) */
+  --color-primary-50: #111827;
+  --color-primary-100: #111827;
+  --color-primary-200: #111827;
+  --color-primary-300: #111827;
+  --color-primary-400: #111827;
+  --color-primary-500: #111827;
+  --color-primary-600: #111827;
+  --color-primary-700: #111827;
+  --color-primary-800: #111827;
+  --color-primary-900: #111827;
+  --color-primary-950: #111827;
+  --color-primary: #111827;
 
   /* Blue color palette for secondary */
   --color-secondary-50: #eff6ff;
@@ -41,17 +41,17 @@
 
 /* Dark mode overrides */
 .dark {
-  --color-primary-50: #042f2e;
-  --color-primary-100: #134e4a;
-  --color-primary-200: #115e59;
-  --color-primary-300: #0f766e;
-  --color-primary-400: #0d9488;
-  --color-primary-500: #14b8a6;
-  --color-primary-600: #2dd4bf;
-  --color-primary-700: #5eead4;
-  --color-primary-800: #99f6e4;
-  --color-primary-900: #ccfbf1;
-  --color-primary-950: #f0fdfa;
+  --color-primary-50: #030712;
+  --color-primary-100: #111827;
+  --color-primary-200: #1f2937;
+  --color-primary-300: #374151;
+  --color-primary-400: #4b5563;
+  --color-primary-500: #6b7280;
+  --color-primary-600: #9ca3af;
+  --color-primary-700: #d1d5db;
+  --color-primary-800: #e5e7eb;
+  --color-primary-900: #f3f4f6;
+  --color-primary-950: #f9fafb;
   --color-primary: var(--color-primary-200);
 
   --color-secondary-50: #172554;
