@@ -6,6 +6,8 @@ export interface TrailingWordInfo {
   lineText: string
   wordCount: number
   isOrphan: boolean
+  yPosition: number
+  gapToNext: number | null
 }
 
 export async function countPdfPages(pdfBuffer: Buffer): Promise<number> {
@@ -13,17 +15,24 @@ export async function countPdfPages(pdfBuffer: Buffer): Promise<number> {
   return pdfDoc.getPageCount()
 }
 
-function analyzeTrailingWords(lines: string[]): TrailingWordInfo[] {
+function analyzeTrailingWords(lines: string[], yPositions: number[]): TrailingWordInfo[] {
   return lines.map((lineText, lineIndex) => {
     const trimmed = lineText.trim()
     const wordCount = trimmed.length === 0 ? 0 : trimmed.split(/\s+/).length
     const isOrphan = wordCount > 0 && wordCount < 4
+    const yPosition = yPositions[lineIndex]
+    const gapToNext =
+      lineIndex < lines.length - 1
+        ? Math.round((yPosition - yPositions[lineIndex + 1]) * 10) / 10
+        : null
 
     return {
       lineIndex,
       lineText,
       wordCount,
       isOrphan,
+      yPosition,
+      gapToNext,
     }
   })
 }
@@ -64,13 +73,13 @@ export async function extractLastPageText(pdfBuffer: Buffer): Promise<{
     lineMap.get(y)?.push(textItem.str)
   }
 
-  const lines = Array.from(lineMap.entries())
-    .sort((a, b) => b[0] - a[0])
-    .map(([, chars]) => chars.join(''))
+  const sortedEntries = Array.from(lineMap.entries()).sort((a, b) => b[0] - a[0])
+  const lines = sortedEntries.map(([, chars]) => chars.join(''))
+  const yPositions = sortedEntries.map(([y]) => y)
 
   const text = lines.join('\n')
   const lineBreaks = lines.length - 1
-  const trailingWords = analyzeTrailingWords(lines)
+  const trailingWords = analyzeTrailingWords(lines, yPositions)
 
   return { text, lineBreaks, lines, trailingWords }
 }
