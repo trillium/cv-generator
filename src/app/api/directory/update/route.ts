@@ -7,7 +7,7 @@ import { broadcast } from '@/lib/sseNotifier'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { directoryPath, yamlPath, value, sourceFile } = body
+    const { directoryPath, yamlPath, value, sourceFile, skipRebuild } = body
 
     console.log(`🔵 [API /directory/update] Request received:`, {
       directoryPath,
@@ -34,6 +34,13 @@ export async function POST(request: NextRequest) {
     const result = await manager.updatePath(directoryPath, yamlPath, value, sourceFile)
 
     console.log(`📄 File updated: ${result.updatedFile}`)
+
+    if (skipRebuild) {
+      return NextResponse.json({
+        ...result,
+        pdf: { skipped: true, reason: 'skipRebuild=true' },
+      })
+    }
 
     const pdfOutputDir = directoryPath
 
