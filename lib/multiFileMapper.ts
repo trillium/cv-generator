@@ -21,6 +21,7 @@ export const SECTION_KEY_TO_FILENAME: Record<string, string[]> = {
   linkedIn: ['linkedIn', 'linkedin'],
   notes: ['notes'],
   llm: ['llm'],
+  layout: ['layout'],
 }
 
 export const SUPPORTED_EXTENSIONS = ['.yml', '.yaml', '.json']

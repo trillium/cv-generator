@@ -16,7 +16,7 @@ import {
 import { validateCVData } from './validateData'
 
 const MANIFEST_FILENAME = 'manifest.yml'
-const LOCAL_ONLY_SECTIONS = new Set(['info', 'metadata', 'llm', 'notes', 'linkedIn'])
+const LOCAL_ONLY_SECTIONS = new Set(['info', 'metadata', 'llm', 'notes', 'linkedIn', 'layout'])
 
 function loadViaManifest(dirPath: string): {
   mergedData: Record<string, unknown>
