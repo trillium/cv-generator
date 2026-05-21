@@ -6,8 +6,7 @@ import ProjectLinks from './ProjectLinks'
 
 const Projects = ({ data, showBubbles }: { data: Project[]; showBubbles: boolean }) => {
   // Defensive check: if data is undefined or not an array, render nothing
-  if (!data || !Array.isArray(data)) {
-    console.warn('Projects component received invalid data:', data)
+  if (!data || !Array.isArray(data) || data.length === 0) {
     return null
   }
 
