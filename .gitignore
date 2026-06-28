@@ -35,12 +35,19 @@ src/script-data.json
 
 # PII Files - These should be in a separate repository
 data.yml
+data.temp.yml
 data-backup.yml
 data_anon.yml
 pii/*
 !pii/.gitkeep
 *.pdf
 !examples/*.pdf
+
+# Local scratch / debug dumps
+interceptor-screenshot-*.png
+context-dump-*.md
+/debug-*.js
+/test-*.js
 
 .next
 .next-dev
