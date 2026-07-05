@@ -1,14 +1,25 @@
 import EditableField from '@/components/EditableField/EditableField'
 import ProfileLink from '@/components/Profile/ProfileLink/ProfileLink'
-import type { CVData } from '@/types'
+import type { CVData, InfoLink } from '@/types'
+
+function resolveInfoLink(value: unknown): { link: string; name: string } {
+  if (typeof value === 'string') return { link: value, name: value }
+  if (value && typeof value === 'object' && 'link' in value && 'name' in value) {
+    return {
+      link: String((value as { link: unknown }).link),
+      name: String((value as { name: unknown }).name),
+    }
+  }
+  return { link: '', name: '' }
+}
 
 function isInfo(obj: Record<string, unknown>): obj is {
   firstName: string
   lastName: string
   email: string
   phone: string
-  website: string
-  bluesky?: string
+  website: InfoLink
+  bluesky?: InfoLink
   role?: string
 } {
   return (
@@ -18,7 +29,9 @@ function isInfo(obj: Record<string, unknown>): obj is {
     typeof (obj as Record<string, unknown>).lastName === 'string' &&
     typeof (obj as Record<string, unknown>).email === 'string' &&
     typeof (obj as Record<string, unknown>).phone === 'string' &&
-    typeof (obj as Record<string, unknown>).website === 'string'
+    (typeof (obj as Record<string, unknown>).website === 'string' ||
+      (typeof (obj as Record<string, unknown>).website === 'object' &&
+        (obj as Record<string, unknown>).website !== null))
   )
 }
 
@@ -28,8 +41,16 @@ export default function Header({ data }: { data: CVData }) {
   const lastName = infoIsValid ? String(data.info.lastName) : ''
   const role = infoIsValid ? String(data.info.role ?? '') : ''
   const email = infoIsValid ? String(data.info.email) : ''
-  const phone = infoIsValid ? String(data.info.phone) : ''
-  const website = infoIsValid ? String(data.info.website) : ''
+  const website = infoIsValid ? resolveInfoLink(data.info.website) : { link: '', name: '' }
+  const github = infoIsValid
+    ? resolveInfoLink((data.info as Record<string, unknown>).github)
+    : { link: '', name: '' }
+  const bluesky = infoIsValid
+    ? resolveInfoLink((data.info as Record<string, unknown>).bluesky)
+    : { link: '', name: '' }
+  const linkedIn = infoIsValid
+    ? resolveInfoLink((data.info as Record<string, unknown>).linkedIn)
+    : { link: '', name: '' }
 
   if (!infoIsValid) return null
 
@@ -44,7 +65,7 @@ export default function Header({ data }: { data: CVData }) {
             <span className="font-normal dark:text-white">{lastName}</span>
           </EditableField>
         </h1>
-        <span className="inline-block font-light border-l-2 border-black dark:border-white px-3 text-gray-700 dark:text-gray-300 text-4xl align-baseline ml-3">
+        <span className="inline-block font-light border-l-2 border-black dark:border-white px-3 text-primary-500 dark:text-gray-300 text-4xl align-baseline ml-3">
           <EditableField yamlPath="info.role" value={role || ''} fieldType="text">
             <span className="dark:text-gray-300">{role}</span>
           </EditableField>
@@ -59,34 +80,62 @@ export default function Header({ data }: { data: CVData }) {
             <ProfileLink
               icon="Email"
               link={email}
-              name={email}
+              name="Email"
               linkYamlPath="info.email"
               nameYamlPath="info.email"
             />
           </span>
         </EditableField>
-        <EditableField yamlPath="info.phone" value={phone} fieldType="text">
+        <EditableField yamlPath="info.website" value={website.link} fieldType="text">
           <span className="inline-block mr-4">
             <ProfileLink
-              icon="Phone"
-              link={phone}
-              name={phone}
-              linkYamlPath="info.phone"
-              nameYamlPath="info.phone"
-            />
-          </span>
-        </EditableField>
-        <EditableField yamlPath="info.website" value={website} fieldType="text">
-          <span className="inline-block">
-            <ProfileLink
               icon="Website"
-              link={website}
-              name={website}
-              linkYamlPath="info.website"
-              nameYamlPath="info.website"
+              link={website.link}
+              name={website.name}
+              linkYamlPath="info.website.link"
+              nameYamlPath="info.website.name"
             />
           </span>
         </EditableField>
+        {github.link && (
+          <EditableField yamlPath="info.github" value={github.link} fieldType="text">
+            <span className="inline-block mr-4">
+              <ProfileLink
+                icon="GitHub"
+                link={github.link}
+                name={github.name}
+                linkYamlPath="info.github.link"
+                nameYamlPath="info.github.name"
+              />
+            </span>
+          </EditableField>
+        )}
+        {linkedIn.link && (
+          <EditableField yamlPath="info.linkedIn" value={linkedIn.link} fieldType="text">
+            <span className="inline-block mr-4">
+              <ProfileLink
+                icon="LinkedIn"
+                link={linkedIn.link}
+                name={linkedIn.name}
+                linkYamlPath="info.linkedIn.link"
+                nameYamlPath="info.linkedIn.name"
+              />
+            </span>
+          </EditableField>
+        )}
+        {bluesky.link && (
+          <EditableField yamlPath="info.bluesky" value={bluesky.link} fieldType="text">
+            <span className="inline-block">
+              <ProfileLink
+                icon="Bluesky"
+                link={bluesky.link}
+                name={bluesky.name}
+                linkYamlPath="info.bluesky.link"
+                nameYamlPath="info.bluesky.name"
+              />
+            </span>
+          </EditableField>
+        )}
       </div>
     </header>
   )
