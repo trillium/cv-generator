@@ -1,3 +1,4 @@
+import { readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { config } from 'dotenv'
@@ -37,6 +38,7 @@ async function main(
         ? `http://localhost:${process.env.PORT_DEV || 10300}`
         : `http://localhost:${process.env.PORT_PROD || 10301}`
 
+    if (version) console.log(`📌 Version: ${version}`)
     console.log(`🔗 Connecting to ${mode} server at ${serverUrl}`)
 
     await fetch(serverUrl).catch(() => {
@@ -47,7 +49,22 @@ async function main(
 
     console.log('🐾 Opening Puppeteer and generating PDF')
     const piiPath = process.env.PII_PATH || path.join(projectRoot, 'pii')
-    const outDir = path.join(piiPath, resumePath)
+    const baseDir = path.join(piiPath, resumePath)
+    let version = (dataObj as Record<string, unknown>).version as string | undefined
+    if (!version) {
+      version = '0.0.1'
+      const manifestPath = path.join(baseDir, 'manifest.yml')
+      try {
+        const content = readFileSync(manifestPath, 'utf-8')
+        if (!content.includes('version:')) {
+          writeFileSync(manifestPath, `${content.trimEnd()}\nversion: ${version}\n`)
+          console.log(`📌 Added default version ${version} to manifest`)
+        }
+      } catch {
+        // No manifest file — version stays as default
+      }
+    }
+    const outDir = path.join(baseDir, version)
 
     const { resumeUrl, coverLetterUrl } = buildUrls(serverUrl, resumeType, resumePath)
 

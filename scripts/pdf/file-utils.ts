@@ -3,7 +3,7 @@ import type { CVData } from '@/types'
 
 export function ensureDirectoryExists(dirPath: string) {
   if (!existsSync(dirPath)) {
-    mkdirSync(dirPath)
+    mkdirSync(dirPath, { recursive: true })
   }
 }
 
@@ -14,9 +14,9 @@ export function getOutputFilename({
   data: CVData
   type: 'Resume' | 'CoverLetter'
 }): string {
-  const parts = [data.header.name.split(' ').join('_'), type]
-  if (data.metadata?.targetCompany) parts.push(data.metadata.targetCompany.replace(/\s+/g, '_'))
-  if (data.metadata?.jobId) parts.push(data.metadata.jobId)
+  const parts = [data.header.name.split(' ').join('_')]
+  if (data.info?.role) parts.push(data.info.role.replace(/\s+/g, '_'))
+  parts.push(type)
   return `${parts.join('_')}.pdf`
 }
 
