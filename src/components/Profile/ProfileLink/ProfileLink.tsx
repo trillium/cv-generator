@@ -107,7 +107,7 @@ const ProfileLink = ({
             key={`${nameYamlPath}-print-link`}
             href={href}
             {...anchorProps}
-            className="print:block hidden"
+            className="print:flex hidden items-center gap-2"
           >
             <span className="text-sm font-bold">{name}</span>
           </a>

@@ -16,7 +16,7 @@ function SingleColumnCoverLetter({ data }: { data: CVData }) {
         <div className="flex-1">
           <CoverLetterContent coverLetterLines={data.coverLetter || []} />
           {data.metadata?.targetJobUrl && (
-            <div className="mt-4 text-sm text-gray-500">
+            <div className="mt-4 text-sm text-primary-500">
               <a href={data.metadata.targetJobUrl} className="underline">
                 View job posting
               </a>

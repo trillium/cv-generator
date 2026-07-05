@@ -36,7 +36,11 @@ function TwoColumnResume({ data }: { data: CVData }) {
           {data.projects && data.projects.length > 0 && (
             <ProjectsList projects={data.projects} showBubbles={showBubbles} />
           )}
-          <EducationList education={data.education} showEducation={data.showEducation} spacing={data.layout?.spacing} />
+          <EducationList
+            education={data.education}
+            showEducation={data.showEducation}
+            spacing={data.layout?.spacing}
+          />
         </div>
         <div className="w-full">
           <Footer data={data} />

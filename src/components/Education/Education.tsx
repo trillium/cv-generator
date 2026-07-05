@@ -2,7 +2,13 @@ import EditableField from '@/components/EditableField'
 import Title from '@/components/Title/Title'
 import type { Education as EducationType, LayoutConfig } from '@/types'
 
-const Education = ({ data, spacing }: { data: EducationType[]; spacing?: LayoutConfig['spacing'] }) => {
+const Education = ({
+  data,
+  spacing,
+}: {
+  data: EducationType[]
+  spacing?: LayoutConfig['spacing']
+}) => {
   if (!data || !Array.isArray(data)) {
     console.warn('Education component received invalid data:', data)
     return null
@@ -70,7 +76,7 @@ function EducationItem({ data, index }: { data: EducationType; index: number }) 
         value={data.location}
         fieldType="text"
       >
-        <div className="text-sm text-neutral-500 dark:text-neutral-400">{data.location}</div>
+        <div className="text-sm text-primary-500 dark:text-neutral-400">{data.location}</div>
       </EditableField>
     </div>
   )
