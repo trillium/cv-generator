@@ -5,6 +5,7 @@ import { parseYamlString } from '../yamlService'
 import {
   ALL_MANIFEST_SECTIONS,
   ARRAY_SECTIONS,
+  MANIFEST_META_KEYS,
   type Manifest,
   type ManifestRef,
   type ManifestSectionKey,
@@ -70,6 +71,11 @@ export function validateManifest(raw: Record<string, unknown>): Manifest {
   const errors: string[] = []
 
   for (const [key, value] of Object.entries(raw)) {
+    if ((MANIFEST_META_KEYS as readonly string[]).includes(key)) {
+      ;(manifest as Record<string, unknown>)[key] = value
+      continue
+    }
+
     if (!ALL_MANIFEST_SECTIONS.includes(key as ManifestSectionKey)) {
       errors.push(`Unknown manifest section: '${key}'`)
       continue

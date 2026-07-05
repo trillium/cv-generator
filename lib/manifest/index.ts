@@ -15,4 +15,9 @@ export type {
   ResolvedManifest,
   ResolvedManifestEntry,
 } from './types'
-export { ALL_MANIFEST_SECTIONS, ARRAY_SECTIONS, SINGLETON_SECTIONS } from './types'
+export {
+  ALL_MANIFEST_SECTIONS,
+  ARRAY_SECTIONS,
+  MANIFEST_META_KEYS,
+  SINGLETON_SECTIONS,
+} from './types'

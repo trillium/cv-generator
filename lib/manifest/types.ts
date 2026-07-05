@@ -30,9 +30,23 @@ export const ALL_MANIFEST_SECTIONS: ManifestSectionKey[] = [
   ...ARRAY_SECTIONS,
 ]
 
+export type ManifestMeta = {
+  resumeType?: string
+  version?: string
+  pages?: number
+  trackingLevel?: number
+}
+
+export const MANIFEST_META_KEYS: (keyof ManifestMeta)[] = [
+  'resumeType',
+  'version',
+  'pages',
+  'trackingLevel',
+]
+
 export type Manifest = {
   [K in ManifestSectionKey]?: K extends 'header' | 'profile' ? ManifestRef : ManifestRef[]
-}
+} & ManifestMeta
 
 export type ParsedLibraryFilename = {
   item: string

@@ -4,7 +4,12 @@ import * as path from 'node:path'
 import type { CVData } from '@/types'
 import type { DirectoryLoadResult, PdfMetadataFile } from '@/types/multiFileManager.types'
 import { getPiiDirectory } from '../getPiiPath'
-import { type ManifestSectionKey, resolveManifest, SINGLETON_SECTIONS } from '../manifest'
+import {
+  MANIFEST_META_KEYS,
+  type ManifestSectionKey,
+  resolveManifest,
+  SINGLETON_SECTIONS,
+} from '../manifest'
 import {
   findDataFilesInDirectory,
   getAncestorDirectories,
@@ -55,6 +60,11 @@ function loadViaManifest(dirPath: string): {
   for (const [section, { data, paths }] of sectionFiles) {
     mergedData[section] = data
     sources[section] = paths
+  }
+
+  for (const key of MANIFEST_META_KEYS) {
+    const value = resolved.manifest[key]
+    if (value !== undefined) mergedData[key] = value
   }
 
   const ancestorDirs = getAncestorDirectories(dirPath)

@@ -130,16 +130,18 @@ export type CandidateProfile = CVData
 export type ResumeObjectType = CandidateProfile
 export type ResumeType = CandidateProfile
 
+export type InfoLink = string | { link: string; name: string }
+
 export type InfoType = {
   firstName: string
   lastName: string
   email: string
   phone: string
   role: string
-  website?: string
-  bluesky?: string
-  github?: string
-  linkedIn?: string
+  website?: InfoLink
+  bluesky?: InfoLink
+  github?: InfoLink
+  linkedIn?: InfoLink
 }
 
 export type CareerSummaryItem = {
