@@ -1,11 +1,12 @@
 import type { CVData } from '@/types'
 import { MultiFileManager } from '../../lib/multiFileManager'
+import { applyRedirectLinks } from '../../lib/redirectLinks'
 
 export async function loadAndProcessData(resumePath: string, isAnon: boolean): Promise<CVData> {
   try {
     const manager = new MultiFileManager()
     const result = await manager.loadDirectory(resumePath)
-    const dataObj = result.data
+    const dataObj = applyRedirectLinks(result.data)
 
     console.log(`✅ Data loaded from directory: ${resumePath}`)
     console.log(`   Files loaded: ${result.metadata.filesLoaded.join(', ')}`)

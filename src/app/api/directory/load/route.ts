@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { MultiFileManager } from '@/lib/multiFileManager'
+import { applyRedirectLinks } from '@/lib/redirectLinks'
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,10 +16,11 @@ export async function GET(request: NextRequest) {
 
     const manager = new MultiFileManager()
     const result = await manager.loadDirectory(dirPath)
+    const data = applyRedirectLinks(result.data)
 
     return NextResponse.json({
       success: true,
-      data: result.data,
+      data,
       sources: result.sources,
       metadata: result.metadata,
       pdfMetadata: result.pdfMetadata,
