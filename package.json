@@ -11,6 +11,8 @@
     "start": "sh scripts/start-with-port.sh",
     "start:prod": "NODE_ENV=production next start",
     "cached-build-serve": "bun scripts/cached-build-serve.ts",
+    "sync:brain": "bun scripts/sync-brain.ts",
+    "sync:brain:check": "bun scripts/sync-brain.ts --check",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:run": "vitest run",
