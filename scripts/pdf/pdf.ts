@@ -103,7 +103,7 @@ async function main(
 
       const resumeGaps = await detectPageGaps(readFileSync(resumePdfPath))
       if (resumeGaps.length > 0) {
-        const report = formatGapReport(resumeGaps, DEFAULT_GAP_THRESHOLD)
+        const report = formatGapReport(resumeGaps, DEFAULT_GAP_THRESHOLD, resumePath)
         console.error(`\n${report}\n`)
         gapFailures.push(`resume (${resumePdfPath})`)
       } else {
@@ -149,7 +149,7 @@ async function main(
 
       const coverGaps = await detectPageGaps(readFileSync(coverPdfPath))
       if (coverGaps.length > 0) {
-        const report = formatGapReport(coverGaps, DEFAULT_GAP_THRESHOLD)
+        const report = formatGapReport(coverGaps, DEFAULT_GAP_THRESHOLD, resumePath)
         console.error(`\n${report}\n`)
         gapFailures.push(`cover letter (${coverPdfPath})`)
       } else {

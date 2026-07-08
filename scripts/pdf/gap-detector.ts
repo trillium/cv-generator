@@ -88,19 +88,52 @@ export async function detectPageGaps(
 }
 
 /**
- * Format detected gaps into a human-readable failure report for the console.
+ * Format detected gaps into an actionable failure report for the console.
+ *
+ * Beyond naming *where* each gap is, the report names the concrete levers that
+ * move page content — the layout `detailGap` value, the manifest section order,
+ * and section trimming — and points at the exact files to edit for this target.
+ *
+ * @param resumePath Repo-relative resume dir (e.g. "resumes/frontend-generic")
+ *   used to print the specific manifest/layout paths to edit. Optional so the
+ *   report still works when the caller has no path handy.
  */
-export function formatGapReport(gaps: PageGap[], threshold: number): string {
+export function formatGapReport(gaps: PageGap[], threshold: number, resumePath?: string): string {
   const clip = (s: string) => (s.length > 60 ? `${s.slice(0, 57)}...` : s)
+
+  const manifestFile = resumePath
+    ? `pii/${resumePath}/manifest.yml`
+    : 'pii/resumes/<target>/manifest.yml'
+  const layoutFile = resumePath ? `pii/${resumePath}/layout.yml` : 'pii/resumes/<target>/layout.yml'
+
   const lines = [
     `❌ Whitespace gap check FAILED: ${gaps.length} gap(s) over ${threshold}u`,
     ...gaps.map(
       (g) =>
-        `   • page ${g.page}/${g.pageCount}: ${g.gap}u between ` +
+        `   • page ${g.page}/${g.pageCount}: ${g.gap}u gap between ` +
         `"${clip(g.aboveText)}" and "${clip(g.belowText)}"`,
     ),
-    '   This usually means a multi-subhead entry straddles a page break.',
-    '   Reorder work items or trim content so the boundary falls between whole entries.',
+    '',
+    '   WHAT THIS MEANS: too much vertical whitespace opened up mid-page. The two',
+    '   most common causes and the levers that fix each:',
+    '',
+    "   1) A per-index detailGap injected a large band between an entry's subheads.",
+    `      → In ${layoutFile}, look at layout.spacing.workExperience.detailGap.`,
+    '        An array like [6, 80, 6, 6] gives the work item at that index (here',
+    '        index 1 = the 2nd entry) an 80u gap between its subheads. Replace the',
+    '        array with a single uniform number (e.g. detailGap: 8). This is the',
+    '        usual culprit when the gap sits between two subheads of ONE entry.',
+    '',
+    '   2) A multi-subhead entry straddles the page boundary, so the print engine',
+    '      reserves blank space rather than split it.',
+    `      → In ${manifestFile}, reorder the workExperience list so a single-subhead`,
+    '        entry lands on the boundary, or move the multi-subhead entry earlier/',
+    '        later. You can also trim: drop a projects entry or a bullet to pull the',
+    '        boundary up, or add one to push it down past the whole entry.',
+    '',
+    '   Also check: itemGap / sectionMarginTop / bulletGap in the same layout.yml',
+    '   nudge total height; careerSummary and technical length affect where page 1',
+    '   ends. Re-render after each change — the gap check re-runs automatically.',
   ]
   return lines.join('\n')
 }
