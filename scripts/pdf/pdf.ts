@@ -6,6 +6,7 @@ import puppeteer, { type Browser } from 'puppeteer'
 import type { CVData } from '@/types'
 import { parseCliArgs } from './cli-args'
 import { loadAndProcessData } from './data-loader'
+import { DEFAULT_GAP_THRESHOLD, detectPageGaps, formatGapReport } from './gap-detector'
 import { saveMetadata } from './metadata-writer'
 import { generateAndSavePdf } from './pdf-generator'
 import { buildUrls } from './url-builder'
@@ -81,16 +82,33 @@ async function main(
       lineBreaks: number
     }> = []
 
+    const gapFailures: string[] = []
+
     if (printOptions.includes('resume')) {
-      const { pageCount, lastPageText, lineBreaks, lastPageLines, trailingWords } =
-        await generateAndSavePdf({
-          url: resumeUrl,
-          dataObj,
-          type: 'Resume',
-          outDir,
-          browser,
-        })
+      const {
+        path: resumePdfPath,
+        pageCount,
+        lastPageText,
+        lineBreaks,
+        lastPageLines,
+        trailingWords,
+      } = await generateAndSavePdf({
+        url: resumeUrl,
+        dataObj,
+        type: 'Resume',
+        outDir,
+        browser,
+      })
       results.push({ type: 'resume', pageCount, lastPageText, lineBreaks })
+
+      const resumeGaps = await detectPageGaps(readFileSync(resumePdfPath))
+      if (resumeGaps.length > 0) {
+        const report = formatGapReport(resumeGaps, DEFAULT_GAP_THRESHOLD)
+        console.error(`\n${report}\n`)
+        gapFailures.push(`resume (${resumePdfPath})`)
+      } else {
+        console.log('✅ Whitespace gap check passed (resume)')
+      }
 
       const orphanCount = trailingWords.filter((w) => w.isOrphan).length
 
@@ -113,15 +131,30 @@ async function main(
       }
     }
     if (printOptions.includes('cover')) {
-      const { pageCount, lastPageText, lineBreaks, lastPageLines, trailingWords } =
-        await generateAndSavePdf({
-          url: coverLetterUrl,
-          dataObj,
-          type: 'CoverLetter',
-          outDir,
-          browser,
-        })
+      const {
+        path: coverPdfPath,
+        pageCount,
+        lastPageText,
+        lineBreaks,
+        lastPageLines,
+        trailingWords,
+      } = await generateAndSavePdf({
+        url: coverLetterUrl,
+        dataObj,
+        type: 'CoverLetter',
+        outDir,
+        browser,
+      })
       results.push({ type: 'cover', pageCount, lastPageText, lineBreaks })
+
+      const coverGaps = await detectPageGaps(readFileSync(coverPdfPath))
+      if (coverGaps.length > 0) {
+        const report = formatGapReport(coverGaps, DEFAULT_GAP_THRESHOLD)
+        console.error(`\n${report}\n`)
+        gapFailures.push(`cover letter (${coverPdfPath})`)
+      } else {
+        console.log('✅ Whitespace gap check passed (cover letter)')
+      }
 
       const orphanCount = trailingWords.filter((w) => w.isOrphan).length
 
@@ -161,6 +194,14 @@ async function main(
     }
 
     console.log('💾 PDF saved')
+
+    if (gapFailures.length > 0) {
+      throw new Error(
+        `Whitespace gap check failed for: ${gapFailures.join(', ')}. ` +
+          'PDF was written for inspection but the render is a failure.',
+      )
+    }
+
     console.log('🏁 Done')
   } catch (error) {
     console.error('💥 Error during PDF generation:', error)
