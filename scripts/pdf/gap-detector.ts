@@ -30,6 +30,19 @@ export interface OrphanHeading {
 }
 
 /**
+ * A non-final page whose content stops well short of the bottom margin,
+ * leaving a large trailing void. Happens when the next entry is an atomic
+ * block (break-inside: avoid) too tall for the remaining space, so the print
+ * engine moves the whole block to the next page.
+ */
+export interface UnderfilledPage {
+  page: number
+  pageCount: number
+  bottomY: number
+  void: number
+}
+
+/**
  * Maximum legitimate vertical gap (in PDF user-space units) between two lines
  * of text within a page. Normal body line spacing is ~18; item/section
  * transitions run up to ~31. An observed layout failure produced a ~78 unit
@@ -37,6 +50,15 @@ export interface OrphanHeading {
  * measured across the resume templates and well below the failure signal.
  */
 export const DEFAULT_GAP_THRESHOLD = 45
+
+/**
+ * Maximum trailing void (in PDF user-space units) allowed at the bottom of a
+ * NON-final page — the distance from the lowest line of text to the page's
+ * bottom edge. Well-filled pages reach within ~70-80u of the bottom (margin +
+ * one line). An observed underfilled page left ~156u of void. 110 sits above
+ * healthy pages and below the failure signal.
+ */
+export const DEFAULT_MAX_TRAILING_VOID = 110
 
 interface TextItemLike {
   str: string
@@ -158,6 +180,42 @@ export async function detectOrphanHeadings(
 }
 
 /**
+ * Scan for non-final pages that stop well short of the bottom margin, leaving a
+ * large trailing void. The final page is never checked (a short last page is
+ * normal). A page's void is the Y of its lowest line of text — in PDF space,
+ * Y is measured from the page bottom, so a small bottomY means the text
+ * reaches near the bottom (good) and a large bottomY means it stops high (bad).
+ */
+export async function detectUnderfilledPages(
+  pdfBuffer: Buffer,
+  maxVoid: number = DEFAULT_MAX_TRAILING_VOID,
+): Promise<UnderfilledPage[]> {
+  const loadingTask = getDocument({ data: new Uint8Array(pdfBuffer) })
+  const pdfDoc = await loadingTask.promise
+  const pageCount = pdfDoc.numPages
+  const underfilled: UnderfilledPage[] = []
+
+  for (let pageNum = 1; pageNum < pageCount; pageNum++) {
+    const page = await pdfDoc.getPage(pageNum)
+    const textContent = await page.getTextContent()
+    const lines = linesForPage(textContent.items as TextItemLike[])
+    if (lines.length === 0) continue
+
+    const bottomY = lines[lines.length - 1].y
+    if (bottomY > maxVoid) {
+      underfilled.push({
+        page: pageNum,
+        pageCount,
+        bottomY: Math.round(bottomY),
+        void: Math.round(bottomY),
+      })
+    }
+  }
+
+  return underfilled
+}
+
+/**
  * Format detected gaps into an actionable failure report for the console.
  *
  * Beyond naming *where* each gap is, the report names the concrete levers that
@@ -245,6 +303,50 @@ export function formatOrphanReport(orphans: OrphanHeading[], resumePath?: string
     '',
     '   3) Reorder so a shorter (single-subhead) entry lands on the boundary.',
     `      → In ${manifestFile}, reorder the workExperience list.`,
+    '',
+    '   Re-render after each change — this check re-runs automatically.',
+  ]
+  return lines.join('\n')
+}
+
+/**
+ * Format underfilled pages into an actionable failure report for the console.
+ *
+ * Names the levers that fill the trailing void: getting the next entry's first
+ * content onto the page, adding content, or rebalancing across pages.
+ */
+export function formatUnderfilledReport(
+  pages: UnderfilledPage[],
+  maxVoid: number,
+  resumePath?: string,
+): string {
+  const manifestFile = resumePath
+    ? `pii/${resumePath}/manifest.yml`
+    : 'pii/resumes/<target>/manifest.yml'
+  const componentFile = 'src/components/WorkExperience/WorkExperience.tsx'
+
+  const lines = [
+    `❌ Underfilled-page check FAILED: ${pages.length} page(s) with a trailing void over ${maxVoid}u`,
+    ...pages.map(
+      (p) =>
+        `   • page ${p.page}/${p.pageCount}: content stops ${p.void}u above the page bottom ` +
+        '(a well-filled page reaches ~70-80u)',
+    ),
+    '',
+    '   WHAT THIS MEANS: the page ends with a large blank band because the next',
+    '   entry is an atomic block (break-inside: avoid) too tall for the remaining',
+    '   space, so the print engine moved the whole block down. Levers, easiest first:',
+    '',
+    '   1) Let the next entry start on this page and split across the break.',
+    `      → In ${componentFile}, the detail block uses breakInside: 'avoid'. For a`,
+    '        multi-bullet entry that never fits, allowing it to split (auto) fills',
+    '        the void. Trade-off: a subhead can then separate from its first bullet.',
+    '',
+    '   2) Add content so the page fills naturally.',
+    `      → In ${manifestFile}, add a bullet or a projects entry above the break,`,
+    '        or move a shorter entry up so its content lands in the void.',
+    '',
+    '   3) Rebalance so both pages are fuller (e.g. trim page 2 so more fits page 1).',
     '',
     '   Re-render after each change — this check re-runs automatically.',
   ]

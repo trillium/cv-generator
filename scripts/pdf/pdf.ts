@@ -9,10 +9,13 @@ import { loadAndProcessData } from './data-loader'
 import {
   collectHeadings,
   DEFAULT_GAP_THRESHOLD,
+  DEFAULT_MAX_TRAILING_VOID,
   detectOrphanHeadings,
   detectPageGaps,
+  detectUnderfilledPages,
   formatGapReport,
   formatOrphanReport,
+  formatUnderfilledReport,
 } from './gap-detector'
 import { saveMetadata } from './metadata-writer'
 import { generateAndSavePdf } from './pdf-generator'
@@ -123,6 +126,16 @@ async function main(
         gapFailures.push(`resume orphan-heading (${resumePdfPath})`)
       } else {
         console.log('✅ Orphaned-heading check passed (resume)')
+      }
+
+      const resumeUnderfilled = await detectUnderfilledPages(resumeBuffer)
+      if (resumeUnderfilled.length > 0) {
+        console.error(
+          `\n${formatUnderfilledReport(resumeUnderfilled, DEFAULT_MAX_TRAILING_VOID, resumePath)}\n`,
+        )
+        gapFailures.push(`resume underfilled-page (${resumePdfPath})`)
+      } else {
+        console.log('✅ Underfilled-page check passed (resume)')
       }
 
       const orphanCount = trailingWords.filter((w) => w.isOrphan).length
