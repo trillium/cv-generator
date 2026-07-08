@@ -124,7 +124,7 @@ function WorkExperienceItem({
         <div
           key={`${detail.subhead}-${detail.years}`}
           className="flex flex-col"
-          style={{ marginTop: detailIndex > 0 ? `${detailGap}px` : undefined }}
+          style={{ marginTop: detailIndex > 0 ? `${detailGap}px` : undefined, breakInside: 'avoid' }}
         >
           <div
             className="flex flex-row justify-between"
