@@ -38,16 +38,6 @@ async function main(
         ? `http://localhost:${process.env.PORT_DEV || 10300}`
         : `http://localhost:${process.env.PORT_PROD || 10301}`
 
-    if (version) console.log(`📌 Version: ${version}`)
-    console.log(`🔗 Connecting to ${mode} server at ${serverUrl}`)
-
-    await fetch(serverUrl).catch(() => {
-      throw new Error(
-        `Server not running at ${serverUrl}. Start it first with bun ${mode === 'dev' ? 'dev' : 'start'}`,
-      )
-    })
-
-    console.log('🐾 Opening Puppeteer and generating PDF')
     const piiPath = process.env.PII_PATH || path.join(projectRoot, 'pii')
     const baseDir = path.join(piiPath, resumePath)
     let version = (dataObj as Record<string, unknown>).version as string | undefined
@@ -65,6 +55,17 @@ async function main(
       }
     }
     const outDir = path.join(baseDir, version)
+
+    if (version) console.log(`📌 Version: ${version}`)
+    console.log(`🔗 Connecting to ${mode} server at ${serverUrl}`)
+
+    await fetch(serverUrl).catch(() => {
+      throw new Error(
+        `Server not running at ${serverUrl}. Start it first with bun ${mode === 'dev' ? 'dev' : 'start'}`,
+      )
+    })
+
+    console.log('🐾 Opening Puppeteer and generating PDF')
 
     const { resumeUrl, coverLetterUrl } = buildUrls(serverUrl, resumeType, resumePath)
 
