@@ -70,7 +70,7 @@ function WorkExperienceItem({
       {item.position && (
         <div
           className="flex flex-row justify-between"
-          style={{ marginBottom: `${positionMarginBottom}px` }}
+          style={{ marginBottom: `${positionMarginBottom}px`, breakAfter: 'avoid' }}
         >
           <EditableField
             yamlPath={`${sectionKey}.${index}.position`}
@@ -84,7 +84,7 @@ function WorkExperienceItem({
       {item.company && (
         <div
           className="flex flex-row justify-between"
-          style={{ marginBottom: `${companyMarginBottom}px` }}
+          style={{ marginBottom: `${companyMarginBottom}px`, breakAfter: 'avoid' }}
         >
           <EditableField
             yamlPath={`${sectionKey}.${index}.company`}
@@ -124,7 +124,10 @@ function WorkExperienceItem({
         <div
           key={`${detail.subhead}-${detail.years}`}
           className="flex flex-col"
-          style={{ marginTop: detailIndex > 0 ? `${detailGap}px` : undefined, breakInside: 'avoid' }}
+          style={{
+            marginTop: detailIndex > 0 ? `${detailGap}px` : undefined,
+            breakInside: 'avoid',
+          }}
         >
           <div
             className="flex flex-row justify-between"

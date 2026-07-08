@@ -17,6 +17,19 @@ export interface PageGap {
 }
 
 /**
+ * A heading (work-experience position/subhead, project name, or technical
+ * category) left stranded as the last line of a non-final page while its body
+ * content flows onto the next page. Reads as a dangling header with nothing
+ * under it. There is no whitespace gap here, so `detectPageGaps` cannot see it.
+ */
+export interface OrphanHeading {
+  page: number
+  pageCount: number
+  headingText: string
+  y: number
+}
+
+/**
  * Maximum legitimate vertical gap (in PDF user-space units) between two lines
  * of text within a page. Normal body line spacing is ~18; item/section
  * transitions run up to ~31. An observed layout failure produced a ~78 unit
@@ -28,6 +41,15 @@ export const DEFAULT_GAP_THRESHOLD = 45
 interface TextItemLike {
   str: string
   transform: number[]
+}
+
+/**
+ * Collapse whitespace and drop non-alphanumerics so a heading string from the
+ * CVData matches its PDF-text-layer rendering, where spaces are frequently
+ * stripped and adjacent fields (e.g. subhead + years) are concatenated.
+ */
+function normalizeHeading(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, '')
 }
 
 /**
@@ -88,6 +110,54 @@ export async function detectPageGaps(
 }
 
 /**
+ * Scan for headings orphaned at a page boundary: a heading that is the last
+ * line of a non-final page, with its body content pushed to the next page.
+ *
+ * @param headings The heading strings from the resume data (work-experience
+ *   positions and subheads, project names, technical categories). A page's
+ *   last line is flagged when — after whitespace/punctuation normalization —
+ *   it equals, or begins with, one of these. The final page is never checked
+ *   (its last line is legitimately the end of the document).
+ */
+export async function detectOrphanHeadings(
+  pdfBuffer: Buffer,
+  headings: string[],
+): Promise<OrphanHeading[]> {
+  const normalizedHeadings = headings.map((h) => normalizeHeading(h)).filter((h) => h.length > 0)
+  if (normalizedHeadings.length === 0) return []
+
+  const loadingTask = getDocument({ data: new Uint8Array(pdfBuffer) })
+  const pdfDoc = await loadingTask.promise
+  const pageCount = pdfDoc.numPages
+  const orphans: OrphanHeading[] = []
+
+  for (let pageNum = 1; pageNum < pageCount; pageNum++) {
+    const page = await pdfDoc.getPage(pageNum)
+    const textContent = await page.getTextContent()
+    const lines = linesForPage(textContent.items as TextItemLike[])
+    if (lines.length === 0) continue
+
+    const lastLine = lines[lines.length - 1]
+    const normalizedLast = normalizeHeading(lastLine.text)
+    if (normalizedLast.length === 0) continue
+
+    const matched = normalizedHeadings.some(
+      (h) => normalizedLast === h || normalizedLast.startsWith(h),
+    )
+    if (matched) {
+      orphans.push({
+        page: pageNum,
+        pageCount,
+        headingText: lastLine.text,
+        y: lastLine.y,
+      })
+    }
+  }
+
+  return orphans
+}
+
+/**
  * Format detected gaps into an actionable failure report for the console.
  *
  * Beyond naming *where* each gap is, the report names the concrete levers that
@@ -136,4 +206,79 @@ export function formatGapReport(gaps: PageGap[], threshold: number, resumePath?:
     '   ends. Re-render after each change — the gap check re-runs automatically.',
   ]
   return lines.join('\n')
+}
+
+/**
+ * Format orphaned headings into an actionable failure report for the console.
+ *
+ * Names the levers that pull a stranded heading back onto its content's page or
+ * push the whole entry to the next page, and cites the target's exact files.
+ */
+export function formatOrphanReport(orphans: OrphanHeading[], resumePath?: string): string {
+  const clip = (s: string) => (s.length > 60 ? `${s.slice(0, 57)}...` : s)
+
+  const manifestFile = resumePath
+    ? `pii/${resumePath}/manifest.yml`
+    : 'pii/resumes/<target>/manifest.yml'
+  const layoutFile = resumePath ? `pii/${resumePath}/layout.yml` : 'pii/resumes/<target>/layout.yml'
+
+  const lines = [
+    `❌ Orphaned-heading check FAILED: ${orphans.length} heading(s) stranded at a page break`,
+    ...orphans.map(
+      (o) =>
+        `   • page ${o.page}/${o.pageCount}: "${clip(o.headingText)}" is the last line, ` +
+        'its content is on the next page',
+    ),
+    '',
+    '   WHAT THIS MEANS: a section/position heading sits alone at the bottom of a',
+    '   page while its bullets flow onto the next. The heading must travel with at',
+    '   least its first line of content. Levers, easiest first:',
+    '',
+    '   1) Push the whole entry to the next page.',
+    `      → In ${layoutFile}, nudge total page-1 height up so the heading crosses`,
+    '        the boundary with its content: raise itemGap, sectionMarginTop, or',
+    '        bulletGap slightly. Small changes move the boundary a lot.',
+    '',
+    '   2) Pull earlier content tighter so the entry + its first bullet both fit.',
+    `      → In ${layoutFile}, lower those same spacing values, or in ${manifestFile}`,
+    '        drop a bullet / trim a projects entry above the stranded heading.',
+    '',
+    '   3) Reorder so a shorter (single-subhead) entry lands on the boundary.',
+    `      → In ${manifestFile}, reorder the workExperience list.`,
+    '',
+    '   Re-render after each change — this check re-runs automatically.',
+  ]
+  return lines.join('\n')
+}
+
+/**
+ * Shape of the CVData fields this detector reads. Kept local and structural so
+ * the detector has no hard dependency on the app's full type graph.
+ */
+export interface HeadingSource {
+  workExperience?: { position?: string; details?: { subhead?: string }[] }[]
+  projects?: { name?: string }[]
+  technical?: { category?: string }[]
+}
+
+/**
+ * Collect every heading string a resume renders as a standalone header line:
+ * work-experience positions and subheads, project names, technical categories.
+ * These are the lines that must never be orphaned at a page break.
+ */
+export function collectHeadings(data: HeadingSource): string[] {
+  const headings: string[] = []
+  for (const we of data.workExperience ?? []) {
+    if (we.position) headings.push(we.position)
+    for (const d of we.details ?? []) {
+      if (d.subhead) headings.push(d.subhead)
+    }
+  }
+  for (const p of data.projects ?? []) {
+    if (p.name) headings.push(p.name)
+  }
+  for (const t of data.technical ?? []) {
+    if (t.category) headings.push(t.category)
+  }
+  return headings
 }

@@ -6,7 +6,14 @@ import puppeteer, { type Browser } from 'puppeteer'
 import type { CVData } from '@/types'
 import { parseCliArgs } from './cli-args'
 import { loadAndProcessData } from './data-loader'
-import { DEFAULT_GAP_THRESHOLD, detectPageGaps, formatGapReport } from './gap-detector'
+import {
+  collectHeadings,
+  DEFAULT_GAP_THRESHOLD,
+  detectOrphanHeadings,
+  detectPageGaps,
+  formatGapReport,
+  formatOrphanReport,
+} from './gap-detector'
 import { saveMetadata } from './metadata-writer'
 import { generateAndSavePdf } from './pdf-generator'
 import { buildUrls } from './url-builder'
@@ -101,13 +108,21 @@ async function main(
       })
       results.push({ type: 'resume', pageCount, lastPageText, lineBreaks })
 
-      const resumeGaps = await detectPageGaps(readFileSync(resumePdfPath))
+      const resumeBuffer = readFileSync(resumePdfPath)
+      const resumeGaps = await detectPageGaps(resumeBuffer)
       if (resumeGaps.length > 0) {
-        const report = formatGapReport(resumeGaps, DEFAULT_GAP_THRESHOLD, resumePath)
-        console.error(`\n${report}\n`)
-        gapFailures.push(`resume (${resumePdfPath})`)
+        console.error(`\n${formatGapReport(resumeGaps, DEFAULT_GAP_THRESHOLD, resumePath)}\n`)
+        gapFailures.push(`resume gap (${resumePdfPath})`)
       } else {
         console.log('✅ Whitespace gap check passed (resume)')
+      }
+
+      const resumeOrphans = await detectOrphanHeadings(resumeBuffer, collectHeadings(dataObj))
+      if (resumeOrphans.length > 0) {
+        console.error(`\n${formatOrphanReport(resumeOrphans, resumePath)}\n`)
+        gapFailures.push(`resume orphan-heading (${resumePdfPath})`)
+      } else {
+        console.log('✅ Orphaned-heading check passed (resume)')
       }
 
       const orphanCount = trailingWords.filter((w) => w.isOrphan).length
