@@ -34,7 +34,8 @@
     "yml-to-json": "bun lib/ymlToJson.ts",
     "yml-to-json:watch": "nodemon --watch . --ext yml --exec 'bun lib/ymlToJson.ts'",
     "init:multi-resume": "node scripts/init-multi-resume.js",
-    "test:file-health": "node scripts/test-file-health.js"
+    "test:file-health": "node scripts/test-file-health.js",
+    "trace:beads": "bun scripts/trace-beads.ts"
   },
   "packageManager": "bun@1.3.3",
   "dependencies": {
