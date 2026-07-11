@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun --bun next dev -p 10300",
+    "cvgen": "bun cli/cvgen.ts",
     "build": "sh scripts/build-with-count.sh",
     "build:prod": "NODE_ENV=production next build",
     "postbuild": "bun scripts/generate-build-hash.ts",
