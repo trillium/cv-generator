@@ -17,6 +17,11 @@ export function companyDir(company: string): string {
 }
 
 export function metadataPath(company: string): string {
+  const version = readManifest(company)?.version
+  if (typeof version === 'string') {
+    const versioned = path.join(companyDir(company), version, 'metadata.json')
+    if (existsSync(versioned)) return versioned
+  }
   return path.join(companyDir(company), 'metadata.json')
 }
 
