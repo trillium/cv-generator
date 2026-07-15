@@ -1,9 +1,10 @@
 import { atsKeywords } from './ats-keywords'
 import { fontSizeFloor } from './font-size-floor'
+import { humanReview } from './human-review'
 import { orphanFlags } from './orphan-flags'
 import { pageCount } from './page-count'
 import type { Check } from './types'
 
-export const registry: Check[] = [pageCount, orphanFlags, fontSizeFloor, atsKeywords]
+export const registry: Check[] = [pageCount, orphanFlags, fontSizeFloor, atsKeywords, humanReview]
 
 export type { Check, CheckContext, CheckOutcome, Severity } from './types'

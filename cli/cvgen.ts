@@ -1,3 +1,4 @@
+import { runBullets } from './commands/bullets'
 import { runCheck } from './commands/check'
 import { runDoctor } from './commands/doctor'
 
@@ -22,6 +23,8 @@ commands:
                       --fix    start the dev server if its probe failed
   check <company>   run the check registry against a company dir, write results
                     into its metadata.json
+  bullets review <company>   render + push the human bullet-review card
+  bullets ratify <chatId>    parse the review reply, hash-verify, patch labels
 
 stubs (not implemented — doctrine in brain-u1ws):
 ${Object.entries(STUBS)
@@ -49,6 +52,8 @@ async function main(): Promise<number> {
       return runDoctor(rest)
     case 'check':
       return runCheck(rest)
+    case 'bullets':
+      return runBullets(rest)
     default:
       if (verb in STUBS) return runStub(verb)
       console.error(`unknown command: ${verb}`)
